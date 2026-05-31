@@ -618,7 +618,7 @@ $(document).on("click", ".OpenBatchPopup", function (e) {
             }
 
             BindDeliveryNoteBatchTable();
-            BindOtherBatch();
+            BindOtherBatch(fromWarehouse, lineItemNumber, ItemGridindex);
 
             $("#DeliveryNoteBatchModal")
                 .modal("show");
@@ -685,8 +685,91 @@ function AddDeliveryNoteBatchRow(data = {}) {
 
 
 //#region BIND TABLE
-function BindOtherBatch() {
+function BindDeliveryNoteOtherBatchTable(response) {
 
+    $("#DeliveryNoteOtherBatchTableBody")
+        .find(".DeliveryNoteBatchRow")
+        .remove();
+
+    $.each(response, function (index, data) {
+
+        let row =
+            $("#DeliveryNoteBatchTemplateRow")
+                .clone()
+                .removeAttr("id")
+                .removeAttr("style")
+                .show()
+                .addClass("DeliveryNoteBatchRow");
+
+        row.find(".JIDNI_BCH_Number")
+            .val(data.lineBatch_Number);
+
+        row.find(".JIDNI_BCH_WH_Number")
+            .val(data.fromWarehouse);
+
+        row.find(".JIDNI_BCH_WH_Name")
+            .val(data.wareHouseCode);
+
+        row.find(".JIDNI_BCH_BatchDate")
+            .val(data.batchDate);
+
+        row.find(".JIDNI_BCH_BatchNo")
+            .val(data.batchNo);
+
+        row.find(".JIDNI_BCH_QtyInvoice")
+            .val(data.deliveredQty);
+
+        row.find(".JIDNI_BCH_BatchUnitPrice")
+            .val(data.batchUnitPrice);
+
+        row.find(".JIDNI_BCH_BatchValue")
+            .val(data.batchValue);
+
+        $("#DeliveryNoteOtherBatchTableBody")
+            .append(row);
+
+    });
+
+    CalculateOtherBatchFooter();
+}
+function BindOtherBatch(fromWarehouse, lineItemNumber, ItemGridindex) {
+    //#region AJAX
+
+    $.ajax({
+
+        url: "/DeliveryNote/GetOtherBatchDetails",
+
+        type: "GET",
+
+        data: {
+            FromWarehouse: fromWarehouse,
+            LineItem_Number: lineItemNumber,
+            ItemGridIndex: ItemGridindex
+        },
+
+        success: function (response) {
+
+            console.log(response);
+            BindDeliveryNoteOtherBatchTable(response);
+          
+
+       
+
+        
+        },
+
+        error: function (xhr, status, error) {
+
+            console.log("Status:", status);
+            console.log("Error:", error);
+            console.log("Response Text:", xhr.responseText);
+
+            alert("Error loading batch details");
+        }
+
+    });
+
+    //#endregion
 }
 
 function BindDeliveryNoteBatchTable() {

@@ -577,6 +577,42 @@ namespace ERP_DAO.JobInwardTransaction
             return dt;
         }
 
+
+        public DataSet GetOtherBatchDetailsDB(long fromWarehouse, long lineItemNumber, int ItemGridIndex)
+        {
+            try
+            {
+                Database db = new SqlDatabase(DB.Connection());
+
+                DbCommand cmd = db.GetStoredProcCommand("JI_DeliveryNote_InCommonOtherBatch_GetBatchDetails_SP");
+
+                db.AddInParameter(cmd, "@FromWarehouse", DbType.Int64, fromWarehouse);
+
+                db.AddInParameter(cmd, "@LineItem_Number", DbType.Int64, lineItemNumber);
+
+                db.AddInParameter(cmd, "@ItemGridIndex", DbType.Int64, ItemGridIndex);
+
+                return db.ExecuteDataSet(cmd);
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception(
+                    "SQL Error : " + ex.Message +
+                    Environment.NewLine +
+                    "Procedure : JI_DeliveryNote_InCommonOtherBatch_GetBatchDetails_SP",
+                    ex
+                );
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(
+                    "Application Error : " + ex.Message,
+                    ex
+                );
+            }
+        }
+
+
         public DataSet GetBatchDetailsDB(long fromWarehouse, long lineItemNumber,int ItemGridIndex)
         {
             try

@@ -984,6 +984,45 @@ namespace ERP.Controllers
         }
         #endregion
 
+        #region Show Other Batch
+        [HttpGet]
+        public JsonResult GetOtherBatchDetails(long FromWarehouse, long LineItem_Number, int ItemGridIndex)
+        {
+            DeliveryNote_DAO dao = new DeliveryNote_DAO();
+            DataTable dt = dao.GetOtherBatchDetailsDB(FromWarehouse, LineItem_Number, ItemGridIndex).Tables[0];
+            var data = dt.AsEnumerable().Select(r => new
+            {
+                LineBatch_Number = r["LineBatch_Number"] == DBNull.Value ? 0 : Convert.ToInt64(r["LineBatch_Number"]),
+                FromWarehouse = r["FromWarehouse"] == DBNull.Value ? 0 : Convert.ToInt64(r["FromWarehouse"]),
+
+                BatchDate = r["BatchDate"] == DBNull.Value
+                    ? ""
+                    : Convert.ToDateTime(r["BatchDate"]).ToString("dd MMM yyyy"),
+
+                BatchNo = r["BatchNo"] == DBNull.Value ? "" : r["BatchNo"].ToString(),
+
+                BatchQty = r["BatchQty"] == DBNull.Value ? 0 : Convert.ToDecimal(r["BatchQty"]),
+                ReservedQty = r["ReservedQty"] == DBNull.Value ? 0 : Convert.ToDecimal(r["ReservedQty"]),
+                DeliveredQty = r["DeliveredQty"] == DBNull.Value ? 0 : Convert.ToDecimal(r["DeliveredQty"]),
+                AvailableQty = r["AvailableQty"] == DBNull.Value ? 0 : Convert.ToDecimal(r["AvailableQty"]),
+
+                BatchUnitPrice = r["BatchUnitPrice"] == DBNull.Value ? 0 : Convert.ToDecimal(r["BatchUnitPrice"]),
+                BatchValue = r["BatchValue"] == DBNull.Value ? 0 : Convert.ToDecimal(r["BatchValue"]),
+
+                WareHouseCode =
+                    dt.Columns.Contains("WarehouseCode") && r["WarehouseCode"] != DBNull.Value
+                    ? r["WarehouseCode"].ToString()
+                    : ""
+            }).ToList();
+
+            return new JsonResult(data, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = true
+            });
+        }
+        #endregion
+
         #region temp batch save (BULK)
         [HttpPost]
         public IActionResult SaveTempDeliveryBatch([FromBody] List<TempDeliveryBatch_DTO> dtoList)
