@@ -1,0 +1,172 @@
+﻿@model ERP_DTO.WH_TaxAssignHead_DTO
+@{
+    ViewData["Title"] = "Withhold Tax Assign";
+}
+<div class="row align-items-center panel-header gx-2">
+    <div class="col h-100">
+        <div class="h6 fw-light text-white h-100 align-content-center bg-secondary px-2">
+            Withhold Tax Assign
+            <a asp-controller="Taxation" asp-action="Index" class="float-end btn p-0 shadow-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                </svg>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row panel-body gx-2">
+    <div class="col-12 panel-card-fixed h-100">
+        <div class="w-100 rounded-0 border border-primary bg-transparent h-100" id="BodyHeight">
+            <div class="w-100" id="BodyCardHeader">
+                <form asp-action="WHTaxAssign">
+                    <div class="w-100 p-3 text-black">
+                        <input type="hidden" name="PSize" value="@ViewData["PageSize"]" />
+                        <input type="hidden" name="PageNumber" value="@ViewData["PageNumber"]" />
+                        <input type="hidden" name="Search" value="@ViewData["CurrentFilter"]" />
+
+                        <partial name="WHTaxAssignView.cshtml" model="@Model" />
+                        <partial name="WHTaxAssignGridView.cshtml" model="@Model.WH_TaxDetail" />
+
+                        @if (@Model.WH_TaxNumber != 0)
+                        {
+                            <input type="submit" name="Mode" value="Update" class="btn btn-primary me-3" />
+                            <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+                        }
+                        else
+                        {
+                            <input type="submit" name="Mode" value="Save" class="btn btn-primary me-3" />
+                            <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+                        }
+                    </div>
+                </form>
+            </div>
+            <div class="w-100" id="BodyCardBody">
+                <div class="card bg-transparent border-top shadow-none overflow-hidden h-100">
+                    <div class="card-body text-black h-100 nav-tab-fix">
+                        <div class="row h-100">
+                            <div class="col-12 h-100">
+                                <ul class="nav nav-tabs tab-header" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-tab-pane" type="button" role="tab" aria-controls="overview-tab-pane" aria-selected="true">Overview</button>
+                                    </li>
+                                </ul>
+                                <div class="tab-content tab-body">
+                                    <div class="tab-pane fade show active p-3 pb-0 border border-top-0 h-100" id="overview-tab-pane" role="tabpanel" aria-labelledby="overview-tab" tabindex="0">
+                                        <div class="w-100 h-100" id="CardPanel">
+                                            <div class="row pb-3" id="CardHeader">
+                                                <div class="col">
+                                                    <form asp-action="WHTaxAssign" method="get">
+                                                        <input type="hidden" name="sortOrder" value="@ViewData["CurrentSort"]" />
+                                                        <input type="hidden" name="PageNumber" value="@ViewData["PageNumber"]" />
+                                                        <input type="hidden" name="PageFilter" value="PageFilter" />
+                                                        <div class="row">
+                                                            <div class="col-8">
+                                                                <div class="row gx-0">
+                                                                    <div class="col-auto me-3">
+                                                                        <select name="PSize" class="form-select w-auto  py-1 pe-4" asp-route-PageFilter="PageFilter" asp-items="@ViewBag.Page" onchange="form.submit();"></select>
+                                                                    </div>
+                                                                    <div class="col-auto">
+                                                                        <input id="Search" name="Search" class="form-control p-1 search-control" autocomplete="off" value="@ViewData["CurrentFilter"]" />
+                                                                    </div>
+                                                                    <div class="col-auto">
+                                                                        <input type="submit" name="Mode" value="Search" class="btn btn-primary btn-sm" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <div class="w-100 MenuAction d-none text-end">
+                                                                    <a class="DeleteAllButton btn btn-sm btn-danger me-2">
+                                                                        Delete
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                            <partial name="WHTaxAssignList.cshtml" model="@Model.WH_TaxAssign_List" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script src="~/js/site.js"></script>
+<script>
+    $('.navbar-nav > .nav-item.taxation > a').addClass("active");
+</script>
+
+<script>
+        $(".datepicker").flatpickr({
+                     dateFormat: "d-M-Y",
+                    altInput: false,
+                 });
+
+    $(".decimal").each(function () {
+        var value = $(this).val();
+        $(this).val(formatToIndianRupees(value));
+    });
+
+    $(document).on("blur", ".decimal", function () {
+        var value = $(this).val();
+        if (value.trim() === "" || isNaN(value)) {
+            $(this).val("0.00");
+        } else {
+            $(this).val(formatToIndianRupees(value));
+        }
+    });
+
+    $(document).on("focus", ".decimal", function () {
+        var value = $(this).val();
+        $(this).val(removeCommas(value));
+        $(this).select();
+    });
+
+    function formatToIndianRupees(value) {
+        if (value === "" || isNaN(value)) {
+            return "0.00";
+        }
+
+        var formattedValue = parseFloat(value).toFixed(2);
+
+        var parts = formattedValue.split(".");
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+        return parts.join(".");
+    }
+
+    function removeCommas(value) {
+        return value.replace(/,/g, '');
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const MainDiv = document.getElementById('BodyHeight');
+        const HeadDiv = document.getElementById('BodyCardHeader');
+        const BodyDiv = document.getElementById('BodyCardBody');
+
+        if (HeadDiv && BodyDiv) {
+            const MainDivHeight = MainDiv.offsetHeight;
+            const HeadDivHeight = HeadDiv.offsetHeight;
+            BodyDiv.style.height = (MainDivHeight - HeadDivHeight) + 'px';
+        }
+
+        console.log("MainDiv.offsetHeight", MainDiv.offsetHeight);
+        console.log("HeadDiv.offsetHeight", HeadDiv.offsetHeight);
+
+        const MainTab = document.getElementById('CardPanel');
+        const HeaderTab = document.getElementById('CardHeader');
+        const bodyTab = document.getElementById('CardBody');
+        const FooterTab = document.getElementById('CardFooter');
+
+        const MainHeight = MainTab.offsetHeight;
+        const HeaderHeight = HeaderTab.offsetHeight;
+        const FooterHeight = FooterTab.offsetHeight;
+
+        bodyTab.style.height = (MainHeight - HeaderHeight - FooterHeight - 15) + 'px';
+    });
+</script>

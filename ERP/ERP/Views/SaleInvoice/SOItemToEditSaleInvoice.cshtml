@@ -1,0 +1,1930 @@
+﻿@model ERP_DTO.SOItemToSaleInvoiceHead_DTO
+@{
+    ViewData["Title"] = "SO Item To Sale Invoice Create";
+}
+<script>
+    function removeCommas(value) {
+        return (value || '').toString().replace(/,/g, '');
+    }
+
+    function DecimalIndianRupees(value) {
+        if (value === "" || isNaN(value)) {
+            return "0.00";
+        }
+
+        var formattedValue = parseFloat(value).toFixed(2);
+
+        var parts = formattedValue.split(".");
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+        return parts.join(".");
+    }
+    function QtyDecimalRupees(value, decimalPlaces) {
+        if (value === "" || isNaN(value)) return "0";
+
+        var formattedValue = parseFloat(value).toFixed(decimalPlaces);
+        var parts = formattedValue.split(".");
+        if (parts.length > 1) {
+            parts[1] = parts[1].replace(/0+$/, "");
+            if (parts[1].length === 0) parts.pop();
+        }
+
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+
+        return parts.join(".");
+    }
+    function UnitDecimalRupees(value, UnitDecimalPlaces) {
+        if (value === "" || isNaN(value)) return "0";
+
+        var num = parseFloat(value);
+
+        var formattedValue = num.toFixed(UnitDecimalPlaces);
+        var parts = formattedValue.split(".");
+
+        if (parts.length > 1) {
+            parts[1] = parts[1].replace(/0+$/, "");
+
+            if (parts[1].length < 2) {
+                parts[1] = parts[1].padEnd(2, "0");
+            }
+        } else {
+            parts.push("00");
+        }
+
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+        return parts.join(".");
+    }
+</script>
+<form asp-action="SOItemToEditSaleInvoice" class="h-100">
+
+    <input id="SII_INC_SOINumber" type="hidden" />
+    <input id="SII_INC_SOHNumber" type="hidden" />
+    <input id="SII_INC_Qty" type="hidden" />
+    <input id="SII_INC_MatrialValue" type="hidden" />
+
+
+    <input id="SII_TEMP_ITM_Number" type="hidden" />
+    <input id="SII_TEMP_Index" type="hidden" />
+    <input id="SII_TEMP_Qty" type="hidden" />
+    <input id="SII_TEMP_WH_Number" type="hidden" />
+    <input id="SII_TEMP_Decimal" type="hidden" />
+
+    <div class="modal modal-lg modal-xl fade" id="BuyerAddress" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title">Address</p>
+                    <button type="button" class="btn-close" id="AddCloseButton" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs tab-header" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-tab-pane" type="button" role="tab" aria-controls="overview-tab-pane" aria-selected="true">Overview</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content tab-body">
+                        <div class="tab-pane fade show active p-2 border border-top-0 h-100" id="overview-tab-pane" role="tabpanel" aria-labelledby="overview-tab" tabindex="0">
+                            <partial name="SOItemToEditSaleInvoiceAddress.cshtml" model="@Model.BuyerAddress" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <a id="AddressAddButton" class="btn btn-primary AddressAddButton">Add Row</a>
+                    <button type="button" id="AddOkayButton" class="btn btn-primary px-4" ref="always_focus" autofocus>Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-lg modal-xl fade" id="Income" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden=1>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title">Header Misc.Income</p>
+                    <button type="button" class="btn-close" id="IncCloseButton" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs tab-header" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-tab-pane" type="button" role="tab" aria-controls="overview-tab-pane" aria-selected=1>Overview</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content tab-body">
+                        <div class="tab-pane fade show active p-2 border border-top-0 h-100" id="overview-tab-pane" role="tabpanel" aria-labelledby="overview-tab" tabindex="0">
+                            <partial name="SOItemToEditSaleInvoiceIncome.cshtml" model="@Model.Income" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-end">
+                    <button type="button" id="IncOkayButton" class="btn btn-primary px-4" ref="always_focus" autofocus>Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-lg modal-xl fade" id="IIncome" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden=1>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title">Item Misc. Income</p>
+                    <button type="button" class="btn-close" id="IIncCloseButton" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs tab-header" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-tab-pane" type="button" role="tab" aria-controls="overview-tab-pane" aria-selected=1>Overview</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content tab-body">
+                        <div class="tab-pane fade show active p-2 border border-top-0 h-100" id="overview-tab-pane" role="tabpanel" aria-labelledby="overview-tab" tabindex="0">
+                            <partial name="SOItemToEditSaleInvoiceIIncome.cshtml" model="@Model.ItemIncome" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-lg fade" id="GSTView" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden=1>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title">GST</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs tab-header">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page">Overview</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content tab-body tab-body-h-o">
+                        <div class="tab-pane fade show active p-2 border border-top-0 h-100" tabindex="0">
+                            <div class="row h-100">
+                                <div id="GSTTableView" class="w-100 table-responsive"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-lg fade" id="IBatch" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden=1>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title w-100 text-center">
+                        <span class="float-start">
+                            Batch
+                        </span>
+                        <span>
+                            Item Qty : <span id="SII_HIDE_BCH_Qty"></span>
+                        </span>
+                    </p>
+
+                    <button type="button" class="btn-close" id="IBatCloseButton" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="w-100 table-responsive pb-2">
+                        <partial name="SOItemToEditSaleInvoiceBatch.cshtml" model="@Model.ItemBatch" />
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" id="IBatOkayButton" class="btn btn-primary px-4" ref="always_focus" autofocus>Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-lg fade" id="TaxView" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden=1>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title">Header GST</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs tab-header">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page">Overview</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content tab-body tab-body-h-o">
+                        <div class="tab-pane fade show active p-2 border border-top-0 h-100" tabindex="0">
+                            <div class="row h-100">
+                                <div id="TaxTableView" class="w-100 table-responsive"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-lg fade" id="SOView" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden=1>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title">Sale Order</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs tab-header">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page">Overview</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content tab-body tab-body-h-o">
+                        <div class="tab-pane fade show active p-2 border border-top-0 h-100" tabindex="0">
+                            <div class="row h-100">
+                                <div id="OrderTableView" class="w-100 table-responsive"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row align-items-center panel-header gx-2">
+        <div class="col h-100 align-items-center">
+            <div class="h6 fw-light text-white h-100 align-content-center bg-secondary px-2">
+                Sale Invoice
+                <a asp-controller="Sale" asp-action="Index" class="float-end btn p-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row panel-body gx-2">
+        <div class="col-12 panel-card-fixed h-100">
+            <div class="w-100 rounded-0 h-100 border border-primary bg-transparent" id="BodyHeight">
+                <div class="card rounded-0 bg-transparent shadow-none" id="CardHeader">
+                    <div class="card-body pb-0">
+                        <div class="row ps-2">
+                            <partial name="SOItemToEditSaleInvoiceHead.cshtml" model="@Model" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card rounded-0 bg-transparent shadow-none" id="CardBody">
+                    <div class="card-body h-100">
+                        <div class="row h-100">
+                            <div class="col-auto left-menu h-100">
+                                <ul class="nav nav-tabs tab-header">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" aria-current="page">Item</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark">Other</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content tab-body tab-body-h-o">
+                                    <div class="tab-pane fade show active p-2 pb-0 border border-top-0 h-100" tabindex="0">
+                                        <div class="row h-100">
+                                            <partial name="SOItemToEditSaleInvoiceItem.cshtml" model="@Model.InvoiceItem" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto right-menu text-center border-start">
+                                <a class="ItemIncome btn btn-sm btn-primary px-2 mb-2 w-100 OneItemMode" disabled>
+                                    Misc Income
+                                </a>
+                                <a class="GSTView btn btn-sm btn-primary px-2 mb-2 w-100 OneItemMode" disabled>
+                                    GST View
+                                </a>
+                                <a class="ItemBatch btn btn-sm btn-primary px-2 mb-2 w-100 OneItemMode" disabled>
+                                    Batch
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card rounded-0 bg-transparent shadow-none pt-0" id="CardFooter">
+                    <div class="card-body text-black pt-0">
+                        <div class="row">
+                            <div class="col-auto left-menu">
+                                <div class="row ps-2">
+                                    <div class="col-12 col-md-4 col-lg-3">
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="SIH_MaterialCost" class="col-md-7 col-form-label ps-0"></label>
+                                            <div class="col-md-5">
+                                                <input asp-for="SIH_MaterialCost" class="form-control text-black text-end" readonly autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="SIH_ItemMiscIncome" class="col-md-7 col-form-label ps-0"></label>
+                                            <div class="col-md-5">
+                                                <input asp-for="SIH_ItemMiscIncome" class="form-control text-black text-end" readonly autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="SIH_HeaderMiscIncome" class="col-md-7 col-form-label ps-0"></label>
+                                            <div class="col-md-5">
+                                                <input asp-for="SIH_HeaderMiscIncome" class="form-control text-black text-end" readonly autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="SIH_GST_Amount" class="col-md-7 col-form-label ps-0"></label>
+                                            <div class="col-md-5">
+                                                <input asp-for="SIH_GST_Amount" class="form-control text-black text-end" readonly autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="SIH_InvoiceAmount" class="col-md-7 col-form-label ps-0"></label>
+                                            <div class="col-md-5">
+                                                <input asp-for="SIH_InvoiceAmount" class="form-control text-black text-end" readonly autocomplete="off" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-4 col-lg-3 px-4">
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="SIH_WHT_Amount" class="col-md-7 col-form-label ps-0"></label>
+                                            <div class="col-md-5">
+                                                <input asp-for="SIH_WHT_Amount" class="form-control text-black text-end" readonly autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="SIH_RoundOff" class="col-md-7 col-form-label ps-0"></label>
+                                            <div class="col-md-5">
+                                                <input asp-for="SIH_RoundOff" class="form-control text-black text-end" readonly autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="SIH_BuyerReceivable" class="col-md-7 col-form-label ps-0"></label>
+                                            <div class="col-md-5">
+                                                <input asp-for="SIH_BuyerReceivable" class="form-control text-black text-end" readonly autocomplete="off" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto right-menu text-centert">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+<script src="~/js/site.js"></script>
+
+<script>
+    $('.navbar-nav > .nav-item.sale > a').addClass("active");
+</script>
+
+<script>
+    $('form').submit(function (event) {
+        $("tr.InNewRow").each(function () {
+            var IncomeCode = $(this).find("select.SIH_INC_MIC_Number").val();
+            var Occurrence = $(this).find("select.SIH_INC_OCRN_Number").val();
+            var ChargeableMethod = $(this).find("select.SIH_INC_CM_Number").val();
+            var IncomeBase = removeCommas($(this).find("input.SIH_INC_IncomeBase").val());
+            var Allocate = $(this).find("select.SIH_INC_ALCT_Number").val();
+            var LedgerAccount = $(this).find("select.SIH_INC_LA_Number").val();
+
+            if (!IncomeCode && !Occurrence && !ChargeableMethod && !Allocate && !LedgerAccount && !(IncomeBase > 0)) {
+                $(this).find("input.SIH_INC_IsDeleted").val(1);
+                $(this).hide();
+            }
+        });
+        $("tr.IIncNewRow").each(function () {
+            var IncomeCode = $(this).find("select.SII_INC_Income_Number").val();
+            var Occurrence = $(this).find("select.SII_INC_OCRN_Number").val();
+            var ChargeableMethod = $(this).find("select.SII_INC_CM_Number").val();
+            var IncomeBase = removeCommas($(this).find("input.SII_INC_IncomeBase").val());
+            var Allocate = $(this).find("select.SII_INC_ALCT_Number").val();
+            var LedgerAccount = $(this).find("select.SII_INC_LA_Number").val();
+
+            if (!IncomeCode && !Occurrence && !ChargeableMethod && !Allocate && !LedgerAccount && !(IncomeBase > 0)) {
+                $(this).find("input.SII_INC_IsDeleted").val(1);
+                $(this).hide();
+            }
+        });
+
+        $("tr.NewRow").each(function () {
+            var ItemNumber = $(this).find("input.SII_ITM_Number").val();
+            var Qty = removeCommas($(this).find("input.SII_Qty").val());
+            var UnitPrice = removeCommas($(this).find("input.SII_UnitPrice").val());
+            var UoMNumber = $(this).find("select.SII_UoM_Number").val();
+
+            if (!ItemNumber && !UoMNumber && !(Qty > 0) && !(UnitPrice > 0)) {
+                $(this).find("input.IsDeleted").val(1);
+                $(this).hide();
+            }
+        });
+
+        $('select').prop('disabled', false);
+    });
+
+    $(".QtyNumbers").each(function () {
+        var value = $(this).val();
+        var decimalPlaces = $(this).closest("tr").find("input.SII_UoM_DecimalPlaces").val();
+        if (decimalPlaces === "" || isNaN(decimalPlaces)) decimalPlaces = 2;
+        $(this).val(QtyDecimalRupees(value, decimalPlaces));
+    });
+    $(document).on("blur", ".QtyNumbers", function () {
+        var value = $(this).val();
+        var decimalPlaces = $(this).closest("tr").find("input.SII_UoM_DecimalPlaces").val();
+        if (value.trim() === "" || isNaN(value)) {
+            $(this).val("0");
+        } else {
+            $(this).val(QtyDecimalRupees(value, decimalPlaces));
+        }
+    });
+    $(document).on("input", ".QtyNumbers", function () {
+        var $this = $(this);
+        var decimalPlaces = parseInt($this.closest("tr").find("input.SII_UoM_DecimalPlaces").val(), 10);
+        if (isNaN(decimalPlaces)) decimalPlaces = 0;
+
+        let clean = $this.val()
+            .replace(/-/g, "")
+            .replace(/[^0-9.]/g, "");
+
+        const firstDot = clean.indexOf(".");
+        if (firstDot !== -1) {
+            clean =
+                clean.substring(0, firstDot + 1) +
+                clean.substring(firstDot + 1).replace(/\./g, "");
+        }
+
+        if (decimalPlaces === 0) {
+            clean = clean.replace(/\./g, "");
+        }
+        else if (decimalPlaces > 0 && firstDot !== -1) {
+            const parts = clean.split(".");
+            if (parts[1].length > decimalPlaces) {
+                parts[1] = parts[1].slice(0, decimalPlaces);
+                clean = parts.join(".");
+            }
+        }
+
+        $this.val(clean);
+    });
+    $(document).on("focus", ".QtyNumbers", function () {
+        var value = $(this).val();
+        $(this).val(removeCommas(value));
+        $(this).select();
+    });
+
+
+    function OnBuyerInput(inputElement) {
+        SearchBuyer(inputElement);
+    }
+    function OnBuyerFocus(inputElement) {
+        var tax = inputElement.value;
+        if (!tax) {
+            SearchBuyer(inputElement);
+        }
+        else {
+            $(this).select();
+        }
+    }
+    async function SearchBuyer(inputElement) {
+        var Buyer = inputElement.value;
+        var SIHDate = $("#SIH_InvoiceDate").val();
+        var resultsDiv = $(inputElement).next('.buyer-search-results');
+        var isChecked = $("#SIH_ExportOrder").prop("checked");
+        var Export;
+
+        if (isChecked) {
+            Export = true;
+        } else {
+            Export = false;
+        }
+
+        $.ajax({
+            url: '../Buyer',
+            data: { Buyer: Buyer, SIHDate: SIHDate, Export: Export },
+            type: 'GET',
+            success: function (data) {
+                resultsDiv.empty();
+                if (data && data.length > 0) {
+                    resultsDiv.show();
+                    var table = $('<div class="card-body modal-content p-0"><table class="table table-bordered table-hover table-fixed table-grid mb-0"><thead><tr class="table-info"><th class="table-col-xxl">Buyer Name</th><th class="table-width-lg text-center">Currency</th></tr></thead><tbody></tbody></table></div>');
+                    data.forEach(function (Buy) {
+                        var row = $('<tr></tr>');
+                        row.append('<td class="table-col-xxl">' + Buy.buY_Name + '</td>');
+                        row.append('<td class="table-width-lg text-center">' + Buy.buY_CUR_Name + '</td>');
+                        table.find('tbody').append(row);
+
+                        row.on('click', function () {
+                            // var vengo = 0;
+                            // var Buyerna = Buy.buY_Name;
+                            // var Buyer = $("#SIHBuyer").val();
+                            // if (Buyer == '') {
+                            //     vengo = 1;
+                            // }
+                            // else if (Buyer === Buyerna) {
+                            //     vengo = 1;
+                            // }
+                            // else {
+                            //     let rowCount = $("tr.NewRow").length;
+                            //     if (rowCount > 0) {
+                            //         if (confirm("Do you want to change the Buyer Name? This action will clear all existing items.")) {
+
+                            //             $("tr.NewRow").each(function () {
+                            //                 $(this).find("input.SII_IsDeleted").val(1);
+                            //                 $(this).hide();
+                            //             });
+                            //             $("tr.IncNewRow").each(function () {
+                            //                 $(this).find("input.SIH_INC_IsDeleted").val(1);
+                            //                 $(this).hide();
+                            //             });
+                            //             $("tr.IIncNewRow").each(function () {
+                            //                 $(this).find("input.SII_INC_IsDeleted").val(1);
+                            //                 $(this).hide();
+                            //             });
+
+                            //             vengo = 1;
+                            //         }
+                            //         else {
+                            //             $(inputElement).val(Buyer);
+                            //         }
+                            //     }
+                            //     else { vengo = 1; }
+                            // }
+                            var vengo=1;
+                            if (vengo === 1) {
+                                $(inputElement).val(Buy.buY_Name);
+                                $("#SIH_BUY_Number").val(Buy.buY_Number)
+                                $("#SIH_CUR_Name").val(Buy.buY_CUR_Name)
+                                $("#SIH_CUR_Number").val(Buy.buY_CUR_Number)
+                                $("#SIH_BUY_LOC_Number").val(Buy.buY_LOC_Number)
+                                $("#SIH_CUR_DecimalPlaces").val(Buy.buY_CUR_DecimalPlaces)
+                                $("#SIH_WHT_Number").val(Buy.buY_WHT_Number)
+
+                                SearchClustor(Buy.buY_Number, Buy.buY_TCT_Number);
+                                GetWHT(Buy.buY_Number, Buy.buY_WHT_Number, SIHDate);
+
+                                SearchInvoice();
+                            }
+                            resultsDiv.hide();
+                        });
+                    });
+
+                    var closeButton = $('<div class="card-header bg-primary py-1"><button type="button" class="p-0 float-end btn btn-sm btn-primary bg-opacity-10"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d = "M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"> </path></svg></button></div>');
+                    closeButton.on('click', function () {
+                        resultsDiv.hide();
+                    });
+
+                    resultsDiv.append(closeButton);
+                    resultsDiv.append(table);
+                } else {
+                    resultsDiv.hide();
+                    resultsDiv.append('<p>No results found</p>');
+                }
+            },
+            error: function () {
+                resultsDiv.text('Error loading data.');
+                resultsDiv.show();
+            }
+        });
+    }
+
+    $(".decimal").each(function () {
+        var value = $(this).val();
+        $(this).val(DecimalIndianRupees(removeCommas(value)));
+    });
+    $(document).on("blur", ".decimal", function () {
+        var value = $(this).val();
+        if (value.trim() === "" || isNaN(value)) {
+            $(this).val("0.00");
+        } else {
+            $(this).val(DecimalIndianRupees(removeCommas(value)));
+        }
+    });
+    $(document).on("focus", ".decimal", function () {
+        var value = $(this).val();
+        $(this).val(removeCommas(value));
+        $(this).select();
+    });
+
+
+    function OnClustorInput(inputElement) {
+        SearchClustor(inputElement);
+    }
+    function OnClustorFocus(inputElement) {
+        var tax = inputElement.value;
+        if (!tax) {
+            SearchClustor(inputElement);
+        }
+        else {
+            $(this).select();
+        }
+    }
+    function SearchClustor(Buyer, taxNumber) {
+        if (Buyer) {
+            $.ajax({
+                url: '../cluster',
+                data: { Buyer: Buyer },
+                type: 'GET',
+                success: function (data) {
+                    if (data && data.length > 0) {
+                        var dropdown = document.getElementById("SIH_TCT_Number");
+                        dropdown.innerHTML = "";
+
+                        var option = document.createElement("option");
+                        option.value = "";
+                        option.text = "";
+                        dropdown.appendChild(option);
+
+                        data.forEach(function (item) {
+                            var option = document.createElement("option");
+                            option.value = item.taxClusterNumber;
+                            option.text = item.taxCluster;
+                            dropdown.appendChild(option);
+                        });
+                        if (taxNumber) {
+                            $("#SIH_TCT_Number").val(taxNumber);
+                        }
+                        else {
+                            AssignGST();
+                        }
+                    }
+                },
+                error: function () {
+                    resultsDiv.text('Error loading data.');
+                    resultsDiv.show();
+                }
+            });
+        }
+    }
+
+
+    function addDays(date, days) {
+        const dateAfterAddingDays = new Date(date);
+        dateAfterAddingDays.setDate(dateAfterAddingDays.getDate() + parseInt(days));
+
+        const day = dateAfterAddingDays.getDate().toString().padStart(2, '0');
+        const year = dateAfterAddingDays.getFullYear();
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const monthAbbr = monthNames[dateAfterAddingDays.getMonth()];
+
+        const result = `${day}-${monthAbbr}-${year}`;
+        return result;
+    }
+
+    function ExchangeVisibility() {
+        if ($('#SIH_ExportOrder').is(':checked')) {
+            $('#ExchangeRate').show();
+        } else {
+            $('#ExchangeRate').hide();
+        }
+    }
+
+    flatpickr(".datepicker", {
+        dateFormat: "d-M-Y",
+        altInput: false,
+    });
+
+
+    function AssignGST() {
+        var TaxCluster = $("#SIH_HIDE_TCT_Number").val();
+        $("#SIH_TCT_Number").val(TaxCluster);
+    }
+    AssignGST();
+
+    $("#IncOkayButton").click(function () {
+        $("#Income").modal('hide');
+    });
+    $("#IncCloseButton").click(function () {
+        $("#Income").modal('hide');
+    });
+    $("#IIncOkayButton").click(function () {
+        $("#IIncome").modal('hide');
+    });
+    $("#IIncCloseButton").click(function () {
+        $("#IIncome").modal('hide');
+    });
+
+    $("#SIH_InvoiceDate").change(function (e) {
+        const SIHDate = $("#SIH_InvoiceDate").val();
+        const InvoiceDate = ParseCustomDate(SIHDate);
+
+        let CheckedPO = [];
+        $("tr.NewRow").each(function () {
+            var irow = $(this);
+            var Po_Number = irow.find("input.SII_SOH_Number").val();
+            var PosDate = irow.find("input.SII_PO_Date").val();
+            const PoDate = ParseCustomDate(PosDate);
+            if (InvoiceDate.getTime() < PoDate.getTime()) {
+                CheckedSO.push(Po_Number);
+            }
+        });
+        const UniqueCheckedPO = [...new Set(CheckedPO)];
+
+        if (CheckedSO.length > 0) {
+            if (confirm("Do you want to change the Date? This action will clear all existing items.")) {
+                const UniqueCheckedPO = [...new Set(CheckedPO)];
+
+                let DisplayedSO = [];
+                $("tr.NewRow").each(function () {
+                    const SONumberInRow = $(this).find(".SII_SOH_Number").val();
+                    if (SONumberInRow) {
+                        DisplayedSO.push(SONumberInRow);
+                    }
+                });
+
+                const POToRemove = DisplayedSO.filter(SO  => UniqueCheckedSO.includes(SO));
+                const UniquePOToRemove = [...new Set(POToRemove)];
+
+                UniquePOToRemove.forEach(SONumberToRemove => {
+                    $("tr.NewRow").filter(function () {
+                        return $(this).find(".SII_SOH_Number").val() === SONumberToRemove;
+                    }).remove();
+                });
+
+
+                let DisplayedInSO = [];
+                $("tr.IncNewRow").each(function () {
+                    const SONumberInRow = $(this).find(".SIH_INC_SOH_Number").val();
+                    if (SONumberInRow) {
+                        DisplayedInSO.push(SONumberInRow);
+                    }
+                });
+
+                const InSoToRemove = DisplayedInSO.filter(SO  => UniqueCheckedSO.includes(SO));
+                const ExUniquePOToRemove = [...new Set(InSoToRemove)];
+
+                ExUniquePOToRemove.forEach(SONumberToRemove => {
+                    $("tr.IncNewRow").filter(function () {
+                        return $(this).find(".SIH_INC_SOH_Number").val() === SONumberToRemove;
+                    }).remove();
+                });
+
+
+
+                let DisplayedIInSO = [];
+                $("tr.IIncNewRow").each(function () {
+                    const SONumberInRow = $(this).find(".SII_INC_SOH_Number").val();
+                    if (SONumberInRow) {
+                        DisplayedIInSO.push(SONumberInRow);
+                    }
+                });
+
+                const IInSoToRemove = DisplayedIInSO.filter(SO  => UniqueCheckedSO.includes(SO));
+                const IExUniquePOToRemove = [...new Set(IInSoToRemove)];
+
+                IExUniquePOToRemove.forEach(SONumberToRemove => {
+                    $("tr.IIncNewRow").filter(function () {
+                        return $(this).find(".SII_INC_SOH_Number").val() === SONumberToRemove;
+                    }).remove();
+                });
+
+                SearchInvoice();
+                $("#SIHInvoiceDate").val($("#SIH_InvoiceDate").val());
+            }
+            else {
+                $("#SIH_InvoiceDate").val($("#SIHInvoiceDate").val());
+            }
+        }
+        else {
+            SearchInvoice();
+        }
+
+        var paymentBase = $("#SIH_PaymentBase").val();
+
+        const date = new Date(SIHDate);
+
+        const Year = date.getFullYear();
+        const Month = date.getMonth() + 1;
+        const Day = date.getDate();
+
+        const ForMonth = String(Month).padStart(2, '0');
+        const ForDay = String(Day).padStart(2, '0');
+
+        const ForDate = `${Year}${ForMonth}${ForDay}`;
+
+        $.ajax({
+            url: '../numbering',
+            data: { PIDate: ForDate },
+            type: 'GET',
+            success: function (data) {
+                if (data === "") {
+
+                }
+                else {
+                    $('#SIH_InvoiceNo').val(data);
+                }
+            },
+            error: function () {
+            }
+        });
+
+        (async () => {
+            await CalculateAllIncomes();
+        })();
+       
+    });
+
+    function ParseCustomDate(dateString) {
+        if (!dateString || typeof dateString !== 'string') {
+            return null;
+        }
+
+        const months = {
+            'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5,
+            'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
+        };
+
+        const parts = dateString.split('-');
+
+        if (parts.length === 3) {
+            const day = parseInt(parts[0], 10);
+            const monthStr = parts[1];
+            const year = parseInt(parts[2], 10);
+
+            if (months.hasOwnProperty(monthStr) && !isNaN(day) && !isNaN(year) && year > 1000) {
+                const monthIndex = months[monthStr];
+                const dateObj = new Date(year, monthIndex, day);
+                if (dateObj.getFullYear() === year && dateObj.getMonth() === monthIndex && dateObj.getDate() === day) {
+                    return dateObj;
+                } else {
+                }
+            }
+        }
+        console.warn("Could not parse date string:", dateString, "Parts:", parts);
+        return null;
+    }
+</script>
+
+<script>
+    function SearchInvoice() {
+        var Buyer = $("#SIH_BUY_Number").val();
+        var MSNumber = $("#SIH_MS_Number").val();
+        var SIHDate = $("#SIH_InvoiceDate").val();
+        var isChecked = $("#SIH_ExportOrder").prop("checked");
+        var resultsDiv = $("#OrderTableView");
+        var Export;
+
+        if (isChecked) {
+            Export = true;
+        } else {
+            Export = false;
+        }
+
+        if (Buyer) {
+            $.ajax({
+                url: '../order',
+                data: { Buyer: Buyer, MSNumber: MSNumber, Export: Export, SIHDate: SIHDate },
+                type: 'GET',
+                success: function (data) {
+                    let DisplayedItemSO = [];
+                    $("tr.NewRow").each(function () {
+                        const SONumberInRow = $(this).find(".SII_ITM_Number").val();
+                        if (SONumberInRow) {
+                            DisplayedItemSO.push(SONumberInRow);
+                        }
+                    });
+                    const UniqueDisplayedItemSOs = [...new Set(DisplayedItemSO)];
+
+                    if (data && data.length > 0) {
+                        resultsDiv.empty();
+                        var tableHTML = `<table class="table table-bordered mb-0 table-hover">
+                                            <thead>
+                                                <tr class="table-info">
+                                                    <th class="px-2 del"></th>
+                                                        <th>Item Group</th>
+                                                        <th>Item Code</th>
+                                                        <th>Item Description</th>
+                                                        <th class='text-center'>Recover Deleted SO</th>
+                                                        <th class='text-center'>Recover Deleted Header Income</th>
+                                                        <th class='text-center'>Recover Deleted Item Income</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>`;
+
+                        var table = $(tableHTML);
+
+                        data.forEach(function (SO) {
+                            var CheckboxCell = $('<td class="px-2 del text-center"></td>');
+                            var Checkbox = $('<input type="checkbox" class="form-check-input order-item-checkbox">');
+                            Checkbox.val(SO.soI_ITM_Number);
+                            const SOItemnum = String(SO.soI_ITM_Number).trim();
+
+                            if (UniqueDisplayedItemSOs.includes(SOItemnum.trim())) {
+                                Checkbox.prop('checked', true);
+                            } 
+
+                            CheckboxCell.append(Checkbox);
+
+                            var ItemCheckboxCell = $('<td class="px-2 del text-center"></td>');
+                            var ItemCheckbox = $('<input type="checkbox" class="form-check-input item-delete-checkbox">');
+                            ItemCheckbox.val(SO.soI_ITM_Number);
+                            ItemCheckboxCell.append(ItemCheckbox);
+
+                            var HeaderIncCheckboxCell = $('<td class="px-2 del text-center"></td>');
+                            var HeaderIncCheckbox = $('<input type="checkbox" class="form-check-input headerinc-delete-checkbox">');
+                            HeaderIncCheckbox.val(SO.soI_ITM_Number);
+                            HeaderIncCheckboxCell.append(HeaderIncCheckbox);
+
+                            var ItemIncCheckboxCell = $('<td class="px-2 del text-center"></td>');
+                            var ItemIncCheckbox = $('<input type="checkbox" class="form-check-input iteminc-delete-checkbox">');
+                            ItemIncCheckbox.val(SO.soI_ITM_Number);
+                            ItemIncCheckboxCell.append(ItemIncCheckbox);
+
+                            var row = $('<tr class="socheck"></tr>');
+                            row.append(CheckboxCell);
+                            row.append('<td>' + SO.soI_ITM_Group + '</td>');
+                            row.append('<td>' + SO.soI_ITM_Code + '</td>');
+                            row.append('<td>' + SO.soI_ITM_Description + '</td>');
+                            row.append(ItemCheckboxCell);
+                            row.append(HeaderIncCheckboxCell);
+                            row.append(ItemIncCheckboxCell);
+                            table.find('tbody').append(row);
+                        });
+
+                        var checkButton = $('<div class="w-100 p-2 text-center"><button type="button" class="btn btn-primary" id="GetInvoice">Get</button></div>');
+
+                        resultsDiv.append(table);
+                        resultsDiv.append(checkButton);
+
+                        resultsDiv.find('#GetInvoice').on('click', function () {
+                            var SelectedSO = $.map($('tbody .order-item-checkbox:checked'), function (c) { return c.value; })
+                            var SelectedItemSO = $.map($('tbody .item-delete-checkbox:checked'), function (c) { return c.value; })
+                            var SelectedHeaderInSO = $.map($('tbody .headerinc-delete-checkbox:checked'), function (c) { return c.value; })
+                            var SelectedItemInSo = $.map($('tbody .iteminc-delete-checkbox:checked'), function (c) { return c.value; })
+
+                            InsertInvoice(SelectedSO, SelectedItemSO, SelectedHeaderInSO, SelectedItemInSo);
+
+                            $("#SOView").modal('hide');
+                        });
+                    }
+                    if (data.length === 0){
+                        resultsDiv.empty();
+                        (async () => {
+                            await CalculateAllIncomes();
+                        })();
+                    }
+                }
+            });
+        }
+    }
+
+    function InsertInvoice(SelectedSO, SelectedItemSO, SelectedHeaderInSO, SelectedItemInSO) {
+        var Selected_Number = SelectedSO.join(',');
+        let DisplayedSO = [];
+        let DisplayedItemSO = [];
+
+        console.log("SelectedSO",SelectedSO);
+
+        const soItemMap = {};
+        $("tr.NewRow").each(function () {
+            const itemNo = $(this).find(".SII_ITM_Number").val();
+            const soNo   = $(this).find(".SII_SOH_Number").val();
+            const isDeleted = $(this).find(".SII_IsDeleted").val();
+
+            if (!SelectedSO.includes(itemNo)) return;
+
+            const key = soNo + "|" + itemNo; // ✅ unique per SO + Item
+
+            if (!(key in soItemMap)) {
+                soItemMap[key] = {
+                    soNo: soNo,
+                    hasActiveRow: false
+                };
+            }
+
+            // if ANY row is active → exclude this SO
+            if (isDeleted == 0) {
+                soItemMap[key].hasActiveRow = true;
+            }
+        });
+
+        console.log("soItemMap",soItemMap);
+        const values = Object.values(soItemMap);
+
+        const hasAnyActiveRow = values.some(x => x.hasActiveRow === true);
+
+        const AllDeletedSOs = hasAnyActiveRow
+            ? []
+            : [...new Set(values.map(x => x.soNo))];
+
+        console.log("AllDeletedSOs", AllDeletedSOs);
+
+        $("tr.NewRow").each(function () {
+            var SIDeleteInRow = $(this).find(".SII_IsDeleted").val();
+            if (SIDeleteInRow == 0) {
+                const ItemNumberInRow = $(this).find(".SII_ITM_Number").val();
+                if (ItemNumberInRow) {
+                    DisplayedItemSO.push(ItemNumberInRow);
+                }
+            }
+        });
+
+        const ItemToRemove = DisplayedItemSO.filter(SO  => !SelectedSO.includes(SO));
+        const UniqueItemToRemove = [...new Set(ItemToRemove)];
+
+        UniqueItemToRemove.forEach(SONumberToRemove => {
+            let $ExistingRow = $("tr.NewRow").filter(function () {
+                return $(this).find(".SII_ITM_Number").val() === SONumberToRemove;
+            });
+
+            let IncAlreadyExists = $ExistingRow.length > 0;
+
+            if (IncAlreadyExists) {
+                $ExistingRow.find("input.CheckItem").val(false);
+                $ExistingRow.find("input.SII_IsDeleted").val(1);
+                $ExistingRow.hide();
+            }
+        });
+
+        $("tr.NewRow").each(function () {
+            var SIDeleteInRow = $(this).find(".SII_IsDeleted").val();
+            if (SIDeleteInRow == 0) {
+                const SONumberInRow = $(this).find(".SII_SOH_Number").val();
+                if (SONumberInRow) {
+                    DisplayedSO.push(SONumberInRow);
+                }
+            }
+        });
+
+        let DisplayedInSO = [];
+        $("tr.InNewRow").each(function () {
+            const SONumberInRow = $(this).find(".SIH_INC_SOH_Number").val();
+            if (SONumberInRow) {
+                DisplayedInSO.push(SONumberInRow);
+            }
+        });
+
+        const InSoToRemove = DisplayedInSO.filter(SO  => !DisplayedSO.includes(SO));
+        const ExUniquePOToRemove = [...new Set(InSoToRemove)];
+
+        ExUniquePOToRemove.forEach(SONumberToRemove => {
+            let $ExistingRow = $("tr.InNewRow").filter(function () {
+                return $(this).find(".SIH_INC_SOH_Number").val() === SONumberToRemove;
+            });
+
+            let IncAlreadyExists = $ExistingRow.length > 0;
+
+            if (IncAlreadyExists) {
+                $ExistingRow.find("input.SIH_INC_IsDeleted").val(1);
+                $ExistingRow.hide();
+            }
+        });
+
+
+
+        let DisplayedIInSO = [];
+        $("tr.IIncNewRow").each(function () {
+            const SONumberInRow = $(this).find(".SII_INC_SOH_Number").val();
+            if (SONumberInRow) {
+                DisplayedIInSO.push(SONumberInRow);
+            }
+        });
+
+        const IInSoToRemove = DisplayedIInSO.filter(SO  => !DisplayedSO.includes(SO));
+        const IExUniquePOToRemove = [...new Set(IInSoToRemove)];
+
+        IExUniquePOToRemove.forEach(SONumberToRemove => {
+            let $ExistingRow = $("tr.IIncNewRow").filter(function () {
+                return $(this).find(".SII_INC_SOH_Number").val() === SONumberToRemove;
+            });
+
+            let IncAlreadyExists = $ExistingRow.length > 0;
+
+            if (IncAlreadyExists) {
+                $ExistingRow.find("input.SII_INC_IsDeleted").val(1);
+                $ExistingRow.hide();
+            }
+        });
+
+        if (Selected_Number) {
+            let OldItemsSO = [];
+            $("tr.NewRow").each(function () {
+                var SIDeleteInRow = $(this).find(".SII_IsDeleted").val();
+                if (SIDeleteInRow == 0) {
+                    const SONumberInRow = $(this).find(".SII_ITM_Number").val();
+                    if (SONumberInRow) {
+                        OldItemsSO.push(SONumberInRow);
+                    }
+                }
+            });
+            const OldItemSO = [...new Set(OldItemsSO)];
+
+            let PushItemsSO = [];
+            $("tr.NewRow").each(function () {
+                // var SIDeleteInRow = $(this).find(".SII_IsDeleted").val();
+                // if (SIDeleteInRow == 0) {
+                    const SONumberInRow = $(this).find(".SII_SOH_Number").val();
+                    if (SONumberInRow) {
+                        PushItemsSO.push(SONumberInRow);
+                    }
+                // }
+            });
+            const PushItemSO = [...new Set(PushItemsSO)];
+
+            var Vendor = $("#SIH_BUY_Number").val();
+            var MSNumber = $("#SIH_MS_Number").val();
+            var InvoiceDate = $("#SIH_InvoiceDate").val();
+            var isChecked = $("#SIH_ExportOrder").prop("checked");
+            var resultsDiv = $("#OrderTableView");
+            var Export;
+
+            if (isChecked) {
+                Export = true;
+            } else {
+                Export = false;
+            }
+
+            $.ajax({
+                url: '../order/item',
+                data: { SONumber: Selected_Number, Vendor: Vendor, MSNumber: MSNumber, Export: Export, InvoiceDate: InvoiceDate },
+                type: 'GET',
+                success: function (data) {
+                    var SOItem = data.soItems;
+                    var SoIncome = data.soIncomes;
+                    var SOItemIncome = data.soItemIncomes;
+                    if (SOItem && SOItem.length > 0) {
+                        SOItem.forEach(function (SO) {
+                            var ItemNumber = String(SO.soI_ITM_Number);
+                            var PiNumber = String(SO.soI_Number);
+
+                            let SOOldItem = OldItemSO.includes(ItemNumber);
+                            let DeletedItem = SelectedItemSO.includes(ItemNumber);
+                            let POIAlreadyExists = false;
+                            let $ExistingRow = null;
+
+                            $("tr.NewRow").each(function () {
+                                var $row = $(this);
+                                var SOItemNumber = $row.find(".SII_ITM_Number").val();
+                                var POINumber = $row.find(".SII_SOI_Number").val();
+
+                                if (SOItemNumber === ItemNumber && PiNumber === POINumber) {
+                                    POIAlreadyExists = true;
+                                    $ExistingRow = $row;
+                                    return false;
+                                }
+                            });
+
+                            if (!SOOldItem || DeletedItem) {
+                                if (POIAlreadyExists) {
+                                    $ExistingRow.find("input.SII_IsDeleted").val(0).closest('tr').show();
+                                } else {
+                                    addRow(SO);
+                                }
+                            }
+                        });
+                    }
+
+                    let PushInItemsSO = [];
+                    let PushInSoS = [];
+                    $("tr.NewRow").each(function () {
+                        const SOItemNumberInRow = $(this).find(".SII_ITM_Number").val();
+                        const SONumberInRow = $(this).find(".SII_SOH_Number").val();
+                        let DeletedEx = SelectedHeaderInSO.includes(SOItemNumberInRow);
+                        if (DeletedEx) {
+                            PushInItemsSO.push(SONumberInRow);
+                        }
+                    });
+                    const PushInItemSO = [...new Set(PushInItemsSO)];
+
+                    $("tr.NewRow").each(function () {
+                        var SIDeleteInRow = $(this).find(".SII_IsDeleted").val();
+                        if (SIDeleteInRow == 0) {
+                            const SONumberInRow = $(this).find(".SII_SOH_Number").val();
+                            if (SONumberInRow) {
+                                PushInSoS.push(SONumberInRow);
+                            }
+                        }
+                    });
+                    const PushInSo = [...new Set(PushInSoS)];
+
+                    if (SoIncome && SoIncome.length > 0) {
+                        SoIncome.forEach(function (SO) {
+                            var IncomeNumber = String(SO.soH_INC_Number);
+                            var HeadNumber = String(SO.soH_INC_SOH_Number);
+                            console.log("HeadNumber",HeadNumber);
+
+                            let SOOldInc = PushItemSO.includes(HeadNumber);
+                            let DeletedEx = PushInItemSO.includes(HeadNumber);
+
+                            let $ExistingRow = $("tr.InNewRow").filter(function () {
+                                var IncNum = $(this).find(".SIH_INC_SOH_INC_Number").val();
+                                var SONum = $(this).find(".SIH_INC_SOH_Number").val();
+                                return SONum === HeadNumber && IncNum === IncomeNumber;
+                            });
+
+                            let IncAlreadyExists = $ExistingRow.length > 0;
+                            let SOOldnewInc = PushInSo.includes(HeadNumber);
+                            let AllDeletedSOsInc = AllDeletedSOs.includes(HeadNumber);
+
+                            console.log("AllDeletedSOsInc",AllDeletedSOsInc);
+                            console.log("IncAlreadyExists",IncAlreadyExists);
+
+                            if(AllDeletedSOsInc){
+                                $ExistingRow.find("input.SIH_INC_IsDeleted").val(0).closest('tr').show();
+                            }
+                            else{
+                                if (IncAlreadyExists && (!SOOldInc || DeletedEx)) {
+                                    $ExistingRow.find("input.SIH_INC_IsDeleted").val(0).closest('tr').show();
+                                }
+                                else if (!IncAlreadyExists && ((!SOOldInc && SOOldnewInc) || (SOOldInc && DeletedEx))) {
+                                    IncAddRow(SO);
+                                }
+                            }
+                        });
+                    }
+
+                    
+                    let PushIInItemsSO = [];
+                    $("tr.NewRow").each(function () {
+                        const SOItemNumberInRow = $(this).find(".SII_ITM_Number").val();
+                        const SONumberInRow = $(this).find(".SII_SOH_Number").val();
+                        let DeletedEx = SelectedItemInSO.includes(SOItemNumberInRow);
+                        if (DeletedEx) {
+                            PushIInItemsSO.push(SONumberInRow);
+                        }
+                    });
+                    const PushIInItemSO = [...new Set(PushIInItemsSO)];
+
+                    if (SOItemIncome && SOItemIncome.length > 0) {
+                        var int = 0;
+                        SOItemIncome.forEach(function (SO) {
+                            var IncomeNumber = String(SO.soI_INC_Number);
+                            var HeadNumber = String(SO.soI_INC_SOH_Number);
+
+                            let SOOldIInc = PushItemSO.includes(HeadNumber);
+                            let DeletedEx = PushIInItemSO.includes(HeadNumber);
+
+                            let $ExistingRow = $("tr.IIncNewRow").filter(function () {
+                                var IncNum = $(this).find(".SII_INC_Number").val();
+                                var SONum = $(this).find(".SII_INC_SOH_Number").val();
+
+                                return SONum === HeadNumber && IncNum === IncomeNumber;
+                            });
+
+                            let IIncAlreadyExists = $ExistingRow.length > 0;
+
+                            if (!SOOldIInc) {
+                                if (IIncAlreadyExists) {
+                                    $ExistingRow.find("input.SII_INC_IsDeleted").val(0);
+                                    $ExistingRow.show();
+                                }
+                                else {
+                                    IIncAddRow(SO);
+                                }
+                            }
+                            else {
+                                if (DeletedEx && !IIncAlreadyExists) {
+                                    IIncAddRow(SO);
+                                }
+                                else if (DeletedEx && IIncAlreadyExists) {
+                                    $ExistingRow.find("input.SII_INC_IsDeleted").val(0);
+                                    $ExistingRow.show();
+                                }
+                            }
+                            int++;
+                        });
+                    }
+                    (async () => {
+                        await CalculateAllIncomes();
+                    })();
+                    UnChecked();
+                },
+                error: function () {
+                    (async () => {
+                        await CalculateAllIncomes();
+                    })();
+                }
+            });
+        }
+
+    }
+
+    $("#SIH_MS_Number").change(function () {
+        var SIH_MS_Number = $(this).val();
+        var SII_MS_Number = "";
+        var SIH_MS = $(this).val();
+        var AllMatch = true;
+
+        $("tr.NewRow").each(function () {
+            var irow = $(this);
+            var SII_IsDeleted = $(this).find("input[name*='SII_IsDeleted']").val() === 1;
+            if (!SII_IsDeleted) {
+                SII_MS_Number = irow.find("input.SII_MS_Number").val();
+                if (SII_MS_Number !== SIH_MS_Number) {
+                    AllMatch = false;
+                    return false;
+                }
+            }
+        });
+
+        if (!AllMatch) {
+            if (SII_MS_Number != "") {
+                if (confirm("Do you want to change the Material Segregation? This action will clear all existing items.")) {
+                    $("tr.NewRow").each(function () {
+                        $(this).remove();
+                    });
+                    $("tr.IncNewRow").each(function () {
+                        $(this).remove();
+                    });
+                    $("tr.IIncNewRow").each(function () {
+                        $(this).remove();
+                    });
+
+                    CalAmount();
+                }
+                else {
+                    $("#SIH_MS_Number").val(SII_MS_Number);
+                }
+            }
+        }
+        SearchInvoice();
+        (async () => {
+            await CalculateAllIncomes();
+        })();
+    });
+
+    function SoUncheckInvoice() {
+        let DisplayedSO = [];
+        $("tr.NewRow").each(function () {
+            var SIDeleteInRow = $(this).find(".SII_IsDeleted").val();
+            if (SIDeleteInRow == 0) {
+                const SONumberInRow = $(this).find(".SII_ITM_Number").val();
+                if (SONumberInRow) {
+                    DisplayedSO.push(SONumberInRow);
+                }
+            }
+        });
+
+        var $CheckedCheckboxes = $('tbody .order-item-checkbox:checked');
+        var SelectedSOValues = $.map($CheckedCheckboxes, function (c) { return c.value; });
+
+        const UniqueDisplayedSOs = [...new Set(DisplayedSO)];
+
+        $CheckedCheckboxes.each(function () {
+            const $Checkbox = $(this);
+            const CheckboxValue = $Checkbox.val();
+
+            if (!UniqueDisplayedSOs.includes(CheckboxValue)) {
+                $Checkbox.prop('checked', false);
+            }
+        });
+    }
+    function SoCheckInvoice() {
+        let DisplayedSO = [];
+        $("tr.NewRow").each(function () {
+            var SIDeleteInRow = $(this).find(".SII_IsDeleted").val();
+            if (SIDeleteInRow == 0) {
+                const SONumberInRow = $(this).find(".SII_ITM_Number").val();
+                if (SONumberInRow) {
+                    DisplayedSO.push(SONumberInRow);
+                }
+            }
+        });
+        const UniqueDisplayedSOs = [...new Set(DisplayedSO)];
+
+        $("tr.socheck").each(function () {
+            const $checkbox = $(this).find(".order-item-checkbox");
+            const checkboxValue = $checkbox.val();
+
+            if (checkboxValue && UniqueDisplayedSOs.includes(checkboxValue.trim())) {
+                $checkbox.prop('checked', true);
+            } else {
+            }
+        });
+    }
+
+    function UnChecked(){
+        var $SelectedItemSO = $('tbody .item-delete-checkbox:checked');
+        $SelectedItemSO.prop('checked', false);
+
+        var $SelectedHeaderInSO = $('tbody .HeaderInc-delete-checkbox:checked');
+        $SelectedHeaderInSO.prop('checked', false);
+        
+        var $SelectedItemIncSO = $('tbody .ItemInc-delete-checkbox:checked');
+        $SelectedItemIncSO.prop('checked', false);
+    }
+    function SOIncRemove() {
+        let DisplayedSO = [];
+        $("tr.NewRow").each(function () {
+            var PIDeleteInRow = parseInt($(this).find(".SII_IsDeleted").val());
+            if (PIDeleteInRow == 0) {
+                const SONumberInRow = $(this).find(".SII_SOH_Number").val();
+                if (SONumberInRow) {
+                    DisplayedSO.push(SONumberInRow);
+                }
+            }
+        });
+
+        const UniqueDisplayedSO = [...new Set(DisplayedSO)];
+
+
+        let DisplayedIncSO = [];
+        $("tr.InNewRow").each(function () {
+            const SONumberInRow = $(this).find(".SIH_INC_SOH_Number").val();
+            if (SONumberInRow) {
+                DisplayedIncSO.push(SONumberInRow);
+            }
+        });
+
+        const IncSOToRemove = DisplayedIncSO.filter(SO => !UniqueDisplayedSO.includes(SO));
+        const IncUniqueSOToRemove = [...new Set(IncSOToRemove)];
+
+        IncUniqueSOToRemove.forEach(SONumberToRemove => {
+            let $ExistingRow = $("tr.InNewRow").filter(function () {
+                return $(this).find(".SIH_INC_SOH_Number").val() === SONumberToRemove;
+            });
+
+            let IncAlreadyExists = $ExistingRow.length > 0;
+
+            if (IncAlreadyExists) {
+                $ExistingRow.find("input.SIH_INC_IsDeleted").val(1);
+                $ExistingRow.hide();
+            }
+        });
+
+
+
+        let DisplayedIIncSO = [];
+        $("tr.IIncNewRow").each(function () {
+            const SONumberInRow = $(this).find(".SII_INC_SOH_Number").val();
+            if (SONumberInRow) {
+                DisplayedIIncSO.push(SONumberInRow);
+            }
+        });
+
+        const IIncSOToRemove = DisplayedIIncSO.filter(SO => !UniqueDisplayedSO.includes(SO));
+        const IIncUniqueSOToRemove = [...new Set(IIncSOToRemove)];
+
+        IIncUniqueSOToRemove.forEach(SONumberToRemove => {
+            let $ExistingRow = $("tr.IIncNewRow").filter(function () {
+                return $(this).find(".SII_INC_SOH_Number").val() === SONumberToRemove;
+            });
+
+            let IncAlreadyExists = $ExistingRow.length > 0;
+
+            if (IncAlreadyExists) {
+                $ExistingRow.find("input.SII_INC_IsDeleted").val(1);
+                $ExistingRow.hide();
+            }
+        });
+    }
+
+    $(document).on('click', '.RowRemove', function () {
+            console.log("strated")
+        $(".CheckItem:checked").each(function () {
+            const $checkbox = $(this);
+            const $row = $checkbox.closest('tr');
+
+            console.log("1IsDeleted",$row.find('input.SII_IsDeleted').val())
+
+            $row.find(".CheckItem").prop('checked', false);
+            $row.find(".SII_IsDeleted").val(1);
+            $row.hide();
+        });
+        
+        SoUncheckInvoice();
+        SOIncRemove();
+        (async () => {
+            await CalculateAllIncomes();
+        })();
+    });
+
+</script>
+
+<script>
+        $('#ExchangeRate').hide();
+        ExchangeVisibility();
+        GetCustor();
+
+        $("#SIH_ExportOrder").change(function () {
+            var isChecked = $(this).is(':checked');
+
+            var resultsDiv = $(".buyer-search-results");
+            resultsDiv.hide();
+
+            if ($("#SOH_BUY_LOC_Number").val() != "") {
+                if (isChecked && $("#SOH_BUY_LOC_Number").val() != "2") {
+                    if (confirm("Do you want to change the status of the Export Order? This action will clear the already selected Buyer.")) {
+                        $("#SIH_BUY_Name").val("");
+                        $("#SIH_BUY_Number").val("");
+                        $("#SIH_CUR_Name").val("");
+                        $("#SIH_CUR_Number").val("");
+                        $("#SIH_BUY_LOC_Number").val("");
+                        $("#SIH_WHT_Number").val("");
+
+                        var dropdown = document.getElementById("SIH_TCT_Number");
+                        dropdown.innerHTML = "";
+
+                        var SIHDate = $("#SIH_InvoiceDate").val();
+                        GetWHT(0, 0, SIHDate);
+                    }
+                    else {
+                        $(this).prop('checked', false);
+                    }
+                }
+                else if (!isChecked && $("#SOH_BUY_LOC_Number").val() != "1") {
+                    if (confirm("Do you want to change the status of the Export Order? This action will clear the already selected Buyer.")) {
+                        $("#SIH_BUY_Name").val("");
+                        $("#SIH_BUY_Number").val("");
+                        $("#SIH_CUR_Name").val("");
+                        $("#SIH_CUR_Number").val("");
+                        $("#SIH_BUY_LOC_Number").val("");
+                        $("#SIH_WHT_Number").val("");
+
+                        var dropdown = document.getElementById("SIH_TCT_Number");
+                        dropdown.innerHTML = "";
+
+                        var SIHDate = $("#SIH_InvoiceDate").val();
+                        GetWHT(0, 0, SIHDate);
+                    }
+                    else {
+                        $(this).prop('checked', true);
+                    }
+                }
+            }
+            ExchangeVisibility();
+        });
+
+        function GetCustor() {
+            SearchClustor($('#SIH_BUY_Number').val(), "");
+        }
+        function ExchangeVisibility() {
+            if ($('#SIH_ExportOrder').is(':checked')) {
+                $('#ExchangeRate').show();
+            } else {
+                $('#ExchangeRate').hide();
+            }
+        }
+
+    function SearchWHT() {
+        var Buyer = $("#SIH_BUY_Number").val();
+        var SIHDate = $("#SIH_InvoiceDate").val();
+        var WHTax = $("#SIH_WHT_Number").val();
+
+        GetWHT(Buyer, WHTax, SIHDate);
+    }
+    function GetWHT(Buyer, WHTax, SIHDate) {
+        $.ajax({
+            type: "get",
+            url: "../wht",
+            data: { Buyer: Buyer, WHTNumber: WHTax, SIHDate: SIHDate },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                if (data != null) {
+                    $("#SIH_WHT_Tax").val(data.tax);
+                    $("#SIH_WHT_Percent").val(data.percentage);
+                }
+                else {
+                    $("#SIH_WHT_Tax").val(1);
+                    $("#SIH_WHT_Percent").val(0);
+                }
+                (async () => {
+                    await CalculateAllIncomes();
+                })();
+            }
+        });
+    }
+
+    function SearchGST() {
+        (async () => {
+            await CalculateAllIncomes();
+        })();
+    }
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        ExchangeVisibility();
+
+        const MainDiv = document.getElementById('BodyHeight');
+        const HeadDiv = document.getElementById('CardHeader');
+        const BodyDiv = document.getElementById('CardBody');
+        const FooterDiv = document.getElementById('CardFooter');
+
+        if (HeadDiv && BodyDiv) {
+            const MainHeight = MainDiv.offsetHeight;
+            const HeadHeight = HeadDiv.offsetHeight;
+            const FooterHeight = FooterDiv.offsetHeight;
+            BodyDiv.style.height = (MainHeight - HeadHeight - FooterHeight - 1) + 'px';
+        } else {
+        }
+    });
+</script>
+<script>
+    async function CalculateAll() {
+        const $newRows = $("tr.NewRow");
+        const $IncNewRows = $("tr.InNewRow");
+        const $iIncNewRows = $("tr.IIncNewRow");
+        const cluster = $("#SIH_TCT_Number").val() || $("#SIH_HIDE_TCT_Number").val();
+        const InvoiceDate = $("#SIH_InvoiceDate").val();
+        const whNumber = $("#SIH_WHT_Number").val();
+
+        // Pre-calculate values that don't change during iteration
+        const whTax = whNumber ? $("#SIH_WHT_Tax").val() : "1";
+        const whPercent = whNumber ? $("#SIH_WHT_Percent").val() : 0;
+
+        // Process items and Incomes in parallel
+        const [itemResults, headerIncomeResults] = await Promise.all([
+            processItems($newRows, $iIncNewRows, cluster, InvoiceDate, whTax, whPercent),
+            processHeaderIncomes($IncNewRows, $newRows, cluster, InvoiceDate, whTax, whPercent)
+        ]);
+
+        // Calculate footer with all results
+        await calculateFooter(itemResults, headerIncomeResults);
+    }
+
+    async function processItems($newRows, $iIncNewRows, cluster, InvoiceDate, whTax, whPercent) {
+        const itemPromises = [];
+        const itemIncomeMap = new Map();
+
+        // Pre-calculate item Incomes
+        $iIncNewRows.each(function() {
+            const $row = $(this);
+            if (parseInt($row.find("input.SII_INC_IsDeleted").val()) === 1) return;
+
+            const soiNumber = $row.find("input.SII_INC_SOI_Number").val();
+            const sohNumber = $row.find("input.SII_INC_SOH_Number").val();
+            const key = `${sohNumber}-${soiNumber}`;
+
+            if (!itemIncomeMap.has(key)) {
+                itemIncomeMap.set(key, []);
+            }
+
+            itemIncomeMap.get(key).push({
+                IncomeBase: parseFloat(removeCommas($row.find("input.SII_INC_IncomeBase").val())) || 0,
+                charge: $row.find("select.SII_INC_CM_Number").val(),
+                row: $row
+            });
+        });
+
+        // Process each item row
+        $newRows.each(function() {
+            const $row = $(this);
+            if (parseInt($row.find("input.SII_IsDeleted").val()) === 1)  return;
+
+            const promise = processSingleItem($row, itemIncomeMap, cluster, InvoiceDate, whTax, whPercent);
+            itemPromises.push(promise);
+        });
+
+        return Promise.all(itemPromises);
+    }
+
+    async function processSingleItem($row, itemIncomeMap, cluster, InvoiceDate, whTax, whPercent) {
+        const pohNumber = $row.find('input.SII_SOH_Number').val();
+        const poiNumber = $row.find('input.SII_SOI_Number').val();
+        const key = `${pohNumber}-${poiNumber}`;
+        const hsnNumber = $row.find('.SII_HSN_Number').val();
+
+        const qty = parseFloat(removeCommas($row.find('input.SII_Qty').val())) || 0;
+        const unitPrice = parseFloat(removeCommas($row.find('input.SII_UnitPrice').val())) || 0;
+        const materialValue = qty * unitPrice;
+
+        // Calculate amount
+        $row.find("input.SII_Amount").val(DecimalIndianRupees(materialValue));
+
+        // Process item Incomes
+        let IncomeTotal = 0;
+        const itemIncomes = itemIncomeMap.get(key) || [];
+
+        for (const Income of itemIncomes) {
+            let IncomeValue = 0;
+
+            switch (Income.charge) {
+                case "1":
+                    IncomeValue = Income.IncomeBase;
+                    break;
+                case "2":
+                    IncomeValue = qty * Income.IncomeBase;
+                    break;
+                case "3":
+                    IncomeValue = materialValue * Income.IncomeBase / 100;
+                    break;
+            }
+            IncomeValue = parseFloat(parseFloat(IncomeValue).toFixed(2));
+            Income.row.find("input.SII_INC_IncomeValue").val(DecimalIndianRupees(IncomeValue));
+            IncomeTotal += parseFloat(IncomeValue);
+        }
+        $row.find("input.SII_IncomeValue").val(DecimalIndianRupees(IncomeTotal));
+
+        // Calculate GST and WHT
+        const BaseAmount = materialValue + IncomeTotal;
+        let gstAmount = 0;
+        let whtAmount = 0;
+
+        if (cluster) {
+            gstAmount = await GetClusterAmount(cluster, InvoiceDate, hsnNumber, BaseAmount);
+            gstAmount = parseFloat(parseFloat(gstAmount).toFixed(2));
+            $row.find("input.SII_GST_Amount").val(DecimalIndianRupees(gstAmount));
+
+            const totalAmount = whTax === "1" ? BaseAmount + gstAmount : BaseAmount;
+            whtAmount = -(totalAmount * whPercent / 100);
+            whtAmount = parseFloat(parseFloat(whtAmount).toFixed(2));
+
+            $row.find("input.SII_WHT_Percent").val(DecimalIndianRupees(whPercent));
+            $row.find("input.SII_WHT_Amount").val(DecimalIndianRupees(whtAmount));
+        }
+
+        return {
+            soQty: parseFloat(removeCommas($row.find('.SII_SOI_Qty').val())) || 0,
+            qty: qty,
+            amount: materialValue,
+            Income: IncomeTotal,
+            gst: gstAmount,
+            wht: whtAmount
+        };
+    }
+
+    async function processHeaderIncomes($IncNewRows, $newRows, cluster, InvoiceDate, whTax, whPercent) {
+        const promises = [];
+
+        $IncNewRows.each(function() {
+            const $row = $(this);
+            if (parseInt($row.find("input.SIH_INC_IsDeleted").val()) !== 1) {
+                promises.push(processHeaderIncome($row, $newRows, cluster, InvoiceDate, whTax, whPercent));
+            }
+        });
+
+        return Promise.all(promises);
+    }
+
+    async function processHeaderIncome($row, $newRows, cluster, InvoiceDate,whTax, whPercent) {
+        const SOHNumber = $row.find("input.SIH_INC_SOH_Number").val();
+        const charge = $row.find("select.SIH_INC_CM_Number").val();
+        const isGst = $row.find("select.SIH_INC_CalculateGST").val();
+        const IncomeBase = parseFloat(removeCommas($row.find("input.SIH_INC_IncomeBase").val())) || 0;
+
+        const items = $newRows.map(function() {
+            const $irow = $(this);
+            if ($irow.find(".SII_SOH_Number").val() === SOHNumber &&
+                parseInt($irow.find("input.SII_IsDeleted").val()) !== 1) {
+                return {
+                    qty: parseFloat(removeCommas($irow.find(".SII_Qty").val())) || 0,
+                    amount: parseFloat(removeCommas($irow.find(".SII_Amount").val())) || 0
+                };
+            }
+            return null;
+        }).get().reduce((acc, item) => ({
+            itemQty: acc.itemQty + item.qty,
+            itemAmount: acc.itemAmount + item.amount
+        }), { itemQty: 0, itemAmount: 0 });
+
+        // const items = $newRows.map(function() {
+        //     const $irow = $(this);
+        //     if (parseInt($irow.find("input.SIH_INC_IsDeleted").val()) !== 1) {
+        //         return {
+        //             qty: parseFloat(removeCommas($irow.find(".SII_Qty").val())) || 0,
+        //             amount: parseFloat(removeCommas($irow.find(".SII_Amount").val())) || 0
+        //         };
+        //     }
+        //     return null;
+        // }).get().reduce((acc, item) => ({
+        //     itemQty: acc.itemQty + item.qty,
+        //     itemAmount: acc.itemAmount + item.amount
+        // }), { itemQty: 0, itemAmount: 0 });
+
+        let IncomeValue = 0;
+        switch (charge) {
+            case "1": IncomeValue = IncomeBase; break;
+            case "2": IncomeValue = items.itemQty * IncomeBase; break;
+            case "3": IncomeValue = items.itemAmount * IncomeBase / 100; break;
+        }
+        IncomeValue = parseFloat(parseFloat(IncomeValue).toFixed(2));
+        $row.find("input.SIH_INC_IncomeValue").val(DecimalIndianRupees(IncomeValue));
+
+        let taxValue = 0;
+        if (isGst === "2" && cluster) {
+            const sacNumber = $row.find("input.SIH_INC_SAC_Number").val();
+            taxValue = await GetClusterIncomeAmount(cluster, InvoiceDate, sacNumber, IncomeValue);
+        }
+        taxValue = parseFloat(parseFloat(taxValue).toFixed(2));
+        $row.find("input.SIH_INC_GST_Amount").val(DecimalIndianRupees(taxValue));
+
+        const totalAmount = whTax === "1" ? IncomeValue + taxValue : IncomeValue;
+        whtAmount = -(totalAmount * whPercent / 100);
+        whtAmount = parseFloat(parseFloat(whtAmount).toFixed(2));
+
+        $row.find("input.SIH_INC_WHT_Percent").val(DecimalIndianRupees(whPercent));
+        $row.find("input.SIH_INC_WHT_Amount").val(DecimalIndianRupees(whtAmount));
+
+        return { IncomeValue, taxValue, whtAmount };
+    }
+
+    // Utility function for safe number operations
+    function safeNumber(value, defaultValue = 0) {
+        const num = parseFloat(value);
+        return isNaN(num) ? defaultValue : num;
+    }
+
+    async function calculateFooter(itemResults, headerIncomeResults) {
+        // Use safe number handling
+        const itemTotals = itemResults.reduce((acc, item) => ({
+            totalsoQty: acc.totalsoQty + safeNumber(item.soQty),
+            totalQty: acc.totalQty + safeNumber(item.qty),
+            totalAmount: acc.totalAmount + safeNumber(item.amount),
+            totalIncome: acc.totalIncome + safeNumber(item.Income),
+            totalGst: acc.totalGst + safeNumber(item.gst),
+            totalWHT: acc.totalWHT + safeNumber(item.wht)
+        }), { totalsoQty: 0, totalQty: 0, totalAmount: 0, totalIncome: 0, totalGst: 0, totalWHT: 0 });
+
+        const headerIncomeTotals = headerIncomeResults.reduce((acc, Income) => ({
+            headerTotal: acc.headerTotal + safeNumber(Income.IncomeValue),
+            headerGst: acc.headerGst + safeNumber(Income.taxValue),
+            headerWHT: acc.headerWHT + safeNumber(Income.whtAmount)
+        }), { headerTotal: 0, headerGst: 0 });
+
+        const totalGst = parseFloat(safeNumber(itemTotals.totalGst).toFixed(2));
+        const totalAmount = parseFloat(safeNumber(itemTotals.totalAmount).toFixed(2));
+        const totalIncome = parseFloat(safeNumber(itemTotals.totalIncome).toFixed(2));
+        const headerTotal = parseFloat(safeNumber(headerIncomeTotals.headerTotal).toFixed(2));
+        const totalWHT = parseFloat(safeNumber(itemTotals.totalWHT).toFixed(2));
+
+        $("#TotalSOQty").val(FormatNumber(parseFloat(itemTotals.totalSOQty).toFixed(2)));
+        $("#TotalQty").val(FormatNumber(parseFloat(itemTotals.totalQty).toPrecision(15)));
+        $("#TotalAmount").val(DecimalIndianRupees(totalAmount.toFixed(2)));
+        $("#TotalIncomeValue").val(DecimalIndianRupees(totalIncome.toFixed(2)));
+        $("#TotalGST").val(DecimalIndianRupees(totalGst.toFixed(2)));
+        $("#TotalWHT").val(DecimalIndianRupees(totalWHT.toFixed(2)));
+
+        const overGst = parseFloat(parseFloat(totalGst + safeNumber(headerIncomeTotals.headerGst)).toFixed(2));
+        const overWHT = parseFloat(parseFloat(totalWHT + safeNumber(headerIncomeTotals.headerWHT)).toFixed(2));
+        const invoiceAmount = parseFloat((totalAmount + totalIncome + headerTotal + overGst).toFixed(2));
+        const total = parseFloat(invoiceAmount + overWHT).toFixed(2);
+        const roundedValue = customRound(total);
+        const rounded = parseFloat((roundedValue - total).toFixed(2));
+
+        $("#SIH_MaterialCost").val(DecimalIndianRupees(totalAmount.toFixed(2)));
+        $("#SIH_ItemMiscIncome").val(DecimalIndianRupees(totalIncome.toFixed(2)));
+        $("#SIH_HeaderMiscIncome").val(DecimalIndianRupees(headerTotal.toFixed(2)));
+        $("#SIH_GST_Amount").val(DecimalIndianRupees(overGst.toFixed(2)));
+        $("#SIH_InvoiceAmount").val(DecimalIndianRupees(invoiceAmount.toFixed(2)));
+        $("#SIH_WHT_Amount").val(DecimalIndianRupees(overWHT.toFixed(2)));
+        $("#SIH_RoundOff").val(rounded.toFixed(2));
+        $("#SIH_BuyerReceivable").val(DecimalIndianRupees(roundedValue.toFixed(2)));
+    }
+
+    // Main entry point - call this instead of all individual functions
+    async function CalculateAllIncomes() {
+        try {
+            await CalculateAll();
+        } catch (error) {
+            console.error("Error in calculation:", error);
+        }
+    }
+</script>
+
+<script>
+        $(document).ready(function () {
+            SearchWHT();
+            SearchInvoice();
+            (async () => {
+                await CalculateAllIncomes();
+            })();
+    });
+</script>
+
+<script>
+    function GetAddress(){
+        $("tr.AddNewRow").each(function () {
+            var $currentRow = $(this);
+
+            var ADTPNumber = $currentRow.find('select.SIH_ADD_ADTP_Number').val();
+            var IsDeleted = parseInt($currentRow.find("input.SIH_ADD_IsDeleted").val());
+            var Buyer = $('#SIH_BUY_Number').val();
+
+            if(IsDeleted!==1){
+                $.ajax({
+                    type: "get",
+                    url: "../buyer/address",
+                    data: { Buyer: Buyer, ADTPNumber: ADTPNumber },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        var AddressID = data.buyerAddressId;
+                        var $AddressDropdown = $currentRow.find('select.SIH_ADD_AddressID');
+                        var $AddressId = $currentRow.find('input.SIH_ADD_HIDE_AddressID').val();
+
+                        $AddressDropdown.empty();
+                        $AddressDropdown.append($('<option>', {
+                            value: '',
+                            text: ''
+                        }));
+
+                        AddressID.forEach(function (item) {
+                            $AddressDropdown.append($('<option>', {
+                                value: item.buY_ADD_AddressID,
+                                text: item.buY_ADD_AddressID
+                            }));
+                        });
+                        $AddressDropdown.val($AddressId);
+                    }
+                });
+            }
+        });
+    }
+    GetAddress();
+</script>

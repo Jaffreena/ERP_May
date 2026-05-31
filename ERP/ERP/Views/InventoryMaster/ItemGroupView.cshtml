@@ -1,0 +1,46 @@
+﻿@model ERP_DTO.ItemGroup_DTO
+
+@if (Model != null)
+{
+    <input asp-for="ItemGroupNumber" type="hidden" class="Number" />
+}
+<div class="mb-3">
+    <label asp-for="ItemGroup" class="control-label"></label>
+    <input asp-for="ItemGroup" class="form-control Key KeyDup" autofocus="true" autocomplete="off" />
+</div>
+<div class="mb-3">
+    <label asp-for="IG_Description" class="control-label"></label>
+    <textarea asp-for="IG_Description" class="form-control Key" autocomplete="off"></textarea>
+</div>
+<div class="mb-3">
+    <label asp-for="UnderIGroup" class="control-label"></label>
+    <select asp-for="UnderIGroup" class="form-select" asp-items="@ViewBag.Under"></select>
+</div>
+<div class="mb-3">
+    <label asp-for="MaterialSegregation" class="control-label"></label>
+    <select asp-for="MaterialSegregation" class="form-select" asp-items="@ViewBag.Segregation"></select>
+</div>
+<div class="mb-3">
+    <label asp-for="MaterialOwnership" class="control-label"></label>
+    <select asp-for="MaterialOwnership" class="form-select" asp-items="@ViewBag.Ownership"></select>
+</div>
+<div class="mb-3">
+    <label asp-for="PurchaseWarehouse" class="control-label"></label>
+    <select asp-for="PurchaseWarehouse" class="form-select form-search" asp-items="@ViewBag.Warehouse"></select>
+</div>
+<div class="mb-3">
+    <label asp-for="SaleWarehouse" class="control-label"></label>
+    <select asp-for="SaleWarehouse" class="form-select form-search" asp-items="@ViewBag.Warehouse"></select>
+</div>
+<div>
+    @if (Model != null)
+    {
+        <input type="submit" name="Mode" value="Update" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+    else
+    {
+        <input type="submit" name="Mode" value="Save" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+</div>

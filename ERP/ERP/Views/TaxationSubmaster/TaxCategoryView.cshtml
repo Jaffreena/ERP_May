@@ -1,0 +1,54 @@
+﻿@model ERP_DTO.TaxationSubmaster_DTO
+
+
+@if (Model != null)
+{
+    <input asp-for="Number" type="hidden" class="Number" />
+}
+<div class="mb-3">
+    <label asp-for="Location" class="control-label w-100"></label>
+    @foreach (SelectListItem Option in (List<SelectListItem>)ViewBag.Location)
+    {
+        <div class="form-check form-check-inline">
+            @if(Model != null){
+                if (Option.Value == Model.Location)
+                {
+                    <input class="form-check-input Location" type="radio" name="Location" id="@Option.Value" value="@Option.Value" checked>
+                }
+                else
+                {
+                    <input class="form-check-input Location" type="radio" name="Location" id="@Option.Value" value="@Option.Value">
+                }
+            }
+            else
+            {
+                <input class="form-check-input Location" type="radio" name="Location" id="@Option.Value" value="@Option.Value">
+            }
+            <label class="form-check-label" for="@Option.Value">
+                @Option.Text
+            </label>
+        </div>
+    }
+</div>
+<div class="mb-3">
+    <label asp-for="Title" class="control-label"></label>
+    <input asp-for="Title" class="form-control Key KeyDup" autofocus="true" autocomplete="off" />
+    @* <span asp-validation-for="Title" class="text-danger"></span> *@
+</div>
+<div class="mb-3">
+    <label asp-for="Notes" class="control-label"></label>
+    <textarea asp-for="Notes" class="form-control Key" autocomplete="off"></textarea>
+    @* <span asp-validation-for="Notes" class="text-danger"></span> *@
+</div>
+<div>
+    @if(Model != null)
+    {
+        <input type="submit" name="Mode" value="Update" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+    else
+    {
+        <input type="submit" name="Mode" value="Save" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+</div>

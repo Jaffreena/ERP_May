@@ -1,0 +1,719 @@
+﻿@model List<ERP_DTO.JobInwardTransaction.ReceiptNoteItem_DTO>
+
+<div class="col table-fixed h-100">
+    <div class="w-12 table-responsive table-body table-body-f">
+
+        <table class="table table-one table-striped table-bordered table-hover align-middle w-100" id="ItemTable">
+
+            <!-- ================= HEADER ================= -->
+            <thead>
+                <tr class="table-info">
+                    <th class="px-2 text-center">
+                        <input type="checkbox" id="IndexAllCheckItem" class="form-check-input border-white">
+                    </th>
+
+                    <th>@Html.DisplayNameFor(m => m.First().PRS_Number)</th>
+                    <th>@Html.DisplayNameFor(m => m.First().Item_Number)</th>
+                    <th>@Html.DisplayNameFor(m => m.First().Description)</th>
+
+                    <th class="text-end">@Html.DisplayNameFor(m => m.First().OuterDia)</th>
+                    <th class="text-end">@Html.DisplayNameFor(m => m.First().Thickness)</th>
+                    <th class="text-end">@Html.DisplayNameFor(m => m.First().Length)</th>
+                    <th class="text-end">@Html.DisplayNameFor(m => m.First().Width)</th>
+
+                    <th>@Html.DisplayNameFor(m => m.First().MaterialGrade)</th>
+                    <th>@Html.DisplayNameFor(m => m.First().ItemGroup)</th>
+
+                    <th>@Html.DisplayNameFor(m => m.First().WH_Number)</th>
+                    <th>@Html.DisplayNameFor(m => m.First().UoM_Number)</th>
+
+                    <th class="text-end">@Html.DisplayNameFor(m => m.First().Qty)</th>
+                    <th class="text-end">@Html.DisplayNameFor(m => m.First().UnitPrice)</th>
+                    <th class="text-end">@Html.DisplayNameFor(m => m.First().Amount)</th>
+                </tr>
+            </thead>
+
+            <!-- ================= BODY ================= -->
+            <tbody id="TableBody">
+
+                <!-- 🔹 TEMPLATE ROW -->
+                <tr id="TempRow" style="display:none;">
+                    <td><input type="checkbox" class="CheckItem form-check-input"> </td>
+
+                    <td>                     
+                        <input   class="PRS_Number" type="hidden" />
+                        <input class="form-control PRS_Name" oninput="OnInputProcess(this)"   onfocus="OnFocusProcess(this)" />
+                        <div class="search-results card" style="display:none"></div>
+                    </td>
+
+                    <td>
+                        <input  class="Item_Number" type="hidden" />
+                        <input  class="Item_Index" type="hidden" />
+                        <input class="form-control Item_Code" oninput="OnInput(this)" onfocus="OnFocus(this)" />
+                        <div class="search-results card" style="display:none"></div>
+                    </td>
+
+                    <td><input class="form-control Description" readonly /></td>
+
+                    <td><input class="form-control OuterDia text-end" readonly /></td>
+                    <td><input class="form-control Thickness text-end" readonly /></td>
+                    <td><input class="form-control Length text-end" readonly /></td>
+                    <td><input class="form-control Width text-end" readonly /></td>
+
+                    <td><input class="form-control MaterialGrade" readonly /></td>
+                    <td><input class="form-control ItemGroup" readonly /></td>
+
+                    <td>
+                        <select class="form-select WH_Number" asp-items="@ViewBag.Warehouse"></select>
+                    </td>
+
+                    <td>
+                        <select class="form-select UoM_Number" asp-items="@ViewBag.UoM"></select>
+                    </td>
+
+                    <td>
+                        <input class="form-control Qty text-end" />
+                    </td>
+
+                    <td>
+                        <input class="form-control UnitPrice text-end" />
+                    </td>
+
+                    <td>
+                        <input class="form-control Amount text-end" readonly />
+                        <input type="hidden" class="IsDeleted" value="0" />
+                    </td>
+                </tr>
+
+                <!-- 🔹 EXISTING DATA -->
+                @if (Model != null)
+                {
+                    for (int i = 0; i < Model.Count; i++)
+                    {
+                        <tr class="NewRow" style="@(Model[i].IsDeleted == "true" ? "display:none;" : "")">
+
+                            <td>
+                                <input type="checkbox" class="CheckItem form-check-input">
+                            </td>
+
+                            <td>
+                              
+
+                                    <!-- HIDDEN VALUE -->
+                                    <input type="hidden"
+                                           name="Items[@i].PRS_Number"
+                                           class="PRS_Number"
+                                           value="@Model[i].PRS_Number" />
+
+                                    <!-- DISPLAY TEXT -->
+                                    <input type="text"
+                                           class="form-control PRS_Name"
+                                           value="@Model[i].PRS_Name"
+                                           oninput="OnInputProcess(this)"
+                                           onfocus="OnFocusProcess(this)" />
+
+                                    <div class="search-results card" style="display:none"></div>
+
+                               
+                            </td>
+
+                            <td>
+                                
+                                <input type="hidden"
+                                       name="Items[@i].RNI_BCH_Item_Number"
+                                       class="RNI_BCH_Item_Number"
+                                       value="@Model[i].JIRNI_Number">
+                                          <input type="hidden" name="Items[@i].JIRNI_Number" class="JIRNI_Number" value="@Model[i].JIRNI_Number">
+                                          <input type="hidden" name="Items[@i].JIRNI_JIRNH_Number" class="JIRNI_JIRNH_Number" value="@Model[i].JIRNI_JIRNH_Number">
+                                    <!-- HIDDEN VALUE -->
+                                    <input type="hidden"
+                                           name="Items[@i].Item_Number"
+                                           class="Item_Number"
+                                           value="@Model[i].Item_Number" />
+
+                                    <!-- DISPLAY TEXT -->
+                                    <input type="text"
+                                           class="form-control Item_Code"
+                                           value="@Model[i].Item_Code"
+                                           oninput="OnInput(this)"
+                                           onfocus="OnFocus(this)" />
+
+                                    <div class="search-results card" style="display:none"></div>
+
+                                
+                            </td>
+
+                            <td>
+                                <input name="Items[@i].Description"
+                                       class="form-control Description"
+                                       value="@Model[i].Description" readonly />
+                            </td>
+
+                            <td>
+                                <input name="Items[@i].OuterDia"
+                                       class="form-control OuterDia text-end"
+                                       value="@Model[i].OuterDia" readonly />
+                            </td>
+
+                            <td>
+                                <input name="Items[@i].Thickness"
+                                       class="form-control Thickness text-end"
+                                       value="@Model[i].Thickness" readonly />
+                            </td>
+
+                            <td>
+                                <input name="Items[@i].Length"
+                                       class="form-control Length text-end"
+                                       value="@Model[i].Length" readonly />
+                            </td>
+
+                            <td>
+                                <input name="Items[@i].Width"
+                                       class="form-control Width text-end"
+                                       value="@Model[i].Width" readonly />
+                            </td>
+
+                            <td>
+                                <input name="Items[@i].MaterialGrade"
+                                       class="form-control MaterialGrade"
+                                       value="@Model[i].MaterialGrade" readonly />
+                            </td>
+
+                            <td>
+                                <input name="Items[@i].ItemGroup"
+                                       class="form-control ItemGroup"
+                                       value="@Model[i].ItemGroup" readonly />
+                            </td>
+
+                            <td>
+                                <select name="Items[@i].WH_Number" class="form-select WH_Number">
+                                    @foreach (var w in (ViewBag.Warehouse as IEnumerable<SelectListItem> ?? Enumerable.Empty<SelectListItem>()))
+                                    {
+                                                                        @if (w.Value == Model[i]?.WH_Number)
+                                    {
+                                        <option value="@w.Value" selected>@w.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@w.Value">@w.Text</option>
+                                    }
+                                    }
+                                </select>
+                            </td>
+
+                            <td>
+                                <select name="Items[@i].UoM_Number" class="form-select UoM_Number">
+                                    @foreach (var u in (ViewBag.UoM as IEnumerable<SelectListItem> ?? Enumerable.Empty<SelectListItem>()))
+                                    {
+                                                                               @if (u.Value == Model[i]?.UoM_Number)
+                                        {
+                                            <option value="@u.Value" selected>@u.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@u.Value">@u.Text</option>
+                                        }
+                                    }
+                                </select>
+                            </td>
+
+                            <td>
+                                <input name="Items[@i].Qty"
+                                       class="form-control Qty text-end"
+                                       value="@Model[i].Qty" />
+                            </td>
+
+                            <td>
+                                <input name="Items[@i].UnitPrice"
+                                       class="form-control UnitPrice text-end"
+                                       value="@Model[i].UnitPrice" />
+                            </td>
+
+                            <td>
+                                <input name="Items[@i].Amount"
+                                       class="form-control Amount text-end"
+                                       value="@Model[i].Amount" readonly />
+
+                                <input type="hidden"
+                                       name="Items[@i].IsDeleted"
+                                       class="IsDeleted"
+                                       value="@Model[i].IsDeleted" />
+                            </td>
+
+                        </tr>
+                    }
+                }
+
+            </tbody>
+
+            <!-- ================= FOOTER ================= -->
+            <tfoot>
+                <tr class="table-info">
+                    <td colspan="12" class="text-end">Total</td>
+                    <td>
+                        <input id="TotalQty" class="form-control text-end" readonly />
+                    </td>
+                    <td></td>
+                    <td>
+                        <input id="TotalAmount" class="form-control text-end" readonly />
+                    </td>
+                </tr>
+            </tfoot>
+
+        </table>
+    </div>
+
+    <!-- ================= BUTTONS ================= -->
+  @*   <div class="row mt-2">
+        <div class="col">
+            <button type="button" id="AddRowButton" class="btn btn-primary">Add Row</button>
+            <button type="button" class="btn btn-danger RowRemove">Delete Row</button>
+        </div>
+    </div> *@
+</div>
+
+
+<script>
+        $(document).on("click", ".RowRemove", function () {
+
+        let row = $(this).closest("tr");
+
+        // Set delete flag
+        row.find(".IsDeleted").val("1");
+
+        // Hide row
+        row.hide();
+
+        // Recalculate footer
+        calculateFooterTotals();
+
+    });
+    $(document).ready(function () {
+
+        calculateFooterTotals();
+          var rowCount = @(Model != null ? Model.Count : 0);
+    var isAddingRow = false;
+@*         if ($("#TableBody tr.NewRow").length == 0) {
+
+        addRow();
+    } *@
+    function addRow() {
+
+        var NewRow = $("#TempRow")
+            .clone()
+            .removeAttr("style")
+            .removeAttr("id")
+            .addClass("NewRow");
+
+        // 🔹 Assign correct model binding names
+        NewRow.find(".PRS_Number")
+            .attr("name", "Items[" + rowCount + "].PRS_Number");
+
+        NewRow.find(".Item_Number")
+            .attr("name", "Items[" + rowCount + "].Item_Number");
+
+        NewRow.find(".Description")
+            .attr("name", "Items[" + rowCount + "].Description");
+
+        NewRow.find(".OuterDia")
+            .attr("name", "Items[" + rowCount + "].OuterDia");
+
+        NewRow.find(".Thickness")
+            .attr("name", "Items[" + rowCount + "].Thickness");
+
+        NewRow.find(".Length")
+            .attr("name", "Items[" + rowCount + "].Length");
+
+        NewRow.find(".Width")
+            .attr("name", "Items[" + rowCount + "].Width");
+
+        NewRow.find(".MaterialGrade")
+            .attr("name", "Items[" + rowCount + "].MaterialGrade");
+
+        NewRow.find(".ItemGroup")
+            .attr("name", "Items[" + rowCount + "].ItemGroup");
+
+        NewRow.find(".WH_Number")
+            .attr("name", "Items[" + rowCount + "].WH_Number");
+
+        NewRow.find(".UoM_Number")
+            .attr("name", "Items[" + rowCount + "].UoM_Number");
+
+        NewRow.find(".Qty")
+            .attr("name", "Items[" + rowCount + "].Qty");
+
+        NewRow.find(".UnitPrice")
+            .attr("name", "Items[" + rowCount + "].UnitPrice");
+
+        NewRow.find(".Amount")
+            .attr("name", "Items[" + rowCount + "].Amount");
+
+        NewRow.find(".IsDeleted")
+            .attr("name", "Items[" + rowCount + "].IsDeleted")
+            .val(0);
+
+        // 🔹 Clear values (important)
+        NewRow.find("input").not(".IsDeleted").val("");
+        NewRow.find("select").prop("selectedIndex", 0);
+            // 🔹 Default values
+       NewRow.find(".UnitPrice").val("0.00");
+       NewRow.find("select").prop("selectedIndex", 0);
+        // 🔹 Append row
+        $("#TableBody").append(NewRow);
+
+        calculateFooterTotals();
+
+        rowCount++;
+        NewRow.data("isValid", false);
+        isAddingRow = false;
+    }
+
+      
+ 
+
+
+
+          $("#AddRowButton").click(function () {
+
+    var lastRow = $("#TableBody tr:visible").last();
+
+    if (checkAllFieldsValid()) {
+
+        addRow();
+
+    }
+    else {
+
+        var firstInvalidField = null;
+
+        lastRow.find("select, input.PRS_Number, input.Item_Number, input.Qty, input.UnitPrice, input[type='text']")
+            .each(function () {
+
+                if (!validateField($(this))) {
+
+                    if (firstInvalidField == null)
+                        firstInvalidField = $(this);
+
+                    return false;
+                }
+            });
+
+        if (firstInvalidField != null) {
+
+            alert("Please complete all fields !");
+            firstInvalidField.focus();
+        }
+    }
+});
+    });
+     function checkAllFieldsValid() {
+
+        var allFieldsValid = true;
+
+        $("#TableBody tr:visible").each(function () {
+
+            $(this).find("select, input.PRS_Number, input.Item_Number, input.Qty, input.UnitPrice")
+                .each(function () {
+
+                    if (!validateField($(this))) {
+                        allFieldsValid = false;
+                        return false;
+                    }
+                });
+
+            if (!allFieldsValid) return false;
+        });
+
+        return allFieldsValid;
+    }
+
+            
+    function validateField(currentInput) {
+            var valid = 1;
+            var inputValue = currentInput.val();
+            if (inputValue === "") {
+                valid = 0;
+            }
+
+            if (valid == 0) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+   
+
+        
+        </script>
+        <script>
+                $(document).on('input', "input.Qty, input.UnitPrice", function () {
+
+        var currentInput = $(this);
+
+        // 🔹 Get current row
+        var row = currentInput.closest("tr.NewRow");
+
+        // 🔹 Get values
+        var qty = parseFloat(removeCommas(row.find("input.Qty").val())) || 0;
+        var unitPrice = parseFloat(removeCommas(row.find("input.UnitPrice").val())) || 0;
+
+        // 🔹 Calculate Amount
+        var amount = qty * unitPrice;
+
+        // 🔹 Set Amount
+        row.find("input.Amount").val(DecimalIndianRupees(amount));
+
+        // 🔹 Recalculate Footer Total
+          calculateFooterTotals();
+
+    });
+            </script>
+            <script>
+
+    // ================= FOOTER TOTAL FUNCTION =================
+    function calculateFooterTotals() {
+
+        let totalQty = 0;
+        let totalAmount = 0;
+
+        $("#TableBody tr.NewRow:visible").each(function () {
+
+            // Skip deleted rows
+            if ($(this).find(".IsDeleted").val() == "1") {
+                return;
+            }
+
+            // Qty
+            let qty = parseFloat(
+                removeCommas($(this).find(".Qty").val())
+            ) || 0;
+
+            // Amount
+            let amount = parseFloat(
+                removeCommas($(this).find(".Amount").val())
+            ) || 0;
+
+            totalQty += qty;
+            totalAmount += amount;
+        });
+
+        // Set footer values
+        $("#TotalQty").val(DecimalIndianRupees(totalQty));
+        $("#TotalAmount").val(DecimalIndianRupees(totalAmount));
+    }
+
+</script>
+
+     <script>
+
+    function OnInput(inputElement) {
+        searchItem(inputElement);
+    }
+function OnFocus(inputElement) {
+
+    var tax = inputElement.value;
+
+    if (!tax) {
+
+        searchItem(inputElement);
+
+    }
+    else {
+
+        $(inputElement).select();
+    }
+}
+    function searchItem(inputElement) {
+        var itemCode = inputElement.value;
+        var resultsDiv = $(inputElement).next('.search-results');
+        var Metrial = $("#MS_Number").val();
+         
+        //Metrial=1;
+        if (Metrial) {
+            $.ajax({
+                url: '/jobinward/transactions/receipt-note/item',
+                data: { ItemCode: itemCode, MS: Metrial },
+                type: 'GET',
+                success: function (data) {
+                    resultsDiv.empty();
+                    if (data && data.length > 0) {
+                        resultsDiv.show();
+                        var table = $('<div class="card-body modal-content p-0 table-responsive"><table class="table table-bordered table-hover table-fixed mb-0 table-grid"><thead><tr class="table-info"><th>Item Code</th><th>Description</th><th>Item Group</th></tr></thead><tbody></tbody></table></div>');
+                        data.forEach(function (item) {
+                            var row = $('<tr></tr>');
+                            row.append('<td>' + item.itemCode + '</td>');
+                            row.append('<td>' + item.itemDescription + '</td>');
+                            row.append('<td>' + item.itemGroup + '</td>');
+                            table.find('tbody').append(row);
+
+                            row.on('click', function () {
+                                   $(inputElement).val(item.itemCode);
+
+    $(inputElement).closest('tr').find('input.Item_Number').val(item.itemNumber);
+    $(inputElement).closest('tr').find('input.Item_Code').val(item.itemCode);
+    $(inputElement).closest('tr').find('input.Description').val(item.itemDescription);
+    $(inputElement).closest('tr').find('input.OuterDia').val(item.outerDia);
+    $(inputElement).closest('tr').find('input.Thickness').val(item.thickness);
+    $(inputElement).closest('tr').find('input.Length').val(item.length);
+    $(inputElement).closest('tr').find('input.Width').val(item.width);
+    $(inputElement).closest('tr').find('input.MaterialGrade').val(item.materialGrade);
+    $(inputElement).closest('tr').find('input.ItemGroup').val(item.itemGroup);
+                                 $(inputElement).closest('tr').find('select.UoM_Number').val(item.uoM);
+    $(inputElement).closest('tr').find('select.WH_Number').val(item.saleWarehouse);
+
+    let qtyInput = $(inputElement)
+        .closest('tr')
+        .find('input.Qty');
+
+    qtyInput.focus();
+
+    setTimeout(function () {
+        qtyInput.select();
+    }, 100);
+
+                                var decimalPlaces = item.decimalPlaces;
+                                if (decimalPlaces === "") {
+                                    decimalPlaces = 2;
+                                }
+                               var value = $(inputElement).closest('tr').find('input.Qty').val();
+                                 $(inputElement).closest('tr').find('input.Qty').val(
+        QtyDecimalRupees(value, decimalPlaces)
+    );
+
+                                // SearchWHT();
+                                // (async () => {
+                                //     await CalculateAllIncomes();
+                                // })();
+
+                                resultsDiv.hide();
+                                //trigger new row
+                              //  $("#AddRowButton").trigger("click");
+                            });
+                        });
+
+                        var closeButton = $('<div class="card-header bg-primary py-1 px-1"><button type="button" class="p-0 float-end btn btn-sm btn-primary bg-opacity-10"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d = "M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"> </path></svg></button></div>');
+                        closeButton.on('click', function () {
+                            resultsDiv.hide();
+                        });
+
+                        resultsDiv.append(closeButton);
+                        resultsDiv.append(table);
+                    } else {
+                        resultsDiv.hide();
+                        resultsDiv.append('<p>No results found</p>');
+                    }
+                },
+                error: function () {
+                    resultsDiv.text('Error loading data.');
+                    resultsDiv.show();
+                }
+            });
+        }
+        else {
+           // alert('Please choose Material Segregation first !');
+        }
+    }
+
+</script>
+ <script>
+
+  $(document).ready(function () {
+
+    $("#TableBody tr").not("#TempRow").each(function (i) {
+
+    let rowEl = $(this);
+
+    setTimeout(function () {
+
+        // ================= PROCESS =================
+        let processNumber = rowEl.find(".PRS_Number").val();
+
+        if (processNumber) {
+
+            $.ajax({
+
+                url: '/jobinward/transactions/receipt-note/process',
+
+                data: {
+                    ProcessCode: processNumber
+                },
+
+                type: 'GET',
+
+                async: false,
+
+                success: function (data) {
+
+                    if (data && data.length > 0) {
+
+                        let p = data[0];
+
+                        rowEl.find(".PRS_Name").val(p.processName);
+
+                        rowEl.find(".PRS_Number").val(p.processNumber);
+                    }
+                }
+            });
+        }
+
+        // ================= ITEM =================
+        let itemNumber = rowEl.find(".Item_Number").val();
+
+        if (itemNumber && itemNumber != "0") {
+
+            $.ajax({
+
+                url: '/jobinward/transactions/receipt-note/itemView',
+
+                data: {
+                    ItemCode: itemNumber,
+                    MS: $("#MS_Number").val()
+                },
+
+                type: 'GET',
+
+                async: false,
+
+                success: function (data) {
+
+                    if (data && data.length > 0) {
+
+                     //   alert('itemdata'+ data[0])
+
+                        let item = data[0];
+
+                        rowEl.find(".Item_Code").val(item.itemCode);
+
+                        rowEl.find(".Item_Number").val(item.itemNumber);
+
+                        rowEl.find(".Description").val(item.itemDescription);
+
+                        rowEl.find(".OuterDia").val(item.outerDia);
+
+                        rowEl.find(".Thickness").val(item.thickness);
+
+                        rowEl.find(".Length").val(item.length);
+
+                        rowEl.find(".Width").val(item.width);
+
+                        rowEl.find(".MaterialGrade").val(item.materialGrade);
+
+                        rowEl.find(".ItemGroup").val(item.itemGroup);
+
+                        rowEl.find(".UoM_Number").val(item.uoM);
+
+                        rowEl.find(".WH_Number").val(item.saleWarehouse);
+                    }
+                }
+            });
+        }
+
+    }, i * 200);
+
+});
+
+});
+
+</script>
+ 

@@ -1,0 +1,133 @@
+﻿@model ERP_DTO.PurchaseReturnHead_DTO
+
+@if (Model.PRH_Number != 0)
+{
+    <input asp-for="PRH_Number" type="hidden" class="Number" />
+}
+
+<div class="col-auto left-menu text-black">
+    <div class="row">
+        <div class="col-12">
+            <div class="row align-items-center mb-3">
+                <div class="col-auto">
+                    <input class="form-check-input" type="radio" checked disabled /> Direct
+                </div>
+                <div class="col-auto">
+                    <input class="form-check-input" type="radio" disabled /> GRN To Item
+                </div>
+                <div class="col-auto">
+                    <input class="form-check-input" type="radio" disabled /> Item To GRN
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="PRH_ReturnNo" class="col-sm-5 col-form-label ps-0"></label>
+                <div class="col-sm-7">
+                    <input asp-for="PRH_ReturnNo" class="form-control Key KeyDup" autocomplete="off" readonly />
+                </div>
+            </div>
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="PRH_ReturnDate" class="col-sm-5 col-form-label ps-0"></label>
+                <div class="col-sm-7">
+                    <input asp-for="PRH_ReturnDate" class="form-control Key datepicker" autocomplete="off" />
+                </div>
+            </div>
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="PRH_ImportOrder" class="col-sm-5 col-form-label ps-0"></label>
+                <div class="col-sm-7">
+                    <input class="form-check-input" type="checkbox" asp-for="PRH_ImportOrder" />
+                </div>
+            </div>
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="PRH_MS_Number" class="col-sm-5 col-form-label ps-0"></label>
+                <div class="col-sm-7">
+                    <select asp-for="PRH_MS_Number" class="form-select" asp-items="@ViewBag.MaterialSegregation"></select>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="PRH_Vendor_Number" class="col-sm-5 col-form-label ps-0"></label>
+                <div class="col-sm-7">
+                    <input asp-for="PRH_Vendor_Number" class="form-control" type="hidden" />
+                    <input asp-for="PRH_VendorLocation" class="form-control" type="hidden" />
+                    <input asp-for="PRH_CreditDays" class="form-control" type="hidden" />
+                    <input asp-for="PRH_PaymentBase" class="form-control" type="hidden" />
+                    <input asp-for="PRH_Vendor" class="form-control" autocomplete="off" oninput="OnVendorInput(this)" onfocus="OnVendorFocus(this)" />
+                    <div class="vendor-search-results card" style="display:none"></div>
+                </div>
+            </div>
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="PRH_Currency_Number" class="col-sm-5 col-form-label ps-0"></label>
+                <div class="col-sm-7">
+                    <input asp-for="PRH_Currency" class="form-control" readonly autocomplete="off" />
+                    <input asp-for="PRH_Currency_Number" class="form-control" type="hidden" />
+                    <input asp-for="PRH_DecimalPlaces" class="form-control" type="hidden" />
+                </div>
+            </div>
+            <div class="row align-items-center px-2 mb-1" id="ExchangeRate">
+                <label asp-for="PRH_ExchangeRate" class="col-sm-5 col-form-label ps-0 text-nowrap"></label>
+                <div class="col-sm-7">
+                    <input asp-for="PRH_ExchangeRate" class="form-control Key decimal" autocomplete="off" />
+                </div>
+            </div>
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="PRH_DueDate" class="col-sm-5 col-form-label ps-0"></label>
+                <div class="col-sm-7">
+                    <input asp-for="PRH_DueDate" class="form-control Key datepicker" readonly autocomplete="off" />
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="PRH_TaxCluster_Number" class="col-sm-5 col-form-label ps-0"></label>
+                <div class="col-sm-7">
+                    <select asp-for="PRH_TaxCluster_Number" class="form-select" onchange="SearchGST()"></select>
+                    @if (Model != null)
+                    {
+                        <input asp-for="PRH_TaxClusterNumber" class="form-control" type="hidden" value="@Model.PRH_TaxCluster_Number" />
+                    }
+                    <div class="cluster-results dropdown-results search-results bg-primary p-2" style="display:none"></div>
+                </div>
+            </div>
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="PRH_WHT_Number" class="col-sm-5 col-form-label ps-0"></label>
+                <div class="col-sm-7">
+                    <input asp-for="PRH_WHT_Tax" class="form-control" type="hidden" />
+                    <input asp-for="PRH_WHT_Percent" class="form-control" type="hidden" />
+                    <select asp-for="PRH_WHT_Number" class="form-select" asp-items="@ViewBag.WHTax" onchange="SearchWHT()"></select>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="PRH_DeliveryTerms" class="col-sm-5 col-form-label ps-0"></label>
+                <div class="col-sm-7">
+                    <input asp-for="PRH_DeliveryTerms" class="form-control Key" autocomplete="off" />
+                </div>
+            </div>
+            <div class="row align-items-center px-2">
+                <label asp-for="PRH_DeliveryMode" class="col-sm-5 col-form-label ps-0"></label>
+                <div class="col-sm-7">
+                    <input asp-for="PRH_DeliveryMode" class="form-control Key" autocomplete="off" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-auto right-menu text-center border-start">
+    @if (Model.PRH_Number != 0)
+    {
+        <input type="submit" name="Mode" value="Update" class="btn btn-primary btn-sm px-2 w-100 mb-1" />
+        <input type="submit" name="Mode" value="Clear All" class="btn btn-primary btn-sm px-2 w-100 mb-1" />
+    }
+    else
+    {
+        <input type="submit" name="Mode" value="Save" class="btn btn-primary btn-sm px-2 w-100 mb-1" />
+        <input type="submit" name="Mode" value="Clear All" class="btn btn-primary btn-sm px-2 w-100 mb-1" />
+    }
+    <button type="button" class="btn btn-primary btn-sm px-2 w-100 mb-1" id="MiscExpenseModal" data-bs-toggle="modal" data-bs-target="#Expense">
+        Misc. Expense
+    </button>
+</div>

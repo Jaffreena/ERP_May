@@ -1,0 +1,383 @@
+﻿@model List<ERP_DTO.PurchaseReturnBatch_DTO>
+
+<ul class="nav nav-tabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="Batch-tab" data-bs-toggle="tab" data-bs-target="#Batch-tab-pane" type="button" role="tab" aria-controls="Batch-tab-pane" aria-selected="true">
+            Batch
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="Other-tab" data-bs-toggle="tab" data-bs-target="#Other-tab-pane" type="button" role="tab" aria-controls="Other-tab-pane" aria-selected="false">
+            Other Warehouse Batch
+        </button>
+    </li>
+</ul>
+<div class="tab-content">
+    <div class="tab-pane fade show active p-3 pb-0 border border-top-0" id="Batch-tab-pane" role="tabpanel" aria-labelledby="Batch-tab" tabindex="0">
+        <div id="BatchForm" class="w-100">
+            <table class="table table-bordered table-hover align-middle w-100">
+                <thead>
+                    <tr class="table-info">
+                        <th>Warehouse</th>
+                        <th>Date</th>
+                        <th>Batch Number</th>
+                        <th class="text-center">Item Qty</th>
+                        <th class="text-center">Hold Qty</th>
+                        <th class="text-center">Qty</th>
+                        <th>Unit Price</th>
+                        <th>Batch Value</th>
+                    </tr>
+                </thead>
+                <tbody id="IBatTableBody">
+                    <tr id="IBatTempRow" style="display: none;">
+                        <td>
+                            <input id="PRI_BCH_Warehouse" class="form-control  PRI_BCH_Warehouse" readonly />
+                        </td>
+                        <td>
+                            <input id="PRI_BCH_Warehouse_Number" class="PRI_BCH_Warehouse_Number" readonly type="hidden" />
+                            <input id="PRI_BCH_Number" class="PRI_BCH_Number" readonly type="hidden" />
+                            <input id="PRI_BCH_BCH_Number" class="PRI_BCH_BCH_Number" readonly type="hidden" />
+                            <input id="PRI_BCH_Item_Number" class="PRI_BCH_Item_Number" readonly type="hidden" />
+                            <input id="PRI_BCH_Item_Index" class="PRI_BCH_Item_Index" readonly type="hidden" />
+                            <input id="PRI_BCH_Date" class="form-control Key datepicker PRI_BCH_Date" readonly autocomplete="off" />
+                        </td>
+                        <td>
+                            <input id="PRI_BCH_No" class="form-control PRI_BCH_No" readonly autocomplete="off" />
+                        </td>
+                        <td>
+                            <input id="PRI_BCH_ItemQty" class="form-control PRI_BCH_ItemQty text-center" readonly autocomplete="off" />
+                        </td>
+                        <td>
+                            <input id="PRI_BCH_HoldQty" class="form-control PRI_BCH_HoldQty text-center" readonly autocomplete="off" />
+                        </td>
+                        <td>
+                            <input id="PRI_BCH_Qty" class="form-control PRI_BCH_Qty text-center Positivedecimal QtyNumbers" autocomplete="off" />
+                        </td>
+                        <td>
+                            <input id="PRI_BCH_UnitPrice" class="form-control PRI_BCH_UnitPrice decimal text-end" readonly autocomplete="off" />
+                        </td>
+                        <td>
+                            <input id="PRI_BCH_Value" class="form-control PRI_BCH_Value decimal text-end" readonly autocomplete="off" />
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr class="table-info">
+                        <td></td>
+                        <td></td>
+                        <td class="text-end">Total Qty</td>
+                        <td><input id="BatchItemQty" class="form-control text-center" readonly /></td>
+                        <td><input id="BatchHoldQty" class="form-control text-center" readonly /></td>
+                        <td>
+                            <input id="BatchTotalQty" class="form-control text-center" readonly />
+                        </td>
+                        <td></td>
+                        <td>
+                            <input id="BatchTotalValue" class="form-control text-end" readonly />
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    <div class="tab-pane fade p-3 border border-top-0" id="Other-tab-pane" role="tabpanel" aria-labelledby="Other-tab" tabindex="0">
+        <div class="w-100 table-responsive" id="BatchWarehouseTableView">
+
+        </div>
+    </div>
+</div>
+
+<script>
+    var browCount = @(Model != null ? Model.Count : 0);
+    function IBatNewRow(B) {
+        var IBatNewRow = $("#IBatTempRow").clone().removeAttr("style").removeAttr("id").addClass("IBatNewRow");
+        IBatNewRow.find("input.PRI_BCH_Warehouse").attr("name", "ItemBatch[" + browCount + "].PRI_BCH_Warehouse").val(B.prI_BCH_Warehoue);
+        IBatNewRow.find("input.PRI_BCH_Warehouse_Number").attr("name", "ItemBatch[" + browCount + "].PRI_BCH_Warehouse_Number").val($("#PRI_BATCH_Warehouse").val());
+        IBatNewRow.find("input.PRI_BCH_BCH_Number").attr("name", "ItemBatch[" + browCount + "].PRI_BCH_BCH_Number").val(B.prI_BCH_BCH_Number);
+        IBatNewRow.find("input.PRI_BCH_Number").attr("name", "ItemBatch[" + browCount + "].PRI_BCH_Number").val(B.prI_BCH_Number);
+        IBatNewRow.find("input.PRI_BCH_Item_Number").attr("name", "ItemBatch[" + browCount + "].PRI_BCH_Item_Number").val($("#PRI_BATCH_ItemNumber").val());
+        IBatNewRow.find("input.PRI_BCH_Item_Index").attr("name", "ItemBatch[" + browCount + "].PRI_BCH_Item_Index").val($("#PRI_BATCH_ItemIndex").val());
+        IBatNewRow.find("input.PRI_BCH_Date").attr("name", "ItemBatch[" + browCount + "].PRI_BCH_Date").val(B.prI_BCH_Date);
+        IBatNewRow.find("input.PRI_BCH_No").attr("name", "ItemBatch[" + browCount + "].PRI_BCH_No").val(B.prI_BCH_No);
+        IBatNewRow.find("input.PRI_BCH_ItemQty").attr("name", "ItemBatch[" + browCount + "].PRI_BCH_ItemQty").val(B.prI_BCH_ItemQty);
+        IBatNewRow.find("input.PRI_BCH_HoldQty").attr("name", "ItemBatch[" + browCount + "].PRI_BCH_HoldQty").val(B.prI_BCH_HoldQty);
+        IBatNewRow.find("input.PRI_BCH_Qty").attr("name", "ItemBatch[" + browCount + "].PRI_BCH_Qty").val(B.prI_BCH_Qty);
+        IBatNewRow.find("input.PRI_BCH_UnitPrice").attr("name", "ItemBatch[" + browCount + "].PRI_BCH_UnitPrice").val(B.prI_BCH_UnitPrice);
+        IBatNewRow.find("input.PRI_BCH_Value").attr("name", "ItemBatch[" + browCount + "].PRI_BCH_Value").val(B.prI_BCH_Value);
+
+        $("#IBatTableBody").append(IBatNewRow);
+        browCount++;
+    }
+
+    $(document).on('click', '.ItemBatch', function () {
+        let CheckedCheckbox = document.querySelector('.CheckItem:checked');
+        if (CheckedCheckbox) {
+            var currentRow = $(CheckedCheckbox).closest('tr.NewRow');
+
+            var ItemNumber = currentRow.find('input.PRI_Item_Number').val();
+            var Warehouse = currentRow.find('select.PRI_Warehouse_Number').val();
+            var Index = currentRow.find('input.PRI_Index').val();
+            var Qty = currentRow.find('input.PRI_Qty').val();
+            var MatrialValue = currentRow.find('input.PRI_Amount').val();
+            var resultsDiv = $("#BatchWarehouseTableView");
+
+            if (ItemNumber) {
+                $("#PRI_BATCH_Qty").val(removeCommas(Qty));
+                $("#PRI_BATCHQty").text(removeCommas(Qty));
+                $("#PRI_BATCH_ItemNumber").val(ItemNumber);
+                $("#PRI_BATCH_ItemIndex").val(Index);
+                $("#PRI_BATCH_Warehouse").val(Warehouse);
+
+                $.ajax({
+                    type: "POST",
+                    url: "batch/get",
+                    data: { Index: Index, ItemNumber: ItemNumber, Warehouse: Warehouse },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        var BatchItem = data.prBatch;
+                        var BarchView = data.prView;
+
+                        $('.IBatNewRow').remove();
+                        if(BatchItem && BatchItem.length > 0) {
+                            BatchItem.forEach(function (BI) {
+                                IBatNewRow(BI);
+                            });
+                        }
+
+                        resultsDiv.empty();
+                        if (BarchView && BarchView.length > 0) {
+                            var tableHTML = `<table class="table table-bordered mb-0 table-hover">
+                                                <thead>
+                                                    <tr class="table-info">
+                                                        <th>Warehouse</th>
+                                                        <th>Batch Date</th>
+                                                        <th>Batch No</th>
+                                                        <th>Qty</th>
+                                                        <th>Unit Price</th>
+                                                        <th>Value</th>
+                                                   </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                             </table>`;
+                            var table = $(tableHTML);
+
+                            BarchView.forEach(function (BI) {
+                                var row = $('<tr></tr>');
+                                row.append('<td>' + BI.prI_BCH_Warehoue + '</td>');
+                                row.append('<td>' + BI.prI_BCH_Date + '</td>');
+                                row.append('<td>' + BI.prI_BCH_No + '</td>');
+                                row.append('<td>' + BI.prI_BCH_Qty + '</td>');
+                                row.append('<td>' + BI.prI_BCH_UnitPrice + '</td>');
+                                row.append('<td>' + BI.prI_BCH_Value + '</td>');
+                                table.find('tbody').append(row);
+                            });
+                            resultsDiv.append(table);
+                        }
+                    }
+                });
+
+                new bootstrap.Modal($("#IBatch")).show();
+                $('#IBatch').on('shown.bs.modal', function () {
+                    $(this).find('[autofocus]').focus();
+
+                    (async () => {
+                        BatchCalculateFooter();
+                    })();
+                });
+            }
+        }
+    });
+
+    $(document).on('keydown', "tr.IBatNewRow select, tr.IBatNewRow input.PRI_BCH_Qty, tr.IBatNewRow input[type='text']", function (event) {
+        if (event.keyCode === 9) {
+            if (!IBatValidateField($(this)))
+                event.preventDefault();
+        }
+    });
+
+    $(document).on('input', "tr.IBatNewRow input.PRI_BCH_Qty", function (event) {
+        var row = $(this).closest("tr.IBatNewRow");
+
+        var QtyInput = row.find("input.PRI_BCH_Qty");
+        var AvailQty = (parseFloat(removeCommas(row.find("input.PRI_BCH_ItemQty").val())) || 0) - (parseFloat(removeCommas(row.find("input.PRI_BCH_HoldQty").val())) || 0);
+
+        var Qty = parseFloat(removeCommas(row.find("input.PRI_BCH_Qty").val())) || 0;
+        if (Qty > AvailQty) {
+            // if (AvailQty < 0) {
+                alert("Quantity (" + Qty + ") cannot be greater than Batch Quantity (" + AvailQty + ").\nIt will be reset to the maximum allowed: " + AvailQty);
+
+            QtyInput.val(DecimalIndianRupees(AvailQty));
+            Qty = AvailQty;
+            // }
+            // else{
+            //     alert("Quantity (" + Qty + ") cannot be greater than Batch Quantity (" + AvailQty + ").\nIt will be reset to the maximum allowed: " + AvailQty);
+
+            //     QtyInput.val(DecimalIndianRupees(AvailQty));
+            //     Qty = AvailQty;
+            // }
+        }
+
+        // if (Qty > 0) {
+        //     Qty = -Qty;
+        // } else {
+        //     Qty = Qty;
+        // }
+
+        var UnitPrice = parseFloat(removeCommas(row.find("input.PRI_BCH_UnitPrice").val())) || 0;
+        var BatchValue = Qty * UnitPrice;
+
+        row.find("input.PRI_BCH_Value").val(DecimalIndianRupees(BatchValue));
+
+        (async () => {
+            BatchCalculateFooter();
+        })();
+    });
+
+    $(document).on("blur", "tr.IBatNewRow input.PRI_BCH_Qty", function () {
+        var value = removeCommas($(this).val());
+
+        // if (value > 0) {
+        //     value = -value;
+        // } else {
+        //     value = value;
+        // }
+
+        $(this).val(DecimalIndianRupees(value));
+    });
+
+    function IBatCheckAllFieldsValid(currentRow) {
+        var allFieldsValid = true;
+        $("tr.IBatNewRow:visible").each(function () {
+            $(this).find("select, input.PRI_BCH_Qty,input.PRI_BCH_No, input[type='text']").each(function () {
+                if (!IBatValidateField($(this))) {
+                    allFieldsValid = false;
+                    return false;
+                }
+            });
+            if (!allFieldsValid) return false;
+        });
+        return allFieldsValid;
+    }
+
+    function IBatValidateField(currentInput) {
+        var valid = 1;
+        var inputValue = currentInput.val();
+        if (inputValue === "") {
+            valid = 0;
+        }
+        if (currentInput.hasClass(".PRI_BCH_Qty")) {
+            valid = ExValidateAmount(currentInput);
+        }
+        if (valid == 0) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    function ExValidateAmount(currentInput) {
+        var valid = 1;
+
+        var currentRow = currentInput.closest("tr.IBatNewRow");
+        var PercentInput = currentRow.find("input.PRI_BCH_Qty");
+        var Percent = removeCommas(PercentInput.val());
+        if (Percent > 0) {
+        }
+        else {
+            valid = 0;
+        }
+        return valid;
+    }
+
+    $(document).on('click', '#IBatCloseButton', function () {
+        var ItemQty = Math.abs($("#PRI_BATCH_Qty").val());
+        var ItemBatchList = [];
+
+        $("tr.IBatNewRow").each(function () {
+            var $row = $(this);
+
+            var BatchItem = {
+                PRI_BCH_Number: $row.find("input.PRI_BCH_Number").val(),
+                PRI_BCH_BCH_Number: $row.find("input.PRI_BCH_BCH_Number").val(),
+                PRI_BCH_Item_Number: $row.find("input.PRI_BCH_Item_Number").val(),
+                PRI_BCH_Warehouse_Number: $row.find("input.PRI_BCH_Warehouse_Number").val(),
+                PRI_BCH_Item_Index: $row.find("input.PRI_BCH_Item_Index").val(),
+                PRI_BCH_Date: $row.find("input.PRI_BCH_Date").val(),
+                PRI_BCH_No: $row.find("input.PRI_BCH_No").val(),
+                PRI_BCH_ItemQty: parseFloat($row.find("input.PRI_BCH_ItemQty").val()) || 0,
+                PRI_BCH_HoldQty: parseFloat($row.find("input.PRI_BCH_HoldQty").val()) || 0,
+                PRI_BCH_Qty: parseFloat(removeCommas($row.find("input.PRI_BCH_Qty").val())) || 0,
+                PRI_BCH_UnitPrice: parseFloat(removeCommas($row.find("input.PRI_BCH_UnitPrice").val())) || 0,
+                PRI_BCH_Value: parseFloat(removeCommas($row.find("input.PRI_BCH_Value").val())) || 0,
+            };
+
+            ItemBatchList.push(BatchItem);
+        });
+
+        var DataToSend = {
+            ItemBatch: ItemBatchList
+        };
+
+        $.ajax({
+            url: 'batch/post',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(DataToSend),
+            success: function (response) {
+            },
+            error: function (xhr, status, error) {
+            }
+        });
+
+        let BatchQty = $("tr.IBatNewRow").map(function () {
+            return parseFloat($(this).find("input.PRI_BCH_Qty").val()) || 0;
+        }).get().reduce((sum, current) => sum + current, 0);
+
+        if (parseFloat(ItemQty) === parseFloat(BatchQty)) {
+        }
+        else {
+            alert("Qty Mismatch !");
+        }
+
+        $("#IBatch").modal('hide');
+    });
+
+    async function BatchCalculateFooter() {
+        var BtotalItemQty = 0;
+        var BtotalHoldQty = 0;
+        var BtotalQty = 0;
+        var BtotalValue = 0;
+
+        $("tr.IBatNewRow:visible").each(function () {
+            var row = $(this);
+            var PRI_BCH_IsDeleted = $(this).find("input.PRI_BCH_IsDeleted").val() === "true";
+            if (!PRI_BCH_IsDeleted) {
+                var ItemQty = parseFloat(removeCommas(row.find("input.PRI_BCH_ItemQty").val()));
+                var HoldQty = parseFloat(removeCommas(row.find("input.PRI_BCH_HoldQty").val()));
+                var Qty = parseFloat(removeCommas(row.find("input.PRI_BCH_Qty").val()));
+                var Value = parseFloat(removeCommas(row.find("input.PRI_BCH_Value").val()));
+
+                BtotalItemQty += parseFloat(ItemQty);
+                BtotalHoldQty += parseFloat(HoldQty);
+                BtotalQty += parseFloat(Qty);
+                BtotalValue += parseFloat(Value);
+            }
+        });
+
+        $("#BatchItemQty").val(BtotalItemQty.toFixed(2));
+        $("#BatchHoldQty").val(BtotalHoldQty.toFixed(2));
+        $("#BatchTotalQty").val(BtotalQty.toFixed(2));
+        $("#BatchTotalValue").val(BtotalValue.toFixed(2));
+    }
+</script>
+<style>
+    .search-results {
+        position: absolute;
+        z-index: 1000;
+        overflow-y: auto;
+        width: 400px;
+        max-height: 300px;
+    }
+</style>

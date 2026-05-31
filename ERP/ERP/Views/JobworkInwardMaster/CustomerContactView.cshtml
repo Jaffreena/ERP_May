@@ -1,0 +1,106 @@
+﻿@model List<ERP_DTO.CustomerContact_DTO>
+
+<div class="w-100 table-fixed h-100">
+    <div class="w-100 table-responsive table-body table-body-f">
+        <table class="table table-bordered align-middle table-hover mb-0 table-grid">
+            <thead>
+                <tr class="table-info">
+                    <th>@Html.DisplayNameFor(model => model.First().CUS_CNT_ContactName)</th>
+                    <th>@Html.DisplayNameFor(model => model.First().CUS_CNT_Department)</th>
+                    <th>@Html.DisplayNameFor(model => model.First().CUS_CNT_Mobile)</th>
+                    <th>@Html.DisplayNameFor(model => model.First().CUS_CNT_Telephone)</th>
+                    <th>@Html.DisplayNameFor(model => model.First().CUS_CNT_Email)</th>
+                    <th class="action text-center">Action</th>
+                </tr>
+            </thead>
+
+            <tbody id="ContactTableBody">
+
+                <!-- 🔹 Template Row -->
+                <tr id="ContactTempRow" style="display:none;">
+                    <td><input class="form-control CUS_CNT_ContactName" /></td>
+                    <td><input class="form-control CUS_CNT_Department" /></td>
+                    <td><input class="form-control CUS_CNT_Mobile" /></td>
+                    <td><input class="form-control CUS_CNT_Telephone" /></td>
+                    <td><input class="form-control CUS_CNT_Email" /></td>
+
+                    <td class="text-center">
+                        <input type="hidden" class="CUS_CNT_IsDeleted" />
+                        <a class="ContactRowRemove btn text-danger p-0">🗑</a>
+                    </td>
+                </tr>
+
+                <!-- 🔹 Existing Data -->
+                @if (Model != null)
+                {
+                    for (int i = 0; i < Model.Count; i++)
+                    {
+                        <tr class="ContactNewRow" style="@(Model[i].CUS_CNT_IsDeleted == 1 ? "display:none;" : "")">
+                            <td>
+                                <input name="CUS_Contact_List[@i].CUS_CNT_ContactName" value="@Model[i].CUS_CNT_ContactName" class="form-control CUS_CNT_ContactName" />
+                            </td>
+                            <td>
+                                <input name="CUS_Contact_List[@i].CUS_CNT_Department" value="@Model[i].CUS_CNT_Department" class="form-control CUS_CNT_Department" />
+                            </td>
+                            <td>
+                                <input name="CUS_Contact_List[@i].CUS_CNT_Mobile" value="@Model[i].CUS_CNT_Mobile" class="form-control CUS_CNT_Mobile" />
+                            </td>
+                            <td>
+                                <input name="CUS_Contact_List[@i].CUS_CNT_Telephone" value="@Model[i].CUS_CNT_Telephone" class="form-control CUS_CNT_Telephone" />
+                            </td>
+                            <td>
+                                <input name="CUS_Contact_List[@i].CUS_CNT_Email" value="@Model[i].CUS_CNT_Email" class="form-control CUS_CNT_Email" />
+                            </td>
+
+                            <td class="text-center">
+                                <input type="hidden" name="CUS_Contact_List[@i].CUS_CNT_Number" value="@Model[i].CUS_CNT_Number" />
+                                <input type="hidden" name="CUS_Contact_List[@i].CUS_CNT_IsDeleted" value="@Model[i].CUS_CNT_IsDeleted" />
+                                <a class="ContactRowRemove btn text-danger p-0">🗑</a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="w-100 table-footer">
+        <a id="ContactAddRowButton" class="btn btn-primary">Add Row</a>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+        var rowCount = @(Model != null ? Model.Count : 0);
+
+        function addRow() {
+            var row = $("#ContactTempRow").clone().removeAttr("id style").addClass("ContactNewRow");
+
+            row.find(".CUS_CNT_ContactName").attr("name", "CUS_Contact_List[" + rowCount + "].CUS_CNT_ContactName");
+            row.find(".CUS_CNT_Department").attr("name", "CUS_Contact_List[" + rowCount + "].CUS_CNT_Department");
+            row.find(".CUS_CNT_Mobile").attr("name", "CUS_Contact_List[" + rowCount + "].CUS_CNT_Mobile");
+            row.find(".CUS_CNT_Telephone").attr("name", "CUS_Contact_List[" + rowCount + "].CUS_CNT_Telephone");
+            row.find(".CUS_CNT_Email").attr("name", "CUS_Contact_List[" + rowCount + "].CUS_CNT_Email");
+            row.find(".CUS_CNT_IsDeleted").attr("name", "CUS_Contact_List[" + rowCount + "].CUS_CNT_IsDeleted").val(0);
+
+            $("#ContactTableBody").append(row);
+            rowCount++;
+        }
+
+        if ($("tr.ContactNewRow").length == 0) {
+            addRow();
+        }
+
+        // 🔴 Remove Row
+        $(document).on("click", ".ContactRowRemove", function () {
+            $(this).closest("tr").find(".CUS_CNT_IsDeleted").val(1);
+            $(this).closest("tr").hide();
+        });
+
+        // ➕ Add Row Button
+        $("#ContactAddRowButton").click(function () {
+            addRow();
+        });
+
+    });
+</script>

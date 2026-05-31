@@ -1,0 +1,30 @@
+﻿@model ERP_DTO.CustomerCategory_DTO
+
+@if (Model != null)
+{
+    <input asp-for="JCC_Number" type="hidden" class="Number" />
+}
+<div class="mb-3">
+    <label asp-for="JCC_JW_CustomerCategory" class="control-label"></label>
+    <input asp-for="JCC_JW_CustomerCategory" class="form-control Key KeyDup" autofocus="true" autocomplete="off" />
+</div>
+<div class="mb-3">
+    <label asp-for="JCC_Description" class="control-label"></label>
+    <textarea asp-for="JCC_Description" class="form-control Key" autocomplete="off"></textarea>
+</div>
+<div class="mb-3">
+    <label asp-for="JCC_Under_JCC_Number" class="control-label"></label>
+    <select asp-for="JCC_Under_JCC_Number" class="form-select" asp-items="@ViewBag.Under"></select>
+</div>
+<div>
+    @if (Model != null)
+    {
+        <input type="submit" name="Mode" value="Update" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+    else
+    {
+        <input type="submit" name="Mode" value="Save" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+</div>

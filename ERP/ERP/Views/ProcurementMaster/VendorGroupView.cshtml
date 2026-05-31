@@ -1,0 +1,31 @@
+﻿@model ERP_DTO.VendorGroup_DTO
+
+
+@if (Model != null)
+{
+    <input asp-for="VendorGroupNumber" type="hidden" class="Number" />
+}
+<div class="mb-3">
+    <label asp-for="VendorGroup" class="control-label"></label>
+    <input asp-for="VendorGroup" class="form-control Key KeyDup" autofocus="true" autocomplete="off" />
+</div>
+<div class="mb-3">
+    <label asp-for="VG_Description" class="control-label"></label>
+    <textarea asp-for="VG_Description" class="form-control Key" autocomplete="off"></textarea>
+</div>
+<div class="mb-3">
+    <label asp-for="UnderVGroup" class="control-label"></label>
+    <select asp-for="UnderVGroup" class="form-select" asp-items="@ViewBag.Under" data-live-search="true"></select>
+</div>
+<div>
+    @if (Model != null)
+    {
+        <input type="submit" name="Mode" value="Update" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+    else
+    {
+        <input type="submit" name="Mode" value="Save" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+</div>

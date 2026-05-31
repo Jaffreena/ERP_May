@@ -1,0 +1,415 @@
+﻿@model List<ERP_DTO.TaxElementVariableDetail_DTO>
+
+<div class="w-100 table-responsive">
+    <table class="table table-bordered table-hover align-middle">
+        <thead>
+            <tr class="table-info">
+                <th class="datetype text-center">From Date</th>
+                <th class="datetype text-center">To Date</th>
+                <th class="table-width-xl text-center">HSN</th>
+                <th class="table-width-lg text-end">HSN Percent</th>
+                <th class="table-width-xl text-center">SAC</th>
+                <th class="table-width-lg text-end">SAC Percent</th>
+                <th class="action text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody id="VNTableBody">
+            <tr id="VNTempRow" style="display: none;">
+                <td class="datetype">
+                    <input id="FromDate" class="form-control FromDate datepicker text-center" autocomplete="off" style="max-width:120px !important" />
+                </td>
+                <td class="datetype">
+                    <input id="ToDate" class="form-control ToDate datepicker text-center" autocomplete="off" style="max-width:120px !important" />
+                </td>
+                <td class="table-width-xl">
+                    <select id="HSN" class="form-select HSN text-center" asp-items="@ViewBag.HSN"></select>
+                </td>
+                <td class="table-width-lg">
+                    <div class="d-flex align-items-center">
+                        <input id="HSNPercent" class="form-control decimal HSNPercent text-end" autocomplete="off" /><span class="percent-symbol">%</span>
+                    </div>
+                </td>
+                <td class="table-width-xl">
+                    <select id="SAC" class="form-select SAC text-center" asp-items="@ViewBag.SAC"></select>
+                </td>
+                <td class="table-width-lg">
+                    <div class="d-flex align-items-center">
+                        <input id="SACPercent" class="form-control decimal SACPercent text-end" autocomplete="off" /><span class="percent-symbol">%</span>
+                    </div>
+                </td>
+                <td class="action text-center">
+                    <input type="hidden" name="IsDeleted" value="false" class="IsDeleted" />
+                    <a class="VNRowRemove btn text-danger p-0 icon-link shadow-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                        </svg>
+                    </a>
+                </td>
+            </tr>
+            @if (Model != null)
+            {
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr class="VNNewRow">
+                        <td class="datetype">
+                            <input id="FromDate" name="Variable_Nature_List[@i].FromDate" class="form-control FromDate datepicker text-center" autocomplete="off" value="@Model[i].FromDate" style="max-width:120px !important" />
+                        </td>
+                        <td class="datetype">
+                            <input id="ToDate" name="Variable_Nature_List[@i].ToDate" class="form-control ToDate datepicker text-center" autocomplete="off" value="@Model[i].ToDate" style="max-width:120px !important" />
+                        </td>
+                        <td class="table-width-xl">
+                            <select id="HSN" name="Variable_Nature_List[@i].HSN" class="form-select HSN text-center">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.HSN)
+                                {
+                                    if (item.Value == Model[i].HSN)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td class="table-width-lg">
+                            <div class="d-flex align-items-center">
+                                <input id="HSNPercent" name="Variable_Nature_List[@i].HSNPercent" class="form-control decimal HSNPercent text-end" autocomplete="off" value="@Model[i].HSNPercent" />
+                                <span class="percent-symbol">%</span>
+                            </div>
+                        </td>
+                        <td class="table-width-xl">
+                            <select id="SAC" name="Variable_Nature_List[@i].SAC" class="form-select SAC text-center">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.SAC)
+                                {
+                                    if (item.Value == Model[i].SAC)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td class="table-width-lg">
+                            <div class="d-flex align-items-center">
+                                <input id="SACPercent" name="Variable_Nature_List[@i].SACPercent" class="form-control decimal SACPercent text-end" autocomplete="off" value="@Model[i].SACPercent" />
+                                <span class="percent-symbol">%</span>
+                            </div>
+                        </td>
+                        <td class="action text-center">
+                            @if (@Model[i].TaxNumber != 0)
+                            {
+                                <input name="Variable_Nature_List[@i].TaxNumber" type="hidden" class="TaxNumber" value="@Model[i].TaxNumber" />
+                            }
+                            <input type="hidden" name="Variable_Nature_List[@i].IsDeleted" value="false" />
+                            <a class="VNRowRemove btn text-danger p-0 icon-link shadow-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                    <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+     $(document).ready(function () {
+         function InitializeFlatpickrs() {
+             $(".datepicker").flatpickr({
+                 dateFormat: "d-M-Y",
+                 altInput: false,
+             });
+         }
+
+        var rowCount = @(Model != null ? Model.Count : 0);
+        var isAddingRow = false;
+
+        function addRow() {
+            var VNNewRow = $("#VNTempRow").clone().removeAttr("style").removeAttr("id").addClass("VNNewRow");
+            VNNewRow.find("input.FromDate").attr("name", "Variable_Nature_List[" + rowCount + "].FromDate");
+            VNNewRow.find("input.ToDate").attr("name", "Variable_Nature_List[" + rowCount + "].ToDate");
+            VNNewRow.find("select.HSN").attr("name", "Variable_Nature_List[" + rowCount + "].HSN");
+            VNNewRow.find("input.HSNPercent").attr("name", "Variable_Nature_List[" + rowCount + "].HSNPercent").val("0.00");
+            VNNewRow.find("select.SAC").attr("name", "Variable_Nature_List[" + rowCount + "].SAC");
+            VNNewRow.find("input.SACPercent").attr("name", "Variable_Nature_List[" + rowCount + "].SACPercent").val("0.00");
+            VNNewRow.find("input.IsDeleted").attr("name", "Variable_Nature_List[" + rowCount + "].IsDeleted");
+
+            VNNewRow.find("input[name='Variable_Nature_List[" + rowCount + "].IsDeleted']").val(false);
+
+            $("#VNTableBody").append(VNNewRow);
+            rowCount++;
+            VNNewRow.data("isValid", false);
+            isAddingRow = false;
+
+            InitializeFlatpickrs();
+        }
+
+        if ($("tr.VNNewRow").length == 0) {
+            addRow();
+        }
+
+        $("tr.VNNewRow").each(function () {
+            enableDisablePercentage($(this));
+        });
+
+        $(document).on('click', '.VNRowRemove', function () {
+            $(this).closest('tr').find("input[name*='IsDeleted']").val(true);
+            $(this).closest('tr').hide();
+        });
+
+        $(document).on('keydown', "tr.VNNewRow select, tr.VNNewRow input.FromDate, tr.VNNewRow input.ToDate,tr.VNNewRow select.HSN,tr.VNNewRow select.SAC,tr.VNNewRow input.HSNPercent,tr.VNNewRow input.SACPercent, tr.VNNewRow input[type='text']", function (event) {
+            if (event.keyCode === 9) {
+                if (!validateField($(this)))
+                    event.preventDefault();
+            }
+        });
+
+        $(document).on("change", "tr.VNNewRow select.HSN, tr.VNNewRow select.SAC", function () {
+            var currentRow = $(this).closest("tr.VNNewRow");
+            enableDisablePercentage(currentRow);
+        });
+
+        $(document).on("change", "tr.VNNewRow select, tr.VNNewRow input.FromDate, tr.VNNewRow input.ToDate,tr.VNNewRow select.HSN,tr.VNNewRow select.SAC,tr.VNNewRow input.HSNPercent,tr.VNNewRow input.SACPercent, tr.VNNewRow input[type='text']", function () {
+            if (isAddingRow)
+                return;
+            isAddingRow = true;
+
+            var currentInput = $(this);
+            var isValid = validateField(currentInput);
+            var currentRow = $(this).closest("tr.VNNewRow");
+            if (isValid) {
+                if (checkAllFieldsValid(currentRow)) {
+                    currentRow.data("isValid", true);
+                }
+                else {
+                    currentRow.data("isValid", false);
+                }
+            }
+            else {
+                currentRow.data("isValid", false);
+            }
+            if (currentRow.data("isValid")) {
+                var lastRow = $("tr.VNNewRow").last();
+                if (checkAllFieldsValid(lastRow))
+                    addRow();
+
+            }
+            else {
+                isAddingRow = false;
+            }
+        });
+
+        function checkAllFieldsValid(currentRow) {
+            var allFieldsValid = true;
+            $("tr.VNNewRow:visible").each(function () {
+                $(this).find("select, input.FromDate, input.ToDate,input.HSNPercent,input.SACPercent,select.HSN,select.SAC, input[type='text']").each(function () {
+                    if (!validateField($(this))) {
+                        allFieldsValid = false;
+                        return false;
+                    }
+                });
+                if (!allFieldsValid) return false;
+            });
+            return allFieldsValid;
+        }
+
+        function validateField(currentInput) {
+            var valid = 1;
+            var inputValue = currentInput.val();
+            var currentRow = currentInput.closest("tr.VNNewRow");
+
+            if (currentInput.hasClass("FromDate") || currentInput.hasClass("ToDate")) {
+                valid = validateDateRange(currentInput);
+            }
+            // if (inputValue === "") {
+            //     valid = 0;
+            // }
+
+            var HSNSelect = currentRow.find("select.HSN");
+            var SACSelect = currentRow.find("select.SAC");
+            var HSNPercentInput = currentRow.find("input.HSNPercent");
+            var SACPercentInput = currentRow.find("input.SACPercent");
+
+            if (HSNSelect.val() == "" && SACSelect.val() == "")
+                    valid = 0;
+
+            if (currentInput.hasClass("SACPercent") || currentInput.hasClass("HSNPercent")) {
+                var SACPercentInput = currentRow.find("input.SACPercent");
+                var HSNPercentInput = currentRow.find("input.HSNPercent");
+                var SACPercent = SACPercentInput.val();
+                var HSNPercent = HSNPercentInput.val();
+                var allFieldsValid = false;
+
+                if (HSNSelect.val() !== "") {
+                    if (HSNPercent > 0) {
+                       
+                    }
+                    else{
+                        valid = 0;
+                    }
+                }
+                else if (SACSelect.val() !== "") {
+                    if (SACPercent > 0) {
+
+                    }
+                    else {
+                        valid = 0;
+                    }
+                }
+            }
+
+            if (valid == 0) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+        function validateDateRange(currentInput) {
+            var valid = 1;
+            var currentRow = currentInput.closest("tr.VNNewRow");
+            var fromDateInput = currentRow.find("input.FromDate");
+            var toDateInput = currentRow.find("input.ToDate");
+            var fromDate = fromDateInput.val();
+            var toDate = toDateInput.val();
+            if (fromDate === "" || toDate === "") {
+                valid = 0;
+            }
+            var from = new Date(fromDate);
+            var to = new Date(toDate);
+            if (to < from) {
+                alert("'To Date' must be greater than or equal to 'From Date'");
+                currentInput.val("");
+                valid = 0;
+            }
+            return valid;
+        }
+
+        $("#VNAddRowButton").click(function () {
+            var lastRow = $("tr.VNNewRow").last();
+            if (checkAllFieldsValid(lastRow))
+                addRow();
+            else {
+                var firstInvalidField = null;
+                lastRow.find("select, input.FromDate, input.ToDate,tr.VNNewRow input.HSNPercent,tr.VNNewRow input.SACPercent,tr.VNNewRow select.HSN,tr.VNNewRow select.SAC, input[type='text']").each(function () {
+                    if (!validateField($(this))) {
+                        if (firstInvalidField == null)
+                            firstInvalidField = $(this);
+                        return false;
+                    }
+                });
+                if (firstInvalidField != null) {
+                    alert("Please complete all fields !");
+                    firstInvalidField.focus();
+                }
+            }
+        });
+
+        // $('form').submit(function (event) {
+        //     $("tr.VNNewRow").each(function () {
+        //         var isEmpty = true;
+        //         $(this).find("select, input.FromDate, input.ToDate, input[type='text']").each(function () {
+        //             if ($(this).val() !== "") {
+        //                 isEmpty = false;
+        //                 return false;
+        //             }
+        //         });
+        //         if (isEmpty) {
+        //             $(this).remove();
+        //         }
+
+        //     });
+        // });
+
+        function enableDisablePercentage(currentRow) {
+            var HSNSelect = currentRow.find("select.HSN");
+            var SACSelect = currentRow.find("select.SAC");
+            var HSNPercentInput = currentRow.find("input.HSNPercent");
+            var SACPercentInput = currentRow.find("input.SACPercent");
+
+            HSNPercentInput.prop("disabled", true);
+            SACPercentInput.prop("disabled", true);
+
+            if (HSNSelect.val()) {
+                SACSelect.val(null);
+                SACSelect.prop("disabled", true);
+                SACPercentInput.val("0.00");
+                SACPercentInput.prop("disabled", true);
+                HSNPercentInput.prop("disabled", false);
+            } else if (SACSelect.val()) {
+                HSNSelect.val(null);
+                HSNSelect.prop("disabled", true);
+                HSNPercentInput.val("0.00");
+                HSNPercentInput.prop("disabled", true);
+                SACPercentInput.prop("disabled", false); 
+            }
+            else {
+                HSNPercentInput.val("0.00");
+                SACPercentInput.val("0.00");
+
+                SACSelect.prop("disabled", false);
+                HSNSelect.prop("disabled", false);
+            }
+
+            if (HSNSelect.val() == "") {
+                HSNPercentInput.val("0.00");
+            } else if (SACSelect.val()) {
+                SACPercentInput.val("0.00");
+            }
+
+        }
+        $("#VNOkayButton").click(function () {
+            Gridvalidation();
+             });
+        $("#VNCloseButton").click(function () {
+            Gridvalidation();
+             });
+            // var lastRow = $("tr.VNNewRow").last();
+            // var firstInvalidField = null;
+            // lastRow.find("select, input.FromDate, input.ToDate,input.HSNPercent,input.SACPercent,select.HSN,select.SAC,  input[type='text']").each(function () {
+            //     if (!validateField($(this))) {
+            //         if (firstInvalidField == null)
+            //             firstInvalidField = $(this);
+            //         return false;
+            //     }
+            // });
+            // if (firstInvalidField != null) {
+            //     alert("Please complete all fields !");
+            //     firstInvalidField.focus();
+            // }
+            // else {
+            //     $("#VariableNatureModel").modal('hide');
+            // }
+        
+        function Gridvalidation(){
+              $("tr.VNNewRow").each(function () {
+                var fromDate = $(this).find("input.FromDate").val();
+                var toDate = $(this).find("input.ToDate").val();
+                var HSNSelect = $(this).find("select.HSN").val();
+                var HSNPercent = $(this).find("input.HSNPercent").val();
+                var SACSelect = $(this).find("select.SAC").val();
+                var SACPercent = $(this).find("input.SACPercent").val();
+
+                if (!fromDate && !toDate && !HSNSelect && !SACSelect && !(HSNPercent > 0) && !(SACPercent > 0)) {
+                    $(this).remove();
+                }
+            });
+
+            var lastRow = $("tr.VNNewRow").last();
+            if (checkAllFieldsValid(lastRow)) {
+
+                $("#VariableNatureModel").modal('hide');
+            }
+            else {
+                alert("Please complete all fields !");
+                firstInvalidField.focus();
+            }
+        }
+    });
+</script>

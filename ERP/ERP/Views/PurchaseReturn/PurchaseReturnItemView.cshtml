@@ -1,0 +1,1130 @@
+﻿@model List<ERP_DTO.PurchaseReturnItem_DTO>
+
+<div class="col h-100">
+    <div class="w-12 table-responsive table-body table-body-f">
+        <table class="table table-bordered table-hover align-middle w-100" id="ItemTable">
+            <thead>
+                <tr class="table-info text-center">
+                    <th class="px-2 del">
+                    </th>
+                    <th class="text-start">Item Code</th>
+                    <th class="text-start">Description</th>
+                    <th class="text-start">Item Group</th>
+                    <th class="text-start">Warehouse</th>
+                    <th class="table-width-md">UoM</th>
+                    <th class="table-width-xl">Qty</th>
+                    <th class="table-width-xl">Unit Price</th>
+                    <th class="table-width-3xl">Amount</th>
+                    <th class="table-width-3xl">
+                        Expense value
+                    </th>
+                    <th class="table-width-lg">
+                        HSN
+                    </th>
+                    <th class="table-width-xxl">
+                        GST Amount
+                    </th>
+                    <th class="table-width-sm">
+                        WHT Percent
+                    </th>
+                    <th class="table-width-xxl">
+                        WH_Tax Amount
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="TableBody">
+                <tr id="TempRow" style="display: none;">
+                    <td class="p-2 del">
+                        <input type="checkbox" class="CheckItem form-check-input" name="CheckItem">
+                    </td>
+                    <td>
+                        <input id="PRI_Index" type="hidden" class="form-control PRI_Index" autocomplete="off" />
+                        <input id="PRI_MS_Number" class="PRI_MS_Number" type="hidden" />
+                        <input id="PRI_Item_Number" class="PRI_Item_Number" type="hidden" />
+                        <input id="PRI_ItemCode" class="form-control PRI_ItemCode" autocomplete="off" oninput="OnInput(this)" onfocus="OnFocus(this)" />
+                        <div class="search-results card" style="display:none"></div>
+                    </td>
+                    <td>
+                        <input id="PRI_Description" class="form-control PRI_Description" autocomplete="off" readonly />
+                    </td>
+                    <td>
+                        <input id="PRI_ItemGroup" class="form-control PRI_ItemGroup" autocomplete="off" readonly />
+                    </td>
+                    <td>
+                        <select id="PRI_Warehouse_Number" class="form-select PRI_Warehouse_Number" asp-items="@ViewBag.Warehouse"></select>
+                    </td>
+                    <td class="table-width-md">
+                        <select id="PRI_UoM_Number" class="form-select PRI_UoM_Number text-center" asp-items="@ViewBag.UoM"></select>
+                        <input type="hidden" id="PRI_DecimalPlaces" class="form-control PRI_DecimalPlaces" autocomplete="off" />
+                        <input type="hidden" id="PRI_UoM" class="form-control PRI_UoM" autocomplete="off" />
+                    </td>
+                    <td class="table-width-xl">
+                        <input id="PRI_Qty" class="form-control PRI_Qty number QtyNumbers text-center" autocomplete="off" />
+                    </td>
+                    <td class="table-width-xl">
+                        <input id="PRI_UnitPrice" class="form-control PRI_UnitPrice number UnitDecimal text-end" autocomplete="off" />
+                    </td>
+                    <td class="table-width-3xl">
+                        <input id="PRI_Amount" class="form-control PRI_Amount text-end" autocomplete="off" readonly />
+                    </td>
+                    <td class="table-width-3xl">
+                        <input id="PRI_ExpenseValue" class="form-control PRI_ExpenseValue text-end" autocomplete="off" readonly />
+                    </td>
+                    <td class="table-width-lg">
+                        <select id="PRI_HSN_Number" class="form-select PRI_HSN_Number text-center" asp-items="@ViewBag.HSN"></select>
+                    </td>
+                    <td class="table-width-xxl">
+                        <input id="PRI_GST_Amount" class="form-control PRI_GST_Amount text-end" autocomplete="off" readonly />
+                    </td>
+                    <td class="table-width-sm">
+                        <input id="PRI_WHT_Percent" class="form-control PRI_WHT_Percent text-center" autocomplete="off" readonly />
+                    </td>
+                    <td class="table-width-xxl">
+                        <input id="PRI_WHT_Amount" class="form-control PRI_WHT_Amount text-end" autocomplete="off" readonly />
+                        <input type="hidden" name="PRI_IsDeleted" class="PRI_IsDeleted" value="false" />
+                    </td>
+                </tr>
+                @if (Model != null)
+                {
+                    @for (int i = 0; i < Model.Count; i++)
+                    {
+                        <tr class="NewRow" style="@(@Model[i].PRI_IsDeleted == "true" ? "display: none;":"")">
+                            <td class="p-2 del">
+                                <input type="checkbox" class="CheckItem form-check-input" name="CheckItem">
+                            </td>
+                            <td>
+                                <input id="PRI_Index" name="ReturnItems[@i].PRI_Index" type="hidden" class="PRI_Index" autocomplete="off" value="@Model[i].PRI_Index" />
+                                <input id="PRI_MS_Number" name="ReturnItems[@i].PRI_MS_Number" class="PRI_MS_Number" type="hidden" value="@Model[i].PRI_MS_Number" />
+                                <input id="PRI_Item_Number" name="ReturnItems[@i].PRI_Item_Number" class="PRI_Item_Number" type="hidden" value="@Model[i].PRI_Item_Number" />
+                                <input id="PRI_ItemCode" name="ReturnItems[@i].PRI_ItemCode" class="form-control PRI_ItemCode" autocomplete="off" value="@Model[i].PRI_ItemCode" oninput="OnInput(this)" onfocus="OnFocus(this)" />
+                                <div class="search-results card" style="display:none"></div>
+                            </td>
+                            <td>
+                                <input id="PRI_Description" name="ReturnItems[@i].PRI_Description" class="form-control PRI_Description" readonly value="@Model[i].PRI_Description" />
+                            </td>
+                            <td>
+                                <input id="PRI_ItemGroup" name="ReturnItems[@i].PRI_ItemGroup" class="form-control PRI_ItemGroup" readonly value="@Model[i].PRI_ItemGroup" />
+                            </td>
+                            <td>
+                                <select id="PRI_Warehouse_Number" name="ReturnItems[@i].PRI_Warehouse_Number" class="form-select PRI_Warehouse_Number">
+                                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Warehouse)
+                                    {
+                                        if (item.Value == Model[i].PRI_Warehouse_Number)
+                                        {
+                                            <option value="@item.Value" selected>@item.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    }
+                                </select>
+                            </td>
+                            <td class="table-width-md">
+                                <select id="PRI_UoM_Number" name="ReturnItems[@i].PRI_UoM_Number" class="form-select PRI_UoM_Number">
+                                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.UoM)
+                                    {
+                                        if (item.Value == Model[i].PRI_UoM_Number)
+                                        {
+                                            <option value="@item.Value" selected>@item.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    }
+                                </select>
+                                <input id="PRI_UoM" name="ReturnItems[@i].PRI_UoM" class="form-control PRI_UoM" type="hidden" value="@Model[i].PRI_UoM" />
+                                <input type="hidden" id="PRI_DecimalPlaces" name="ReturnItems[@i].PRI_DecimalPlaces" class="form-control PRI_DecimalPlaces" autocomplete="off" value="@Convert.ToDouble(@Model[i].PRI_DecimalPlaces)" />
+                            </td>
+                            <td class="table-width-xl">
+                                <input id="PRI_Qty" name="ReturnItems[@i].PRI_Qty" class="form-control PRI_Qty number QtyNumbers text-center" autocomplete="off" value="@Convert.ToDouble(@Model[i].PRI_Qty)" />
+                            </td>
+                            <td class="table-width-xl">
+                                <input id="PRI_UnitPrice" name="ReturnItems[@i].PRI_UnitPrice" class="form-control PRI_UnitPrice number UnitDecimal text-end" autocomplete="off" value="@Convert.ToDouble(@Model[i].PRI_UnitPrice)" />
+                            </td>
+                            <td class="table-width-3xl">
+                                <input id="PRI_Amount" name="ReturnItems[@i].PRI_Amount" class="form-control PRI_Amount text-end" readonly autocomplete="off" value="@Convert.ToDouble(@Model[i].PRI_Amount)" />
+                                @if (@Model[i].PRI_Number != 0)
+                                {
+                                    <input name="ReturnItems[@i].PRI_Number" type="hidden" class="PRI_Number" value="@Model[i].PRI_Number" />
+                                }
+                                <input type="hidden" name="ReturnItems[@i].PRI_IsDeleted" class="PRI_IsDeleted" value="@Model[i].PRI_IsDeleted" />
+                            </td>
+                            <td class="table-width-3xl">
+                                <input id="PRI_ExpenseValue" name="ReturnItems[@i].PRI_ExpenseValue" class="form-control PRI_ExpenseValue text-end" autocomplete="off" readonly value="@Convert.ToDouble(@Model[i].PRI_ExpenseValue)" />
+                            </td>
+                            <td class="table-width-lg">
+                                <select id="PRI_HSN_Number" name="ReturnItems[@i].PRI_HSN_Number" class="form-select PRI_HSN_Number">
+                                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.HSN)
+                                    {
+                                        if (item.Value == Model[i].PRI_HSN_Number)
+                                        {
+                                            <option value="@item.Value" selected>@item.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    }
+                                </select>
+                            </td>
+                            <td class="table-width-xxl">
+                                <input id="PRI_GST_Amount" name="ReturnItems[@i].PRI_GST_Amount" class="form-control PRI_GST_Amount text-end" autocomplete="off" readonly value="@Convert.ToDouble(@Model[i].PRI_GST_Amount)" />
+                            </td>
+                            <td class="table-width-sm">
+                                <input id="PRI_WHT_Percent" name="ReturnItems[@i].PRI_WHT_Percent" class="form-control PRI_WHT_Percent text-center" autocomplete="off" readonly value="@Convert.ToDouble(@Model[i].PRI_WHT_Percent)" />
+                            </td>
+                            <td class="table-width-xxl">
+                                <input id="PRI_WHT_Amount" name="ReturnItems[@i].PRI_WHT_Amount" class="form-control PRI_WHT_Amount text-end" autocomplete="off" readonly value="@Convert.ToDouble(@Model[i].PRI_WHT_Amount)" />
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+            <tfoot>
+                <tr class="table-info">
+                    <td colspan="6" class="text-end py-2"><span class="float-end  pe-3">Total</span></td>
+                    <td>
+                        <input id="TotalQty" class="form-control text-center" readonly />
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        <input id="TotalAmount" class="form-control text-end" readonly />
+                    </td>
+                    <td>
+                        <input id="TotalExpenseValue" class="form-control text-end" readonly />
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        <input id="TotalGST" class="form-control text-end" readonly />
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        <input id="TotalWHT" class="form-control text-end" readonly />
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div class="row table-footer align-items-center">
+        <div class="col">
+            <a id="AddRowButton" class="btn btn-primary">Add Row</a>
+            <a class="RowRemove btn btn-primary">
+                Delete Row
+            </a>
+        </div>
+    </div>
+    </div>
+<script>
+    $(document).ready(function () {
+        var rowCount = @(Model != null ? Model.Count : 0);
+        var isAddingRow = false;
+
+        function addRow() {
+            var NewRow = $("#TempRow").clone().removeAttr("style").removeAttr("id").addClass("NewRow");
+            NewRow.find("input.PRI_Index").attr("name", "ReturnItems[" + rowCount + "].PRI_Index").val(rowCount + 1);
+            NewRow.find("input.PRI_MS_Number").attr("name", "ReturnItems[" + rowCount + "].PRI_MS_Number");
+            NewRow.find("input.PRI_Item_Number").attr("name", "ReturnItems[" + rowCount + "].PRI_Item_Number");
+            NewRow.find("input.PRI_ItemCode").attr("name", "ReturnItems[" + rowCount + "].PRI_ItemCode");
+            NewRow.find("input.PRI_Description").attr("name", "ReturnItems[" + rowCount + "].PRI_Description");
+            NewRow.find("input.PRI_DecimalPlaces").attr("name", "ReturnItems[" + rowCount + "].PRI_DecimalPlaces");
+            NewRow.find("input.PRI_ItemGroup").attr("name", "ReturnItems[" + rowCount + "].PRI_ItemGroup");
+            NewRow.find("select.PRI_Warehouse_Number").attr("name", "ReturnItems[" + rowCount + "].PRI_Warehouse_Number");
+            NewRow.find("select.PRI_UoM_Number").attr("name", "ReturnItems[" + rowCount + "].PRI_UoM_Number");
+            NewRow.find("select.PRI_UoM").attr("name", "ReturnItems[" + rowCount + "].PRI_UoM");
+            NewRow.find("input.PRI_Qty").attr("name", "ReturnItems[" + rowCount + "].PRI_Qty");
+            NewRow.find("input.PRI_UnitPrice").attr("name", "ReturnItems[" + rowCount + "].PRI_UnitPrice");
+            NewRow.find("input.PRI_Amount").attr("name", "ReturnItems[" + rowCount + "].PRI_Amount");
+
+            NewRow.find("input.PRI_ExpenseValue").attr("name", "ReturnItems[" + rowCount + "].PRI_ExpenseValue");
+            NewRow.find("select.PRI_HSN_Number").attr("name", "ReturnItems[" + rowCount + "].PRI_HSN_Number");
+            NewRow.find("input.PRI_GST_Amount").attr("name", "ReturnItems[" + rowCount + "].PRI_GST_Amount");
+            NewRow.find("input.PRI_WHT_Percent").attr("name", "ReturnItems[" + rowCount + "].PRI_WHT_Percent");
+            NewRow.find("input.PRI_WHT_Amount").attr("name", "ReturnItems[" + rowCount + "].PRI_WHT_Amount");
+            NewRow.find("input.PRI_IsDeleted").attr("name", "ReturnItems[" + rowCount + "].PRI_IsDeleted").val("false");
+
+            $("#TableBody").append(NewRow);
+            rowCount++;
+            NewRow.data("isValid", false);
+            isAddingRow = false;
+
+        }
+
+        if ($("tr.NewRow").length == 0) {
+            addRow();
+
+            (async () => {
+                CalculateFooter();
+            })();
+        }
+
+        $(document).on('click', '.RowRemove', function () {
+            $(".CheckItem:checked").each(function () {
+                const $checkbox = $(this);
+                const $row = $checkbox.closest('tr');
+
+                $row.find(".CheckItem").prop('checked', false);
+                $row.find(".PRI_IsDeleted").val("true");
+                $row.hide();
+            });
+
+            (async () => {
+                await CalculateFooter();
+                await CalculateExpense();
+            })();
+        });
+
+        $(document).on('keydown', "tr.NewRow select, tr.NewRow input.PRI_Item_Number,tr.NewRow input.PRI_Qty,tr.NewRow input.PRI_UnitPrice, tr.NewRow input[type='text']", function (event) {
+            if (event.keyCode === 9) {
+                if (!validateField($(this)))
+                    event.preventDefault();
+            }
+        });
+
+        $(document).on('change', "tr.NewRow select.PRI_UoM_Number", function () {
+            var selectedValue = $(this).val();
+            var currentInput = $(this);
+            var currentRow = currentInput.closest('tr.NewRow');
+
+            var uom = currentRow.find('input.PRI_UoM').val();
+
+            if (uom === selectedValue) { } else {
+                alert("Selected Uom differs from item master purchase unit");
+            }
+
+            $.ajax({
+                type: "get",
+                url: "uom",
+                data: { UoM: selectedValue },
+                datatype: "json",
+                traditional: true,
+                success: function (decimalPlaces) {
+                    if (decimalPlaces === "") {
+                        decimalPlaces = 2;
+                    }
+
+                    currentRow.find('input.PRI_DecimalPlaces').val(decimalPlaces);
+                    var value = currentRow.find('input.PRI_Qty').val();
+                    currentRow.find('input.PRI_Qty').val(NumberToIndianRupees(value, decimalPlaces));
+                }
+            });
+        });
+        $(document).on('change', "tr.NewRow select.PRI_HSN_Number", function () {
+            CalAmount();
+        });
+
+        $(document).on("change", "tr.NewRow select, input.PRI_Item_Number,input.PRI_Qty,input.PRI_UnitPrice, input[type='text']", function () {
+            if (isAddingRow)
+                return;
+            isAddingRow = true;
+
+            var currentInput = $(this);
+            var isValid = validateField(currentInput);
+            var currentRow = $(this).closest("tr.NewRow");
+            if (isValid) {
+                if (checkAllFieldsValid(currentRow)) {
+                    currentRow.data("isValid", true);
+                }
+                else {
+                    currentRow.data("isValid", false);
+                }
+            }
+            else {
+                currentRow.data("isValid", false);
+            }
+            if (currentRow.data("isValid")) {
+                var lastRow = $("tr.NewRow").last();
+                if (checkAllFieldsValid(lastRow))
+                    addRow();
+            }
+            else {
+                isAddingRow = false;
+            }
+        });
+
+        function checkAllFieldsValid(currentRow) {
+            var allFieldsValid = true;
+            $("tr.NewRow:visible").each(function () {
+                $(this).find("select, input.PRI_Item_Number,input.PRI_Qty,input.PRI_UnitPrice").each(function () {
+                    if (!validateField($(this))) {
+                        allFieldsValid = false;
+                        return false;
+                    }
+                });
+                if (!allFieldsValid) return false;
+            });
+            return allFieldsValid;
+        }
+        function validateField(currentInput) {
+            var valid = 1;
+            var inputValue = currentInput.val();
+            if (inputValue === "") {
+                valid = 0;
+            }
+
+            if (valid == 0) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+        $("#AddRowButton").click(function () {
+            var lastRow = $("tr.NewRow").last();
+            if (checkAllFieldsValid(lastRow)) {
+                addRow();
+            }
+            else {
+                var firstInvalidField = null;
+                lastRow.find("select, input.PRI_Item_Number,input.PRI_Qty,input.PRI_UnitPrice").each(function () {
+                    if (!validateField($(this))) {
+                        if (firstInvalidField == null)
+                            firstInvalidField = $(this);
+                        return false;
+                    }
+                });
+                if (firstInvalidField != null) {
+                    alert("Please complete all fields !");
+                    firstInvalidField.focus();
+                }
+            }
+        });
+
+        $(document).on('input', "input.PRI_UnitPrice, input.PRI_Qty", function (event) {
+            var currentInput = $(this);
+
+            var row = currentInput.closest("tr.NewRow");
+
+            var itemIndex = row.find(".PRI_Index").val();
+            var itemNumber = row.find(".PRI_Item_Number").val();
+            var HSNNumber = row.find(".PRI_HSN_Number").val();
+
+            var qty = parseFloat(removeCommas(row.find("input.PRI_Qty").val())) || 0;
+
+            if (qty > 0) {
+                qty = -qty;
+            } else {
+                qty = qty;
+            }
+
+            var unitPrice = parseFloat(removeCommas(row.find("input.PRI_UnitPrice").val())) || 0;
+            var amo = qty * unitPrice;
+            var amount = DecimalIndianRupees(amo);
+            row.find("input.PRI_Amount").val(DecimalIndianRupees(amo));
+            
+            (async () => {
+                await CalculateIExpense($(this));
+            })();
+
+            const ItemExpenseTotals = $("tr.IExNewRow").map(function () {
+                const irow = $(this);
+                if (irow.find("input.PRI_EXP_IsDeleted").val() !== 'true' && irow.find("input.PRI_EXP_Item_Number").val() === itemNumber && irow.find("input.PRI_EXP_Item_Index").val() === itemIndex) {
+                    return {
+                        ExpenseBase: parseFloat(removeCommas(irow.find(".PRI_EXP_ExpenseValue").val())) || 0,
+                    };
+                }
+                return null;
+            }).get().reduce((Value, Assign) => ({
+                ExpenseTotal: Value.ExpenseTotal + Assign.ExpenseBase
+            }), {
+                ExpenseTotal: 0
+            });
+            const ExpenseTotal = DecimalIndianRupees(ItemExpenseTotals.ExpenseTotal);
+            row.find("input.PRI_ExpenseValue").val(ExpenseTotal);
+
+            var Cluster = $("#PRH_TaxCluster_Number").val();
+            var WHTax = $("#PRH_WHT_Number").val();
+            var PRHDATE = $("#PRH_ReturnDate").val();
+
+            var WHTax = $("#PRH_WHT_Tax").val();
+            var WHPercent = $("#PRH_WHT_Percent").val();
+
+            var BaseAmount = parseFloat(removeCommas(amount)) + parseFloat(removeCommas(ExpenseTotal));
+            var GstAmount = 0;
+            (async () => {
+                GstAmount = await GetClusterAmount(Cluster, PRHDATE, HSNNumber, BaseAmount);
+                row.find("input.PRI_GST_Amount").val(DecimalIndianRupees(GstAmount));
+
+                if (WHTax == "1") {
+                    TotalAmount = parseFloat(BaseAmount) + parseFloat(GstAmount);
+                    WHTAmount = parseFloat(TotalAmount) * parseFloat(WHPercent) / 100;
+                }
+                else {
+                    TotalAmount = parseFloat(BaseAmount);
+                    WHTAmount = parseFloat(TotalAmount) * parseFloat(WHPercent) / 100;
+                }
+                if (WHTAmount < 0) {
+                    WHTAmount = WHTAmount * -1;
+                }
+                row.find("input.PRI_WHT_Percent").val(DecimalIndianRupees(WHPercent));
+                row.find("input.PRI_WHT_Amount").val(DecimalIndianRupees(WHTAmount));
+
+                await CalculateFooter();
+            })();
+        });
+
+        $(document).on("blur", "input.PRI_Qty", function () {
+            var value = removeCommas($(this).val());
+            var decimalPlaces = $(this).closest('tr').find("input.PRI_DecimalPlaces").val();
+
+            if (value > 0) {
+                value = -value;
+            } else {
+                value = value;
+            }
+
+            $(this).val(NumberToIndianRupees(value, decimalPlaces));
+        });
+
+        $(document).on('focus', 'tr.NewRow input:not(.CheckItem), tr.NewRow select, tr.NewRow .datePRcker', function () {
+            $(this).closest('tr').find('.CheckItem').prop('checked', true);
+            $('.CheckItem').not($(this).closest('tr').find('.CheckItem')).prop('checked', false);
+        });
+
+        $(document).on('click', '.GSTView', function () {
+            let CheckedCheckbox = document.querySelector('.CheckItem:checked');
+            if (CheckedCheckbox) {
+                var currentRow = $(CheckedCheckbox).closest('tr.NewRow');
+
+                var ItemNumber = currentRow.find('input.PRI_Item_Number').val();
+                var Index = currentRow.find('input.PRI_Index').val();
+                var HSNNumber = currentRow.find('select.PRI_HSN_Number').val();
+                var Expensive = currentRow.find('input.PRI_ExpenseValue').val();
+
+                var Cluster = $("#PRH_TaxCluster_Number").val();
+                var PRHDATE = $("#PRH_ReturnDate").val();
+
+                var qty = parseFloat(removeCommas(currentRow.find("input.PRI_Qty").val())) || 0;
+                var unitPrice = parseFloat(removeCommas(currentRow.find("input.PRI_UnitPrice").val())) || 0;
+
+                var amo = qty * unitPrice;
+                var amount = DecimalIndianRupees(amo);
+                var BaseAmount = parseFloat(removeCommas(amount)) + parseFloat(removeCommas(Expensive));
+
+                if (ItemNumber && HSNNumber) {
+                    $.ajax({
+                        type: "get",
+                        url: "gst/view",
+                        data: { Cluster: Cluster, PRHDATE: PRHDATE, HSN: HSNNumber, BaseAmount: BaseAmount },
+                        datatype: "json",
+                        traditional: true,
+                        success: function (data) {
+                            const Table = document.getElementById('GSTTableView');
+                            Table.innerHTML = "";
+
+                            if (Table) {
+                                const TaxView = ClusterTaxView(data);
+                                Table.appendChild(TaxView);
+                            }
+
+                            new bootstrap.Modal($("#GSTView")).show();
+                            $('#GSTView').on('shown.bs.modal', function () {
+                                $(this).find('[autofocus]').focus();
+                            });
+                        }
+                    });
+                }
+            }
+        });
+
+        $("#PRH_MS_Number").change(function () {
+            var PRH_MS_Number = $(this).val();
+            var PRI_MS_Number = "";
+            var PRH_MS = $(this).val();
+            var AllMatch = true;
+
+            $("tr.NewRow").each(function () {
+                var irow = $(this);
+                var PRI_IsDeleted = $(this).find("input[name*='PRI_IsDeleted']").val() === "true";
+                if (!PRI_IsDeleted) {
+                    PRI_MS_Number = irow.find("input.PRI_MS_Number").val();
+                    if (PRI_MS_Number !== PRH_MS_Number) {
+                        AllMatch = false;
+                        return false;
+                    }
+                }
+            });
+
+            if (!AllMatch) {
+                if (PRI_MS_Number != "") {
+                    if (confirm("Do you want to change the Material Segregation? This action will clear all existing items.")) {
+                        $("tr.NewRow").each(function () {
+                            var irow = $(this);
+                            var PRI_IsDeleted = $(this).find("input[name*='PRI_IsDeleted']").val() === "true";
+                            if (!PRI_IsDeleted) {
+                                $(this).find("input[name*='PRI_IsDeleted']").val(true);
+                                $(this).hide();
+                            }
+                        });
+                        addRow();
+                        CalAmount();
+                    }
+                    else {
+                        $("#PRH_MS_Number").val(PRI_MS_Number);
+                    }
+                }
+            }
+        });
+    });
+
+    function ClusterTaxView(data) {
+        const table = document.createElement('table');
+        table.classList.add('table', 'table-bordered', 'table-hover', 'align-middle', 'w-100');
+
+        const thead = table.createTHead();
+        const headerRow = thead.insertRow();
+        const headers = ["Tax Index", "Tax Element", "Category", "Type", "Load on Inventory", "Load on Inventory %", "Assessable Value", "Percentage", "Tax Amount",];
+        headers.forEach(headerText => {
+            const th = document.createElement('th');
+            th.textContent = headerText;
+            th.classList.add('table-info');
+            headerRow.appendChild(th);
+        });
+
+        const tbody = table.createTBody();
+        let totalAssessable = 0;
+        let totalTaxAmount = 0;
+
+
+        data.forEach(tax => {
+            const row = tbody.insertRow();
+            const TaxIndexCell = row.insertCell();
+            const TaxElementCell = row.insertCell();
+            const CategoryCell = row.insertCell();
+            const TypeCell = row.insertCell();
+            const LoadonCell = row.insertCell();
+            const LoadonPerCell = row.insertCell();
+            const AssessableCell = row.insertCell();
+            const PercentageCell = row.insertCell();
+            const AmountCell = row.insertCell();
+
+            TaxIndexCell.textContent = tax.taxIndex;
+            TaxElementCell.textContent = tax.taxElement;
+            CategoryCell.textContent = tax.taxCategory;
+            TypeCell.textContent = tax.taxType;
+            LoadonCell.textContent = tax.loadonInventory;
+            LoadonPerCell.textContent = tax.loadonInventoryPercent;
+            AssessableCell.textContent = tax.assessableValue.toFixed(2);
+            AssessableCell.style.textAlign = 'right';
+
+            PercentageCell.textContent = tax.percentage.toFixed(2);
+            PercentageCell.style.textAlign = 'right';
+
+            AmountCell.textContent = tax.amount.toFixed(2);
+            AmountCell.style.textAlign = 'right';
+
+            totalAssessable += tax.assessableValue;
+            totalTaxAmount += tax.amount;
+        });
+
+        const tfoot = table.createTFoot();
+        const footerRow = tfoot.insertRow();
+
+        const footerCells = headers.map(() => footerRow.insertCell());
+        footerCells.forEach(cell => {
+            cell.classList.add('table-info'); // Add the class to each footer cell
+        });
+
+        footerCells[footerCells.length - 2].textContent = `Total:`;
+        footerCells[footerCells.length - 2].style.textAlign = 'right';
+        footerCells[footerCells.length - 1].textContent = totalTaxAmount.toFixed(2);
+        footerCells[footerCells.length - 1].style.textAlign = 'right';
+
+        return table;
+    }
+
+    function CalAmount() {
+        $("tr.NewRow").each(function () {
+            var row = $(this);
+            var itemIndex = row.find(".PRI_Index").val();
+            var itemNumber = row.find(".PRI_Item_Number").val();
+            var HSNNumber = row.find(".PRI_HSN_Number").val();
+
+            if (itemNumber) {
+
+                var qty = parseFloat(removeCommas(row.find("input.PRI_Qty").val())) || 0;
+
+                if (qty > 0) {
+                    qty = -qty;
+                } else {
+                    qty = qty;
+                }
+
+                var unitPrice = parseFloat(removeCommas(row.find("input.PRI_UnitPrice").val())) || 0;
+
+                var amo = qty * unitPrice;
+
+                var amount = DecimalIndianRupees(amo);
+                row.find("input.PRI_Amount").val(amount);
+
+                const ItemExpenseTotals = $("tr.IExNewRow").map(function () {
+                    const irow = $(this);
+                    if (irow.find("input.PRI_EXP_IsDeleted").val() !== 'true' && irow.find("input.PRI_EXP_Item_Number").val() === itemNumber && irow.find("input.PRI_EXP_Item_Index").val() === itemIndex) {
+                        return {
+                            ExpenseBase: parseFloat(removeCommas(irow.find(".PRI_EXP_ExpenseValue").val())) || 0,
+                        };
+                    }
+                    return null;
+                }).get().reduce((Value, Assign) => ({
+                    ExpenseTotal: Value.ExpenseTotal + Assign.ExpenseBase
+                }), {
+                    ExpenseTotal: 0
+                });
+                const ExpenseTotal = DecimalIndianRupees(ItemExpenseTotals.ExpenseTotal);
+                row.find("input.PRI_ExpenseValue").val(ExpenseTotal);
+
+                var Cluster = $("#PRH_TaxCluster_Number").val();
+                var PRHDATE = $("#PRH_ReturnDate").val();
+
+                var WHNumber = $("#PRH_WHT_Number").val();
+
+                var WHTax = 1;
+                var WHPercent = 0;
+
+                if (WHNumber) {
+                    var WHTax = $("#PRH_WHT_Tax").val();
+                    var WHPercent = $("#PRH_WHT_Percent").val();
+                }
+
+                var BaseAmount = parseFloat(removeCommas(amount)) + parseFloat(removeCommas(ExpenseTotal));
+
+                var GstAmount = 0;
+                var TotalAmount = 0;
+                var WHTAmount = 0;
+                (async () => {
+                    GstAmount = await GetClusterAmount(Cluster, PRHDATE, HSNNumber, BaseAmount);
+                    row.find("input.PRI_GST_Amount").val(DecimalIndianRupees(GstAmount));
+
+                    if (WHTax == "1") {
+                        TotalAmount = parseFloat(BaseAmount) + parseFloat(GstAmount);
+                        WHTAmount = parseFloat(TotalAmount) * parseFloat(WHPercent) / 100;
+                    }
+                    else {
+                        TotalAmount = parseFloat(BaseAmount);
+                        WHTAmount = parseFloat(TotalAmount) * parseFloat(WHPercent) / 100;
+                    }
+                    if (WHTAmount < 0) {
+                        WHTAmount = WHTAmount * -1;
+                    }
+                    row.find("input.PRI_WHT_Percent").val(DecimalIndianRupees(WHPercent));
+                    row.find("input.PRI_WHT_Amount").val(DecimalIndianRupees(WHTAmount));
+
+                    CalculateFooter();
+                })();
+            }
+        });
+    }
+
+    function OnInput(inputElement) {
+        searchItem(inputElement);
+    }
+    function OnFocus(inputElement) {
+        var tax = inputElement.value;
+        if (!tax) {
+            searchItem(inputElement);
+        }
+        else {
+            $(this).select();
+        }
+    }
+    function searchItem(inputElement) {
+        var itemCode = inputElement.value;
+        var resultsDiv = $(inputElement).next('.search-results');
+        var Metrial = $("#PRH_MS_Number").val();
+
+        if (Metrial) {
+            $.ajax({
+                url: 'item',
+                data: { ItemCode: itemCode, MS: Metrial },
+                type: 'GET',
+                success: function (data) {
+                    resultsDiv.empty();
+                    if (data && data.length > 0) {
+                        resultsDiv.show();
+                        var table = $('<div class="card-body modal-content"><table class="table table-bordered table-hover mb-0"><thead><tr class="table-info"><th>Item Code</th><th>Description</th><th>Item Group</th></tr></thead><tbody></tbody></table></div>');
+                        data.forEach(function (item) {
+                            var row = $('<tr></tr>');
+                            row.append('<td>' + item.itemCode + '</td>');
+                            row.append('<td>' + item.itemDescription + '</td>');
+                            row.append('<td>' + item.itemGroup + '</td>');
+                            table.find('tbody').append(row);
+
+                            row.on('click', function () {
+                                $(inputElement).val(item.itemCode);
+                                $(inputElement).closest('tr').find('input.PRI_Item_Number').val(item.itemNumber);
+                                $(inputElement).closest('tr').find('input.PRI_ItemCode').val(item.itemCode);
+                                $(inputElement).closest('tr').find('input.PRI_Description').val(item.itemDescription);
+                                $(inputElement).closest('tr').find('input.PRI_ItemGroup').val(item.itemGroup);
+                                $(inputElement).closest('tr').find('input.PRI_DecimalPlaces').val(item.decimalPlaces);
+                                $(inputElement).closest('tr').find('input.PRI_MS_Number').val(item.materialSegregation);
+                                $(inputElement).closest('tr').find('select.PRI_Warehouse_Number').val(item.purchaseWarehouse);
+                                $(inputElement).closest('tr').find('select.PRI_UoM_Number').val(item.uoM);
+                                $(inputElement).closest('tr').find('input.PRI_UoM').val(item.uoM);
+                                $(inputElement).closest('tr').find('select.PRI_UoM_Number').focus();
+                                $(inputElement).closest('tr').find('select.PRI_HSN_Number').val(item.hsN_Code);
+
+                                var decimalPlaces = item.decimalPlaces;
+                                if (decimalPlaces === "") {
+                                    decimalPlaces = 2;
+                                }
+                                var value = $(inputElement).closest('tr').find('input.PRI_Qty').val();
+                                $(inputElement).closest('tr').find('input.PRI_Qty').val(NumberToIndianRupees(value, decimalPlaces));
+
+                                SearchWHT();
+                                CalAmount();
+
+                                resultsDiv.hide();
+                            });
+                        });
+
+                        var closeButton = $('<div class="card-header bg-primary py-1"><button type="button" class="p-0 float-end btn btn-sm btn-primary bg-opacity-10"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d = "M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"> </path></svg></button></div>');
+                        closeButton.on('click', function () {
+                            resultsDiv.hide();
+                        });
+
+                        resultsDiv.append(closeButton);
+                        resultsDiv.append(table);
+                    } else {
+                        resultsDiv.hide();
+                        resultsDiv.append('<p>No results found</p>');
+                    }
+                },
+                error: function () {
+                    resultsDiv.text('Error loading data.');
+                    resultsDiv.show();
+                }
+            });
+        }
+        else {
+        }
+    }
+
+    async function GetClusterAmount(Cluster, PRHDATE, HSN, BaseAmount) {
+        try {
+            const Amount = await $.ajax({
+                url: 'gst',
+                data: { Cluster: Cluster, PRHDATE: PRHDATE, HSN: HSN, BaseAmount: BaseAmount },
+                type: 'GET'
+            });
+            return Amount;
+        } catch (error) {
+            return 0;
+        }
+    }
+    async function CalculateFooter() {
+        const ItemTotals = $("tr.NewRow").map(function () {
+            const irow = $(this);
+            if (irow.find("input.PRI_IsDeleted").val() !== 'true') {
+                return {
+                    QtyField: -Math.abs(parseFloat(removeCommas(irow.find(".PRI_Qty").val())) || 0),
+                    AmountField: parseFloat(removeCommas(irow.find(".PRI_Amount").val())) || 0,
+                    ExpenseField: parseFloat(removeCommas(irow.find(".PRI_ExpenseValue").val())) || 0,
+                    GstField: parseFloat(removeCommas(irow.find(".PRI_GST_Amount").val())) || 0,
+                    WHTtField: parseFloat(removeCommas(irow.find(".PRI_WHT_Amount").val())) || 0
+                };
+            }
+            return null;
+        }).get().reduce((Value, Assign) => ({
+            totalQty: Value.totalQty + Assign.QtyField,
+            totalAmount: Value.totalAmount + Assign.AmountField,
+            totalExpense: Value.totalExpense + Assign.ExpenseField,
+            totalGst: Value.totalGst + Assign.GstField,
+            totalWHT: Value.totalWHT + Assign.WHTtField
+        }), {
+            totalQty: 0,
+            totalAmount: 0,
+            totalExpense: 0,
+            totalGst: 0,
+            totalWHT: 0
+        });
+
+        $("#TotalQty").val(FormatNumber(ItemTotals.totalQty.toFixed(2)));
+        $("#TotalAmount").val(ItemTotals.totalAmount.toFixed(2));
+        $("#TotalExpenseValue").val(ItemTotals.totalExpense.toFixed(2));
+        $("#TotalGST").val(ItemTotals.totalGst.toFixed(2));
+        $("#TotalWHT").val(ItemTotals.totalWHT.toFixed(2));
+
+        await CalculateExpense();
+
+        var MaterialCost = $("#PRH_MaterialCost");
+        var ItemMiscExpense = $("#PRH_ItemMiscExpense");
+        var HeaderMiscExpense = $("#PRH_HeaderMiscExpense");
+        var GST_Amount = $("#PRH_GST_Amount");
+        var ReturnAmount = $("#PRH_ReturnAmount");
+        var WHT_Amount = $("#PRH_WHT_Amount");
+        var RoundOff = $("#PRH_RoundOff");
+        var VendorReceivable = $("#PRH_VendorReceivable");
+
+        const HeaderExpenseTotals = $("tr.ExNewRow").map(function () {
+            const irow = $(this);
+            if (irow.find("input.PRH_EXP_IsDeleted").val() !== 'true') {
+                return { ExpenseValue: parseFloat(removeCommas(irow.find(".PRH_EXP_ExpenseValue").val())) || 0, TaxValue: parseFloat(removeCommas(irow.find(".PRH_EXP_TaxValue").val())) || 0 };
+            }
+            return null;
+        }).get().reduce((Value, Assign) => ({ HeaderTotal: Value.HeaderTotal + Assign.ExpenseValue, HeaderGst: Value.HeaderGst + Assign.TaxValue }), { HeaderTotal: 0, HeaderGst: 0 });
+
+        const TotalGst = ItemTotals.totalGst + HeaderExpenseTotals.HeaderGst;
+        const MaterialAmo = parseFloat(ItemTotals.totalAmount);
+        const InvoiceAmo = parseFloat(ItemTotals.totalAmount) + parseFloat(ItemTotals.totalExpense) + parseFloat(HeaderExpenseTotals.HeaderTotal) + parseFloat(TotalGst);
+        const Total = parseFloat(InvoiceAmo) + parseFloat(ItemTotals.totalWHT);
+        const RoundedValue = customRound(Total);
+        const Rounded = parseFloat(RoundedValue) - parseFloat(Total);
+
+        MaterialCost.val(MaterialAmo.toFixed(2));
+        ItemMiscExpense.val(ItemTotals.totalExpense.toFixed(2));
+        HeaderMiscExpense.val(HeaderExpenseTotals.HeaderTotal.toFixed(2));
+        GST_Amount.val(TotalGst.toFixed(2));
+        ReturnAmount.val(InvoiceAmo.toFixed(2));
+        WHT_Amount.val(ItemTotals.totalWHT.toFixed(2));
+
+        RoundOff.val(Rounded.toFixed(2));
+        VendorReceivable.val(RoundedValue.toFixed(2));
+    }
+
+    function customRound(number) {
+        let numberStr = String(number);
+        let cleanStr = numberStr.replace(/,/g, '');
+        let num = parseFloat(cleanStr);
+        if (isNaN(num)) {
+            return 0;
+        }
+        return Math.round(num);
+    }
+    window.onload = CalculateFooter();
+    function FormatNumber(num) {
+        const numberValue = Number(num);
+        if (isNaN(numberValue)) {
+            return 0;
+        }
+        if (Number.isInteger(numberValue)) {
+            return numberValue.toString();
+        } else {
+            return numberValue.toString();
+            return numberValue.toString();
+        }
+    }
+
+    function SearchWHT() {
+        var Vendor = $("#PRH_Vendor_Number").val();
+        var PRHDATE = $("#PRH_ReturnDate").val();
+        var WHTax = $("#PRH_WHT_Number").val();
+
+        GetWHT(Vendor, WHTax, PRHDATE);
+    }
+    function GetWHT(Vendor, WHTax, PRHDATE) {
+        $.ajax({
+            type: "get",
+            url: "wht",
+            data: { Vendor: Vendor, WHTNumber: WHTax, PRHDATE: PRHDATE },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                if (data != null) {
+                    $("#PRH_WHT_Tax").val(data.tax);
+                    $("#PRH_WHT_Percent").val(data.percentage);
+                }
+                else {
+                    $("#PRH_WHT_Tax").val(1);
+                    $("#PRH_WHT_Percent").val(0);
+                }
+                CalAmount();
+            }
+        });
+    }
+
+    function SearchGST() {
+        CalAmount();
+    }
+
+    flatpickr(".datepicker", {
+        dateFormat: "d-M-Y",
+        altInput: false,
+        onChange: function () {
+            GetVendor();
+        }
+    });
+
+    function GetVendor() {
+        var vendor = $("#PRH_Vendor_Number").val();;
+        var PRHDATE = $("#PRH_ReturnDate").val();
+        var isChecked = $("#PRH_ImportOrder").prop("checked");
+        var Import;
+
+        if (isChecked) {
+            Import = true;
+        } else {
+            Import = false;
+        }
+
+        $.ajax({
+            url: 'vendor/get',
+            data: { Vendor: vendor, PRHDATE: PRHDATE, Import: Import },
+            type: 'GET',
+            success: function (ven) {
+                $("#PRH_Vendor").val(ven.vendorName);
+                $("#PRH_Vendor_Number").val(ven.vendorNumber);
+                $("#PRH_Currency").val(ven.currencyCode);
+                $("#PRH_Currency_Number").val(ven.currency);
+                $("#PRH_VendorLocation").val(ven.vendorLocation);
+                $("#PRH_WHT_Number").val(ven.withholdTax);
+                $("#PRH_CreditDays").val(ven.creditDays);
+                $("#PRH_PaymentBase").val(ven.paymentBase);
+
+                SearchClustor(ven.vendorNumber, ven.taxNumber);
+                GetWHT(ven.vendorNumber, ven.withholdTax, PRHDATE);
+
+                if (ven.paymentBase === 2) {
+                    var Date = $("#PRH_ReturnDate").val();
+                    var Credit = $("#PRH_CreditDays").val();
+                    if (Date) {
+                        var CurentDate = addDays(Date, Credit);
+                        $("#PRH_DueDate").val(CurentDate);
+                    }
+                    else {
+                        $("#PRH_DueDate").val("");
+                    }
+                }
+                else if (ven.paymentBase === 3) {
+                    var Date = $("#PRH_SupplierReturnDate").val();
+                    var Credit = $("#PRH_CreditDays").val();
+                    if (Date) {
+                        var CurentDate = addDays(Date, Credit);
+                        $("#PRH_DueDate").val(CurentDate);
+                    }
+                }
+                else {
+                    $("#PRH_DueDate").val("");
+                }
+
+                CalculateExpense();
+            },
+            error: function () {
+                resultsDiv.text('Error loading data.');
+                resultsDiv.show();
+            }
+        });
+    }
+
+    async function CalculateExpense() {
+        const promises = [];
+        $("tr.ExNewRow").each(function () {
+            var $row = $(this);
+            var IsDeleted = $row.find("input.PRH_EXP_IsDeleted").val() === "true";
+            if (!IsDeleted) {
+                promises.push(ExAssignValue($row));
+            }
+        });
+        await Promise.all(promises);
+    }
+    async function CalculateIExpense(currentInput) {
+        var currentRow = currentInput.closest('tr.NewRow');
+
+        var ItemNumber = currentRow.find('input.PRI_Item_Number').val();
+        var Index = currentRow.find('input.PRI_Index').val();
+        var ItemQty = removeCommas(currentRow.find('input.PRI_Qty').val());
+        var MatrialValue = removeCommas(currentRow.find('input.PRI_Amount').val());
+
+        if (ItemNumber) {
+            $("tr.IExNewRow").each(function () {
+                var ExpenseValue = 0;
+                var RowItemNumber = $(this).find("input.PRI_EXP_Item_Number").val();
+                var RowItemIndex = $(this).find("input.PRI_EXP_Item_Index").val();
+                var PRIIsDeleted = $(this).find("input.PRI_EXP_IsDeleted").val();
+
+                if (RowItemNumber === ItemNumber && RowItemIndex === Index && PRIIsDeleted !== 'true') {
+                    var Charge = $(this).find("select.PRI_EXP_CM_Number").val();
+                    var ExpenseBase = parseFloat(removeCommas($(this).find("input.PRI_EXP_ExpenseBase").val())) || 0;
+
+                    if (Charge === "1") {
+                        ExpenseValue = ExpenseBase;
+                    }
+                    else if (Charge === "2") {
+                        ExpenseValue = ItemQty * ExpenseBase;
+                    }
+                    else if (Charge === "3") {
+                        ExpenseValue = MatrialValue * ExpenseBase / 100;
+                    }
+
+                    if (ExpenseValue > 0) {
+                        ExpenseValue = -ExpenseValue;
+                    } else {
+                        ExpenseValue = ExpenseValue;
+                    }
+                    $(this).find("input.PRI_EXP_ExpenseValue").val(DecimalIndianRupees(ExpenseValue));
+                }
+            });
+        }
+    }
+</script>
+<style>
+    .search-results {
+        width: 400px;
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+        $('#ExchangeRate').hide();
+        ExchangeVisibility();
+        GetCustor();
+
+        $("#PRH_ImportOrder").change(function () {
+            var isChecked = $(this).is(':checked');
+
+
+            var resultsDiv = $(".vendor-search-results");
+            resultsDiv.hide();
+
+            if ($("#PRH_VendorLocation").val() != "") {
+                if (isChecked && $("#PRH_VendorLocation").val() != "2") {
+                    if (confirm("Do you want to change the status of the Import Order? This action will clear the already selected vendor.")) {
+                        $("#PRH_Vendor").val("");
+                        $("#PRH_Vendor_Number").val("");
+                        $("#PRH_Currency").val("");
+                        $("#PRH_Currency_Number").val("");
+                        $("#PRH_VendorLocation").val("");
+                        $("#PRH_WHT_Number").val("");
+
+                        var dropdown = document.getElementById("PRH_TaxCluster_Number");
+                        dropdown.innerHTML = "";
+
+                        var PRHDATE = $("#PRH_ReturnDate").val();
+                        GetWHT(0, 0, PRHDATE);
+                    }
+                    else {
+                        $(this).prop('checked', false);
+                    }
+                }
+                else if (!isChecked && $("#PRH_VendorLocation").val() != "1") {
+                    if (confirm("Do you want to change the status of the Import Order? This action will clear the already selected vendor.")) {
+                        $("#PRH_Vendor").val("");
+                        $("#PRH_Vendor_Number").val("");
+                        $("#PRH_Currency").val("");
+                        $("#PRH_Currency_Number").val("");
+                        $("#PRH_VendorLocation").val("");
+                        $("#PRH_WHT_Number").val("");
+
+                        var dropdown = document.getElementById("PRH_TaxCluster_Number");
+                        dropdown.innerHTML = "";
+
+                        var PRHDATE = $("#PRH_ReturnDate").val();
+                        GetWHT(0, 0, PRHDATE);
+                    }
+                    else {
+                        $(this).prop('checked', true);
+                    }
+                }
+            }
+            ExchangeVisibility();
+        });
+
+        function GetCustor() {
+            SearchClustor($('#PRH_Vendor_Number').val(), "");
+        }
+    });
+</script>

@@ -1,0 +1,151 @@
+﻿@model List<ERP_DTO.PINumberPrefix_DTO>
+
+<div class="col table-fixed h-100">
+    <div class="w-100 table-responsive table-body table-body-f">
+        <table class="table table-one table-striped table-bordered table-hover align-middle w-100">
+            <thead>
+                <tr class="table-info">
+                    <th class="datetype text-center">Date</th>
+                    <th>Particulars</th>
+                    <th class="table-width-sm"></th>
+                </tr>
+            </thead>
+            <tbody id="PreTableBody">
+                <tr id="PreTempRow" style="display: none;">
+                    <td>
+                        <input id="PIP_Date" class="form-control PIP_Date datepicker text-center" autocomplete="off" />
+                    </td>
+                    <td>
+                        <input id="PIP_Particulars" class="form-control PIP_Particulars" autocomplete="off" />
+                    </td>
+                    <td class="text-center">
+                        <input type="hidden" name="PIP_IsDeleted" class="PIP_IsDeleted" value="false" />
+                        <a class="PreRowRemove btn btn-sm btn-danger p-1 icon-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                            </svg>
+                        </a>
+                    </td>
+                </tr>
+                @if (Model != null)
+                {
+                    @for (int i = 0; i < Model.Count; i++)
+                    {
+                        <tr class="PreNewRow">
+                            <td>
+                                <input id="PIP_Date" name="PINumberPrefix[@i].PIP_Date" class="form-control PIP_Date text-center datepicker" autocomplete="off" value="@Model[i].PIP_Date" />
+                            </td>
+                            <td>
+                                <input id="PIP_Particulars" name="PINumberPrefix[@i].PIP_Particulars" class="form-control PIP_Particulars" autocomplete="off" value="@Model[i].PIP_Particulars" />
+                            </td>
+                            <td class="text-center">
+                                @if (@Model[i].PIP_Number != 0)
+                                {
+                                    <input name="PINumberPrefix[@i].PIP_Number" type="hidden" class="PIP_Number" value="@Model[i].PIP_Number" />
+                                }
+                                <input type="hidden" name="PINumberPrefix[@i].PIP_IsDeleted" value="false" class="PIP_IsDeleted" />
+                                <a class="PreRowRemove btn btn-sm btn-danger p-1 icon-link">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                                    </svg>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="row table-footer align-items-center">
+    <div class="col">
+        <a id="PreNewRowButton" class="btn btn-primary">Add Row</a>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        function PrefixInitializeFlatpickrs() {
+            $(".datepicker").flatpickr({
+                dateFormat: "d-M-Y",
+                altInput: false,
+            });
+        }
+
+        var rowCount = @(Model != null ? Model.Count : 0);
+        var isAddingRow = false;
+
+        function PreaddRow() {
+            var NewRow = $("#PreTempRow").clone().removeAttr("style").removeAttr("id").addClass("PreNewRow");
+            NewRow.find("input.PIP_Date").attr("name", "PINumberPrefix[" + rowCount + "].PIP_Date").val();
+            NewRow.find("input.PIP_Particulars").attr("name", "PINumberPrefix[" + rowCount + "].PIP_Particulars");
+            NewRow.find("input.PIP_IsDeleted").attr("name", "PINumberPrefix[" + rowCount + "].PIP_IsDeleted");
+
+            NewRow.find("input[name='PINumberPrefix[" + rowCount + "].PIP_IsDeleted']").val(false);
+
+            $("#PreTableBody").append(NewRow);
+            rowCount++;
+            NewRow.data("isValid", false);
+            isAddingRow = false;
+
+            PrefixInitializeFlatpickrs();
+        }
+
+        if ($("tr.PreNewRow").length == 0) {
+            PreaddRow();
+        }
+
+        $(document).on('click', '.PreRowRemove', function () {
+            $(this).closest('tr').find("input[name*='PIP_IsDeleted']").val(true);
+            $(this).closest('tr').hide();
+        });
+
+
+        $("#PreNewRowButton").click(function () {
+            var lastRow = $("tr.PreNewRow").last();
+            if (PreCheckAllFieldsValid(lastRow)) {
+                PreaddRow();
+            }
+            else {
+                var firstInvalidField = null;
+                lastRow.find("select, input, input[type='text']").each(function () {
+                    if (!PreValidateField($(this))) {
+                        if (firstInvalidField == null)
+                            firstInvalidField = $(this);
+                        return false;
+                    }
+                });
+                if (firstInvalidField != null) {
+                    alert("Please complete all fields !");
+                    firstInvalidField.focus();
+                }
+            }
+        });
+        function PreCheckAllFieldsValid(currentRow) {
+            var allFieldsValid = true;
+            $("tr.PreNewRow:visible").each(function () {
+                $(this).find("select, input, input[type='text']").each(function () {
+                    if (!PreValidateField($(this))) {
+                        allFieldsValid = false;
+                        return false;
+                    }
+                });
+                if (!allFieldsValid) return false;
+            });
+            return allFieldsValid;
+        }
+        function PreValidateField(currentInput) {
+            var valid = 1;
+            var inputValue = currentInput.val();
+            if (inputValue === "") {
+                valid = 0;
+            }
+            if (valid == 0) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+        PrefixInitializeFlatpickrs();
+    });
+</script>

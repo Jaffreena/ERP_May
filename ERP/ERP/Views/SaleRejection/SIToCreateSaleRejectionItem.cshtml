@@ -1,0 +1,653 @@
+﻿@model List<ERP_DTO.SIToSaleRejectionItem_DTO>
+
+<div class="col table-fixed h-100">
+    <div class="w-12 table-responsive table-body table-body-f">
+        <table class="table table-one table-striped table-bordered table-hover align-middle w-100" id="ItemTable">
+            <thead>
+                <tr class="table-info">
+                    <th class="px-2 del">
+                        <input type="checkbox" class="IndexAllCheckItem form-check-input border-white" name="IndexAllCheckItem" id="IndexAllCheckItem">
+                    </th>
+                    <th>Sale Invoice Number</th>
+                    <th>@Html.DisplayNameFor(M => M.First().SRI_ITM_Number)</th>
+                    <th>@Html.DisplayNameFor(M => M.First().SRI_ITM_Description)</th>
+                    <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SRI_ITM_OuterDia)</th>
+                    <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SRI_ITM_Thickness)</th>
+                    <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SRI_ITM_Length)</th>
+                    <th>@Html.DisplayNameFor(M => M.First().SRI_ITM_MaterialGrade)</th>
+                    <th>@Html.DisplayNameFor(M => M.First().SRI_ITM_Group)</th>
+                    <th>@Html.DisplayNameFor(M => M.First().SRI_WH_Number)</th>
+                    <th class="table-width-md text-center">@Html.DisplayNameFor(M => M.First().SRI_UoM_Number)</th>
+                    <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SRI_SII_Origin_Qty)</th>
+                    <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SRI_SII_Qty)</th>
+                    <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SRI_Qty)</th>
+                    <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SRI_UnitPrice)</th>
+                    <th class="table-width-3xl text-end">@Html.DisplayNameFor(M => M.First().SRI_Amount)</th>
+                    <th class="table-width-3xl text-end">@Html.DisplayNameFor(M => M.First().SRI_IncomeValue)</th>
+                    <th class="table-width-lg text-center">@Html.DisplayNameFor(M => M.First().SRI_HSN_Number)</th>
+                    <th class="table-width-xxl text-end">@Html.DisplayNameFor(M => M.First().SRI_GST_Amount)</th>
+                    <th class="table-width-md text-end">@Html.DisplayNameFor(M => M.First().SRI_WHT_Percent)</th>
+                    <th class="table-width-xxl text-end">@Html.DisplayNameFor(M => M.First().SRI_WHT_Amount)</th>
+                </tr>
+            </thead>
+            <tbody id="TableBody">
+                <tr id="TempRow" style="display: none;">
+                    <td class="p-2 del">
+                        <input type="checkbox" class="CheckItem form-check-input" name="CheckItem">
+                    </td>
+                    <td>
+                        <input id="SRI_SIH_InvoiceNo" class="form-control SRI_SIH_InvoiceNo" autocomplete="off" readonly />
+                    </td>
+                    <td>
+                        <input id="SRI_SII_Number" class="SRI_SII_Number" type="hidden" />
+                        <input id="SRI_SIH_Number" class="SRI_SIH_Number" type="hidden" />
+                        <input id="SRI_MS_Number" class="SRI_MS_Number" type="hidden" />
+                        <input id="SRI_ITM_Number" class="SRI_ITM_Number" type="hidden" />
+                        <input id="SRI_Index" class="SRI_Index" type="hidden" />
+                        <input id="SRI_ITM_Code" class="form-control SRI_ITM_Code" readonly />
+                    </td>
+                    <td>
+                        <input id="SRI_ITM_Description" class="form-control SRI_ITM_Description" autocomplete="off" readonly />
+                    </td>
+                    <td class="table-width-xl">
+                        <input id="SRI_ITM_OuterDia" class="form-control SRI_ITM_OuterDia text-end" autocomplete="off" readonly />
+                    </td>
+                    <td class="table-width-xl">
+                        <input id="SRI_ITM_Thickness" class="form-control SRI_ITM_Thickness text-end" autocomplete="off" readonly />
+                    </td>
+                    <td class="table-width-xl">
+                        <input id="SRI_ITM_Length" class="form-control SRI_ITM_Length text-end" autocomplete="off" readonly />
+                    </td>
+                    <td>
+                        <input id="SRI_ITM_MaterialGrade" class="form-control SRI_ITM_MaterialGrade" autocomplete="off" readonly />
+                    </td>
+                    <td>
+                        <input id="SRI_ITM_Group" class="form-control SRI_ITM_Group" autocomplete="off" readonly />
+                    </td>
+                    <td>
+                        <select id="SRI_WH_Number" class="form-select SRI_WH_Number" asp-items="@ViewBag.Warehouse"></select>
+                    </td>
+                    <td class="table-width-md">
+                        <select id="SRI_UoM_Number" class="form-select SRI_UoM_Number text-center" asp-items="@ViewBag.UoM"></select>
+                        <input id="SRI_UoM_DecimalPlaces" class="form-control SRI_UoM_DecimalPlaces" autocomplete="off" type="hidden" />
+                        @* <input type="hidden" id="SRI_UoM" class="form-control SRI_UoM" autocomplete="off" /> *@
+                    </td>
+                    <td class="table-width-xl">
+                        <input id="SRI_SII_Origin_Qty" class="form-control SRI_SII_Origin_Qty QtyNumbers text-end" autocomplete="off" readonly />
+                    </td>
+                    <td class="table-width-xl">
+                        <input id="SRI_SII_Qty" class="form-control SRI_SII_Qty QtyNumbers text-end" autocomplete="off" readonly />
+                    </td>
+                    <td class="table-width-xl">
+                        <input id="SRI_Qty" class="form-control SRI_Qty number QtyNumbers text-end" autocomplete="off" />
+                    </td>
+                    <td class="table-width-xl">
+                        <input id="SRI_UnitPrice" class="form-control SRI_UnitPrice number text-end" autocomplete="off" readonly />
+                    </td>
+                    <td class="table-width-3xl">
+                        <input id="SRI_Amount" class="form-control SRI_Amount text-end" autocomplete="off" readonly />
+                    </td>
+                    <td class="table-width-3xl">
+                        <input id="SRI_IncomeValue" class="form-control SRI_IncomeValue text-end" autocomplete="off" readonly />
+                    </td>
+                    <td class="table-width-lg">
+                        <select id="SRI_HSN_Number" class="form-select SRI_HSN_Number text-center" asp-items="@ViewBag.HSN"></select>
+                    </td>
+                    <td class="table-width-xxl">
+                        <input id="SRI_GST_Amount" class="form-control SRI_GST_Amount text-end" autocomplete="off" readonly />
+                    </td>
+                    <td class="table-width-sm">
+                        <input id="SRI_WHT_Percent" class="form-control SRI_WHT_Percent text-end" autocomplete="off" readonly />
+                    </td>
+                    <td class="table-width-xxl">
+                        <input id="SRI_WHT_Amount" class="form-control SRI_WHT_Amount text-end" autocomplete="off" readonly />
+                        <input name="SRI_IsDeleted" class="SRI_IsDeleted" value="false" type="hidden" />
+                    </td>
+                </tr>
+                @if (Model != null)
+                {
+                    @for (int i = 0; i < Model.Count; i++)
+                    {
+                        <tr class="NewRow" style="@(@Model[i].SRI_IsDeleted == 1 ? "display: none;" : "")">
+                            <td class="p-2 del">
+                                <input type="checkbox" class="CheckItem form-check-input" name="CheckItem">
+                            </td>
+                            <td>
+                                <input id="SRI_SIH_InvoiceNo" name="RejectionItem[@i].SRI_SIH_InvoiceNo" class="form-control SRI_SIH_InvoiceNo" readonly value="@Model[i].SRI_SIH_InvoiceNo" />
+                            </td>
+                            <td>
+                                <input id="SRI_SII_Number" name="RejectionItem[@i].SRI_SII_Number" class="SRI_SII_Number" type="hidden" value="@Model[i].SRI_SII_Number" />
+                                <input id="SRI_SIH_Number" name="RejectionItem[@i].SRI_SIH_Number" class="SRI_SIH_Number" type="hidden" value="@Model[i].SRI_SIH_Number" />
+                                <input id="SRI_MS_Number" name="RejectionItem[@i].SRI_MS_Number" class="SRI_MS_Number" type="hidden" value="@Model[i].SRI_MS_Number" />
+                                <input id="SRI_ITM_Number" name="RejectionItem[@i].SRI_ITM_Number" class="SRI_ITM_Number" type="hidden" value="@Model[i].SRI_ITM_Number" />
+                                <input id="SRI_ITM_Code" name="RejectionItem[@i].SRI_ITM_Code" class="form-control SRI_ITM_Code" autocomplete="off" value="@Model[i].SRI_ITM_Code" readonly />
+                                <input id="SRI_Index" name="RejectionItem[@i].SRI_Index" class="form-control SRI_Index" type="hidden" autocomplete="off" value="@Model[i].SRI_Index" readonly />
+                            </td>
+                            <td>
+                                <input id="SRI_ITM_Description" name="RejectionItem[@i].SRI_ITM_Description" class="form-control SRI_ITM_Description" readonly value="@Model[i].SRI_ITM_Description" />
+                            </td>
+                            <td class="table-width-xl">
+                                <input id="SRI_ITM_OuterDia" name="RejectionItem[@i].SRI_ITM_OuterDia" class="form-control SRI_ITM_OuterDia text-end" autocomplete="off" readonly value="@Model[i].SRI_ITM_OuterDia" />
+                            </td>
+                            <td class="table-width-xl">
+                                <input id="SRI_ITM_Thickness" name="RejectionItem[@i].SRI_ITM_Thickness" class="form-control SRI_ITM_Thickness text-end" autocomplete="off" readonly value="@Model[i].SRI_ITM_Thickness" />
+                            </td>
+                            <td class="table-width-xl">
+                                <input id="SRI_ITM_Length" name="RejectionItem[@i].SRI_ITM_Length" class="form-control SRI_ITM_Length text-end" autocomplete="off" readonly value="@Model[i].SRI_ITM_Length" />
+                            </td>
+                            <td>
+                                <input id="SRI_ITM_MaterialGrade" name="RejectionItem[@i].SRI_ITM_MaterialGrade" class="form-control SRI_ITM_MaterialGrade" autocomplete="off" readonly value="@Model[i].SRI_ITM_MaterialGrade" />
+                            </td>
+                            <td>
+                                <input id="SRI_ITM_Group" name="RejectionItem[@i].SRI_ITM_Group" class="form-control SRI_ITM_Group" readonly value="@Model[i].SRI_ITM_Group" />
+                            </td>
+                            <td>
+                                <select id="SRI_WH_Number" name="RejectionItem[@i].SRI_WH_Number" class="form-select SRI_WH_Number">
+                                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Warehouse)
+                                    {
+                                        if (item.Value == Model[i].SRI_WH_Number.ToString())
+                                        {
+                                            <option value="@item.Value" selected>@item.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    }
+                                </select>
+                            </td>
+                            <td class="table-width-md">
+                                <select id="SRI_UoM_Number" name="RejectionItem[@i].SRI_UoM_Number" class="form-select SRI_UoM_Number">
+                                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.UoM)
+                                    {
+                                        if (item.Value == Model[i].SRI_UoM_Number.ToString())
+                                        {
+                                            <option value="@item.Value" selected>@item.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    }
+                                </select>
+                                <input id="SRI_UoM_DecimalPlaces" name="RejectionItem[@i].SRI_UoM_DecimalPlaces" class="form-control SRI_UoM_DecimalPlaces" autocomplete="off" value="@Convert.ToDouble(@Model[i].SRI_UoM_DecimalPlaces)" type="hidden" />
+                            </td>
+                            <td class="table-width-xl">
+                                <input id="SRI_SII_Origin_Qty" name="RejectionItem[@i].SRI_SII_Origin_Qty" class="form-control SRI_SII_Qty QtyNumbers text-end" autocomplete="off" readonly value="@Convert.ToDouble(@Model[i].SRI_SII_Origin_Qty)" />
+                            </td>
+                            <td class="table-width-xl">
+                                <input id="SRI_SII_Qty" name="RejectionItem[@i].SRI_SII_Qty" class="form-control SRI_SII_Qty QtyNumbers text-end" autocomplete="off" readonly value="@Convert.ToDouble(@Model[i].SRI_SII_Qty)" />
+                            </td>
+                            <td class="table-width-xl">
+                                <input id="SRI_Qty" name="RejectionItem[@i].SRI_Qty" class="form-control SRI_Qty number QtyNumbers text-end" autocomplete="off" value="@Convert.ToDouble(@Model[i].SRI_Qty)" />
+                            </td>
+                            <td class="table-width-xl">
+                                <input id="SRI_UnitPrice" name="RejectionItem[@i].SRI_UnitPrice" class="form-control SRI_UnitPrice number text-end" readonly autocomplete="off" value="@Convert.ToDouble(@Model[i].SRI_UnitPrice)" />
+                            </td>
+                            <td class="table-width-3xl">
+                                <input id="SRI_Amount" name="RejectionItem[@i].SRI_Amount" class="form-control SRI_Amount text-end" readonly autocomplete="off" value="@Convert.ToDouble(@Model[i].SRI_Amount)" />
+                                @if (@Model[i].SRI_Number != 0)
+                                {
+                                    <input name="RejectionItem[@i].SRI_Number" class="SRI_Number" value="@Model[i].SRI_Number" type="hidden" />
+                                }
+                                <input name="RejectionItem[@i].SRI_IsDeleted" class="SRI_IsDeleted" value="@Model[i].SRI_IsDeleted" type="hidden" />
+                            </td>
+                            <td class="table-width-3xl">
+                                <input id="SRI_IncomeValue" name="RejectionItem[@i].SRI_IncomeValue" class="form-control SRI_IncomeValue text-end" autocomplete="off" readonly value="@Convert.ToDouble(@Model[i].SRI_IncomeValue)" />
+                            </td>
+                            <td class="table-width-lg">
+                                <select id="SRI_HSN_Number" name="RejectionItem[@i].SRI_HSN_Number" class="form-select SRI_HSN_Number">
+                                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.HSN)
+                                    {
+                                        if (item.Value == Model[i].SRI_HSN_Number.ToString())
+                                        {
+                                            <option value="@item.Value" selected>@item.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    }
+                                </select>
+                            </td>
+                            <td class="table-width-xxl">
+                                <input id="SRI_GST_Amount" name="RejectionItem[@i].SRI_GST_Amount" class="form-control SRI_GST_Amount text-end" autocomplete="off" readonly value="@Convert.ToDouble(@Model[i].SRI_GST_Amount)" />
+                            </td>
+                            <td class="table-width-sm">
+                                <input id="SRI_WHT_Percent" name="RejectionItem[@i].SRI_WHT_Percent" class="form-control SRI_WHT_Percent text-end" autocomplete="off" readonly value="@Convert.ToDouble(@Model[i].SRI_WHT_Percent)" />
+                            </td>
+                            <td class="table-width-xxl">
+                                <input id="SRI_WHT_Amount" name="RejectionItem[@i].SRI_WHT_Amount" class="form-control SRI_WHT_Amount text-end" autocomplete="off" readonly value="@Convert.ToDouble(@Model[i].SRI_WHT_Amount)" />
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+            <tfoot>
+                <tr class="table-info">
+                        <td colspan="11" class="text-end py-2"><span class="float-end  pe-3">Total</span></td>
+
+                    <td>
+                    </td>
+                    <td>
+                        <input id="TotalSIQty" class="form-control text-end" readonly />
+                    </td>
+                    <td>
+                        <input id="TotalQty" class="form-control text-end" readonly />
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        <input id="TotalAmount" class="form-control text-end" readonly />
+                    </td>
+                    <td>
+                        <input id="TotalIncomeValue" class="form-control text-end" readonly />
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        <input id="TotalGST" class="form-control text-end" readonly />
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        <input id="TotalWHT" class="form-control text-end" readonly />
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div class="row table-footer align-items-center">
+        <div class="col">
+            <a class="RowRemove btn btn-primary">
+                Delete Row
+            </a>
+        </div>
+    </div>
+</div>
+<script>
+    function initializeFlatpickrs() {
+        $(".SRI_DeliveryDate").flatpickr({
+            dateFormat: "d-M-Y",
+            altInput: false,
+        });
+    }
+
+    var rowCount = @(Model != null ? Model.Count : 0);
+    var isAddingRow = false;
+
+    function addRow(SI) {
+        console.log(SI.SII_Number);
+        var NewRow = $("#TempRow").clone().removeAttr("style").removeAttr("id").addClass("NewRow");
+        NewRow.find("input.SRI_Index").attr("name", "RejectionItem[" + rowCount + "].SRI_Index").val(rowCount + 1);
+        NewRow.find("input.SRI_SII_Number").attr("name", "RejectionItem[" + rowCount + "].SRI_SII_Number").val(SI.siI_Number);
+        NewRow.find("input.SRI_SIH_Number").attr("name", "RejectionItem[" + rowCount + "].SRI_SIH_Number").val(SI.siH_Number);
+        NewRow.find("input.SRI_SIH_InvoiceNo").attr("name", "RejectionItem[" + rowCount + "].SRI_SIH_InvoiceNo").val(SI.siH_InvoiceNo);
+        NewRow.find("input.SRI_MS_Number").attr("name", "RejectionItem[" + rowCount + "].SRI_MS_Number").val(SI.siI_MS_Number);
+        NewRow.find("input.SRI_ITM_Number").attr("name", "RejectionItem[" + rowCount + "].SRI_ITM_Number").val(SI.siI_ITM_Number);
+        NewRow.find("input.SRI_ITM_Code").attr("name", "RejectionItem[" + rowCount + "].SRI_ITM_Code").val(SI.siI_ITM_Code);
+        NewRow.find("input.SRI_ITM_Description").attr("name", "RejectionItem[" + rowCount + "].SRI_ITM_Description").val(SI.siI_ITM_Description);
+        NewRow.find("input.SRI_ITM_OuterDia").attr("name", "RejectionItem[" + rowCount + "].SRI_ITM_OuterDia").val(SI.siI_ITM_OuterDia);
+        NewRow.find("input.SRI_ITM_Thickness").attr("name", "RejectionItem[" + rowCount + "].SRI_ITM_Thickness").val(SI.siI_ITM_Thickness);
+        NewRow.find("input.SRI_ITM_Length").attr("name", "RejectionItem[" + rowCount + "].SRI_ITM_Length").val(SI.siI_ITM_Length);
+        NewRow.find("input.SRI_ITM_MaterialGrade").attr("name", "RejectionItem[" + rowCount + "].SRI_ITM_MaterialGrade").val(SI.siI_ITM_MaterialGrade);
+        NewRow.find("input.SRI_UoM_DecimalPlaces").attr("name", "RejectionItem[" + rowCount + "].SRI_UoM_DecimalPlaces").val(SI.siI_UoM_DecimalPlaces);
+        NewRow.find("input.SRI_ITM_Group").attr("name", "RejectionItem[" + rowCount + "].SRI_ITM_Group").val(SI.siI_ITM_Group);
+        NewRow.find("select.SRI_WH_Number").attr("name", "RejectionItem[" + rowCount + "].SRI_WH_Number").val(SI.siI_WH_Number);
+        NewRow.find("select.SRI_UoM_Number").attr("name", "RejectionItem[" + rowCount + "].SRI_UoM_Number").val(SI.siI_UoM_Number);
+        NewRow.find("input.SRI_SII_Origin_Qty").attr("name", "RejectionItem[" + rowCount + "].SRI_SII_Origin_Qty").val(SI.siI_Origin_Qty);
+        NewRow.find("input.SRI_SII_Qty").attr("name", "RejectionItem[" + rowCount + "].SRI_SII_Qty").val(SI.siI_Qty);
+        NewRow.find("input.SRI_Qty").attr("name", "RejectionItem[" + rowCount + "].SRI_Qty").val(-SI.siI_Qty);
+        NewRow.find("input.SRI_UnitPrice").attr("name", "RejectionItem[" + rowCount + "].SRI_UnitPrice").val(SI.siI_UnitPrice);
+        NewRow.find("input.SRI_Amount").attr("name", "RejectionItem[" + rowCount + "].SRI_Amount").val(SI.siI_Amount);
+
+        NewRow.find("input.SRI_IncomeValue").attr("name", "RejectionItem[" + rowCount + "].SRI_IncomeValue");
+        NewRow.find("select.SRI_HSN_Number").attr("name", "RejectionItem[" + rowCount + "].SRI_HSN_Number").val(SI.siI_HSN);
+        NewRow.find("input.SRI_GST_Amount").attr("name", "RejectionItem[" + rowCount + "].SRI_GST_Amount");
+        NewRow.find("input.SRI_WHT_Percent").attr("name", "RejectionItem[" + rowCount + "].SRI_WHT_Percent");
+        NewRow.find("input.SRI_WHT_Amount").attr("name", "RejectionItem[" + rowCount + "].SRI_WHT_Amount");
+        NewRow.find("input.SRI_IsDeleted").attr("name", "RejectionItem[" + rowCount + "].SRI_IsDeleted").val(0);
+
+        $("#TableBody").append(NewRow);
+        rowCount++;
+        NewRow.data("isValid", false);
+        isAddingRow = false;
+
+        initializeFlatpickrs();
+    }
+
+    $(document).on('keydown', "tr.NewRow select, tr.NewRow input.SRI_DeliveryDate,tr.NewRow input.SRI_ITM_Number,tr.NewRow input.SRI_Qty,tr.NewRow input.SRI_UnitPrice, tr.NewRow input[type='text']", function (event) {
+        if (event.keyCode === 9) {
+            if (!validateField($(this)))
+                event.preventDefault();
+        }
+    });
+
+    $(document).on('change', "tr.NewRow select.SRI_UoM_Number", function () {
+        var selectedValue = $(this).val();
+        var currentInput = $(this);
+        var currentRow = currentInput.closest('tr.NewRow');
+
+        var uom = currentRow.find('input.SRI_UoM').val();
+
+        if (uom === selectedValue) { } else {
+            alert("Selected Uom differs from item master Sale unit");
+        }
+
+        $.ajax({
+            type: "get",
+            url: "uom",
+            data: { UoM: selectedValue },
+            datatype: "json",
+            traditional: true,
+            success: function (decimalPlaces) {
+                if (decimalPlaces === "") {
+                    decimalPlaces = 2;
+                }
+
+                currentRow.find('input.SRI_UoM_DecimalPlaces').val(decimalPlaces);
+                    var value = removeCommas(currentRow.find('input.SRI_Qty').val());
+                    currentRow.find('input.SRI_Qty').val(QtyDecimalRupees(value, decimalPlaces));
+
+                    var qty = parseFloat(removeCommas(currentRow.find("input.SRI_Qty").val())) || 0;
+                    var unitPrice = parseFloat(removeCommas(currentRow.find("input.SRI_UnitPrice").val())) || 0;
+                    var amo = qty * unitPrice;
+                    currentRow.find("input.SRI_Amount").val(DecimalIndianRupees(amo));
+
+                    (async () => {
+                        await CalculateAllIncomes();
+                    })();
+            }
+        });
+    });
+    $(document).on('change', "tr.NewRow select.SRI_HSN_Number", function () {
+        (async () => {
+            await CalculateAllIncomes();
+        })();
+    });
+   
+
+    function checkAllFieldsValid(currentRow) {
+        var allFieldsValid = true;
+        $("tr.NewRow:visible").each(function () {
+            $(this).find("select, input.SRI_DeliveryDate,input.SRI_ITM_Number,input.SRI_Qty,input.SRI_UnitPrice, input[type='text']").each(function () {
+                if (!validateField($(this))) {
+                    allFieldsValid = false;
+                    return false;
+                }
+            });
+            if (!allFieldsValid) return false;
+        });
+        return allFieldsValid;
+    }
+    function validateField(currentInput) {
+        var valid = 1;
+        var inputValue = currentInput.val();
+        if (inputValue === "") {
+            valid = 0;
+        }
+
+        if (valid == 0) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+    $(document).on("blur", "input.SRI_Qty", function () {
+            var value = removeCommas($(this).val());
+            var decimalPlaces = $(this).closest('tr').find("input.SRI_UoM_DecimalPlaces").val();
+
+            value = -Math.abs(value);
+
+            $(this).val(QtyDecimalRupees(value, decimalPlaces));
+        });
+    $(document).on('input', "input.SRI_UnitPrice, input.SRI_Qty", function (event) {
+        var currentInput = $(this);
+        var row = currentInput.closest("tr.NewRow");
+
+        var QtyInput = row.find("input.SRI_Qty");
+        var SIQty = parseFloat(removeCommas(row.find("input.SRI_SII_Qty").val())) || 0;
+        var qty = Math.abs(parseFloat(removeCommas(row.find("input.SRI_Qty").val()))) || 0;
+        if (qty > SIQty) {
+            alert("Quantity (" + qty + ") cannot be greater than SI Quantity (" + SIQty + ").\nIt will be reset to the maximum allowed: " + SIQty);
+
+            QtyInput.val(FormatNumber(SIQty));
+            qty = SIQty;
+        }
+         (async () => {
+            await CalculateAllIncomes();
+        })();
+    })
+    $(document).on('focus', 'tr.NewRow input:not(.CheckItem), tr.NewRow select, tr.NewRow .datepicker', function () {
+        $(this).closest('tr').find('.CheckItem').prop('checked', true);
+        $('.CheckItem').not($(this).closest('tr').find('.CheckItem')).prop('checked', false);
+        UpdateItemButton();
+    });
+
+    $(document).on('click', '.GSTView', function () {
+        let CheckedCheckbox = document.querySelector('.CheckItem:checked');
+        if (CheckedCheckbox) {
+            var currentRow = $(CheckedCheckbox).closest('tr.NewRow');
+
+                var ItemNumber = currentRow.find('input.SRI_ITM_Number').val();
+                var Index = currentRow.find('input.SRI_Index').val();
+                var HSNNumber = currentRow.find('select.SRI_HSN_Number').val();
+                var Income = currentRow.find('input.SRI_IncomeValue').val();
+
+                var Cluster = $("#SRH_TCT_Number").val();
+                var SRHDate = $("#SRH_RejectionDate").val();
+
+                var qty = parseFloat(removeCommas(currentRow.find("input.SRI_Qty").val())) || 0;
+                var unitPrice = parseFloat(removeCommas(currentRow.find("input.SRI_UnitPrice").val())) || 0;
+                var Amount = parseFloat(removeCommas(currentRow.find("input.SRI_Amount").val())) || 0;
+
+                var BaseAmount = parseFloat(removeCommas(Amount)) + parseFloat(removeCommas(Income));
+
+                if (ItemNumber && HSNNumber) {
+                    $.ajax({
+                        type: "get",
+                        url: "gst/view",
+                        data: { Cluster: Cluster, SRHDate: SRHDate, HSN: HSNNumber, BaseAmount: BaseAmount },
+                        datatype: "json",
+                        traditional: true,
+                        success: function (data) {
+                            const Table = document.getElementById('GSTTableView');
+                            Table.innerHTML = "";
+
+                            if (Table) {
+                                const TaxView = ClusterTaxView(data);
+                                Table.appendChild(TaxView);
+                            }
+
+                            new bootstrap.Modal($("#GSTView")).show();
+                            $('#GSTView').on('shown.bs.modal', function () {
+                                $(this).find('[autofocus]').focus();
+                            });
+                        }
+                    });
+                }
+        }
+    });
+
+    function ClusterTaxView(data) {
+        const table = document.createElement('table');
+        table.classList.add('table', 'table-bordered', 'table-hover', 'align-middle', 'w-100', 'mb-0');
+
+        const thead = table.createTHead();
+        const headerRow = thead.insertRow();
+        const headers = ["Tax Category", "Tax Type", "Tax Index", "Tax Element", "Assessable Value", "Tax Rate",  "Tax Amount",  "Load on Inventory", "Load on Inventory %",];
+        headers.forEach(headerText => {
+            const th = document.createElement('th');
+            th.textContent = headerText;
+            th.classList.add('table-info');
+
+            if (headerText.includes('Assessable Value') || headerText.includes('Tax Rate') || headerText.includes('Tax Amount') || headerText.includes('Load on Inventory %')) {
+                th.classList.add('text-end', 'table-width-xl');
+            } else if (headerText.includes('Tax Index') || headerText.includes('Load on Inventory')) {
+                th.classList.add('text-center', 'table-width-md');
+            }
+
+            headerRow.appendChild(th);
+        });
+
+        const tbody = table.createTBody();
+        let totalAssessable = 0;
+        let totalTaxAmount = 0;
+
+
+        data.forEach(tax => {
+            const row = tbody.insertRow();
+            const CategoryCell = row.insertCell();
+            const TypeCell = row.insertCell();
+            const TaxIndexCell = row.insertCell();
+            const TaxElementCell = row.insertCell();
+            const AssessableCell = row.insertCell();
+            const PercentageCell = row.insertCell();
+            const AmountCell = row.insertCell();
+            const LoadonCell = row.insertCell();
+            const LoadonPerCell = row.insertCell();
+
+            CategoryCell.textContent = tax.taxCategory;
+            TypeCell.textContent = tax.taxType;
+
+            TaxIndexCell.textContent = tax.taxIndex;
+            TaxIndexCell.classList.add("text-center", "table-width-md");
+
+            TaxElementCell.textContent = tax.taxElement;
+
+            AssessableCell.textContent = tax.assessableValue.toFixed(2);
+            AssessableCell.classList.add("text-end", "table-width-xl");
+
+            PercentageCell.textContent = tax.percentage.toFixed(2);
+            PercentageCell.classList.add("text-end", "table-width-xl");
+
+            AmountCell.textContent = tax.amount.toFixed(2);
+            AmountCell.classList.add("text-end", "table-width-xl");
+
+            LoadonCell.textContent = tax.loadonInventory;
+            LoadonCell.classList.add("text-center", "table-width-md");
+
+            LoadonPerCell.textContent = tax.loadonInventoryPercent;
+            LoadonPerCell.classList.add("text-end", "table-width-xl");
+
+            totalAssessable += tax.assessableValue;
+            totalTaxAmount += tax.amount;
+        });
+
+        const tfoot = table.createTFoot();
+        const footerRow = tfoot.insertRow();
+
+        const footerCells = headers.map(() => footerRow.insertCell());
+        footerCells.forEach(cell => {
+            cell.classList.add('table-info');
+        });
+
+        footerCells[footerCells.length - 4].textContent = `Total`;
+        footerCells[footerCells.length - 4].style.textAlign = 'right';
+        footerCells[footerCells.length - 3].textContent = totalTaxAmount.toFixed(2);
+        footerCells[footerCells.length - 3].style.textAlign = 'right';
+
+        return table;
+    }
+
+    $(document).ready(function() {
+        // Call initially when page loads
+        UpdateItemButton();
+
+        // Update whenever any checkbox changes
+        $(document).on('change', '.CheckItem', function() {
+            UpdateItemButton();
+        });
+    });
+
+    function UpdateItemButton() {
+        const selectedValues = $(".CheckItem:checked").map(function() {
+            return $(this).closest("tr").find("td:eq(1)").text().trim();
+        }).get();
+
+        $(".OneItemMode").prop("disabled", selectedValues.length !== 1);
+    }
+
+
+    async function GetClusterAmount(Cluster, SRHDate, HSN, BaseAmount) {
+        try {
+            const Amount = await $.ajax({
+                url: 'gst',
+                data: { Cluster: Cluster, SRHDate: SRHDate, HSN: HSN, BaseAmount: BaseAmount },
+                type: 'GET'
+            });
+            return Amount;
+        } catch (error) {
+            return 0;
+        }
+    }
+
+    function customRound(number) {
+        const num = Math.abs(parseFloat(number));
+        const decimal = num % 1;
+
+        if (decimal >= 0.5) {
+            return Math.ceil(num);
+        } else {
+            return Math.floor(num);
+        }
+    }
+
+    function FormatNumber(num) {
+        if (num === "" || isNaN(num)) return "0";
+
+        var formattedValue = parseFloat(num).toFixed(10);
+        var parts = formattedValue.split(".");
+        if (parts.length > 1) {
+            parts[1] = parts[1].replace(/0+$/, "");
+            if (parts[1].length === 0) parts.pop();
+        }
+
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+
+        return parts.join(".");
+    }
+
+    function SearchWHT() {
+        var Buyer = $("#SRH_BUY_Number").val();
+        var SRHDate = $("#SRH_RejectionDate").val();
+        var WHTax = $("#SRH_WHT_Number").val();
+
+        GetWHT(Buyer, WHTax, SRHDate);
+    }
+    function GetWHT(Buyer, WHTax, SRHDate) {
+        $.ajax({
+            type: "get",
+            url: "wht",
+            data: { Buyer: Buyer, WHTNumber: WHTax, SRHDate: SRHDate },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                if (data != null) {
+                    $("#SRH_WHT_Tax").val(data.tax);
+                    $("#SRH_WHT_Percent").val(data.percentage);
+                }
+                else {
+                    $("#SRH_WHT_Tax").val(1);
+                    $("#SRH_WHT_Percent").val(0);
+                }
+                (async () => {
+                    await CalculateAllIncomes();
+                })();
+            }
+        });
+    }
+
+    function SearchGST() {
+        (async () => {
+            await CalculateAllIncomes();
+        })();
+    }
+</script>
+
+<style>
+    .search-results {
+        width: 400px;
+    }
+</style>

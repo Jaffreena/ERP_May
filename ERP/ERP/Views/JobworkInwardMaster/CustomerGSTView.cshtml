@@ -1,0 +1,549 @@
+﻿@model List<ERP_DTO.CustomerGST_DTO>
+<div class="modal fade" id="AlertModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            
+            <div class="modal-body py-4 text-dark fs-6 text-center">
+
+                <img src="~/img/danger.png" class="img-fluid mb-2" />
+
+                <div>
+                    <label id="AlertMessage" class="fw-semibold text-danger"></label>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="w-100 table-responsive">
+    <table class="table table-bordered align-middle table-hover align-middle mb-0 table-grid">
+        <thead>
+            <tr class="table-info">
+                <th>@Html.DisplayNameFor(model => model.First().CUS_GST_GSTC_Number)</th>
+                <th>@Html.DisplayNameFor(model => model.First().CUS_GST_GSTT_Number)</th>
+                <th>@Html.DisplayNameFor(model => model.First().CUS_GST_TCT_Number)</th>
+                <th>@Html.DisplayNameFor(model => model.First().CUS_GST_TCT_Description)</th>
+                <th class="datetype text-center">@Html.DisplayNameFor(model => model.First().CUS_GST_FromDate)</th>
+                <th class="datetype text-center">@Html.DisplayNameFor(model => model.First().CUS_GST_ToDate)</th>
+                <th class="action text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody id="GSTTableBody">
+            <tr id="GSTTempRow" style="display: none;">
+                <td>
+                 @*    <input id="CUS_GST_GSTC_Number" class="CUS_GST_GSTC_Number" type="hidden" />
+                    <input id="CUS_GST_GSTC_Name" class="form-control CUS_GST_GSTC_Name" autocomplete="off" oninput="OnCategoryInput(this)" onfocus="OnCategoryFocus(this)" />
+                    <div class="tax-results search-results p-0 rounded" style="display:none"></div> *@
+                    <select id="CUS_GST_GSTC_Number" class="form-select CUS_GST_GSTC_Number" asp-items="@ViewBag.GST_Category"></select>
+                </td>
+                <td>
+                    <select id="CUS_GST_GSTT_Number" class="form-select CUS_GST_GSTT_Number" asp-items="@ViewBag.GST_Type"></select>
+                </td>
+                <td>
+                   @*  <input id="CUS_GST_TCT_Number" class="CUS_GST_TCT_Number" type="hidden" />
+                    <input id="CUS_GST_TCT_Name" class="form-control CUS_GST_TCT_Name" autocomplete="off" oninput="OnInput(this)" onfocus="OnFocus(this)" />
+                    <div class="cluster-results search-results p-0 rounded" style="display:none"></div>
+     *@              
+     <select id="CUS_GST_TCT_Number" class="form-select CUS_GST_TCT_Number" asp-items="@ViewBag.GST_TaxCluster"></select>
+                </td>
+                <td>
+                    <input id="CUS_GST_TCT_Description" class="form-control CUS_GST_TCT_Description" />
+                </td>
+                <td class="datetype">
+                    <input id="CUS_GST_FromDate" class="form-control text-center CUS_GST_FromDate datepicker" autocomplete="off" />
+                </td>
+                <td class="datetype">
+                    <input id="CUS_GST_ToDate" class="form-control text-center CUS_GST_ToDate datepicker" autocomplete="off" />
+                </td>
+                <td class="action text-center">
+                    <input type="hidden" name="CUS_GST_IsDeleted" class="CUS_GST_IsDeleted" value="0" />
+                    <a class="GSTRowRemove btn text-danger p-0 icon-link shadow-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                        </svg>
+                    </a>
+                </td>
+            </tr>
+            @if (Model != null)
+            {
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr class="GSTNewRow" style="@(@Model[i].CUS_GST_IsDeleted == 1 ? "display: none;" : "")">
+                   
+                        <td>
+                            <select id="CUS_GST_GSTC_Number" name="CUS_GST_List[@i].CUS_GST_GSTC_Number" class="form-select CUS_GST_GSTC_Number">
+                                @if (ViewBag.GST_Category != null)
+                                {
+                                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.GST_Category)
+                                    {
+                                        if (item.Value == Model[i].CUS_GST_GSTC_Number)
+                                        {
+                                            <option value="@item.Value" selected>@item.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <select id="CUS_GST_GSTT_Number" name="CUS_GST_List[@i].CUS_GST_GSTT_Number" class="form-select CUS_GST_GSTT_Number">
+                                @if (ViewBag.GST_Type != null)
+                                {
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.GST_Type)
+                                {
+                                    if (item.Value == Model[i].CUS_GST_GSTT_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                                }
+                            </select>
+                        </td>
+
+                        <td>
+                            <select id="CUS_GST_TCT_Number" name="CUS_GST_List[@i].CUS_GST_TCT_Number" class="form-select CUS_GST_TCT_Number">
+                                @if (ViewBag.GST_TaxCluster != null)
+                                {
+                                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.GST_TaxCluster)
+                                    {
+                                        if (item.Value == Model[i].CUS_GST_TCT_Number)
+                                        {
+                                            <option value="@item.Value" selected>@item.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                        </td>
+                  
+                        <td>
+                            <input id="CUS_GST_TCT_Description" name="CUS_GST_List[@i].CUS_GST_TCT_Description" class="form-control CUS_GST_TCT_Description" readonly value="@Model[i].CUS_GST_TCT_Description" />
+                        </td>
+                        <td class="datetype">
+                            <input id="CUS_GST_FromDate" name="CUS_GST_List[@i].CUS_GST_FromDate" class="form-control text-center CUS_GST_FromDate datepicker" autocomplete="off" value="@Model[i].CUS_GST_FromDate" />
+                        </td>
+                        <td class="datetype">
+                            <input id="CUS_GST_ToDate" name="CUS_GST_List[@i].CUS_GST_ToDate" class="form-control text-center CUS_GST_ToDate datepicker" autocomplete="off" value="@Model[i].CUS_GST_ToDate" />
+                        </td>
+                        <td class="action text-center">
+                            @if (@Model[i].CUS_GST_Number != 0)
+                            {
+                                <input name="CUS_GST_List[@i].CUS_GST_Number" type="hidden" class="CUS_GST_Number" value="@Model[i].CUS_GST_Number" />
+                            }
+                            <input type="hidden" name="CUS_GST_List[@i].CUS_GST_IsDeleted" class="CUS_GST_IsDeleted" value="@Model[i].CUS_GST_IsDeleted" />
+                            <a class="GSTRowRemove btn text-danger p-0 icon-link shadow-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                    <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        InitializegGstFlatpickrs();
+
+        function InitializegGstFlatpickrs() {
+            $(".datepicker").flatpickr({
+                dateFormat: "d-M-Y",
+                altInput: false,
+            });
+        }
+
+        var rowCount = @(Model != null ? Model.Count : 0);
+        var isAddingRow = false;
+
+        function addRow() {
+            var NewRow = $("#GSTTempRow").clone().removeAttr("style").removeAttr("id").addClass("GSTNewRow");
+            NewRow.find("select.CUS_GST_GSTC_Number").attr("name", "CUS_GST_List[" + rowCount + "].CUS_GST_GSTC_Number");
+        //    NewRow.find("input.CUS_GST_GSTC_Name").attr("name", "CUS_GST_List[" + rowCount + "].CUS_GST_GSTC_Name");
+            NewRow.find("select.CUS_GST_GSTT_Number").attr("name", "CUS_GST_List[" + rowCount + "].CUS_GST_GSTT_Number");
+            NewRow.find("select.CUS_GST_TCT_Number").attr("name", "CUS_GST_List[" + rowCount + "].CUS_GST_TCT_Number");
+           // NewRow.find("input.CUS_GST_TCT_Name").attr("name", "CUS_GST_List[" + rowCount + "].CUS_GST_TCT_Name");
+            NewRow.find("input.CUS_GST_TCT_Description").attr("name", "CUS_GST_List[" + rowCount + "].CUS_GST_TCT_Description");
+            NewRow.find("input.CUS_GST_FromDate").attr("name", "CUS_GST_List[" + rowCount + "].CUS_GST_FromDate");
+            NewRow.find("input.CUS_GST_ToDate").attr("name", "CUS_GST_List[" + rowCount + "].CUS_GST_ToDate");
+            NewRow.find("input.CUS_GST_IsDeleted").attr("name", "CUS_GST_List[" + rowCount + "].CUS_GST_IsDeleted").val(0);
+
+            $("#GSTTableBody").append(NewRow);
+            rowCount++;
+            NewRow.data("isValid", false);
+            isAddingRow = false;
+
+            InitializegGstFlatpickrs();
+        }
+
+        if ($("tr.GSTNewRow").length == 0) {
+            addRow();
+        }
+
+        $(document).on('click', '.GSTRowRemove', function () {
+            $(this).closest('tr').find("input.CUS_GST_IsDeleted").val(1);
+            $(this).closest('tr').hide();
+        });
+
+   
+
+        $(document).on('keydown', "tr.GSTNewRow select, tr.GSTNewRow input.CUS_GST_FromDate, tr.GSTNewRow input.CUS_GST_TCT_Number, tr.GSTNewRow input.CUS_GST_ToDate, tr.GSTNewRow input[type='text']", function (event) {
+            if (event.keyCode === 9) {
+                if (!validateField($(this)))
+                    event.preventDefault();
+            }
+        });
+
+        $(document).on('change', "tr.GSTNewRow select.CUS_GST_GSTC_Number, tr.GSTNewRow select.CUS_GST_GSTT_Number", function () {
+            var currentRow = $(this).closest('tr');
+            var TCT_Number = currentRow.find('input.CUS_GST_TCT_Number');
+            var Tax = currentRow.find('input.CUS_GST_TCT_Name');
+            var resultsDiv = $(currentRow).find(".cluster-results");
+
+            TCT_Number.val('');
+            Tax.val('');
+            resultsDiv.empty();
+            resultsDiv.hide();
+            resultsDiv.append('<p>No results found</p>');
+        });
+
+        $(document).on("change", "tr.GSTNewRow select, tr.GSTNewRow input.CUS_GST_FromDate, tr.GSTNewRow input.CUS_GST_TCT_Number, tr.GSTNewRow input.CUS_GST_ToDate, input[type='text']", function () {
+            if (isAddingRow)
+                return;
+            isAddingRow = true;
+
+            var currentInput = $(this);
+            var isValid = validateField(currentInput);
+            var currentRow = $(this).closest("tr.GSTNewRow");
+            if (isValid) {
+                if (checkAllFieldsValid(currentRow)) {
+                    currentRow.data("isValid", true);
+                }
+                else {
+                    currentRow.data("isValid", false);
+                }
+            }
+            else {
+                currentRow.data("isValid", false);
+            }
+            if (currentRow.data("isValid")) {
+                var lastRow = $("tr.GSTNewRow").last();
+                if (checkAllFieldsValid(lastRow))
+                    addRow();
+            }
+            else {
+                isAddingRow = false;
+            }
+        });
+
+        function checkAllFieldsValid(currentRow) {
+            var allFieldsValid = true;
+            $("tr.GSTNewRow:visible").each(function () {
+                $(this).find("select, input.CUS_GST_FromDate, input.CUS_GST_TCT_Number, input.CUS_GST_ToDate, input[type='text']").each(function () {
+                    if (!validateField($(this))) {
+                        allFieldsValid = false;
+                        return false;
+                    }
+                });
+                if (!allFieldsValid) return false;
+            });
+            return allFieldsValid;
+        }
+
+        function validateField(currentInput) {
+            var valid = 1;
+            var inputValue = currentInput.val();
+            if (currentInput.hasClass("CUS_GST_FromDate") || currentInput.hasClass("CUS_GST_ToDate")) {
+                valid = validateDateRange(currentInput);
+            }
+            if (inputValue === "") {
+                valid = 0;
+            }
+
+            if (valid == 0) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+        function validateDateRange(currentInput) {
+            var valid = 1;
+            var currentRow = currentInput.closest("tr.GSTNewRow");
+            var FromDateInput = currentRow.find("input.CUS_GST_FromDate");
+            var ToDateInput = currentRow.find("input.CUS_GST_ToDate");
+            var FromDate = FromDateInput.val();
+            var ToDate = ToDateInput.val();
+            if (FromDate === "" || ToDate === "") {
+                valid = 0;
+            }
+            var from = new Date(FromDate);
+            var to = new Date(ToDate);
+            if (to < from) {
+                alert("'To Date' must be greater than or equal to 'From Date'");
+                currentInput.val("");
+                valid = 0;
+            }
+            return valid;
+        }
+
+        $("#GSTOkayButton").click(function () {
+            GridValidation();
+        });
+        $("#GSTCloseButton").click(function () {
+            GridValidation();
+        });
+        function GridValidation() {
+            $("tr.GSTNewRow").each(function () {
+                var FromDate = $(this).find("input.CUS_GST_FromDate").val();
+                var ToDate = $(this).find("input.CUS_GST_ToDate").val();
+                var GSTC_Number = $(this).find("select.CUS_GST_GSTC_Number").val();
+                var GSTT_Number = $(this).find("select.CUS_GST_GSTT_Number").val();
+                var Tax = $(this).find("select.CUS_GST_TCT_Number").val();
+
+                if (!FromDate && !ToDate && !GSTC_Number && !GSTT_Number && !Tax) {
+                    $(this).closest('tr').find("input.CUS_GST_IsDeleted").val(1);
+                    $(this).closest('tr').hide();
+                }
+            });
+
+            var lastRow = $("tr.GSTNewRow").last();
+            if (checkAllFieldsValid(lastRow)) {
+                $("#GSTModal").modal('hide');
+            }
+            else {
+                    $("#AlertMessage").text("Please complete all fields !");
+    $("#AlertModal").modal('show');
+               // alert("Please complete all fields !");
+                firstInvalidField.focus();
+            }
+        }
+
+            // Description auto fill (like WHT)
+    $(document).on("change", ".CUS_GST_TCT_Number", function () {
+
+        let selectedDesc = $(this).find(":selected").data("desc");
+
+        $(this).closest("tr")
+               .find(".CUS_GST_TCT_Description")
+               .val(selectedDesc);
+    });
+
+
+    // Category + Type change → Load Tax Cluster
+    $(document).on("change", ".CUS_GST_GSTC_Number, .CUS_GST_GSTT_Number", function () {
+
+        let row = $(this).closest("tr");
+
+        let categoryId = row.find(".CUS_GST_GSTC_Number").val();
+        let typeId = row.find(".CUS_GST_GSTT_Number").val();
+
+        let taxDropdown = row.find(".CUS_GST_TCT_Number");
+
+        // Clear only current row dropdown
+        taxDropdown.html('<option value=""> </option>');
+
+        // Stop if both not selected
+        if (!categoryId || !typeId) return;
+
+        $.ajax({
+            url: '/jobwork/master/customer/gstgrid', // change API
+            type: 'GET',
+            data: {
+                categoryId: categoryId,
+                typeId: typeId
+            },
+            success: function (data) {
+                console.log(data)
+                $.each(data, function (i, item) {
+
+                    taxDropdown.append(`
+                        <option value="${item.tcT_Number}"
+                                data-desc="${item.tcT_Description}">
+                            ${item.tcT_Name}
+                        </option>
+                    `);
+
+                });
+
+            }
+        });
+
+    });
+
+        $("#GSTAddRowButton").click(function () {
+            var lastRow = $("tr.GSTNewRow").last();
+            if (checkAllFieldsValid(lastRow)) {
+                addRow();
+            }
+            else {
+                var firstInvalidField = null;
+                lastRow.find("select, input.CUS_GST_FromDate, input.CUS_GST_TCT_Number, input.CUS_GST_ToDate, input[type='text']").each(function () {
+                    if (!validateField($(this))) {
+                        if (firstInvalidField == null)
+                            firstInvalidField = $(this);
+                        return false;
+                    }
+                });
+                if (firstInvalidField != null) {
+                    alert("Please complete all fields !");
+                    firstInvalidField.focus();
+                }
+            }
+        });
+    });
+
+    function OnInput(inputElement) {
+        searchItem(inputElement);
+    }
+    function OnFocus(inputElement) {
+        var tax = inputElement.value;
+        if (!tax) {
+            searchItem(inputElement);
+        }
+        else {
+            $(this).select();
+        }
+    }
+        function searchItem(inputElement) {
+
+        var tax = inputElement.value;
+        var resultsDiv = $(inputElement).next('.cluster-results');
+
+        var currentRow = $(inputElement).closest('tr');
+        var GSTC_Number = currentRow.find('input.CUS_GST_GSTC_Number').val();
+        var GSTT_Number = currentRow.find('select.CUS_GST_GSTT_Number').val();
+
+        $.ajax({
+            url: '/jobwork/master/customer/cluster',
+            data: { Tax: tax, Category: GSTC_Number, Type: GSTT_Number },
+            type: 'GET',
+            success: function (data) {
+                console.log(data)
+                resultsDiv.empty();
+
+                if (data && data.length > 0) {
+
+                    resultsDiv.show();
+
+                    var list = $('<ul class="list-unstyled ulmode m-0"></ul>');
+
+                    data.forEach(function (cluster) {
+
+                        var listItem = $('<li></li>').text(cluster.cuS_GST_TCT_Number);
+                        list.append(listItem);
+
+                        listItem.on('click', function () {
+
+                            $(inputElement).val(cluster.cuS_GST_TCT_Number);
+
+                            currentRow.find('input.CUS_GST_TCT_Number')
+                                .val(cluster.cuS_GST_Number);
+
+                            console.log("Selected ID:", cluster.cuS_GST_Number);
+
+                            resultsDiv.hide();
+                        });
+                    });
+
+                    resultsDiv.append(list);
+                }
+                else {
+                    resultsDiv.hide();
+                    resultsDiv.html('<p>No results found</p>');
+                }
+            },
+            error: function () {
+                resultsDiv.text('Error loading data.');
+                resultsDiv.show();
+            }
+        });
+    }
+
+
+    function OnCategoryInput(inputElement) {
+        SearchCategory(inputElement);
+    }
+    function OnCategoryFocus(inputElement) {
+        var tax = inputElement.value;
+        if (!tax) {
+            SearchCategory(inputElement);
+        }
+        else {
+            $(this).select();
+        }
+    }
+    function SearchCategory(inputElement) {
+        var GSTC_Number = inputElement.value;
+        var CUS_Location = $("input[name='CUS_LOC_Number']:checked").val();
+        var resultsDiv = $(inputElement).next('.tax-results');
+
+        $.ajax({
+            url: '/jobwork/master/customer/category',
+            data: { Category: GSTC_Number, Location: CUS_Location },
+            type: 'GET',
+            success: function (data) {
+              //  console.log(data)
+                resultsDiv.empty();
+                if (data && data.length > 0) {
+                    resultsDiv.show();
+                    var list = $('<ul class="list-unstyled ulmode m-0"></ul>');
+                    data.forEach(function (Cluster) {
+                        var listItem = $('<li></li>').text(Cluster.cuS_GST_GSTC_Number);
+                        list.append(listItem);
+
+                        listItem.on('click', function () {
+                            $(inputElement).val(Cluster.cuS_GST_GSTC_Number);
+                            $(inputElement).closest('tr').find('input.CUS_GST_GSTC_Number').val(Cluster.cuS_GST_Number);
+                            resultsDiv.hide();
+                        });
+                    });
+                    resultsDiv.append(list);
+                } else {
+                    resultsDiv.hide();
+                    resultsDiv.append('<p>No results found</p>');
+                }
+            },
+            error: function () {
+                resultsDiv.text('Error loading data.');
+                resultsDiv.show();
+            }
+        });
+    }
+</script>
+<style>
+    .search-results {
+        width: 200px;
+    }
+
+    .ulmode {
+        background-color: var(--bs-body-bg);
+    }
+
+        .ulmode li {
+            padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+            font-size: 0.7rem;
+            color: var(--bs-body-color);
+            background-color: var(--bs-body-bg);
+            text-align: left;
+        }
+
+            .ulmode li:hover {
+                background-color: #f1f1f1;
+                color: #333;
+            }
+</style>

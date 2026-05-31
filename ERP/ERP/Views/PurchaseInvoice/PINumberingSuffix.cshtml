@@ -1,0 +1,152 @@
+﻿@model List<ERP_DTO.PINumberSuffix_DTO>
+
+<div class="col table-fixed h-100">
+    <div class="w-100 table-responsive table-body table-body-f">
+        <table class="table table-one table-striped table-bordered table-hover align-middle w-100">
+            <thead>
+                <tr class="table-info">
+                    <th class="datetype text-center">Date</th>
+                    <th>Particulars</th>
+                    <th class="table-width-sm"></th>
+                </tr>
+            </thead>
+            <tbody id="SubTableBody">
+                <tr id="SubTempRow" style="display: none;">
+                    <td>
+                        <input id="PIS_Date" class="form-control PIS_Date datepicker text-center" autocomplete="off" />
+                    </td>
+                    <td>
+                        <input id="PIS_Particulars" class="form-control PIS_Particulars" autocomplete="off" />
+                    </td>
+                    <td class="text-center">
+                        <input type="hidden" name="PIS_IsDeleted" class="PIS_IsDeleted" value="false" />
+                        <a class="SubRowRemove btn btn-sm btn-danger p-1 icon-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                            </svg>
+                        </a>
+                    </td>
+                </tr>
+                @if (Model != null)
+                {
+                    @for (int i = 0; i < Model.Count; i++)
+                    {
+                        <tr class="SubNewRow">
+                            <td>
+                                <input id="PIS_Date" name="PINumberSuffix[@i].PIS_Date" class="form-control PIS_Date text-center datepicker" autocomplete="off" value="@Model[i].PIS_Date" />
+                            </td>
+                            <td>
+                                <input id="PIS_Particulars" name="PINumberSuffix[@i].PIS_Particulars" class="form-control PIS_Particulars" autocomplete="off" value="@Model[i].PIS_Particulars" />
+                            </td>
+                            <td class="text-center">
+                                @if (@Model[i].PIS_Number != 0)
+                                {
+                                    <input name="PINumberSuffix[@i].PIS_Number" type="hidden" class="PIS_Number" value="@Model[i].PIS_Number" />
+                                }
+                                <input type="hidden" name="PINumberSuffix[@i].PIS_IsDeleted" value="false" class="PIS_IsDeleted" />
+                                <a class="SubRowRemove btn btn-sm btn-danger p-1 icon-link">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                                    </svg>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="row table-footer align-items-center">
+    <div class="col">
+        <a id="SubNewRowButton" class="btn btn-primary">Add Row</a>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        function SuffixInitializeFlatpickrs() {
+            $(".datepicker").flatpickr({
+                dateFormat: "d-M-Y",
+                altInput: false,
+            });
+        }
+
+        var rowCount = @(Model != null ? Model.Count : 0);
+        var isAddingRow = false;
+
+        function SubaddRow() {
+            var NewRow = $("#SubTempRow").clone().removeAttr("style").removeAttr("id").addClass("SubNewRow");
+            NewRow.find("input.PIS_Date").attr("name", "PINumberSuffix[" + rowCount + "].PIS_Date").val();
+            NewRow.find("input.PIS_Particulars").attr("name", "PINumberSuffix[" + rowCount + "].PIS_Particulars");
+            NewRow.find("input.PIS_IsDeleted").attr("name", "PINumberSuffix[" + rowCount + "].PIS_IsDeleted");
+
+            NewRow.find("input[name='PINumberSuffix[" + rowCount + "].PIS_IsDeleted']").val(false);
+
+            $("#SubTableBody").append(NewRow);
+            rowCount++;
+            NewRow.data("isValid", false);
+            isAddingRow = false;
+
+            SuffixInitializeFlatpickrs();
+        }
+
+        if ($("tr.SubNewRow").length == 0) {
+            SubaddRow();
+        }
+
+        $(document).on('click', '.SubRowRemove', function () {
+            $(this).closest('tr').find("input[name*='PIS_IsDeleted']").val(true);
+            $(this).closest('tr').hide();
+        });
+
+
+        $("#SubNewRowButton").click(function () {
+            var lastRow = $("tr.SubNewRow").last();
+            if (SubCheckAllFieldsValid(lastRow)) {
+                SubaddRow();
+            }
+            else {
+                var firstInvalidField = null;
+                lastRow.find("select, input, input[type='text']").each(function () {
+                    if (!SubValidateField($(this))) {
+                        if (firstInvalidField == null)
+                            firstInvalidField = $(this);
+                        return false;
+                    }
+                });
+                if (firstInvalidField != null) {
+                    alert("Please complete all fields !");
+                    firstInvalidField.focus();
+                }
+            }
+        });
+        function SubCheckAllFieldsValid(currentRow) {
+            var allFieldsValid = true;
+            $("tr.SubNewRow:visible").each(function () {
+                $(this).find("select, input, input[type='text']").each(function () {
+                    if (!SubValidateField($(this))) {
+                        allFieldsValid = false;
+                        return false;
+                    }
+                });
+                if (!allFieldsValid) return false;
+            });
+            return allFieldsValid;
+        }
+        function SubValidateField(currentInput) {
+            var valid = 1;
+            var inputValue = currentInput.val();
+            if (inputValue === "") {
+                valid = 0;
+            }
+            if (valid == 0) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+        SuffixInitializeFlatpickrs();
+    });
+</script>

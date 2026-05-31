@@ -1,0 +1,311 @@
+﻿@model List<ERP_DTO.BuyerWHT_DTO>
+
+<div class="w-100 table-responsive">
+    <table class="table table-bordered align-middle table-hover align-middle mb-0 table-grid">
+        <thead>
+            <tr class="table-info">
+                <th>
+                    @Html.DisplayNameFor(model => model.First().BUY_WHT_WHTC_Number)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.First().BUY_WHT_WHTT_Number)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.First().BUY_WHT_WHT_Number)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.First().BUY_WHT_WHT_Description)
+                </th>
+                <th class="datetype text-center">@Html.DisplayNameFor(model => model.First().BUY_WHT_FromDate)</th>
+                <th class="datetype text-center">@Html.DisplayNameFor(model => model.First().BUY_WHT_ToDate)</th>
+                <th class="action text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody id="WHTTableBody">
+            <tr id="WHTTempRow" style="display: none;">
+                <td>
+                    <select id="BUY_WHT_WHTC_Number" class="form-select BUY_WHT_WHTC_Number" asp-items="@ViewBag.WHT_Category"></select>
+                </td>
+                <td>
+                    <select id="BUY_WHT_WHTT_Number" class="form-select BUY_WHT_WHTT_Number" asp-items="@ViewBag.WHT_Type"></select>
+                </td>
+                <td>
+                    <select id="BUY_WHT_WHT_Number" class="form-select BUY_WHT_WHT_Number" asp-items="@ViewBag.WHT_Tax"></select>
+                </td>
+                <td>
+                    <input id="BUY_WHT_WHT_Description" class="form-control BUY_WHT_WHT_Description" />
+                </td>
+                <td class ="datetype">
+                    <input id="BUY_WHT_FromDate" class="form-control text-center BUY_WHT_FromDate datepicker" autocomplete="off" />
+                </td>
+                <td class="datetype">
+                    <input id="BUY_WHT_ToDate" class="form-control text-center BUY_WHT_ToDate datepicker" autocomplete="off" />
+                </td>
+                <td class="action text-center">
+                    <input type="hidden" name="BUY_WHT_IsDeleted" class="BUY_WHT_IsDeleted" />
+                    <a class="WHTRowRemove btn text-danger p-0 icon-link shadow-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                        </svg>
+                    </a>
+                </td>
+            </tr>
+            @if (Model != null)
+            {
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr class="WHTNewRow" style="@(@Model[i].BUY_WHT_IsDeleted == 1 ? "display: none;" : "")">
+                        <td>
+                            <select id="BUY_WHT_WHTC_Number" name="BUY_WHT_List[@i].BUY_WHT_WHTC_Number" class="form-select BUY_WHT_WHTC_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.WHT_Category)
+                                {
+                                    if (item.Value == Model[i].BUY_WHT_WHTC_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <select id="BUY_WHT_WHTT_Number" name="BUY_WHT_List[@i].BUY_WHT_WHTT_Number" class="form-select BUY_WHT_WHTT_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.WHT_Type)
+                                {
+                                    if (item.Value == Model[i].BUY_WHT_WHTT_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <select id="BUY_WHT_WHT_Number" name="BUY_WHT_List[@i].BUY_WHT_WHT_Number" class="form-select BUY_WHT_WHT_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.WHT_Tax)
+                                {
+                                    if (item.Value == Model[i].BUY_WHT_WHT_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <input id="BUY_WHT_WHT_Description" name="BUY_WHT_List[@i].BUY_WHT_WHT_Description" class="form-control BUY_WHT_WHT_Description" readonly value="@Model[i].BUY_WHT_WHT_Description" />
+                        </td>
+                        <td class="datetype">
+                            <input id="BUY_WHT_FromDate" name="BUY_WHT_List[@i].BUY_WHT_FromDate" class="form-control text-center BUY_WHT_FromDate datepicker" autocomplete="off" value="@Model[i].BUY_WHT_FromDate" />
+                        </td>
+                        <td class="datetype">
+                            <input id="BUY_WHT_ToDate" name="BUY_WHT_List[@i].BUY_WHT_ToDate" class="form-control text-center BUY_WHT_ToDate datepicker" autocomplete="off" value="@Model[i].BUY_WHT_ToDate" />
+                        </td>
+                        <td class="action text-center">
+                            @if (@Model[i].BUY_WHT_Number != 0)
+                            {
+                                <input name="BUY_WHT_List[@i].BUY_WHT_Number" type="hidden" class="BUY_WHT_Number" value="@Model[i].BUY_WHT_Number" />
+                            }
+                            <input type="hidden" name="BUY_WHT_List[@i].BUY_WHT_IsDeleted" value="@Model[i].BUY_WHT_IsDeleted" />
+                            <a class="WHTRowRemove btn text-danger p-0 icon-link shadow-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                    <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        InitializeFlatpickrs();
+
+         function InitializeFlatpickrs() {
+            $(".datepicker").flatpickr({
+                dateFormat: "d-M-Y",
+                altInput: false,
+            });
+        }
+
+        var rowCount = @(Model != null ? Model.Count : 0);
+        var isAddingRow = false;
+
+        function addRow() {
+            var NewRow = $("#WHTTempRow").clone().removeAttr("style").removeAttr("id").addClass("WHTNewRow");
+            NewRow.find("select.BUY_WHT_WHTC_Number").attr("name", "BUY_WHT_List[" + rowCount + "].BUY_WHT_WHTC_Number");
+            NewRow.find("select.BUY_WHT_WHTT_Number").attr("name", "BUY_WHT_List[" + rowCount + "].BUY_WHT_WHTT_Number");
+            NewRow.find("select.BUY_WHT_WHT_Number").attr("name", "BUY_WHT_List[" + rowCount + "].BUY_WHT_WHT_Number");
+            NewRow.find("input.BUY_WHT_FromDate").attr("name", "BUY_WHT_List[" + rowCount + "].BUY_WHT_FromDate");
+            NewRow.find("input.BUY_WHT_ToDate").attr("name", "BUY_WHT_List[" + rowCount + "].BUY_WHT_ToDate");
+            NewRow.find("input.BUY_WHT_IsDeleted").attr("name", "BUY_WHT_List[" + rowCount + "].BUY_WHT_IsDeleted").val(0);
+
+            $("#WHTTableBody").append(NewRow);
+            rowCount++;
+            NewRow.data("isValid", false);
+            isAddingRow = false;
+
+             InitializeFlatpickrs();
+        }
+
+        if ($("tr.WHTNewRow").length == 0) {
+            addRow();
+        }
+
+        $(document).on('click', '.WHTRowRemove', function () {
+            $(this).closest('tr').find("input.BUY_WHT_IsDeleted").val(1);
+            $(this).closest('tr').hide();
+        });
+
+        $(document).on('keydown', "tr.WHTNewRow select, tr.WHTNewRow input.BUY_WHT_FromDate, tr.WHTNewRow input.BUY_WHT_ToDate, tr.WHTNewRow input[type='text']", function (event) {
+            if (event.keyCode === 9) {
+                if (!validateField($(this)))
+                    event.preventDefault();
+            }
+        });
+
+        $(document).on("change", "tr.WHTNewRow select, tr.WHTNewRow input.BUY_WHT_FromDate, tr.WHTNewRow input.BUY_WHT_ToDate, input[type='text']", function () {
+            if (isAddingRow)
+                return;
+            isAddingRow = true;
+
+            var currentInput = $(this);
+            var isValid = validateField(currentInput);
+            var currentRow = $(this).closest("tr.WHTNewRow");
+            if (isValid) {
+                if (checkAllFieldsValid(currentRow)) {
+                    currentRow.data("isValid", true);
+                }
+                else {
+                    currentRow.data("isValid", false);
+                }
+            }
+            else {
+                currentRow.data("isValid", false);
+            }
+            if (currentRow.data("isValid")) {
+                var lastRow = $("tr.WHTNewRow").last();
+                if (checkAllFieldsValid(lastRow))
+                    addRow();
+            }
+            else {
+                isAddingRow = false;
+            }
+        });
+
+        function checkAllFieldsValid(currentRow) {
+            var allFieldsValid = true;
+            $("tr.WHTNewRow:visible").each(function () {
+                $(this).find("select, input.BUY_WHT_FromDate, input.BUY_WHT_ToDate, input[type='text']").each(function () {
+                    if (!validateField($(this))) {
+                        allFieldsValid = false;
+                        return false;
+                    }
+                });
+                if (!allFieldsValid) return false;
+            });
+            return allFieldsValid;
+        }
+
+        function validateField(currentInput) {
+            var valid = 1;
+            var inputValue = currentInput.val();
+            if (currentInput.hasClass("BUY_WHT_FromDate") || currentInput.hasClass("BUY_WHT_ToDate")) {
+                valid = validateDateRange(currentInput);
+            }
+            if (inputValue === "") {
+                valid = 0;
+            }
+
+            if (valid == 0) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+        function validateDateRange(currentInput) {
+            var valid = 1;
+            var currentRow = currentInput.closest("tr.WHTNewRow");
+            var FromDateInput = currentRow.find("input.BUY_WHT_FromDate");
+            var ToDateInput = currentRow.find("input.BUY_WHT_ToDate");
+            var FromDate = FromDateInput.val();
+            var ToDate = ToDateInput.val();
+            if (FromDate === "" || ToDate === "") {
+                valid = 0;
+            }
+            var from = new Date(FromDate);
+            var to = new Date(ToDate);
+            if (to < from) {
+                alert("'To Date' must be greater than or equal to 'From Date'");
+                currentInput.val("");
+                valid = 0;
+            }
+            return valid;
+        }
+
+        $("#WHTAddRowButton").click(function () {
+            var lastRow = $("tr.WHTNewRow").last();
+            if (checkAllFieldsValid(lastRow)) {
+                addRow();
+            }
+            else {
+                var firstInvalidField = null;
+                lastRow.find("select, input.BUY_WHT_FromDate, input.BUY_WHT_ToDate, input[type='text']").each(function () {
+                    if (!validateField($(this))) {
+                        if (firstInvalidField == null)
+                            firstInvalidField = $(this);
+                        return false;
+                    }
+                });
+                if (firstInvalidField != null) {
+                    alert("Please complete all fields !");
+                    firstInvalidField.focus();
+                }
+            }
+        });
+        $("#WHTOkayButton").click(function () {
+           GridValidation();
+        });
+        $("#WHTCloseButton").click(function () {
+           GridValidation();
+        });
+        function GridValidation(){
+            $("tr.WHTNewRow").each(function () {
+                var FromDate = $(this).find("input.BUY_WHT_FromDate").val();
+                var ToDate = $(this).find("input.BUY_WHT_ToDate").val();
+                var WHTC_Number = $(this).find("select.BUY_WHT_WHTC_Number").val();
+                var WHTT_Number = $(this).find("select.BUY_WHT_WHTT_Number").val();
+                var WHT_Number = $(this).find("select.BUY_WHT_WHT_Number").val();
+
+                if (! FromDate && ! ToDate && ! WHTC_Number && ! WHTT_Number && ! WHT_Number) {
+                    $(this).closest('tr').find("input.BUY_WHT_IsDeleted").val(1);
+                    $(this).closest('tr').hide();
+                }
+            });
+
+
+            var lastRow = $("tr.WHTNewRow").last();
+            if (checkAllFieldsValid(lastRow)) {
+
+                $("#WHTModel").modal('hide');
+            }
+            else {
+                alert("Please complete all fields !");
+                firstInvalidField.focus();
+            }
+        }
+    });
+</script>

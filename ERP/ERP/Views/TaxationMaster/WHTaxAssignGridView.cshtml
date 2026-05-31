@@ -1,0 +1,334 @@
+﻿@model List<ERP_DTO.WH_TaxAssignDetail_DTO>
+
+<div class="w-100 pb-3" style="height:200px">
+    <div class="table-body table-responsive h-100">
+        <table class="table table-bordered table-hover mb-0 align-middle table-grid">
+            <thead>
+            <thead>
+                <tr class="table-info">
+                    <th>Assessee Nature</th>
+                    <th class="datetype text-center">From Date</th>
+                    <th class="dateype text-center">To Date</th>
+                    <th class="table-width-xxl text-end">Single Transaction Limit</th>
+                    <th class="table-width-xxl text-end">Aggregate Transaction Limit</t>
+                    <th class="table-width-md text-center">Include Tax</th>
+                    <th class="table-width-lg text-end">Tax %</th>
+                    <th class="table-width-lg text-end">PAN non-availability %</th>
+                    <th>Assign COA</th>
+                    <th class="action text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody id="TableBody">
+                <tr id="TempRow" style="display: none;">
+                    <td>
+                        <select id="AssesseeNature" class="form-select AssesseeNature" asp-items="@ViewBag.Nature"></select>
+                    </td>
+                    <td class="datetype">
+                        <input id="FromDate" class="form-control FromDate datepicker text-center" autocomplete="off" style="max-width:120px !important" />
+                    </td>
+                    <td class="datetype">
+                        <input id="ToDate" class="form-control ToDate datepicker text-center" autocomplete="off" style="max-width:120px !important" />
+                    </td>
+                    <td class="table-width-xxl">
+                        <input id="SingleTransLimit" class="form-control decimal text-end  SingleTransLimit" autocomplete="off" />
+                    </td>
+                    <td class="table-width-xxl">
+                        <input id="AggregateTransLimit" class="form-control decimal text-end AggregateTransLimit" autocomplete="off" />
+                    </td>
+                    <td class="table-width-md">
+                        <select id="IncludeTax" class="form-select IncludeTax text-center" asp-items="@ViewBag.Tax"></select>
+                    </td>
+                    <td class="table-width-lg">
+                        <div class="d-flex align-items-center">
+                            <input id="PAN_TaxPercent" class="form-control decimal PAN_TaxPercent text-end" autocomplete="off" /> <span class="percent-symbol">%</span>
+                        </div>
+                    </td>
+                    <td class="table-width-lg">
+                        <div class="d-flex align-items-center">
+                            <input id="NON_PAN_TaxPercent" class="form-control decimal text-end NON_PAN_TaxPercent" autocomplete="off" /> <span class="percent-symbol">%</span>
+                        </div>
+                    </td>
+                    <td>
+                        <select id="COA" class="form-select form-search COA" asp-items="@ViewBag.COA"></select>
+                    </td>
+                    <td class="action text-center">
+                        <a class="RowRemove btn text-danger p-0 icon-link shadow-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                            </svg>
+                        </a>
+                    </td>
+                </tr>
+                    @if (Model != null)
+                    {
+                        @for (int i = 0; i < Model.Count; i++)
+                        {
+                        <tr class="NewRow">
+                            <td>
+                                <select id="COA" name="WH_TaxDetail[@i].AssesseeNature" class="form-select AssesseeNature">
+                                        @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Nature)
+                                        {
+                                            if (item.Value == Model[i].AssesseeNature)
+                                            {
+                                            <option value="@item.Value" selected>@item.Text</option>
+                                            }
+                                            else
+                                            {
+                                            <option value="@item.Value">@item.Text</option>
+                                            }
+                                        }
+                                </select>
+                            </td>
+                            <td class="datetype">
+                                <input id="FromDate" name="WH_TaxDetail[@i].FromDate" class="form-control FromDate datepicker text-center" autocomplete="off" value="@Model[i].FromDate" style="max-width:120px !important" />
+                            </td>
+                            <td class="datetype">
+                                <input id="ToDate" name="WH_TaxDetail[@i].ToDate" class="form-control ToDate datepicker text-center" autocomplete="off" value="@Model[i].ToDate" style="max-width:120px !important" />
+                            </td>
+                            <td class="table-width-xxl">
+                                <input id="SingleTransLimit" name="WH_TaxDetail[@i].SingleTransLimit" class="form-control decimal text-end SingleTransLimit" autocomplete="off" value="@Model[i].SingleTransLimit" />
+                            </td>
+                            <td class="table-width-xxl">
+                                <input id="AggregateTransLimit" name="WH_TaxDetail[@i].AggregateTransLimit" class="form-control decimal text-end AggregateTransLimit" autocomplete="off" value="@Model[i].AggregateTransLimit" />
+                            </td>
+                            <td class="table-width-md">
+                                <select id="COA" name="WH_TaxDetail[@i].IncludeTax" class="form-select IncludeTax">
+                                        @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Tax)
+                                        {
+                                            if (item.Value == Model[i].IncludeTax)
+                                            {
+                                            <option value="@item.Value" selected>@item.Text</option>
+                                            }
+                                            else
+                                            {
+                                            <option value="@item.Value">@item.Text</option>
+                                            }
+                                        }
+                                </select>
+                            </td>
+                            <td class="table-width-lg">
+                                <div class="d-flex align-items-center">
+                                    <input id="PAN_TaxPercent" name="WH_TaxDetail[@i].PAN_TaxPercent" class="form-control decimal PAN_TaxPercent text-end" autocomplete="off" value="@Model[i].PAN_TaxPercent" />
+                                    <span class="percent-symbol">%</span>
+                                </div>
+                            </td>
+                            <td class="table-width-lg">
+                                <div class="d-flex align-items-center">
+                                    <input id="NON_PAN_TaxPercent" name="WH_TaxDetail[@i].NON_PAN_TaxPercent" class="form-control decimal NON_PAN_TaxPercent text-end" autocomplete="off" value="@Model[i].NON_PAN_TaxPercent" />
+                                    <span class="percent-symbol">%</span>
+                                </div>
+                            </td>
+                            <td>
+                                <select id="COA" name="WH_TaxDetail[@i].COA" class="form-select form-search COA">
+                                        @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.COA)
+                                        {
+                                            if (item.Value == Model[i].COA)
+                                            {
+                                            <option value="@item.Value" selected>@item.Text</option>
+                                            }
+                                            else
+                                            {
+                                            <option value="@item.Value">@item.Text</option>
+                                            }
+                                        }
+                                </select>
+                            </td>
+                            <td class="action text-center">
+                                    @if (@Model[i].WH_TaxAssignNumber != 0)
+                                    {
+                                    <input name="WH_TaxDetail[@i].WH_TaxAssignNumber" type="hidden" class="WH_TaxAssignNumber" value="@Model[i].WH_TaxAssignNumber" />
+                                    }
+                                <input type="hidden" name="WH_TaxDetail[@i].IsDeleted" value="false" />
+                                <a class="RowRemove btn text-danger p-0 icon-link shadow-none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                        <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                    </svg>
+                                </a>
+                            </td>
+                        </tr>
+                        }
+                    }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<a id="addRowButton" class="btn btn-primary me-3">Add Row</a>
+<script>
+    $(document).ready(function () {
+         function InitializeFlatpickrs() {
+             $(".datepicker").flatpickr({
+                 dateFormat: "d-M-Y",
+                altInput: false,
+             });
+         }
+
+        var rowCount = @(Model != null ? Model.Count : 0);
+        var isAddingRow = false;
+
+        function addRow() {
+            var newRow = $("#TempRow").clone().removeAttr("style").removeAttr("id").addClass("NewRow");
+            newRow.find("input.FromDate").attr("name", "WH_TaxDetail[" + rowCount + "].FromDate");
+            newRow.find("input.ToDate").attr("name", "WH_TaxDetail[" + rowCount + "].ToDate");
+            newRow.find("select.AssesseeNature").attr("name", "WH_TaxDetail[" + rowCount + "].AssesseeNature");
+            newRow.find("input.SingleTransLimit").attr("name", "WH_TaxDetail[" + rowCount + "].SingleTransLimit").val("0.00");
+            newRow.find("input.AggregateTransLimit").attr("name", "WH_TaxDetail[" + rowCount + "].AggregateTransLimit").val("0.00");
+            newRow.find("select.IncludeTax").attr("name", "WH_TaxDetail[" + rowCount + "].IncludeTax");
+            newRow.find("input.PAN_TaxPercent").attr("name", "WH_TaxDetail[" + rowCount + "].PAN_TaxPercent").val("0.00");
+            newRow.find("input.NON_PAN_TaxPercent").attr("name", "WH_TaxDetail[" + rowCount + "].NON_PAN_TaxPercent").val("0.00");
+            newRow.find("select.COA").attr("name", "WH_TaxDetail[" + rowCount + "].COA");
+
+            newRow.find("input[name='WH_TaxDetail[" + rowCount + "].IsDeleted']").val(false);
+
+            $("#TableBody").append(newRow);
+            rowCount++;
+            newRow.data("isValid", false);
+            isAddingRow = false;
+
+             InitializeFlatpickrs();
+
+        }
+
+        if ($("tr.NewRow").length == 0) {
+            addRow();
+        }
+
+        $(document).on('click', '.RowRemove', function () {
+            $(this).closest('tr').find("input[name*='IsDeleted']").val(true);
+            $(this).closest('tr').hide();
+        });
+
+        $(document).on('keydown', "tr.NewRow select, tr.NewRow input.FromDate, tr.NewRow input.ToDate, tr.NewRow input[type='text']", function (event) {
+            if (event.keyCode === 9) {
+                if (!validateField($(this)))
+                    event.preventDefault();
+            }
+        });
+
+
+        $(document).on("change", "tr.NewRow select, tr.NewRow input.FromDate, tr.NewRow input.ToDate, tr.NewRow input[type='text']", function () {
+            if (isAddingRow)
+                return;
+            isAddingRow = true;
+
+            var currentInput = $(this);
+            var isValid = validateField(currentInput);
+            var currentRow = $(this).closest("tr.NewRow");
+            if (isValid) {
+                if (checkAllFieldsValid(currentRow)) {
+                    currentRow.data("isValid", true);
+                }
+                else {
+                    currentRow.data("isValid", false);
+                }
+            }
+            else {
+                currentRow.data("isValid", false);
+            }
+            if (currentRow.data("isValid")) {
+                var lastRow = $("tr.NewRow").last();
+                if (checkAllFieldsValid(lastRow))
+                    addRow();
+
+            }
+            else {
+                isAddingRow = false;
+            }
+        });
+
+        function checkAllFieldsValid(currentRow) {
+            var allFieldsValid = true;
+            $("tr.NewRow:visible").each(function () {
+                $(this).find("select, input.FromDate, input.ToDate, input[type='text']").each(function () {
+                    if (!validateField($(this))) {
+                        allFieldsValid = false;
+                        return false;
+                    }
+                });
+                if (!allFieldsValid) return false;
+            });
+            return allFieldsValid;
+        }
+
+
+        function validateField(currentInput) {
+            var inputValue = currentInput.val();
+            if (currentInput.hasClass("FromDate") || currentInput.hasClass("ToDate")) {
+                return validateDateRange(currentInput);
+            }
+            if (inputValue === "") {
+                // alert("This field is required");
+                currentInput.addClass("error-field");
+                return false;
+            }
+            else {
+                currentInput.removeClass("error-field");
+                return true;
+            }
+        }
+
+        function validateDateRange(currentInput) {
+            var currentRow = currentInput.closest("tr.NewRow");
+            var fromDateInput = currentRow.find("input.FromDate");
+            var toDateInput = currentRow.find("input.ToDate");
+            var fromDate = fromDateInput.val();
+            var toDate = toDateInput.val();
+            if (fromDate === "" || toDate === "") {
+                // alert("This field is required");
+                currentInput.addClass("error-field");
+                return false;
+            }
+            var from = new Date(fromDate);
+            var to = new Date(toDate);
+            if (to < from) {
+                alert("'To Date' must be greater than or equal to 'From Date'");
+                currentInput.val("");
+                return false;
+            }
+            currentInput.removeClass("error-field");
+            return true;
+        }
+
+        $("#addRowButton").click(function () {
+            var lastRow = $("tr.NewRow").last();
+            if (checkAllFieldsValid(lastRow))
+                addRow();
+            else {
+                var firstInvalidField = null;
+                lastRow.find("select, input.FromDate, input.ToDate, input[type='text']").each(function () {
+                    if (!validateField($(this))) {
+                        if (firstInvalidField == null)
+                            firstInvalidField = $(this);
+                        return false;
+                    }
+                });
+                if (firstInvalidField != null) {
+                    alert("Please complete all fields before adding a new row");
+                    firstInvalidField.focus();
+                }
+            }
+        });
+
+        $('form').submit(function (event) {
+            $("tr.NewRow").each(function () {
+                var isEmpty = true;
+                $(this).find("select, input.FromDate, input.ToDate, input[type='text']").each(function () {
+                    if ($(this).val() !== "") {
+                        isEmpty = false;
+                        return false;
+                    }
+                });
+                if (isEmpty) {
+                    $(this).remove();
+                }
+
+            });
+        });
+    });
+</script>
+
+<style>
+    .select2-container {
+        min-width: 250px;
+    }
+</style>

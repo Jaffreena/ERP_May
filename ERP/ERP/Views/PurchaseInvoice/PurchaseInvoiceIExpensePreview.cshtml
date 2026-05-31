@@ -1,0 +1,178 @@
+﻿@model List<ERP_DTO.PurchaseInvoiceIExpense_DTO>
+
+<div class="w-100 table-responsive">
+    <table class="table table-bordered table-hover align-middle table-grid mb-0">
+        <thead>
+            <tr class="table-info">
+                <th>@Html.DisplayNameFor(M => M.First().PII_EXP_Expense_Number)</th>
+                <th>@Html.DisplayNameFor(M => M.First().PII_EXP_Description)</th>
+                <th>@Html.DisplayNameFor(M => M.First().PII_EXP_Remarks)</th>
+                <th>@Html.DisplayNameFor(M => M.First().PII_EXP_Occurrence_Number)</th>
+                <th>@Html.DisplayNameFor(M => M.First().PII_EXP_CM_Number)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().PII_EXP_ExpenseBase)</th>
+                <th class="table-width-3xl text-end">@Html.DisplayNameFor(M => M.First().PII_EXP_ExpenseValue)</th>
+                <th>@Html.DisplayNameFor(M => M.First().PII_EXP_Allocate_Number)</th>
+                <th>@Html.DisplayNameFor(M => M.First().PII_EXP_LA_Number)</th>
+            </tr>
+        </thead>
+        <tbody id="IExTableBody">
+            @if (Model != null)
+            {
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr class="IExNewRow">
+                        <td>
+                            <input id="PII_EXP_PII_Number" name="ItemExpenses[@i].PII_EXP_PII_Number" class="PII_EXP_PII_Number" type="hidden" value="@Model[i].PII_EXP_PII_Number" />
+                            <select id="PII_EXP_Expense_Number" name="ItemExpenses[@i].PII_EXP_Expense_Number" disabled class="form-select PII_EXP_Expense_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.ExpenseCode)
+                                {
+                                    if (item.Value == Model[i].PII_EXP_Expense_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <input id="PII_EXP_Description" name="ItemExpenses[@i].PII_EXP_Description" readonly class="form-control PII_EXP_Description" autocomplete="off" value="@Model[i].PII_EXP_Description" />
+                        </td>
+                        <td>
+                            <input id="PII_EXP_Remarks" name="ItemExpenses[@i].PII_EXP_Remarks" readonly class="form-control PII_EXP_Remarks" autocomplete="off" value="@Model[i].PII_EXP_Remarks" />
+                        </td>
+                        <td>
+                            <select id="PII_EXP_Occurrence_Number" name="ItemExpenses[@i].PII_EXP_Occurrence_Number" disabled class="form-select PII_EXP_Occurrence_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Occurrence)
+                                {
+                                    if (item.Value == Model[i].PII_EXP_Occurrence_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <select id="PII_EXP_CM_Number" name="ItemExpenses[@i].PII_EXP_CM_Number" disabled class="form-select PII_EXP_CM_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.ChargeableMethod)
+                                {
+                                    if (item.Value == Model[i].PII_EXP_CM_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="PII_EXP_ExpenseBase" name="ItemExpenses[@i].PII_EXP_ExpenseBase" readonly class="form-control PII_EXP_ExpenseBase decimal text-end" autocomplete="off" value="@Model[i].PII_EXP_ExpenseBase" />
+                        </td>
+                        <td class="table-width-3xl">
+                            <input id="PII_EXP_ExpenseValue" name="ItemExpenses[@i].PII_EXP_ExpenseValue" readonly class="form-control PII_EXP_ExpenseValue decimal text-end" autocomplete="off" value="@Model[i].PII_EXP_ExpenseValue" />
+                        </td>
+                        <td>
+                            <select id="PII_EXP_Allocate_Number" name="ItemExpenses[@i].PII_EXP_Allocate_Number" disabled class="form-select PII_EXP_Allocate_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Allocate)
+                                {
+                                    if (item.Value == Model[i].PII_EXP_Allocate_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+
+                         <td>
+                            <select id="PII_EXP_LA_Number" name="ItemExpenses[@i].PII_EXP_LA_Number" disabled class="form-select PII_EXP_LA_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.LedgerAccount)
+                                {
+                                    if (item.Value == Model[i].PII_EXP_LA_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+
+        <tfoot>
+            <tr class="table-info">
+                <td colspan="6" class="text-end py-2">Total</td>
+                <td class="table-width-3xl">
+                    <input id="TotalIExpenseAmount" class="form-control text-end" readonly />
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#IExOkayButton").click(function () {
+            $("#IExpense").modal('hide');
+        });
+        $("#IExCloseButton").click(function () {
+            $("#IExpense").modal('hide');
+        });
+
+        $(document).on('click', '.ItemExpense', function () {
+            let CheckedCheckbox = document.querySelector('.CheckItem:checked');
+            if (CheckedCheckbox) {
+                var currentRow = $(CheckedCheckbox).closest('tr.NewRow');
+                var ItemNumber = currentRow.find('input.PII_Number').val();
+
+                console.log(ItemNumber);
+
+                if (ItemNumber) {
+                   var TotalIExpAmount = 0;
+                    $("tr.IExNewRow").each(function () {
+                        var RowItemNumber = $(this).find("input.PII_EXP_PII_Number").val();
+                        var isDeleted = $(this).find("input.IsDeleted").val();
+
+                        if (RowItemNumber === ItemNumber && isDeleted !== 'true') {
+                            $(this).show();
+
+                            var ExpenseAmount = $(this).find(".PII_EXP_ExpenseValue").val();
+
+                            TotalIExpAmount += parseFloat(removeCommas(ExpenseAmount));
+                        } else {
+                            $(this).hide();
+                        }
+                    });
+
+                       $("#TotalIExpenseAmount").val(DecimalIndianRupees(TotalIExpAmount.toFixed(2)));
+
+                    new bootstrap.Modal($("#IExpense")).show();
+                    $('#IExpense').on('shown.bs.modal', function () {
+                        $(this).find('[autofocus]').focus();
+                    });
+                }
+            }
+        });
+    });
+
+</script>

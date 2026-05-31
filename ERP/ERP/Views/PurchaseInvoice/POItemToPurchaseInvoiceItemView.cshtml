@@ -1,0 +1,1206 @@
+﻿@model List<ERP_DTO.POItemTOPurchaseInvoiceItem_DTO>
+
+<div class="col table-fixed h-100">
+    <div class="w-12 table-responsive table-body table-body-f">
+        <table class="table table-one table-striped table-bordered table-hover align-middle w-100" id="ItemTable">
+            <thead>
+                <tr class="table-info text-center">
+                    <th class="px-2 del">
+                    </th>
+                    <th class="text-start">Purchase Order Number</th>
+                    <th class="text-start">Item Code</th>
+                    <th class="text-start">Description</th>
+                    <th class="text-start">Item Group</th>
+                    <th class="text-start text-center">Warehouse</th>
+                    <th class="table-width-md">UoM</th>
+                    <th class="table-width-xl">PO Qty</th>
+                    <th class="table-width-xl text-center">Invoice Qty</th>
+                    <th class="table-width-xl text-end">Unit Price</th>
+                    <th class="table-width-3xl text-end">Amount</th>
+                    <th class="table-width-3xl text-end">
+                        Expense value
+                    </th>
+                    <th class="table-width-lg text-center">
+                        HSN
+                    </th>
+                    <th class="table-width-xxl text-end">
+                        GST Amount
+                    </th>
+                    <th class="table-width-sm text-center">
+                        WHT Percent
+                    </th>
+                    <th class="table-width-xxl text-end">
+                        WH_Tax Amount
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="TableBody">
+                <tr id="TempRow" style="display: none;">
+                    <td class="p-2 del">
+                        <input type="checkbox" class="CheckItem form-check-input" name="CheckItem">
+                    </td>
+                    <td>
+                        <input id="PII_POH_OrderNo" class="form-control PII_POH_OrderNo" autocomplete="off" readonly />
+                    </td>
+                    <td>
+                        <input id="PII_PO_Date" class="PII_PO_Date" type="hidden" />
+                        <input id="PII_POI_Number" class="PII_POI_Number" type="hidden" />
+                        <input id="PII_POH_Number" class="PII_POH_Number" type="hidden" />
+                        <input id="PII_MS_Number" class="PII_MS_Number" type="hidden" />
+                        <input id="PII_Item_Number" class="PII_Item_Number" type="hidden" />
+                        <input id="PII_ItemCode" class="form-control PII_ItemCode" autocomplete="off" oninput="OnInput(this)" onfocus="OnFocus(this)" />
+                        <div class="search-results card" style="display:none"></div>
+                    </td>
+                    <td>
+                        <input id="PII_Description" class="form-control PII_Description" autocomplete="off" readonly />
+                    </td>
+                    <td>
+                        <input id="PII_ItemGroup" class="form-control PII_ItemGroup" autocomplete="off" readonly />
+                    </td>
+                    <td>
+                        <select id="PII_Warehouse_Number" class="form-select PII_Warehouse_Number" asp-items="@ViewBag.Warehouse"></select>
+                    </td>
+                    <td class="table-width-md">
+                        <select id="PII_UoM_Number" class="form-select PII_UoM_Number text-center" asp-items="@ViewBag.UoM" ></select>
+                        <input id="PII_DecimalPlaces" class="form-control PII_DecimalPlaces" autocomplete="off" type="hidden" />
+                        @* <input type="hidden" id="PII_UoM" class="form-control PII_UoM" autocomplete="off" /> *@
+                    </td>
+                    <td class="table-width-xl">
+                        <input id="PII_POQty" class="form-control PII_POQty decimal text-center" autocomplete="off" readonly />
+                    </td>
+                    <td class="table-width-xl">
+                        <input id="PII_Qty" class="form-control PII_Qty number QtyNumbers Positivedecimal text-center" autocomplete="off" />
+                    </td>
+                    <td class="table-width-xl">
+                        <input id="PII_UnitPrice" class="form-control PII_UnitPrice number UnitDecimal text-end" autocomplete="off" readonly />
+                    </td>
+                    <td class="table-width-3xl">
+                        <input id="PII_Amount" class="form-control PII_Amount text-end" autocomplete="off" readonly />
+                    </td>
+                    <td class="table-width-3xl">
+                        <input id="PII_ExpenseValue" class="form-control PII_ExpenseValue text-end" autocomplete="off" readonly />
+                    </td>
+                    <td class="table-width-lg">
+                        <select id="PII_HSN_Number" class="form-select PII_HSN_Number text-center" asp-items="@ViewBag.HSN"></select>
+                    </td>
+                    <td class="table-width-xxl">
+                        <input id="PII_GST_Amount" class="form-control PII_GST_Amount text-end" autocomplete="off" readonly />
+                    </td>
+                    <td class="table-width-sm">
+                        <input id="PII_WHT_Percent" class="form-control PII_WHT_Percent text-end" autocomplete="off" readonly />
+                    </td>
+                    <td class="table-width-xxl">
+                        <input id="PII_WHT_Amount" class="form-control PII_WHT_Amount text-end" autocomplete="off" readonly />
+                        <input name="PII_IsDeleted" class="PII_IsDeleted" value="false" type="hidden" />
+                    </td>
+                </tr>
+                @if (Model != null)
+                {
+                    @for (int i = 0; i < Model.Count; i++)
+                    {
+                        <tr class="NewRow" style="@(@Model[i].PII_IsDeleted == "true" ? "display: none;":"")">
+                            <td class="p-2 del">
+                                <input type="checkbox" class="CheckItem form-check-input" name="CheckItem">
+                            </td>
+                            <td>
+                                <input id="PII_POH_OrderNo" name="InvoiceItems[@i].PII_POH_OrderNo" class="form-control PII_POH_OrderNo" readonly value="@Model[i].PII_POH_OrderNo" />
+                            </td>
+                            <td>
+                                <input id="PII_PO_Date" name="InvoiceItems[@i].PII_PO_Date" class="PII_PO_Date" value="@Model[i].PII_PO_Date" type="hidden" />
+                                <input id="PII_POI_Number" name="InvoiceItems[@i].PII_POI_Number" class="PII_POI_Number" type="hidden" value="@Model[i].PII_POI_Number" />
+                                <input id="PII_POH_Number" name="InvoiceItems[@i].PII_POH_Number" class="PII_POH_Number" type="hidden" value="@Model[i].PII_POH_Number" />
+                                <input id="PII_MS_Number" name="InvoiceItems[@i].PII_MS_Number" class="PII_MS_Number" type="hidden" value="@Model[i].PII_MS_Number" />
+                                <input id="PII_Item_Number" name="InvoiceItems[@i].PII_Item_Number" class="PII_Item_Number" type="hidden" value="@Model[i].PII_Item_Number" />
+                                <input id="PII_ItemCode" name="InvoiceItems[@i].PII_ItemCode" class="form-control PII_ItemCode" autocomplete="off" value="@Model[i].PII_ItemCode" oninput="OnInput(this)" onfocus="OnFocus(this)" />
+                                <div class="search-results card" style="display:none"></div>
+                            </td>
+                            <td>
+                                <input id="PII_Description" name="InvoiceItems[@i].PII_Description" class="form-control PII_Description" readonly value="@Model[i].PII_Description" />
+                            </td>
+                            <td>
+                                <input id="PII_ItemGroup" name="InvoiceItems[@i].PII_ItemGroup" class="form-control PII_ItemGroup" readonly value="@Model[i].PII_ItemGroup" />
+                            </td>
+                            <td>
+                                <select id="PII_Warehouse_Number" name="InvoiceItems[@i].PII_Warehouse_Number" class="form-select PII_Warehouse_Number">
+                                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Warehouse)
+                                    {
+                                        if (item.Value == Model[i].PII_Warehouse_Number)
+                                        {
+                                            <option value="@item.Value" selected>@item.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    }
+                                </select>
+                            </td>
+                            <td class="table-width-md">
+                                <select id="PII_UoM_Number" name="InvoiceItems[@i].PII_UoM_Number" class="form-select PII_UoM_Number" disabled>
+                                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.UoM)
+                                    {
+                                        if (item.Value == Model[i].PII_UoM_Number)
+                                        {
+                                            <option value="@item.Value" selected>@item.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    }
+                                </select>
+                                @* <input id="PII_UoM" name="InvoiceItems[@i].PII_UoM" class="form-control PII_UoM" type="hidden" value="@Model[i].PII_UoM" /> *@
+                                <input id="PII_DecimalPlaces" name="InvoiceItems[@i].PII_DecimalPlaces" class="form-control PII_DecimalPlaces" autocomplete="off" value="@Convert.ToDouble(@Model[i].PII_DecimalPlaces)" type="hidden" />
+                            </td>
+                            <td class="table-width-xl">
+                                <input id="PII_POQty" name="InvoiceItems[@i].PII_POQty" class="form-control PII_POQty decimal text-center" autocomplete="off" readonly value="@Convert.ToDouble(@Model[i].PII_POQty)" />
+                            </td>
+                            <td class="table-width-xl">
+                                <input id="PII_Qty" name="InvoiceItems[@i].PII_Qty" class="form-control PII_Qty number QtyNumbers Positivedecimal text-center" autocomplete="off" value="@Convert.ToDouble(@Model[i].PII_Qty)" />
+                            </td>
+                            <td class="table-width-xl">
+                                <input id="PII_UnitPrice" name="InvoiceItems[@i].PII_UnitPrice" class="form-control PII_UnitPrice number UnitDecimal text-end" readonly autocomplete="off" value="@Convert.ToDouble(@Model[i].PII_UnitPrice)" />
+                            </td>
+                            <td class="table-width-3xl">
+                                <input id="PII_Amount" name="InvoiceItems[@i].PII_Amount" class="form-control PII_Amount text-end" readonly autocomplete="off" value="@Convert.ToDouble(@Model[i].PII_Amount)" />
+                                @if (@Model[i].PII_Number != 0)
+                                {
+                                    <input name="InvoiceItems[@i].PII_Number" class="PII_Number" value="@Model[i].PII_Number" type="hidden" />
+                                }
+                                <input name="InvoiceItems[@i].PII_IsDeleted" class="PII_IsDeleted" value="@Model[i].PII_IsDeleted" type="hidden" />
+                            </td>
+                            <td class="table-width-3xl">
+                                <input id="PII_ExpenseValue" name="InvoiceItems[@i].PII_ExpenseValue" class="form-control PII_ExpenseValue text-end" autocomplete="off" readonly value="@Convert.ToDouble(@Model[i].PII_ExpenseValue)" />
+                            </td>
+                            <td class="table-width-lg">
+                                <select id="PII_HSN_Number" name="InvoiceItems[@i].PII_HSN_Number" class="form-select PII_HSN_Number">
+                                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.HSN)
+                                    {
+                                        if (item.Value == Model[i].PII_HSN_Number)
+                                        {
+                                            <option value="@item.Value" selected>@item.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    }
+                                </select>
+                            </td>
+                            <td class="table-width-xxl">
+                                <input id="PII_GST_Amount" name="InvoiceItems[@i].PII_GST_Amount" class="form-control PII_GST_Amount text-end" autocomplete="off" readonly value="@Convert.ToDouble(@Model[i].PII_GST_Amount)" />
+                            </td>
+                            <td class="table-width-sm">
+                                <input id="PII_WHT_Percent" name="InvoiceItems[@i].PII_WHT_Percent" class="form-control PII_WHT_Percent" autocomplete="off" readonly value="@Convert.ToDouble(@Model[i].PII_WHT_Percent)" />
+                            </td>
+                            <td class="table-width-xxl">
+                                <input id="PII_WHT_Amount" name="InvoiceItems[@i].PII_WHT_Amount" class="form-control PII_WHT_Amount text-end" autocomplete="off" readonly value="@Convert.ToDouble(@Model[i].PII_WHT_Amount)" />
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+            <tfoot>
+                <tr class="table-info fw-bold">
+                    <td colspan="7" class="text-end py-2"><span class="float-end  pe-3">Total</span></td>
+                    <td>
+                        <input id="TotalPOQty" class="form-control text-center" readonly />
+                    </td>
+                    <td>
+                        <input id="TotalQty" class="form-control text-center" readonly />
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        <input id="TotalAmount" class="form-control text-end" readonly />
+                    </td>
+                    <td>
+                        <input id="TotalExpenseValue" class="form-control text-end" readonly />
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        <input id="TotalGST" class="form-control text-end" readonly />
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        <input id="TotalWHT" class="form-control text-end" readonly />
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div class="row table-footer align-items-center">
+        <div class="col">
+            @* <a id="AddRowButton" class="btn btn-primary">Add Row</a> *@
+            <a class="RowRemove btn btn-primary">
+                Delete Row
+            </a>
+        </div>
+    </div>
+</div>
+<script>
+    function initializeFlatpickrs() {
+        $(".PII_DeliveryDate").flatpickr({
+            dateFormat: "d-M-Y",
+            altInput: false,
+        });
+    }
+
+    var rowCount = @(Model != null ? Model.Count : 0);
+    var isAddingRow = false;
+
+    function addRow(Po) {
+        var NewRow = $("#TempRow").clone().removeAttr("style").removeAttr("id").addClass("NewRow");
+        NewRow.find("input.PII_POI_Number").attr("name", "InvoiceItems[" + rowCount + "].PII_POI_Number").val(Po.poI_Number);
+        NewRow.find("input.PII_POH_Number").attr("name", "InvoiceItems[" + rowCount + "].PII_POH_Number").val(Po.poH_Number);
+        NewRow.find("input.PII_PO_Date").attr("name", "InvoiceItems[" + rowCount + "].PII_PO_Date").val(Po.poH_PODate);
+        NewRow.find("input.PII_POH_OrderNo").attr("name", "InvoiceItems[" + rowCount + "].PII_POH_OrderNo").val(Po.poH_OrderNo);
+        NewRow.find("input.PII_MS_Number").attr("name", "InvoiceItems[" + rowCount + "].PII_MS_Number").val(Po.poI_MS_Number);
+        NewRow.find("input.PII_Item_Number").attr("name", "InvoiceItems[" + rowCount + "].PII_Item_Number").val(Po.poI_Item_Number);
+        NewRow.find("input.PII_ItemCode").attr("name", "InvoiceItems[" + rowCount + "].PII_ItemCode").val(Po.poI_ItemCode);
+        NewRow.find("input.PII_Description").attr("name", "InvoiceItems[" + rowCount + "].PII_Description").val(Po.poI_ItemDescription);
+        NewRow.find("input.PII_DecimalPlaces").attr("name", "InvoiceItems[" + rowCount + "].PII_DecimalPlaces").val(Po.poI_DecimalPlaces);
+        NewRow.find("input.PII_ItemGroup").attr("name", "InvoiceItems[" + rowCount + "].PII_ItemGroup").val(Po.poI_ItemGroup);
+        NewRow.find("select.PII_Warehouse_Number").attr("name", "InvoiceItems[" + rowCount + "].PII_Warehouse_Number").val(Po.poI_Warehouse_Number);
+        NewRow.find("select.PII_UoM_Number").attr("name", "InvoiceItems[" + rowCount + "].PII_UoM_Number").val(Po.poI_UoM_Number);
+        NewRow.find("input.PII_POQty").attr("name", "InvoiceItems[" + rowCount + "].PII_POQty").val(Po.poI_Qty);
+        NewRow.find("input.PII_Qty").attr("name", "InvoiceItems[" + rowCount + "].PII_Qty").val(Po.poI_Qty);
+        NewRow.find("input.PII_UnitPrice").attr("name", "InvoiceItems[" + rowCount + "].PII_UnitPrice").val(Po.poI_UnitPrice);
+        NewRow.find("input.PII_Amount").attr("name", "InvoiceItems[" + rowCount + "].PII_Amount").val(Po.poI_Amount);
+
+        NewRow.find("input.PII_ExpenseValue").attr("name", "InvoiceItems[" + rowCount + "].PII_ExpenseValue");
+        NewRow.find("select.PII_HSN_Number").attr("name", "InvoiceItems[" + rowCount + "].PII_HSN_Number").val(Po.poI_HSN);
+        NewRow.find("input.PII_GST_Amount").attr("name", "InvoiceItems[" + rowCount + "].PII_GST_Amount");
+        NewRow.find("input.PII_WHT_Percent").attr("name", "InvoiceItems[" + rowCount + "].PII_WHT_Percent");
+        NewRow.find("input.PII_WHT_Amount").attr("name", "InvoiceItems[" + rowCount + "].PII_WHT_Amount");
+        NewRow.find("input.PII_IsDeleted").attr("name", "InvoiceItems[" + rowCount + "].PII_IsDeleted").val("false");
+
+        $("#TableBody").append(NewRow);
+        rowCount++;
+        NewRow.data("isValid", false);
+        isAddingRow = false;
+
+        initializeFlatpickrs();
+    }
+
+    $(document).on('keydown', "tr.NewRow select, tr.NewRow input.PII_DeliveryDate,tr.NewRow input.PII_Item_Number,tr.NewRow input.PII_Qty,tr.NewRow input.PII_UnitPrice, tr.NewRow input[type='text']", function (event) {
+        if (event.keyCode === 9) {
+            if (!validateField($(this)))
+                event.preventDefault();
+        }
+    });
+
+    $(document).on('change', "tr.NewRow select.PII_UoM_Number", function () {
+        var selectedValue = $(this).val();
+        var currentInput = $(this);
+        var currentRow = currentInput.closest('tr.NewRow');
+
+        var uom = currentRow.find('input.PII_UoM').val();
+
+        if (uom === selectedValue) { } else {
+            alert("Selected Uom differs from item master purchase unit");
+        }
+
+        $.ajax({
+            type: "get",
+            url: "uom",
+            data: { UoM: selectedValue },
+            datatype: "json",
+            traditional: true,
+            success: function (decimalPlaces) {
+                if (decimalPlaces === "") {
+                    decimalPlaces = 2;
+                }
+
+                currentRow.find('input.PII_DecimalPlaces').val(decimalPlaces);
+                var value = currentRow.find('input.PII_Qty').val();
+                currentRow.find('input.PII_Qty').val(NumberToIndianRupees(value, decimalPlaces));
+            }
+        });
+    });
+
+    $(document).on('change', "tr.NewRow select.PII_HSN_Number", function () {
+        (async () => {
+            await CalculateAllExpenses();
+        })();
+    });
+
+    function checkAllFieldsValid(currentRow) {
+        var allFieldsValid = true;
+        $("tr.NewRow:visible").each(function () {
+            $(this).find("select, input.PII_DeliveryDate,input.PII_Item_Number,input.PII_Qty,input.PII_UnitPrice, input[type='text']").each(function () {
+                if (!validateField($(this))) {
+                    allFieldsValid = false;
+                    return false;
+                }
+            });
+            if (!allFieldsValid) return false;
+        });
+        return allFieldsValid;
+    }
+
+    function validateField(currentInput) {
+        var valid = 1;
+        var inputValue = currentInput.val();
+        if (inputValue === "") {
+            valid = 0;
+        }
+
+        if (valid == 0) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    $("#AddRowButton").click(function () {
+        var lastRow = $("tr.NewRow").last();
+        if (checkAllFieldsValid(lastRow)) {
+            addRow();
+        }
+        else {
+            var firstInvalidField = null;
+            lastRow.find("select, input.PII_DeliveryDate,input.PII_Item_Number,input.PII_Qty,input.PII_UnitPrice, input[type='text']").each(function () {
+                if (!validateField($(this))) {
+                    if (firstInvalidField == null)
+                        firstInvalidField = $(this);
+                    return false;
+                }
+            });
+            if (firstInvalidField != null) {
+                alert("Please complete all fields !");
+                firstInvalidField.focus();
+            }
+        }
+    });
+
+    $(document).on('input', "input.PII_UnitPrice, input.PII_Qty", function (event) {
+        var currentInput = $(this);
+        var row = currentInput.closest("tr.NewRow");
+
+        var QtyInput = row.find("input.PII_Qty");
+        var POQty = parseFloat(removeCommas(row.find("input.PII_POQty").val())) || 0;
+        var qty = parseFloat(removeCommas(row.find("input.PII_Qty").val())) || 0;
+        if (qty > POQty) {
+            alert("Quantity (" + qty + ") cannot be greater than PO Quantity (" + POQty + ").\nIt will be reset to the maximum allowed: " + POQty);
+
+            QtyInput.val(DecimalIndianRupees(POQty));
+            qty = POQty;
+        }
+
+        // var POINumber = row.find(".PII_POI_Number").val();
+        // var HSNNumber = row.find(".PII_HSN_Number").val();
+
+        // var unitPrice = parseFloat(removeCommas(row.find("input.PII_UnitPrice").val())) || 0;
+        // var amo = qty * unitPrice;
+        // var amount = DecimalIndianRupees(amo);
+        // row.find("input.PII_Amount").val(DecimalIndianRupees(amo));
+
+        // (async () => {
+        //     await CalculateIExpense($(this));
+        // })();
+
+        // const ItemExpenseTotals = $("tr.IExNewRow").map(function () {
+        //     const irow = $(this);
+        //     if (irow.find("input.PII_EXP_IsDeleted").val() !== 'true' && irow.find("input.PII_EXP_POI_Number").val() === POINumber) {
+        //         return {
+        //             ExpenseBase: parseFloat(removeCommas(irow.find(".PII_EXP_ExpenseValue").val())) || 0,
+        //         };
+        //     }
+        //     return null;
+        // }).get().reduce((Value, Assign) => ({
+        //     ExpenseTotal: Value.ExpenseTotal + Assign.ExpenseBase
+        // }), {
+        //     ExpenseTotal: 0
+        // });
+
+        // const ExpenseTotal = DecimalIndianRupees(ItemExpenseTotals.ExpenseTotal);
+
+        // row.find("input.PII_ExpenseValue").val(ExpenseTotal);
+
+        // var Cluster = $("#PIH_TaxCluster_Number").val();
+        // var WHTax = $("#PIH_WHT_Number").val();
+        // var GRNDate = $("#PIH_InvoiceDate").val();
+
+        // var WHTax = $("#PIH_WHT_Tax").val();
+        // var WHPercent = $("#PIH_WHT_Percent").val();
+
+        // var BaseAmount = parseFloat(removeCommas(amount)) + parseFloat(removeCommas(ExpenseTotal));
+        // var GstAmount = 0;
+        // (async () => {
+        //     GstAmount = await GetClusterAmount(Cluster, GRNDate, HSNNumber, BaseAmount);
+        //     row.find("input.PII_GST_Amount").val(DecimalIndianRupees(GstAmount));
+
+        //     if (WHTax == "1") {
+        //         TotalAmount = parseFloat(BaseAmount) + parseFloat(GstAmount);
+        //         WHTAmount = parseFloat(TotalAmount) * parseFloat(WHPercent) / 100;
+        //     }
+        //     else {
+        //         TotalAmount = parseFloat(BaseAmount);
+        //         WHTAmount = parseFloat(TotalAmount) * parseFloat(WHPercent) / 100;
+        //     }
+
+        //     row.find("input.PII_WHT_Percent").val(DecimalIndianRupees(WHPercent));
+        //     row.find("input.PII_WHT_Amount").val(DecimalIndianRupees(WHTAmount));
+
+        //     await CalculateFooter();
+        // })();
+
+        // CalculateIBatch($(this));
+        (async () => {
+            await CalculateAllExpenses();
+        })();
+    });
+
+     $(document).on('focus', 'tr.NewRow input:not(.CheckItem), tr.NewRow select, tr.NewRow .datepicker', function () {
+        $(this).closest('tr').find('.CheckItem').prop('checked', true);
+        $('.CheckItem').not($(this).closest('tr').find('.CheckItem')).prop('checked', false);
+        UpdateItemButton();
+    });
+
+    $(document).on('click', '.GSTView', function () {
+        let CheckedCheckbox = document.querySelector('.CheckItem:checked');
+        if (CheckedCheckbox) {
+            var currentRow = $(CheckedCheckbox).closest('tr.NewRow');
+
+            var ItemNumber = currentRow.find('input.PII_Item_Number').val();
+            var Index = currentRow.find('input.PII_Index').val();
+            var HSNNumber = currentRow.find('select.PII_HSN_Number').val();
+            var Expensive = currentRow.find('input.PII_ExpenseValue').val();
+
+            var Cluster = $("#PIH_TaxCluster_Number").val();
+            var GRNDate = $("#PIH_InvoiceDate").val();
+
+            var qty = parseFloat(removeCommas(currentRow.find("input.PII_Qty").val())) || 0;
+            var unitPrice = parseFloat(removeCommas(currentRow.find("input.PII_UnitPrice").val())) || 0;
+
+            var amo = qty * unitPrice;
+            var amount = DecimalIndianRupees(amo);
+            var BaseAmount = parseFloat(removeCommas(amount)) + parseFloat(removeCommas(Expensive));
+
+            if (ItemNumber && HSNNumber) {
+                $.ajax({
+                    type: "get",
+                    url: "gst/view",
+                    data: { Cluster: Cluster, GRNDate: GRNDate, HSN: HSNNumber, BaseAmount: BaseAmount },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        const Table = document.getElementById('GSTTableView');
+                        Table.innerHTML = "";
+
+                        if (Table) {
+                            const TaxView = ClusterTaxView(data);
+                            Table.appendChild(TaxView);
+                        }
+
+                        new bootstrap.Modal($("#GSTView")).show();
+                        $('#GSTView').on('shown.bs.modal', function () {
+                            $(this).find('[autofocus]').focus();
+                        });
+                    }
+                });
+            }
+        }
+    });
+
+    function ClusterTaxView(data) {
+        const table = document.createElement('table');
+        table.classList.add('table', 'table-bordered', 'table-hover', 'align-middle', 'w-100');
+
+        const thead = table.createTHead();
+        const headerRow = thead.insertRow();
+        const headers = ["Tax Index", "Tax Element", "Category", "Type", "Load on Inventory", "Load on Inventory %", "Assessable Value", "Percentage", "Tax Amount",];
+        headers.forEach(headerText => {
+            const th = document.createElement('th');
+            th.textContent = headerText;
+            th.classList.add('table-info');
+            headerRow.appendChild(th);
+        });
+
+        const tbody = table.createTBody();
+        let totalAssessable = 0;
+        let totalTaxAmount = 0;
+
+
+        data.forEach(tax => {
+            const row = tbody.insertRow();
+            const TaxIndexCell = row.insertCell();
+            const TaxElementCell = row.insertCell();
+            const CategoryCell = row.insertCell();
+            const TypeCell = row.insertCell();
+            const LoadonCell = row.insertCell();
+            const LoadonPerCell = row.insertCell();
+            const AssessableCell = row.insertCell();
+            const PercentageCell = row.insertCell();
+            const AmountCell = row.insertCell();
+
+            TaxIndexCell.textContent = tax.taxIndex;
+            TaxElementCell.textContent = tax.taxElement;
+            CategoryCell.textContent = tax.taxCategory;
+            TypeCell.textContent = tax.taxType;
+            LoadonCell.textContent = tax.loadonInventory;
+            LoadonPerCell.textContent = tax.loadonInventoryPercent;
+            AssessableCell.textContent = tax.assessableValue.toFixed(2);
+            AssessableCell.style.textAlign = 'right';
+
+            PercentageCell.textContent = tax.percentage.toFixed(2);
+            PercentageCell.style.textAlign = 'right';
+
+            AmountCell.textContent = tax.amount.toFixed(2);
+            AmountCell.style.textAlign = 'right';
+
+            totalAssessable += tax.assessableValue;
+            totalTaxAmount += tax.amount;
+        });
+
+        const tfoot = table.createTFoot();
+        const footerRow = tfoot.insertRow();
+
+        const footerCells = headers.map(() => footerRow.insertCell());
+        footerCells.forEach(cell => {
+            cell.classList.add('table-info'); // Add the class to each footer cell
+        });
+
+        footerCells[footerCells.length - 2].textContent = `Total:`;
+        footerCells[footerCells.length - 2].style.textAlign = 'right';
+        footerCells[footerCells.length - 1].textContent = totalTaxAmount.toFixed(2);
+        footerCells[footerCells.length - 1].style.textAlign = 'right';
+
+        return table;
+    }
+
+    // function CalAmount() {
+    //     $("tr.NewRow").each(function () {
+    //         var row = $(this);
+    //         var POINumber = row.find(".PII_POI_Number").val();
+    //         var HSNNumber = row.find(".PII_HSN_Number").val();
+    //         var isDeleted = row.find(".PII_IsDeleted").val();
+
+    //         if (POINumber && isDeleted !== 'true') {
+    //             var qty = parseFloat(removeCommas(row.find("input.PII_Qty").val())) || 0;
+    //             var unitPrice = parseFloat(removeCommas(row.find("input.PII_UnitPrice").val())) || 0;
+
+    //             var amo = qty * unitPrice;
+
+    //             var amount = DecimalIndianRupees(amo);
+    //             row.find("input.PII_Amount").val(amount);
+
+    //             const ItemExpenseTotals = $("tr.IExNewRow").map(function () {
+    //                 const irow = $(this);
+    //                 if (irow.find("input.PII_EXP_IsDeleted").val() !== 'true' && irow.find("input.PII_EXP_POI_Number").val() === POINumber) {
+    //                     return {
+    //                         ExpenseBase: parseFloat(removeCommas(irow.find(".PII_EXP_ExpenseValue").val())) || 0,
+    //                     };
+    //                 }
+    //                 return null;
+    //             }).get().reduce((Value, Assign) => ({
+    //                 ExpenseTotal: Value.ExpenseTotal + Assign.ExpenseBase
+    //             }), {
+    //                 ExpenseTotal: 0
+    //             });
+
+    //             const ExpenseTotal = DecimalIndianRupees(ItemExpenseTotals.ExpenseTotal);
+
+    //             row.find("input.PII_ExpenseValue").val(ExpenseTotal);
+
+    //             var Cluster = $("#PIH_TaxCluster_Number").val();
+    //             if (Cluster === null) {
+    //                 Cluster = $("#PIH_TaxClusterNumber").val();
+    //             }
+
+    //             var GRNDate = $("#PIH_InvoiceDate").val();
+    //             var WHNumber = $("#PIH_WHT_Number").val();
+
+    //             var WHTax = 1;
+    //             var WHPercent = 0;
+    //             if (WHNumber) {
+    //                 var WHTax = $("#PIH_WHT_Tax").val();
+    //                 var WHPercent = $("#PIH_WHT_Percent").val();
+    //             }
+
+    //             var BaseAmount = parseFloat(removeCommas(amount)) + parseFloat(removeCommas(ExpenseTotal));
+
+    //             var GstAmount = 0;
+    //             var TotalAmount = 0;
+    //             var WHTAmount = 0;
+    //             (async () => {
+    //                 GstAmount = await GetClusterAmount(Cluster, GRNDate, HSNNumber, BaseAmount);
+    //                 row.find("input.PII_GST_Amount").val(DecimalIndianRupees(GstAmount));
+
+    //                 if (WHTax == "1") {
+    //                     TotalAmount = parseFloat(BaseAmount) + parseFloat(GstAmount);
+    //                     WHTAmount = parseFloat(TotalAmount) * parseFloat(WHPercent) / 100;
+    //                 }
+    //                 else {
+    //                     TotalAmount = parseFloat(BaseAmount);
+    //                     WHTAmount = parseFloat(TotalAmount) * parseFloat(WHPercent) / 100;
+    //                 }
+
+    //                 row.find("input.PII_WHT_Percent").val(DecimalIndianRupees(WHPercent));
+    //                 row.find("input.PII_WHT_Amount").val(DecimalIndianRupees(WHTAmount));
+
+    //                 await CalculateFooter();
+    //             })();
+    //         }
+
+    //         (async () => {
+    //             await CalculateIBatch($(this));
+    //         })();
+    //     });
+
+    // }
+
+    $(document).ready(function() {
+        UpdateItemButton();
+
+        $(document).on('change', '.CheckItem', function() {
+            UpdateItemButton();
+        });
+    });
+
+    function UpdateItemButton() {
+        const selectedValues = $(".CheckItem:checked").map(function() {
+            return $(this).closest("tr").find("td:eq(1)").text().trim();
+        }).get();
+
+        $(".OneItemMode").prop("disabled", selectedValues.length !== 1);
+    }
+
+    function OnInput(inputElement) {
+        searchItem(inputElement);
+    }
+    function OnFocus(inputElement) {
+        var tax = inputElement.value;
+        if (!tax) {
+            searchItem(inputElement);
+        }
+        else {
+            $(this).select();
+        }
+    }
+    function searchItem(inputElement) {
+        var itemCode = inputElement.value;
+        var resultsDiv = $(inputElement).next('.search-results');
+        var Metrial = $("#PIH_MS_Number").val();
+
+        if (Metrial) {
+            $.ajax({
+                url: 'item',
+                data: { ItemCode: itemCode, MS: Metrial },
+                type: 'GET',
+                success: function (data) {
+                    resultsDiv.empty();
+                    if (data && data.length > 0) {
+                        resultsDiv.show();
+                        var table = $('<div class="card-body modal-content"><table class="table table-bordered table-hover mb-0"><thead><tr class="table-info"><th>Item Code</th><th>Description</th><th>Item Group</th></tr></thead><tbody></tbody></table></div>');
+                        data.forEach(function (item) {
+                            var row = $('<tr></tr>');
+                            row.append('<td>' + item.itemCode + '</td>');
+                            row.append('<td>' + item.itemDescription + '</td>');
+                            row.append('<td>' + item.itemGroup + '</td>');
+                            table.find('tbody').append(row);
+
+                            row.on('click', function () {
+                                $(inputElement).val(item.itemCode);
+                                $(inputElement).closest('tr').find('input.PII_Item_Number').val(item.itemNumber);
+                                $(inputElement).closest('tr').find('input.PII_ItemCode').val(item.itemCode);
+                                $(inputElement).closest('tr').find('input.PII_Description').val(item.itemDescription);
+                                $(inputElement).closest('tr').find('input.PII_ItemGroup').val(item.itemGroup);
+                                $(inputElement).closest('tr').find('input.PII_DecimalPlaces').val(item.decimalPlaces);
+                                $(inputElement).closest('tr').find('input.PII_MS_Number').val(item.materialSegregation);
+                                $(inputElement).closest('tr').find('select.PII_Warehouse_Number').val(item.purchaseWarehouse);
+                                $(inputElement).closest('tr').find('select.PII_UoM_Number').val(item.uoM);
+                                $(inputElement).closest('tr').find('input.PII_UoM').val(item.uoM);
+                                $(inputElement).closest('tr').find('select.PII_UoM_Number').focus();
+                                $(inputElement).closest('tr').find('select.PII_HSN_Number').val(item.hsN_Code);
+
+                                var decimalPlaces = item.decimalPlaces;
+                                if (decimalPlaces === "") {
+                                    decimalPlaces = 2;
+                                }
+                                var value = $(inputElement).closest('tr').find('input.PII_Qty').val();
+                                $(inputElement).closest('tr').find('input.PII_Qty').val(NumberToIndianRupees(value, decimalPlaces));
+
+                                SearchWHT();
+                                // CalAmount();
+                                (async () => {
+                                    await CalculateAllExpenses();
+                                })();
+
+                                resultsDiv.hide();
+                            });
+                        });
+
+                        var closeButton = $('<div class="card-header bg-primary py-1"><button type="button" class="p-0 float-end btn btn-sm btn-primary bg-opacity-10"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d = "M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"> </path></svg></button></div>');
+                        closeButton.on('click', function () {
+                            resultsDiv.hide();
+                        });
+
+                        resultsDiv.append(closeButton);
+                        resultsDiv.append(table);
+                    } else {
+                        resultsDiv.hide();
+                        resultsDiv.append('<p>No results found</p>');
+                    }
+                },
+                error: function () {
+                    resultsDiv.text('Error loading data.');
+                    resultsDiv.show();
+                }
+            });
+        }
+        else {
+        }
+    }
+
+    async function GetClusterAmount(Cluster, GRNDate, HSN, BaseAmount) {
+        try {
+            const Amount = await $.ajax({
+                url: 'gst',
+                data: { Cluster: Cluster, GRNDate: GRNDate, HSN: HSN, BaseAmount: BaseAmount },
+                type: 'GET'
+            });
+            return Amount;
+        } catch (error) {
+            return 0;
+        }
+    }
+    // async function CalculateFooter() {
+    //     const ItemTotals = $("tr.NewRow").map(function () {
+    //         const irow = $(this);
+    //         if (irow.find("input.PII_IsDeleted").val() !== 'true') {
+    //             return {
+    //                 POQtyField: parseFloat(removeCommas(irow.find(".PII_POQty").val())) || 0,
+    //                 QtyField: parseFloat(removeCommas(irow.find(".PII_Qty").val())) || 0,
+    //                 AmountField: parseFloat(removeCommas(irow.find(".PII_Amount").val())) || 0,
+    //                 ExpenseField: parseFloat(removeCommas(irow.find(".PII_ExpenseValue").val())) || 0,
+    //                 GstField: parseFloat(removeCommas(irow.find(".PII_GST_Amount").val())) || 0,
+    //                 WHTtField: parseFloat(removeCommas(irow.find(".PII_WHT_Amount").val())) || 0
+    //             };
+    //         }
+    //         return null;
+    //     }).get().reduce((Value, Assign) => ({
+    //         totalPOQty: Value.totalPOQty + Assign.POQtyField,
+    //         totalQty: Value.totalQty + Assign.QtyField,
+    //         totalAmount: Value.totalAmount + Assign.AmountField,
+    //         totalExpense: Value.totalExpense + Assign.ExpenseField,
+    //         totalGst: Value.totalGst + Assign.GstField,
+    //         totalWHT: Value.totalWHT + Assign.WHTtField
+    //     }), {
+    //         totalPOQty: 0,
+    //         totalQty: 0,
+    //         totalAmount: 0,
+    //         totalExpense: 0,
+    //         totalGst: 0,
+    //         totalWHT: 0
+    //     });
+
+    //     $("#TotalPOQty").val(FormatNumber(ItemTotals.totalPOQty.toFixed(2)));
+    //     $("#TotalQty").val(FormatNumber(ItemTotals.totalQty.toFixed(2)));
+    //     $("#TotalAmount").val(ItemTotals.totalAmount.toFixed(2));
+    //     $("#TotalExpenseValue").val(ItemTotals.totalExpense.toFixed(2));
+    //     $("#TotalGST").val(ItemTotals.totalGst.toFixed(2));
+    //     $("#TotalWHT").val(ItemTotals.totalWHT.toFixed(2));
+
+    //     await CalculateExpense();
+
+    //     var MaterialCost = $("#PIH_MaterialCost");
+    //     var ItemMiscExpense = $("#PIH_ItemMiscExpense");
+    //     var HeaderMiscExpense = $("#PIH_HeaderMiscExpense");
+    //     var GST_Amount = $("#PIH_GST_Amount");
+    //     var InvoiceAmount = $("#PIH_InvoiceAmount");
+    //     var WHT_Amount = $("#PIH_WHT_Amount");
+    //     var RoundOff = $("#PIH_RoundOff");
+    //     var VendorPayable = $("#PIH_VendorPayable");
+
+    //     const HeaderExpenseTotals = $("tr.ExNewRow").map(function () {
+    //         const irow = $(this);
+    //         if (irow.find("input.PIH_EXP_IsDeleted").val() !== 'true') {
+    //             return { ExpenseValue: parseFloat(removeCommas(irow.find(".PIH_EXP_ExpenseValue").val())) || 0, TaxValue: parseFloat(removeCommas(irow.find(".PIH_EXP_TaxValue").val())) || 0 };
+    //         }
+    //         return null;
+    //     }).get().reduce((Value, Assign) => ({ HeaderTotal: Value.HeaderTotal + Assign.ExpenseValue, HeaderGst: Value.HeaderGst + Assign.TaxValue }), { HeaderTotal: 0, HeaderGst: 0 });
+
+    //     const TotalGst = ItemTotals.totalGst + HeaderExpenseTotals.HeaderGst;
+
+    //     const MaterialAmo = parseFloat(ItemTotals.totalAmount);
+    //     const InvoiceAmo = parseFloat(ItemTotals.totalAmount) + parseFloat(ItemTotals.totalExpense) + parseFloat(HeaderExpenseTotals.HeaderTotal) + parseFloat(TotalGst);
+    //     const Total = parseFloat(InvoiceAmo) - parseFloat(ItemTotals.totalWHT);
+    //     const RoundedValue = customRound(Total);
+    //     const Rounded = parseFloat(RoundedValue) - parseFloat(Total);
+
+    //     const TotalWHT = -ItemTotals.totalWHT;
+
+    //     MaterialCost.val(MaterialAmo.toFixed(2));
+    //     ItemMiscExpense.val(ItemTotals.totalExpense.toFixed(2));
+    //     HeaderMiscExpense.val(HeaderExpenseTotals.HeaderTotal.toFixed(2));
+    //     GST_Amount.val(TotalGst.toFixed(2));
+    //     InvoiceAmount.val(InvoiceAmo.toFixed(2));
+    //     WHT_Amount.val(TotalWHT.toFixed(2));
+
+    //     RoundOff.val(Rounded.toFixed(2));
+    //     VendorPayable.val(RoundedValue.toFixed(2));
+    // }
+
+    function customRound(number) {
+        return Math.round(parseFloat(number));
+    }
+
+    // window.onload = CalculateFooter();
+
+    function FormatNumber(num) {
+        if (num === "" || isNaN(num)) return "0";
+
+        var formattedValue = parseFloat(num).toFixed(10);
+        var parts = formattedValue.split(".");
+        if (parts.length > 1) {
+            parts[1] = parts[1].replace(/0+$/, "");
+            if (parts[1].length === 0) parts.pop();
+        }
+
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+
+        return parts.join(".");
+    }
+
+    function SearchWHT() {
+        var Vendor = $("#PIH_Vendor_Number").val();
+        var GRNDate = $("#PIH_InvoiceDate").val();
+        var WHTax = $("#PIH_WHT_Number").val();
+
+        GetWHT(Vendor, WHTax, GRNDate);
+    }
+    function GetWHT(Vendor, WHTax, GRNDate) {
+        $.ajax({
+            type: "get",
+            url: "wht",
+            data: { Vendor: Vendor, WHTNumber: WHTax, GRNDate: GRNDate },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                if (data != null) {
+                    $("#PIH_WHT_Tax").val(data.tax);
+                    $("#PIH_WHT_Percent").val(data.percentage);
+                }
+                else {
+                    $("#PIH_WHT_Tax").val(1);
+                    $("#PIH_WHT_Percent").val(0);
+                }
+                // CalAmount();
+               (async () => {
+                    await CalculateAllExpenses();
+                })();
+            }
+        });
+    }
+
+    function SearchGST() {
+        // CalAmount();
+         (async () => {
+            await CalculateAllExpenses();
+        })();
+    }
+
+    async function GetVendor() {
+        var vendor = $("#PIH_Vendor_Number").val();;
+        var GRNDate = $("#PIH_InvoiceDate").val();
+        var isChecked = $("#PIH_ImportOrder").prop("checked");
+        var Import;
+
+        if (isChecked) {
+            Import = true;
+        } else {
+            Import = false;
+        }
+
+        $.ajax({
+            url: 'vendor/get',
+            data: { Vendor: vendor, GRNDate: GRNDate, Import: Import },
+            type: 'GET',
+            success: function (ven) {
+                var vengo = 0;
+                var vendorna = ven.vendorName;
+                var vendor = $("#PIHVendor").val();
+                if (vendor == '') {
+                    vengo = 1;
+                }
+                else if (vendor === vendorna) {
+                    vengo = 1;
+                }
+                else {
+                    let rowCount = $("tr.NewRow").length;
+                    if (rowCount > 0) {
+                        if (confirm("Do you want to change the Vendor Name? This action will clear all existing items.")) {
+
+                            $("tr.NewRow").each(function () {
+                                $(this).remove();
+                            });
+                            $("tr.ExNewRow").each(function () {
+                                $(this).remove();
+                            });
+                            $("tr.IExNewRow").each(function () {
+                                $(this).remove();
+                            });
+
+                            vengo = 1;
+                        }
+                        else {
+                            $(inputElement).val(vendor);
+                        }
+                    }
+                    else { vengo = 1; }
+                }
+
+                if (vengo === 1) {
+                    $("#PIH_Vendor").val(ven.vendorName);
+                    $("#PIHVendor").val(ven.vendorName);
+                    $("#PIH_Vendor_Number").val(ven.vendorNumber);
+                    $("#PIH_Currency").val(ven.currencyCode);
+                    $("#PIH_Currency_Number").val(ven.currency);
+                    $("#PIH_VendorLocation").val(ven.vendorLocation);
+                    $("#PIH_WHT_Number").val(ven.withholdTax);
+                    $("#PIH_CreditDays").val(ven.creditDays);
+                    $("#PIH_PaymentBase").val(ven.paymentBase);
+
+                    SearchClustor(ven.vendorNumber, ven.taxNumber);
+                    GetWHT(ven.vendorNumber, ven.withholdTax, GRNDate);
+
+                    if (ven.paymentBase === 2) {
+                        var Date = $("#PIH_InvoiceDate").val();
+                        var Credit = $("#PIH_CreditDays").val();
+                        if (Date) {
+                            var CurentDate = addDays(Date, Credit);
+                            $("#PIH_DueDate").val(CurentDate);
+                        }
+                        else {
+                            $("#PIH_DueDate").val("");
+                        }
+                    }
+                    else if (ven.paymentBase === 3) {
+                        var Date = $("#PIH_SupplierInvoiceDate").val();
+                        var Credit = $("#PIH_CreditDays").val();
+                        if (Date) {
+                            var CurentDate = addDays(Date, Credit);
+                            $("#PIH_DueDate").val(CurentDate);
+                        }
+                    }
+                    else {
+                        $("#PIH_DueDate").val("");
+                    }
+                }
+            },
+            error: function () {
+                resultsDiv.text('Error loading data.');
+                resultsDiv.show();
+            }
+        });
+    }
+
+    // async function CalculateExpense() {
+    //     const promises = [];
+    //     $("tr.ExNewRow").each(function () {
+    //         var $row = $(this);
+    //         var IsDeleted = $row.find("input.PIH_EXP_IsDeleted").val() === "true";
+    //         if (!IsDeleted) {
+    //             promises.push(ExAssignValue($row));
+    //         }
+    //     });
+    //     await Promise.all(promises);
+    // }
+    // async function CalculateIExpense(currentInput) {
+    //     var currentRow = currentInput.closest('tr.NewRow');
+
+    //     var POINumber = currentRow.find('input.PII_POI_Number').val();
+    //     var POHNumber = currentRow.find('input.PII_POH_Number').val();
+    //     var Qty = removeCommas(currentRow.find('input.PII_Qty').val());
+    //     var MatrialValue = removeCommas(currentRow.find('input.PII_Amount').val());
+    //     var IsDeleted = currentRow.find('input.PII_IsDeleted').val();
+
+    //     if (POINumber && IsDeleted !== "true") {
+    //         var cout = 0;
+    //         $("tr.IExNewRow").each(function () {
+    //             var RowPOINumber = $(this).find("input.PII_EXP_POI_Number").val();
+    //             var RowPOHNumber = $(this).find("input.PII_EXP_POH_Number").val();
+    //             var isDeleted = $(this).find("input.PII_EXP_IsDeleted").val();
+
+    //             if (RowPOINumber === POINumber && RowPOHNumber === POHNumber && isDeleted !== 'true') {
+
+    //                 var Charge = $(this).find("select.PII_EXP_CM_Number").val();
+    //                 var ExpenseBase = parseFloat(removeCommas($(this).find("input.PII_EXP_ExpenseBase").val())) || 0;
+
+    //                 if (Charge === "1") {
+    //                     $(this).find("input.PII_EXP_ExpenseValue").val(DecimalIndianRupees(ExpenseBase));
+    //                 }
+    //                 else if (Charge === "2") {
+    //                     var ExpenseValue = Qty * ExpenseBase;
+    //                     $(this).find("input.PII_EXP_ExpenseValue").val(DecimalIndianRupees(ExpenseValue));
+    //                 }
+    //                 else if (Charge === "3") {
+    //                     var ExpenseValue = MatrialValue * ExpenseBase / 100;
+    //                     $(this).find("input.PII_EXP_ExpenseValue").val(DecimalIndianRupees(ExpenseValue));
+    //                 }
+
+    //                 cout++;
+    //             }
+    //         });
+    //     }
+    // }
+    async function CalculateIBatch(currentInput) {
+        const currentRow = currentInput.closest('tr.NewRow');
+
+        const POINumber = currentRow.find("input.PII_POI_Number").val();
+        const POHNumber = currentRow.find("input.PII_POH_Number").val();
+        const Qty = parseFloat(removeCommas(currentRow.find('input.PII_Qty').val())) || 0;
+        const MaterialValue = parseFloat(removeCommas(currentRow.find('input.PII_Amount').val())) || 0;
+
+        // Early return if invalid data
+        if (!POHNumber || Qty === 0) return;
+
+        // Calculate batch totals
+        let totalMaterial = 0;
+        $("tr.NewRow").each(function () {
+            const row = $(this);
+            if (row.find("input.PII_POH_Number").val() === POHNumber &&
+                row.find("input.PII_IsDeleted").val() !== 'true') {
+                totalMaterial += parseFloat(removeCommas(row.find("input.PII_Amount").val())) || 0;
+            }
+        });
+
+        // Calculate header expenses
+        let BExpense = 0;
+        $("tr.ExNewRow").each(function () {
+            const row = $(this);
+            if (row.find("input.PIH_EXP_IsDeleted").val() === "true") return;
+
+            const EXPPOHNumber = row.find("input.PIH_EXP_POH_Number").val();
+            const Charge = row.find("select.PIH_EXP_CM_Number").val();
+            const Allocate = row.find("select.PIH_EXP_Allocate_Number").val();
+            const ExpenseValue = parseFloat(removeCommas(row.find("input.PIH_EXP_ExpenseValue").val())) || 0;
+            const ExpenseBase = parseFloat(removeCommas(row.find("input.PIH_EXP_ExpenseBase").val())) || 0;
+
+            if (POHNumber === EXPPOHNumber && Allocate === "1") {
+                switch (Charge) {
+                    case "1":
+                        if (totalMaterial > 0) {
+                            BExpense += (ExpenseValue / totalMaterial) * MaterialValue;
+                        }
+                        break;
+                    case "2":
+                        BExpense += Qty * ExpenseBase;
+                        break;
+                    case "3":
+                        BExpense += MaterialValue * ExpenseBase / 100;
+                        break;
+                }
+            }
+        });
+
+        // Calculate item expenses
+        let BIExpense = 0;
+        if (POINumber) {
+            $("tr.IExNewRow").each(function () {
+                const row = $(this);
+                if (row.find("input.PII_EXP_IsDeleted").val() === 'true') return;
+
+                const EXPPOINumber = row.find('input.PII_EXP_POI_Number').val();
+                const EXPPOHNumber = row.find('input.PII_EXP_POH_Number').val();
+                const Allocate = row.find("select.PII_EXP_Allocate_Number").val();
+
+                if (EXPPOINumber === POINumber && EXPPOHNumber === POHNumber && Allocate === "1") {
+                    const ExpenseValue = parseFloat(removeCommas(row.find("input.PII_EXP_ExpenseValue").val())) || 0;
+                    BIExpense += ExpenseValue;
+                }
+            });
+        }
+
+        // Calculate unit price and update batch rows
+        const unitPrice = (BExpense + BIExpense + MaterialValue) / Qty;
+
+        $("tr.IBatNewRow").each(function () {
+            const irow = $(this);
+            const RowPOINumber = irow.find("input.PII_BCH_POI_Number").val();
+            const RowPOHNumber = irow.find("input.PII_BCH_POH_Number").val();
+            const isDeleted = irow.find("input.PII_BCH_IsDeleted").val();
+
+            if (RowPOINumber === POINumber && RowPOHNumber === POHNumber && isDeleted !== 'true') {
+                const BtQty = parseFloat(removeCommas(irow.find("input.PII_BCH_Qty").val())) || 0;
+                const BtBatchValue = BtQty * unitPrice;
+
+                irow.find("input.PII_BCH_UnitPrice").val(DecimalIndianRupees(unitPrice.toFixed(2)));
+                irow.find("input.PII_BCH_Value").val(DecimalIndianRupees(BtBatchValue.toFixed(2)));
+            }
+        });
+    }
+</script>
+
+<style>
+    .search-results {
+        width: 400px;
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+        $('#ExchangeRate').hide();
+        ExchangeVisibility();
+        GetCustor();
+
+        $("#PIH_ImportOrder").change(function () {
+            var isChecked = $(this).is(':checked');
+
+
+            var resultsDiv = $(".vendor-search-results");
+            resultsDiv.hide();
+
+            if ($("#PIH_VendorLocation").val() != "") {
+                if (isChecked && $("#PIH_VendorLocation").val() != "2") {
+                    if (confirm("Do you want to change the status of the Import Order? This action will clear the already selected vendor.")) {
+                        $("#PIH_Vendor").val("");
+                        $("#PIH_Vendor_Number").val("");
+                        $("#PIH_Currency").val("");
+                        $("#PIH_Currency_Number").val("");
+                        $("#PIH_VendorLocation").val("");
+                        $("#PIH_WHT_Number").val("");
+
+                        var dropdown = document.getElementById("PIH_TaxCluster_Number");
+                        dropdown.innerHTML = "";
+
+                        var GRNDate = $("#PIH_InvoiceDate").val();
+                        GetWHT(0, 0, GRNDate);
+                    }
+                    else {
+                        $(this).prop('checked', false);
+                    }
+                }
+                else if (!isChecked && $("#PIH_VendorLocation").val() != "1") {
+                    if (confirm("Do you want to change the status of the Import Order? This action will clear the already selected vendor.")) {
+                        $("#PIH_Vendor").val("");
+                        $("#PIH_Vendor_Number").val("");
+                        $("#PIH_Currency").val("");
+                        $("#PIH_Currency_Number").val("");
+                        $("#PIH_VendorLocation").val("");
+                        $("#PIH_WHT_Number").val("");
+
+                        var dropdown = document.getElementById("PIH_TaxCluster_Number");
+                        dropdown.innerHTML = "";
+
+                        var GRNDate = $("#PIH_InvoiceDate").val();
+                        GetWHT(0, 0, GRNDate);
+                    }
+                    else {
+                        $(this).prop('checked', true);
+                    }
+                }
+            }
+            ExchangeVisibility();
+        });
+
+        function GetCustor() {
+            SearchClustor($('#PIH_Vendor_Number').val(), "");
+        }
+    });
+</script>

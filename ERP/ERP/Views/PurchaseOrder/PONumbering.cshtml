@@ -1,0 +1,130 @@
+﻿@model ERP_DTO.PONumber_DTO
+
+
+@{
+    ViewData["Title"] = "Purchase Order Numbering Setup";
+}
+<form asp-action="PONumbering" class="h-100">
+
+    <div class="row align-items-center panel-header h-auto">
+        <div class="col">
+            <div class="card rounded-0 mt-3">
+                <div class="card-body px-2 py-2">
+                    <h1 class="h6 fw-light">
+                        Purchase Order Numbering Setup
+                        <a asp-controller="Procurement" asp-action="Index" class="float-end btn p-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                            </svg>
+                        </a>
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row panel-body">
+        <div class="col-12 panel-card-fixed h-100" id="BodyHeight">
+            <div class="w-100 rounded-0 border border-primary bg-transparent h-100">
+                <div class="card rounded-0 bg-transparent shadow-none h-100" id="CardHeader">
+                    <div class="card-body pb-0">
+                        <div class="row h-100">
+                            <div class="col-auto left-menu h-100">
+                                <div class="row text-dark">
+                                    <div class="col-12 col-sm-5 col-lg-3">
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="PON_Method" class="col-md-6 col-lg-5 col-form-label ps-0">Method of Numbering</label>
+                                            <div class="col-md-6 col-lg-7">
+                                                <select asp-for="PON_Method" class="form-select" asp-items="@ViewBag.Method"></select>
+                                                <input asp-for="PON_Number" type="hidden" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-5 col-lg-3">
+                                    </div>
+                                </div>
+                                <div class="@(@Model.PON_Method == "3" ? "row py-3 d-none" : "row py-3")">
+                                    <div class="col-12 col-md-3">
+                                        <div class="row">
+                                            <div class="col text-dark pb-2">
+                                                <h6>Prefix</h6>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <partial name="PONumberingPrefix.cshtml" model="@Model.PONumberPrefix" />
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <div class="row">
+                                            <div class="col text-dark pb-2">
+                                                <h6>Numbering</h6>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <partial name="PONumberingReset.cshtml" model="@Model.PONumberReset" />
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-3">
+                                        <div class="row">
+                                            <div class="col text-dark pb-2">
+                                                <h6>Suffix</h6>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <partial name="PONumberingSuffix.cshtml" model="@Model.PONumberSuffix" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto right-menu text-center border-start">
+                                <input type="submit" name="Mode" value="Submit" class="btn btn-primary btn-sm px-2 w-100 mb-1" />
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+<script>
+
+    $('form').submit(function (event) {
+        $("tr.SubNewRow").each(function () {
+            var Date = $(this).find("input.POS_Date").val();
+            var Particulars = $(this).find("input.POS_Particulars").val();
+
+            if (!Date && !Particulars) {
+                $(this).remove();
+            }
+        });
+
+        $("tr.PreNewRow").each(function () {
+            var Date = $(this).find("input.POP_Date").val();
+            var Particulars = $(this).find("input.POP_Particulars").val();
+
+            if (!Date && !Particulars) {
+                $(this).remove();
+            }
+        });
+
+        $("tr.ResetNewRow").each(function () {
+            var Date = $(this).find("input.POP_Date").val();
+            var StartingNumber = $(this).find("input.POR_StartingNumber").val();
+            var NumberofDigits = $(this).find("input.POR_NumberofDigits").val();
+            var PrefilZero = $(this).find("select.POR_PrefilZero").val();
+            var Frequency = $(this).find("select.POR_Frequency").val();
+
+            if (!Date && !StartingNumber && !NumberofDigits && !PrefilZero && !Frequency) {
+                $(this).remove();
+            }
+        });
+
+        $(".datepicker").flatpickr({
+            dateFormat: "d-M-Y",
+            altInput: false,
+        });
+    });
+
+</script>

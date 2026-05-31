@@ -1,0 +1,271 @@
+﻿@model List<ERP_DTO.SIItemToSaleRejectionIIncome_DTO>
+
+<table class="table table-bordered table-hover align-middle w-100">
+    <thead>
+        <tr class="table-info">
+            <th>Income Code</th>
+            <th>Description</th>
+            <th>Remarks</th>
+            <th>Occurrence</th>
+            <th>Chargeable method</th>
+            <th>Income Base</th>
+            <th>Income Value</th>
+            <th>Allocate</th>
+            <th>Ledger account</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody id="IIncTableBody">
+        <tr id="IIncTempRow" style="display: none;">
+            <td>
+                <input id="SRI_INC_SII_Number" class="SRI_INC_SII_Number" type="hidden" />
+                <input id="SRI_INC_SIH_Number" class="SRI_INC_SIH_Number" type="hidden" />
+                <input id="SRI_INC_SII_INC_Number" class="SRI_INC_SII_INC_Number" type="hidden" />
+                <select id="SRI_INC_MIC_Number" class="form-select SRI_INC_MIC_Number" asp-items="@ViewBag.IncomeCode" disabled></select>
+            </td>
+            <td>
+                <input id="SRI_INC_MIC_Description" class="form-control SRI_INC_MIC_Description" readonly autocomplete="off" />
+            </td>
+            <td>
+                <input id="SRI_SRI_INC_Remarks" class="form-control SRI_INC_Remarks" readonly autocomplete="off" />
+            </td>
+            <td>
+                <select id="SRI_INC_OCRN_Number" class="form-select SRI_INC_OCRN_Number" asp-items="@ViewBag.Occurrence" disabled></select>
+            </td>
+            <td>
+                <select id="SRI_INC_CM_Number" class="form-select SRI_INC_CM_Number" asp-items="@ViewBag.ChargeableMethod" disabled></select>
+            </td>
+            <td>
+                <input id="SRI_INC_IncomeBase" class="form-control SRI_INC_IncomeBase decimal text-end" readonly autocomplete="off" />
+            </td>
+            <td>
+                <input id="SRI_INC_IncomeValue" class="form-control SRI_INC_IncomeValue decimal text-end" readonly autocomplete="off" />
+            </td>
+            <td>
+                <select id="SRI_INC_ALCT_Number" class="form-select SRI_INC_ALCT_Number" asp-items="@ViewBag.Allocate" disabled></select>
+            </td>
+            <td>
+                <select id="SRI_INC_LA_Number" class="form-select SRI_INC_LA_Number" asp-items="@ViewBag.LedgerAccount" disabled></select>
+            </td>
+            <td class="action text-center">
+                <input type="hidden" name="SRI_INC_IsDeleted" class="SRI_INC_IsDeleted" />
+                <a class="IIncRowRemove btn btn-sm btn-danger p-1 icon-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                    </svg>
+                </a>
+            </td>
+        </tr>
+        @if (Model != null)
+        {
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <tr class="IIncNewRow" style="@(@Model[i].SRI_INC_IsDeleted == 1 ? "display: none;":"")">
+                    <td>
+                        <input id="SRI_INC_SII_Number" name="ItemIncome[@i].SRI_INC_SII_Number" class="SRI_INC_SII_Number" type="hidden" value="@Model[i].SRI_INC_SII_Number" />
+                        <input id="SRI_INC_SIH_Number" name="ItemIncome[@i].SRI_INC_SIH_Number" class="SRI_INC_SIH_Number" type="hidden" value="@Model[i].SRI_INC_SIH_Number" />
+                        <input id="SRI_INC_SII_INC_Number" name="ItemIncome[@i].SRI_INC_SII_INC_Number" class="SRI_INC_SII_INC_Number" type="hidden" value="@Model[i].SRI_INC_SII_INC_Number" />
+                        <select id="SRI_INC_MIC_Number" name="ItemIncome[@i].SRI_INC_MIC_Number" class="form-select SRI_INC_MIC_Number" disabled>
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.IncomeCode)
+                            {
+                                if (item.Value == Model[i].SRI_INC_MIC_Number)
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input id="SRI_INC_MIC_Description" name="ItemIncome[@i].SRI_INC_MIC_Description" readonly class="form-control SRI_INC_MIC_Description" autocomplete="off" value="@Model[i].SRI_INC_MIC_Description" />
+                    </td>
+                    <td>
+                        <input id="SRI_INC_Remarks" name="ItemIncome[@i].SRI_INC_Remarks" readonly class="form-control SRI_INC_Remarks" autocomplete="off" value="@Model[i].SRI_INC_Remarks" />
+                    </td>
+                    <td>
+                        <select id="SRI_INC_OCRN_Number" name="ItemIncome[@i].SRI_INC_OCRN_Number" class="form-select SRI_INC_OCRN_Number" disabled>
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Occurrence)
+                            {
+                                if (item.Value == Model[i].SRI_INC_OCRN_Number)
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <select id="SRI_INC_CM_Number" name="ItemIncome[@i].SRI_INC_CM_Number" class="form-select SRI_INC_CM_Number" disabled>
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.ChargeableMethod)
+                            {
+                                if (item.Value == Model[i].SRI_INC_CM_Number)
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input id="SRI_INC_IncomeBase" name="ItemIncome[@i].SRI_INC_IncomeBase" readonly class="form-control SRI_INC_IncomeBase decimal text-end" autocomplete="off" value="@Model[i].SRI_INC_IncomeBase" />
+                    </td>
+                    <td>
+                        <input id="SRI_INC_IncomeValue" name="ItemIncome[@i].SRI_INC_IncomeValue" readonly class="form-control SRI_INC_IncomeValue decimal text-end" autocomplete="off" value="@Model[i].SRI_INC_IncomeValue" />
+                    </td>
+                    <td>
+                        <select id="SRI_INC_ALCT_Number" name="ItemIncome[@i].SRI_INC_ALCT_Number" class="form-select SRI_INC_ALCT_Number" disabled>
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Allocate)
+                            {
+                                if (item.Value == Model[i].SRI_INC_ALCT_Number)
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <select id="SRI_INC_LA_Number" name="ItemIncome[@i].SRI_INC_LA_Number" class="form-select SRI_INC_LA_Number" disabled>
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.LedgerAccount)
+                            {
+                                if (item.Value == Model[i].SRI_INC_LA_Number)
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input type="hidden" name="ItemIncome[@i].SRI_INC_IsDeleted" value="@Model[i].SRI_INC_IsDeleted" class="SRI_INC_IsDeleted" />
+                        <a class="IIncRowRemove btn btn-sm btn-danger p-1 icon-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                            </svg>
+                        </a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+    <tfoot>
+        <tr class="table-info">
+            <td colspan="6" class="text-end py-2">Total</td>
+            <td class="table-width-3xl text-end">
+                <input id="TotalIIncAmount" class="form-control text-end" readonly />
+            </td>
+            <td colspan="3">
+            </td>
+        </tr>
+    </tfoot>
+</table>
+<script>
+    var IIncrowCount = @(Model != null ? Model.Count : 0);
+    function IIncAddRow(SI) {
+        var IIncNewRow = $("#IIncTempRow").clone().removeAttr("style").removeAttr("id").addClass("IIncNewRow");
+        IIncNewRow.find("input.SRI_INC_SII_INC_Number").attr("name", "ItemIncome[" + IIncrowCount + "].SRI_INC_SII_INC_Number").val(SI.siI_INC_Number);
+        IIncNewRow.find("input.SRI_INC_SII_Number").attr("name", "ItemIncome[" + IIncrowCount + "].SRI_INC_SII_Number").val(SI.siI_INC_SII_Number);
+        IIncNewRow.find("input.SRI_INC_SIH_Number").attr("name", "ItemIncome[" + IIncrowCount + "].SRI_INC_SIH_Number").val(SI.siI_INC_SIH_Number);
+        IIncNewRow.find("select.SRI_INC_MIC_Number").attr("name", "ItemIncome[" + IIncrowCount + "].SRI_INC_MIC_Number").val(SI.siI_INC_MIC_Number);
+        IIncNewRow.find("input.SRI_INC_MIC_Description").attr("name", "ItemIncome[" + IIncrowCount + "].SRI_INC_MIC_Description").val(SI.siI_INC_Description);
+        IIncNewRow.find("input.SRI_SRI_INC_Remarks").attr("name", "ItemIncome[" + IIncrowCount + "].SRI_SRI_INC_Remarks").val(SI.siI_SRI_INC_Remarks);
+        IIncNewRow.find("select.SRI_INC_OCRN_Number").attr("name", "ItemIncome[" + IIncrowCount + "].SRI_INC_OCRN_Number").val(SI.siI_INC_OCRN_Number);
+        IIncNewRow.find("select.SRI_INC_CM_Number").attr("name", "ItemIncome[" + IIncrowCount + "].SRI_INC_CM_Number").val(SI.siI_INC_CM_Number);
+        IIncNewRow.find("input.SRI_INC_IncomeBase").attr("name", "ItemIncome[" + IIncrowCount + "].SRI_INC_IncomeBase").val(SI.siI_INC_IncomeBase);
+        IIncNewRow.find("input.SRI_INC_IncomeValue").attr("name", "ItemIncome[" + IIncrowCount + "].SRI_INC_IncomeValue").val(SI.siI_INC_IncomeValue);
+        IIncNewRow.find("select.SRI_INC_ALCT_Number").attr("name", "ItemIncome[" + IIncrowCount + "].SRI_INC_ALCT_Number").val(SI.siI_INC_ALCT_Number);
+        IIncNewRow.find("select.SRI_INC_LA_Number").attr("name", "ItemIncome[" + IIncrowCount + "].SRI_INC_LA_Number").val(SI.siI_INC_LA_Number);
+        IIncNewRow.find("input.SRI_INC_IsDeleted").attr("name", "ItemIncome[" + IIncrowCount + "].SRI_INC_IsDeleted").val(0);
+
+        $("#IIncTableBody").append(IIncNewRow);
+        IIncrowCount++;
+    }
+
+    $(document).on('click', '.ItemIncome', function () {
+        let CheckedCheckbox = document.querySelector('.CheckItem:checked');
+        if (CheckedCheckbox) {
+            var currentRow = $(CheckedCheckbox).closest('tr.NewRow');
+
+            var SIINumber = currentRow.find('input.SRI_SII_Number').val();
+            var SIHNumber = currentRow.find('input.SRI_SIH_Number').val();
+            var Qty = currentRow.find('input.SRI_Qty').val();
+            var MatrialValue = currentRow.find('input.SRI_Amount').val();
+
+            if (SIINumber) {
+                $("#SRI_INC_SIINumber").val(SIINumber);
+                $("#SRI_INC_SIHNumber").val(SIHNumber);
+                $("#SRI_INC_Qty").val(Qty);
+                $("#SRI_INC_MatrialValue").val(MatrialValue);
+
+                var cout = 0;
+                $("tr.IIncNewRow").each(function () {
+                    var RowSIINumber = $(this).find("input.SRI_INC_SII_Number").val();
+                    var RowSIHNumber = $(this).find("input.SRI_INC_SIH_Number").val();
+                    var isDeleted = parseInt($(this).find("input.SRI_INC_IsDeleted").val());
+
+                    if (RowSIINumber === SIINumber && RowSIHNumber === SIHNumber && isDeleted !== 1) {
+                        $(this).show();
+                        cout++;
+                    } else {
+                        $(this).hide();
+                    }
+                });
+
+                new bootstrap.Modal($("#IIncome")).show();
+                $('#IIncome').on('shown.bs.modal', function () {
+                    $(this).find('[autofocus]').focus();
+
+                    (async () => {
+                        await IIncCalculateFooter();
+                    })();
+                });
+            }
+        }
+    });
+
+    $(document).on('click', '.IIncRowRemove', function () {
+        $(this).closest('tr').find("input.SRI_INC_IsDeleted").val(1);
+        $(this).closest('tr').hide();
+        (async () => {
+            await IIncCalculateFooter();
+            await CalculateAllIncomes();
+        })();
+    });
+
+    $("#IIncCloseButton").click(function () {
+        $("#IIncome").modal('hide');
+    });
+
+    async function IIncCalculateFooter() {
+        var TotalIncAmount = 0;
+        $("tr.IIncNewRow:visible").each(function () {
+            var IncAmount = $(this).find(".SRI_INC_IncomeValue").val();
+            TotalIncAmount += parseFloat(removeCommas(IncAmount));
+        });
+        $("#TotalIIncAmount").val(DecimalIndianRupees(TotalIncAmount.toFixed(2)));
+    }
+</script>
+<style>
+    .search-results {
+        position: absolute;
+        z-index: 1000;
+        overflow-y: auto;
+        width: 400px;
+        max-height: 300px;
+    }
+</style>

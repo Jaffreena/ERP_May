@@ -1,0 +1,31 @@
+﻿@model ERP_DTO.UoM_DTO
+
+
+@if (Model != null)
+{
+    <input asp-for="UnitNumber" type="hidden" class="Number" />
+}
+<div class="mb-3">
+    <label asp-for="UnitCode" class="control-label"></label>
+    <input asp-for="UnitCode" class="form-control Key KeyDup" autofocus="true" autocomplete="off" />
+</div>
+<div class="mb-3">
+    <label asp-for="UnitDescription" class="control-label"></label>
+    <textarea asp-for="UnitDescription" class="form-control Key" autocomplete="off"></textarea>
+</div>
+<div class="mb-3">
+    <label asp-for="DecimalPlaces" class="control-label"></label>
+    <input asp-for="DecimalPlaces" class="form-control number-only" autocomplete="off" />
+</div>
+<div>
+    @if (Model != null)
+    {
+        <input type="submit" name="Mode" value="Update" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+    else
+    {
+        <input type="submit" name="Mode" value="Save" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+</div>

@@ -1,0 +1,200 @@
+﻿@model List<ERP_DTO.JobInwardTransaction.RNNumberReset_DTO>
+
+<div class="col table-fixed h-100">
+    <div class="w-100 table-responsive table-body table-body-f">
+        <table class="table table-one table-striped table-bordered table-hover align-middle w-100">
+            <thead>
+                <tr class="table-info text-center">
+                    <th class="datetype">Date</th>
+                    <th>Starting Number</th>
+                    <th>Number Of Digits</th>
+                    <th>Prefil Zero</th>
+                    <th>Frequency</th>
+                    <th class="table-width-sm"></th>
+                </tr>
+            </thead>
+            <tbody id="ResetTableBody">
+                <tr id="ResetTempRow" style="display: none;">
+                    <td>
+                        <input id="RNR_Date" class="form-control RNR_Date datepicker text-center" autocomplete="off" />
+                    </td>
+                    <td>
+                        <input id="RNR_StartingNumber" class="form-control RNR_StartingNumber text-center" autocomplete="off" />
+                    </td>
+                    <td>
+                        <input id="RNR_NumberofDigits" class="form-control RNR_NumberofDigits text-center" autocomplete="off" />
+                    </td>
+                    <td>
+                        <select id="RNR_PrefilZero" class="form-select RNR_PrefilZero text-center" asp-items="@ViewBag.Prefil"></select>
+                    </td>
+                    <td>
+                        <select id="RNR_Frequency" class="form-select RNR_Frequency text-center" asp-items="@ViewBag.Frequency"></select>
+                    </td>
+                    <td class="text-center">
+                        <input type="hidden" name="RNR_IsDeleted" class="RNR_IsDeleted" value="false" />
+                        <a class="ResetRowRemove btn btn-sm btn-danger p-1 icon-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                            </svg>
+                        </a>
+                    </td>
+                </tr>
+                @if (Model != null)
+                {
+                    @for (int i = 0; i < Model.Count; i++)
+                    {
+                        <tr class="ResetNewRow">
+                            <td>
+                                <input id="RNR_Date" name="RNNumberReset[@i].RNR_Date" class="form-control RNR_Date datepicker text-center" autocomplete="off" value="@Model[i].RNR_Date" />
+                            </td>
+                            <td>
+                                <input id="RNR_StartingNumber" name="RNNumberReset[@i].RNR_StartingNumber" class="form-control RNR_StartingNumber text-center" autocomplete="off" value="@Model[i].RNR_StartingNumber" />
+                            </td>
+                            <td>
+                                <input id="RNR_NumberofDigits" name="RNNumberReset[@i].RNR_NumberofDigits" class="form-control RNR_NumberofDigits text-center" autocomplete="off" value="@Model[i].RNR_NumberofDigits" />
+                            </td>
+                            <td>
+                                <select id="RNR_PrefilZero" name="RNNumberReset[@i].RNR_PrefilZero" class="form-select RNR_PrefilZero text-center">
+                                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Prefil)
+                                    {
+                                        if (item.Value == Model[i].RNR_PrefilZero)
+                                        {
+                                            <option value="@item.Value" selected>@item.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    }
+                                </select>
+                            </td>
+                            <td>
+                                <select id="RNR_Frequency" name="RNNumberReset[@i].RNR_Frequency" class="form-select RNR_Frequency text-center">
+                                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Frequency)
+                                    {
+                                        if (item.Value == Model[i].RNR_Frequency)
+                                        {
+                                            <option value="@item.Value" selected>@item.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    }
+                                </select>
+                            </td>
+                            <td class="text-center">
+                                @if (@Model[i].RNR_Number != 0)
+                                {
+                                    <input name="RNNumberReset[@i].RNR_Number" type="hidden" class="RNR_Number" value="@Model[i].RNR_Number" />
+                                }
+                                <input type="hidden" name="RNNumberReset[@i].RNR_IsDeleted" value="false" class="RNR_IsDeleted" />
+                                <a class="ResetRowRemove btn btn-sm btn-danger p-1 icon-link">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                                    </svg>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="row table-footer align-items-center">
+    <div class="col">
+        <a id="ResetNewRowButton" class="btn btn-primary">Add Row</a>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        function ResetInitializeFlatpickrs() {
+            $(".datepicker").flatpickr({
+                dateFormat: "d-M-Y",
+                altInput: false,
+            });
+        }
+
+        var rowCount = @(Model != null ? Model.Count : 0);
+        var isAddingRow = false;
+
+        function ResetaddRow() {
+            var NewRow = $("#ResetTempRow").clone().removeAttr("style").removeAttr("id").addClass("ResetNewRow");
+            NewRow.find("input.RNR_Date").attr("name", "RNNumberReset[" + rowCount + "].RNR_Date").val();
+            NewRow.find("input.RNR_StartingNumber").attr("name", "RNNumberReset[" + rowCount + "].RNR_StartingNumber");
+            NewRow.find("input.RNR_NumberofDigits").attr("name", "RNNumberReset[" + rowCount + "].RNR_NumberofDigits");
+            NewRow.find("select.RNR_PrefilZero").attr("name", "RNNumberReset[" + rowCount + "].RNR_PrefilZero");
+            NewRow.find("select.RNR_Frequency").attr("name", "RNNumberReset[" + rowCount + "].RNR_Frequency");
+            NewRow.find("input.RNR_IsDeleted").attr("name", "RNNumberReset[" + rowCount + "].RNR_IsDeleted");
+
+            NewRow.find("input[name='RNNumberReset[" + rowCount + "].RNR_IsDeleted']").val(false);
+
+            $("#ResetTableBody").append(NewRow);
+            rowCount++;
+            NewRow.data("isValid", false);
+            isAddingRow = false;
+
+            ResetInitializeFlatpickrs();
+        }
+
+        if ($("tr.ResetNewRow").length == 0) {
+            ResetaddRow();
+        }
+
+        $(document).on('click', '.ResetRowRemove', function () {
+            $(this).closest('tr').find("input[name*='RNR_IsDeleted']").val(true);
+            $(this).closest('tr').hide();
+        });
+
+
+
+        $("#ResetNewRowButton").click(function () {
+            var lastRow = $("tr.ResetNewRow").last();
+            if (ResetCheckAllFieldsValid(lastRow)) {
+                ResetaddRow();
+            }
+            else {
+                var firstInvalidField = null;
+                lastRow.find("select, input, input[type='text']").each(function () {
+                    if (!ResetValidateField($(this))) {
+                        if (firstInvalidField == null)
+                            firstInvalidField = $(this);
+                        return false;
+                    }
+                });
+                if (firstInvalidField != null) {
+                    alert("Please complete all fields !");
+                    firstInvalidField.focus();
+                }
+            }
+        });
+        function ResetCheckAllFieldsValid(currentRow) {
+            var allFieldsValid = true;
+            $("tr.ResetNewRow:visible").each(function () {
+                $(this).find("select, input, input[type='text']").each(function () {
+                    if (!ResetValidateField($(this))) {
+                        allFieldsValid = false;
+                        return false;
+                    }
+                });
+                if (!allFieldsValid) return false;
+            });
+            return allFieldsValid;
+        }
+        function ResetValidateField(currentInput) {
+            var valid = 1;
+            var inputValue = currentInput.val();
+            if (inputValue === "") {
+                valid = 0;
+            }
+            if (valid == 0) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+        ResetInitializeFlatpickrs();
+    });
+</script>

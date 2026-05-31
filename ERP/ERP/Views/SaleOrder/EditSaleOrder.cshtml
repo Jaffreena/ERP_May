@@ -1,0 +1,601 @@
+﻿@model ERP_DTO.SaleOrderHead_DTO
+
+
+@{
+    ViewData["Title"] = "Sale Order Edit";
+}
+<script>
+    function removeCommas(value) {
+        return (value || '').toString().replace(/,/g, '');
+    }
+
+    function DecimalIndianRupees(value) {
+        if (value === "" || isNaN(value)) {
+            return "0.00";
+        }
+
+        var formattedValue = parseFloat(value).toFixed(2);
+
+        var parts = formattedValue.split(".");
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+        return parts.join(".");
+    }
+    function QtyDecimalRupees(value, decimalPlaces) {
+        if (value === "" || isNaN(value)) return "0";
+
+        var formattedValue = parseFloat(value).toFixed(decimalPlaces);
+        var parts = formattedValue.split(".");
+        if (parts.length > 1) {
+            parts[1] = parts[1].replace(/0+$/, "");
+            if (parts[1].length === 0) parts.pop();
+        }
+
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+
+        return parts.join(".");
+    }
+    function UnitDecimalRupees(value, UnitDecimalPlaces) {
+        if (value === "" || isNaN(value)) return "0";
+
+        var num = parseFloat(value);
+
+        var formattedValue = num.toFixed(UnitDecimalPlaces);
+        var parts = formattedValue.split(".");
+
+        if (parts.length > 1) {
+            parts[1] = parts[1].replace(/0+$/, "");
+
+            if (parts[1].length < 2) {
+                parts[1] = parts[1].padEnd(2, "0");
+            }
+        } else {
+            parts.push("00");
+        }
+
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+        return parts.join(".");
+    }
+</script>
+
+<form asp-action="EditSaleOrder" class="h-100">
+    <input id="SOI_TEMP_Number" type="hidden" />
+    <input id="SOI_TEMP_ITM_Number" type="hidden" />
+    <input id="SOI_TEMP_Index" type="hidden" />
+    <input id="SOI_TEMP_Qty" type="hidden" />
+    <input id="SOI_TEMP_Amount" type="hidden" />
+
+    <div class="modal modal-lg modal-xl fade" id="BuyerAddress" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title">Address</p>
+                    <button type="button" class="btn-close" id="AddCloseButton" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs tab-header" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-tab-pane" type="button" role="tab" aria-controls="overview-tab-pane" aria-selected="true">Overview</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content tab-body">
+                        <div class="tab-pane fade show active p-2 border border-top-0 h-100" id="overview-tab-pane" role="tabpanel" aria-labelledby="overview-tab" tabindex="0">
+                            <partial name="EditSaleOrderAddress.cshtml" model="@Model.BuyerAddress" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <a id="AddressAddButton" class="btn btn-primary AddressAddButton">Add Row</a>
+                    <button type="button" id="AddOkayButton" class="btn btn-primary px-4" ref="always_focus" autofocus>Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-lg modal-xl fade" id="Income" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title">Header Misc.Income</p>
+                    <button type="button" class="btn-close" id="InCloseButton" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs tab-header" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-tab-pane" type="button" role="tab" aria-controls="overview-tab-pane" aria-selected="true">Overview</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content tab-body">
+                        <div class="tab-pane fade show active p-2 border border-top-0 h-100" id="overview-tab-pane" role="tabpanel" aria-labelledby="overview-tab" tabindex="0">
+                            <partial name="EditSaleOrderIncome.cshtml" model="@Model.Income" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <a id="InAddRowButton" class="btn btn-primary InAddRowButton">Add Row</a>
+                    <button type="button" id="InOkayButton" class="btn btn-primary px-4" ref="always_focus" autofocus>Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-lg modal-xl fade" id="IIncome" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title">Item Misc.Income</p>
+                    <button type="button" class="btn-close" id="IInCloseButton" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs tab-header" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-tab-pane" type="button" role="tab" aria-controls="overview-tab-pane" aria-selected="true">Overview</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content tab-body">
+                        <div class="tab-pane fade show active p-2 border border-top-0 h-100" id="overview-tab-pane" role="tabpanel" aria-labelledby="overview-tab" tabindex="0">
+                            <partial name="EditSaleOrderIIncome.cshtml" model="@Model.ItemIncome" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <a id="IInNewRowButton" class="btn btn-primary IInNewRowButton">Add Row</a>
+                    <button type="button" id="IInOkayButton" class="btn btn-primary" ref="always_focus" autofocus>Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row align-items-center panel-header gx-2">
+        <div class="col h-100 align-items-center">
+            <div class="h6 fw-light text-white h-100 align-content-center bg-secondary px-2">
+                Sale Order
+                <a asp-controller="Sale" asp-action="Index" class="float-end btn p-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row panel-body gx-2">
+        <div class="col-12 panel-card-fixed h-100">
+            <div class="w-100 rounded-0 h-100 border border-primary bg-transparent" id="BodyHeight">
+                <div class="card rounded-0 bg-transparent shadow-none" id="CardHeader">
+                    <div class="card-body pb-0">
+                        <div class="row">
+                            <partial name="EditSaleOrderHead.cshtml" model="@Model" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card rounded-0 bg-transparent shadow-none" id="CardBody">
+                    <div class="card-body h-100">
+                        <div class="row h-100">
+                            <div class="col-auto left-menu h-100 nav-tab-fix">
+                                <ul class="nav nav-tabs tab-header">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" aria-current="page">Item</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark">Other</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content tab-body tab-body-h-o">
+                                    <div class="tab-pane fade show active p-2 pb-0 border border-top-0 h-100 table-fixed" tabindex="0">
+                                        <partial name="EditSaleOrderItem.cshtml" model="@Model.SaleItems" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto right-menu text-center border-start">
+                                <input type="button" class="ItemIncomeView btn btn-sm btn-primary px-2 w-100" value="Item Misc.Income" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card rounded-0 bg-transparent shadow-none pt-0" id="CardFooter">
+                    <div class="card-body text-black pt-0">
+                        <div class="row">
+                            <div class="col-auto left-menu">
+                                <div class="row ps-2">
+                                    <div class="col-12 col-md-3">
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="SOH_TotalAmount" class="col-sm-7 ps-0"></label>
+                                            <div class="col-sm-5">
+                                                <input asp-for="SOH_TotalAmount" class="form-control text-black text-end" readonly autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="SOH_TotalItemIncome" class="col-sm-7 ps-0"></label>
+                                            <div class="col-sm-5">
+                                                <input asp-for="SOH_TotalItemIncome" class="form-control text-black text-end" readonly autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="SOH_TotalHeadIncome" class="col-sm-7 ps-0"></label>
+                                            <div class="col-sm-5">
+                                                <input asp-for="SOH_TotalHeadIncome" class="form-control text-black text-end" readonly autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="SOH_OrderValue" class="col-sm-7 ps-0"></label>
+                                            <div class="col-sm-5">
+                                                <input asp-for="SOH_OrderValue" class="form-control text-black text-end" readonly autocomplete="off" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto right-menu text-centert">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script src="~/js/site.js"></script>
+
+<script>
+    $('.navbar-nav > .nav-item.sale > a').addClass("active");
+</script>
+
+<script>
+    $('form').submit(function (event) {
+        $("tr.InNewRow").each(function () {
+            var IncomeCode = $(this).find("select.SOI_INC_MIC_Number").val();
+                var Occurrence = $(this).find("select.SOI_INC_OCRN_Number").val();
+                var ChargeableMethod = $(this).find("select.SOI_INC_CM_Number").val();
+                var IncomeBase = removeCommas($(this).find("input.SOI_INC_IncomeBase").val());
+                var Allocate = $(this).find("select.SOI_INC_ALCT_Number").val();
+                var LedgerAccount = $(this).find("select.SOI_INC_LA_Number").val();
+
+                if (!IncomeCode && !Occurrence && !ChargeableMethod && !Allocate && !LedgerAccount && !(IncomeBase > 0)) {
+                    $(this).closest('tr').find("input.SOI_INC_IsDeleted").val(1);
+                    $(this).closest('tr').hide();
+                }
+        });
+
+
+        $("tr.InNewRow").each(function () {
+            var IncomeCode = $(this).find("select.SOH_INC_MIC_Number").val();
+                var Occurrence = $(this).find("select.SOH_INC_OCRN_Number").val();
+                var ChargeableMethod = $(this).find("select.SOH_INC_CM_Number").val();
+                var IncomeBase = removeCommas($(this).find("input.SOH_INC_IncomeBase").val());
+                var Allocate = $(this).find("select.SOH_INC_ALCT_Number").val();
+                var LedgerAccount = $(this).find("select.SOH_INC_LA_Number").val();
+
+                if (!IncomeCode && !Occurrence && !ChargeableMethod && !Allocate && !LedgerAccount && !(IncomeBase > 0)) {
+                    $(this).closest('tr').find("input.SOH_INC_IsDeleted").val(1);
+                    $(this).closest('tr').hide();
+                }
+        });
+
+        $("tr.NewRow").each(function () {
+            var ItemNumber = $(this).find("input.SOI_ITM_Number").val();
+            var Qty = removeCommas($(this).find("input.SOI_Qty").val());
+            var UnitPrice = removeCommas($(this).find("input.SOI_UnitPrice").val());
+            var UoMNumber = $(this).find("select.SOI_UoM_Number").val();
+
+            if (!ItemNumber && !UoMNumber && !(Qty > 0) && !(UnitPrice > 0)) {
+                $(this).closest('tr').find("input.SOI_IsDeleted").val(1);
+                $(this).closest('tr').hide();
+            }
+        });
+    });
+
+    $(".QtyNumbers").each(function () {
+        var value = $(this).val();
+        var decimalPlaces = $(this).closest("tr").find("input.SOI_UoM_DecimalPlaces").val();
+        if (decimalPlaces === "" || isNaN(decimalPlaces)) decimalPlaces = 2;
+        $(this).val(QtyDecimalRupees(value, decimalPlaces));
+    });
+    $(document).on("blur", ".QtyNumbers", function () {
+        var value = $(this).val();
+        var decimalPlaces = $(this).closest("tr").find("input.SOI_UoM_DecimalPlaces").val();
+        if (value.trim() === "" || isNaN(value)) {
+            $(this).val("0");
+        } else {
+            $(this).val(QtyDecimalRupees(value, decimalPlaces));
+        }
+    });
+    $(document).on("input", ".QtyNumbers", function () {
+        var $this = $(this);
+        var decimalPlaces = parseInt($this.closest("tr").find("input.SOI_UoM_DecimalPlaces").val(), 10);
+        if (isNaN(decimalPlaces)) decimalPlaces = 0;
+
+        let clean = $this.val()
+            .replace(/-/g, "")
+            .replace(/[^0-9.]/g, "");
+
+        const firstDot = clean.indexOf(".");
+        if (firstDot !== -1) {
+            clean =
+                clean.substring(0, firstDot + 1) +
+                clean.substring(firstDot + 1).replace(/\./g, "");
+        }
+
+        if (decimalPlaces === 0) {
+            clean = clean.replace(/\./g, "");
+        }
+        else if (decimalPlaces > 0 && firstDot !== -1) {
+            const parts = clean.split(".");
+            if (parts[1].length > decimalPlaces) {
+                parts[1] = parts[1].slice(0, decimalPlaces);
+                clean = parts.join(".");
+            }
+        }
+
+        $this.val(clean);
+    });
+    $(document).on("focus", ".QtyNumbers", function () {
+        var value = $(this).val();
+        $(this).val(removeCommas(value));
+        $(this).select();
+    });
+
+
+    $(".UnitDecimal").each(function () {
+        var ValueResult = "0";
+        var value = $(this).val();
+        var decimalPlaces = $("#SOH_CUR_DecimalPlaces").val();
+        if (decimalPlaces === "" || isNaN(value)) {
+            decimalPlaces = 2;
+        }
+        ValueResult = UnitDecimalRupees(removeCommas(value), decimalPlaces);
+        $(this).val(ValueResult);
+    });
+    $(document).on("blur", ".UnitDecimal", function () {
+        var ValueResult = "0";
+        var value = $(this).val();
+
+        var decimalPlaces = $("#SOH_CUR_DecimalPlaces").val();
+
+        if (decimalPlaces === "" || isNaN(value)) {
+            decimalPlaces = 2;
+        }
+
+        if (value.trim() === "" || isNaN(value)) {
+        } else {
+            ValueResult = UnitDecimalRupees(value, decimalPlaces);
+            $(this).val(ValueResult);
+        }
+    });
+    $(document).on("focus", ".UnitDecimal", function () {
+        var value = $(this).val();
+        $(this).val(removeCommas(value));
+        $(this).select();
+    });
+    $(document).on("input", ".UnitDecimal", function () {
+        var Value = $(this).val();
+        var decimalPlaces = parseInt($("#SOH_CUR_DecimalPlaces").val());
+        if (isNaN(decimalPlaces)) decimalPlaces = 0;
+
+        var UnitValue = Value.replace(/[^\d.]/g, '');
+        var parts = UnitValue.split('.');
+
+        if (parts.length > 2) {
+            UnitValue = parts[0] + '.' + parts.slice(1).join('');
+            parts = UnitValue.split('.');
+        }
+
+        if (decimalPlaces === 0) {
+            UnitValue = parts[0];
+        }
+        else if (parts.length === 2 && parts[1].length > decimalPlaces) {
+            UnitValue = parts[0] + '.' + parts[1].substring(0, decimalPlaces);
+        }
+
+        $(this).val(UnitValue);
+    });
+
+
+    function OnBuyerInput(inputElement) {
+        SearchBuyer(inputElement);
+    }
+    function OnBuyerFocus(inputElement) {
+        var tax = inputElement.value;
+        if (!tax) {
+            SearchBuyer(inputElement);
+        }
+        else {
+            $(this).select();
+        }
+    }
+    function SearchBuyer(inputElement) {
+        var buyer = inputElement.value;
+        var resultsDiv = $(inputElement).next('.buyer-search-results');
+        var Export;
+        var isChecked = $("#SOH_ExportOrder").prop("checked");
+
+        if (isChecked) {
+            Export = true;
+        } else {
+            Export = false;
+        }
+
+        $.ajax({
+            url: '../buyer',
+            data: { Buyer: buyer, Export: Export },
+            type: 'GET',
+            success: function (data) {
+                resultsDiv.empty();
+                if (data && data.length > 0) {
+                    resultsDiv.show();
+                    var table = $('<div class="card-body modal-content p-0 table-responsive"><table class="table table-bordered table-hover table-fixed table-grid mb-0"><thead><tr class="table-info"><th class="table-col-xxl">Buyer Name</th><th class="table-width-lg text-center">Currency</th></tr></thead><tbody></tbody></table></div>');
+                    data.forEach(function (Buy) {
+                        var row = $('<tr></tr>');
+                        row.append('<td class="table-col-xxl">' + Buy.buY_Name + '</td>');
+                        row.append('<td class="table-width-lg text-center">' + Buy.buY_CUR_Name + '</td>');
+                        table.find('tbody').append(row);
+
+                        row.on('click', function () {
+                            $(inputElement).val(Buy.buY_Name);
+                            $("#SOH_BUY_Number").val(Buy.buY_Number)
+                            $("#SOH_CUR_Name").val(Buy.buY_CUR_Name)
+                            $("#SOH_CUR_Number").val(Buy.buY_CUR_Number)
+                            $("#SOH_BUY_LOC_Number").val(Buy.buY_LOC_Number)
+                            $("#SOH_CUR_DecimalPlaces").val(Buy.buY_CUR_DecimalPlaces)
+
+                            resultsDiv.hide();
+                        });
+                    });
+
+                    var closeButton = $('<div class="card-header bg-primary py-1 px-1"><button type="button" class="p-0 float-end btn btn-sm btn-primary bg-opacity-10 d-flex"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d = "M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"> </path></svg></button></div>');
+                    closeButton.on('click', function () {
+                        resultsDiv.hide();
+                    });
+
+                    resultsDiv.append(closeButton);
+                    resultsDiv.append(table);
+                } else {
+                    resultsDiv.hide();
+                    resultsDiv.append('<p>No results found</p>');
+                }
+            },
+            error: function () {
+                resultsDiv.text('Error loading data.');
+                resultsDiv.show();
+            }
+        });
+    }
+
+
+    $(".decimal").each(function () {
+        var value = $(this).val();
+        $(this).val(DecimalIndianRupees(removeCommas(value)));
+    });
+    $(document).on("blur", ".decimal", function () {
+        var value = $(this).val();
+        if (value.trim() === "" || isNaN(value)) {
+            $(this).val("0.00");
+        } else {
+            $(this).val(DecimalIndianRupees(removeCommas(value)));
+        }
+    });
+    $(document).on("focus", ".decimal", function () {
+        var value = $(this).val();
+        $(this).val(removeCommas(value));
+        $(this).select();
+    });
+
+    flatpickr(".datepicker", {
+        dateFormat: "d-M-Y",
+        altInput: false,
+    });
+
+    $(document).on('change', "#SOH_OrderDate", function () {
+        var SOHDate = $('#SOH_OrderDate').val();
+        const date  = new Date(SOHDate);
+        date.setDate(date.getDate() + 1);
+        const ForDate = date.toISOString().slice(0, 10).replace(/-/g, '');
+
+        var SORDate = $('#SOH_RegDate');
+        var ORDate = $('#SOH_RegDate').val();
+        if(ORDate){
+            const OrderDate  = new Date(ORDate);
+            OrderDate.setDate(OrderDate.getDate() + 1);
+            const OrderDateNumber = OrderDate.toISOString().slice(0, 10).replace(/-/g, '');
+
+            if (OrderDateNumber && OrderDateNumber < ForDate) {
+                SORDate.val(SOHDate);
+            }
+        }
+        SORDate.flatpickr({
+            dateFormat: "d-M-Y",
+            altInput: false,
+            minDate: $("#SOH_OrderDate").val()
+        });
+
+        $("tr.NewRow").each(function () {
+            var DeliveryDate = $(this).find("input.SOI_DeliveryDate");
+
+            var DeliveryString = DeliveryDate.val();
+
+            const Deldate = new Date(DeliveryString);
+            Deldate.setDate(Deldate.getDate() + 1);
+            const DeliDate = Deldate.toISOString().slice(0, 10).replace(/-/g, '');
+
+            DeliveryDate.flatpickr({
+                dateFormat: "d-M-Y",
+                altInput: false,
+                minDate: $("#SOH_OrderDate").val()
+            });
+
+            if (DeliDate && DeliDate < ForDate) {
+                DeliveryDate.val(SOHDate);
+            }
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const MainDiv = document.getElementById('BodyHeight');
+        const HeadDiv = document.getElementById('CardHeader');
+        const BodyDiv = document.getElementById('CardBody');
+        const FooterDiv = document.getElementById('CardFooter');
+
+        if (HeadDiv && BodyDiv) {
+            const MainHeight = MainDiv.offsetHeight;
+            const HeadHeight = HeadDiv.offsetHeight;
+            const FooterHeight = FooterDiv.offsetHeight;
+            BodyDiv.style.height = (MainHeight - HeadHeight - FooterHeight - 1) + 'px';
+        } else {
+        }
+
+        var SOHDate = $('#SOH_RegDate');
+        SOHDate.flatpickr({
+            dateFormat: "d-M-Y",
+            altInput: false,
+            minDate: $("#SOH_OrderDate").val()
+        });
+    });
+
+    window.onload = CalculateFooter();
+</script>
+
+<script>
+    function GetAddress(){
+        $("tr.AddNewRow").each(function () {
+            var $currentRow = $(this);
+
+            var ADTPNumber = $currentRow.find('select.SOH_ADD_ADTP_Number').val();
+            var IsDeleted = parseInt($currentRow.find("input.SOH_ADD_IsDeleted").val());
+            var Buyer = $('#SOH_BUY_Number').val();
+
+            if(IsDeleted!==1){
+                $.ajax({
+                    type: "get",
+                    url: "../buyer/address",
+                    data: { Buyer: Buyer, ADTPNumber: ADTPNumber },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        var AddressID = data.buyerAddressId;
+                        var $AddressDropdown = $currentRow.find('select.SOH_ADD_AddressID');
+                        var $AddressId = $currentRow.find('input.SOH_ADD_HIDE_AddressID').val();
+
+                        console.log("$AddressId",$AddressId);
+
+                        $AddressDropdown.empty();
+                        $AddressDropdown.append($('<option>', {
+                            value: '',
+                            text: ''
+                        }));
+
+                        AddressID.forEach(function (item) {
+                            $AddressDropdown.append($('<option>', {
+                                value: item.buY_ADD_AddressID,
+                                text: item.buY_ADD_AddressID
+                            }));
+                        });
+                        $AddressDropdown.val($AddressId);
+                    }
+                });
+            }
+        });
+    }
+    GetAddress();
+</script>

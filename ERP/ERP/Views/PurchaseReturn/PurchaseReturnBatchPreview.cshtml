@@ -1,0 +1,168 @@
+﻿@model List<ERP_DTO.PurchaseReturnBatch_DTO>
+
+<table class="table table-bordered table-hover align-middle w-100">
+    <thead>
+        <tr class="table-info">
+            <th>Date</th>
+            <th>Batch Number</th>
+            <th>Qty</th>
+            <th>Unit Price</th>
+            <th>Batch Value</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="IBatTableBody">
+        <tr id="IBatTempRow" style="display: none;">
+            <td>
+                <input id="PRI_BCH_Item_Number" class="PRI_BCH_Item_Number" type="hidden" />
+                <input id="PRI_BCH_Item_Index" class="PRI_BCH_Item_Index" type="hidden" />
+                <input id="PRI_BCH_Date" class="form-control Key datePRcker PRI_BCH_Date" autocomplete="off" />
+            </td>
+            <td>
+                <input id="PRI_BCH_No" class="form-control PRI_BCH_No" autocomplete="off" />
+            </td>
+            <td>
+                <input id="PRI_BCH_Qty" class="form-control PRI_BCH_Qty" autocomplete="off" />
+            </td>
+            <td>
+                <input id="PRI_BCH_UnitPrice" class="form-control PRI_BCH_UnitPrice decimal text-end" readonly autocomplete="off" />
+            </td>
+            <td>
+                <input id="PRI_BCH_Value" class="form-control PRI_BCH_Value decimal text-end" readonly autocomplete="off" />
+            </td>
+            <td>
+                <input type="hidden" name="PRI_BCH_IsDeleted" class="PRI_BCH_IsDeleted" value="false" />
+                <a class="IBatRowRemove btn btn-sm btn-danger p-1 icon-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                    </svg>
+                </a>
+            </td>
+        </tr>
+        @if (Model != null)
+        {
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <tr class="IBatNewRow">
+                    <td>
+                        <input id="PRI_BCH_Item_Number" name="ItemBatch[@i].PRI_BCH_Item_Number" class="PRI_BCH_Item_Number" type="hidden" value="@Model[i].PRI_BCH_Item_Number" />
+                        <input id="PRI_BCH_PRI_Number" name="ItemBatch[@i].PRI_BCH_PRI_Number" class="PRI_BCH_PRI_Number" type="hidden" value="@Model[i].PRI_BCH_PRI_Number" />
+                        <input id="PRI_BCH_Date" name="ItemBatch[@i].PRI_BCH_Date" class="form-control Key datePRcker PRI_BCH_Date" autocomplete="off" value="@Model[i].PRI_BCH_Date" />
+                    </td>
+                    <td>
+                        <input id="PRI_BCH_No" name="ItemBatch[@i].PRI_BCH_No" class="form-control PRI_BCH_No" autocomplete="off" value="@Model[i].PRI_BCH_No" />
+                    </td>
+                    <td>
+                        <input id="PRI_BCH_Qty" name="ItemBatch[@i].PRI_BCH_Qty" class="form-control PRI_BCH_Qty" autocomplete="off" value="@Model[i].PRI_BCH_Qty" />
+                    </td>
+                    <td>
+                        <input id="PRI_BCH_UnitPrice" class="form-control PRI_BCH_UnitPrice decimal text-end" readonly autocomplete="off" value="@Model[i].PRI_BCH_UnitPrice" />
+                    </td>
+                    <td>
+                        <input id="PRI_BCH_Value" class="form-control PRI_BCH_Value decimal text-end" readonly autocomplete="off" value="@Model[i].PRI_BCH_Value" />
+                    </td>
+                    <td>
+                        @if (@Model[i].PRI_BCH_Number != 0)
+                        {
+                            <input name="ItemBatch[@i].PRI_BCH_Number" type="hidden" class="Number" value="@Model[i].PRI_BCH_Number" />
+                        }
+                        <input type="hidden" name="ItemBatch[@i].PRI_BCH_IsDeleted" value="false" class="PRI_BCH_IsDeleted" />
+                        <a class="IBatRowRemove btn btn-sm btn-danger p-1 icon-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                            </svg>
+                        </a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+    <tfoot>
+        <tr class="table-info">
+            <td></td>
+            <td class="text-end">Total Qty:</td>
+            <td>
+                <input id="BatchTotalQty" class="form-control" readonly />
+            </td>
+            <td></td>
+            <td>
+                <input id="BatchTotalValue" class="form-control" readonly />
+            </td>
+            <td></td>
+        </tr>
+    </tfoot>
+</table>
+<a id="IBatNewRowButton" class="btn btn-primary">Add Row</a>
+<script>
+    $(document).ready(function () {
+        var rowCount = @(Model != null ? Model.Count : 0);
+        var isAddingRow = false;
+
+        $(document).on('click', '.ItemBatch', function () {
+            let CheckedCheckbox = document.querySelector('.CheckItem:checked');
+            if (CheckedCheckbox) {
+                var currentRow = $(CheckedCheckbox).closest('tr.NewRow');
+                var ItemNumber = currentRow.find('input.PRI_Number').val();
+
+                if (ItemNumber) {
+                    var cout = 0;
+                    $("tr.IBatNewRow").each(function () {
+                        var RowItemNumber = $(this).find("input.PRI_BCH_PRI_Number").val();
+                        if (RowItemNumber === ItemNumber) {
+                            $(this).show();
+                        } else {
+                            $(this).hide();
+                        }
+                    });
+
+                    new bootstrap.Modal($("#IBatch")).show();
+                    $('#IBatch').on('shown.bs.modal', function () {
+                        $(this).find('[autofocus]').focus();
+
+                        (async () => {
+                            BatchCalculateFooter();
+                        })();
+                    });
+                }
+            }
+        });
+
+
+        $("#IBatCloseButton").click(function () {
+            $("#IBatch").modal('hide');
+        });
+
+
+        async function BatchCalculateFooter() {
+            var BtotalQty = 0;
+            var BtotalValue = 0;
+
+            $("tr.IBatNewRow:visible").each(function () {
+                var row = $(this);
+                var Qty = parseFloat(removeCommas(row.find("input.PRI_BCH_Qty").val()));
+                var Value = parseFloat(removeCommas(row.find("input.PRI_BCH_Value").val()));
+
+                if (Qty != '') {
+                    BtotalQty += parseFloat(Qty);
+                }
+                if (Value != '') {
+                    BtotalValue += parseFloat(Value);
+                }
+            });
+
+            $("#BatchTotalQty").val(BtotalQty.toFixed(2));
+            $("#BatchTotalValue").val(BtotalValue.toFixed(2));
+        }
+        window.onload = BatchCalculateFooter();
+
+    });
+</script>
+<style>
+    .search-results {
+        position: absolute;
+        z-index: 1000;
+        overflow-y: auto;
+        width: 400px;
+        max-height: 300px;
+    }
+</style>

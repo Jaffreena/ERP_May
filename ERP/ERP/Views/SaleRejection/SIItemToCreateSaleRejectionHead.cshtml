@@ -1,0 +1,122 @@
+﻿@model ERP_DTO.SIItemToSaleRejectionHead_DTO
+
+@if (Model.SRH_Number != 0)
+{
+    <input asp-for="SRH_Number" type="hidden" class="Number" />
+}
+
+<div class="col-auto left-menu text-black">
+    <div class="row">
+        <div class="col-12 px-1">
+            <div class="row align-items-center mb-3">
+                <div class="col-auto">
+                    <button name="Mode" value="Direct" class="bg-transparent border-0 shadow-0 icon-link text-black">
+                        <input class="form-check-input m-0" type="radio" disabled /> Direct
+                    </button>
+                </div>
+                <div class="col-auto">
+                    <button name="Mode" value="SITOITEM" class="bg-transparent border-0 shadow-0 icon-link text-black">
+                        <input class="form-check-input m-0" type="radio" disabled /> SI To Item
+                    </button>
+                </div>
+                <div class="col-auto">
+                    <input class="form-check-input" type="radio" checked disabled /> Item To SI
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="SRH_RejectionNo" class="col-md-6 col-lg-5 col-form-label ps-0"></label>
+                <div class="col-md-6 col-lg-7">
+                    <input asp-for="SRH_RejectionNo" class="form-control Key KeyDup" autocomplete="off" readonly />
+                </div>
+            </div>
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="SRH_RejectionDate" class="col-md-6 col-lg-5 col-form-label ps-0"></label>
+                <div class="col-md-6 col-lg-7">
+                    <input asp-for="SRH_RejectionDate" class="form-control Key datepicker" autocomplete="off" />
+                    <input id="PIHRejectionDate" class="form-control" hidden value="@Model.SRH_RejectionDate" />
+                </div>
+            </div>
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="SRH_ExportOrder" class="col-md-6 col-lg-5 col-form-label ps-0"></label>
+                <div class="col-md-6 col-lg-7">
+                    <input class="form-check-input" type="checkbox" asp-for="SRH_ExportOrder" />
+                </div>
+            </div>
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="SRH_MS_Number" class="col-md-6 col-lg-5 col-form-label ps-0"></label>
+                <div class="col-md-6 col-lg-7">
+                    <select asp-for="SRH_MS_Number" class="form-select" asp-items="@ViewBag.MaterialSegregation"></select>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="SRH_BUY_Number" class="col-sm-5 col-form-label ps-0"></label>
+                <div class="col-sm-7">
+                    <input asp-for="SRH_BUY_Number" class="form-control" type="hidden" />
+                    <input asp-for="SRH_BUY_LOC_Number" class="form-control" type="hidden" />
+                    <input asp-for="SRH_BUY_Name" class="form-control" autocomplete="off" oninput="OnBuyerInput(this)" onfocus="OnBuyerFocus(this)" />
+                    <div class="buyer-search-results bg-primary card" style="display:none"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="SRH_TCT_Number" class="col-sm-5 col-form-label ps-0"></label>
+                <div class="col-sm-7">
+                    <select asp-for="SRH_TCT_Number" class="form-select" onchange="SearchGST()"></select>
+                    @if (Model != null)
+                    {
+                        <input asp-for="SRH_HIDE_TCT_Number" class="form-control" type="hidden" value="@Model.SRH_TCT_Number" />
+                    }
+                    <div class="cluster-results dropdown-results search-results bg-primary p-2" style="display:none"></div>
+                </div>
+            </div>
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="SRH_WHT_Number" class="col-sm-5 col-form-label ps-0"></label>
+                <div class="col-sm-7">
+                    <input asp-for="SRH_WHT_Tax" class="form-control" type="hidden" />
+                    <input asp-for="SRH_WHT_Percent" class="form-control" type="hidden" />
+                    <select asp-for="SRH_WHT_Number" class="form-select" asp-items="@ViewBag.WHTax" onchange="SearchWHT()"></select>
+                </div>
+            </div>
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="SRH_CUR_Number" class="col-sm-5 col-form-label ps-0"></label>
+                <div class="col-sm-7">
+                    <input asp-for="SRH_CUR_Name" class="form-control" readonly autocomplete="off" />
+                    <input asp-for="SRH_CUR_Number" class="form-control" type="hidden" />
+                    <input asp-for="SRH_CUR_DecimalPlaces" class="form-control" type="hidden" />
+                </div>
+            </div>
+            <div class="row align-items-center px-2 mb-1" id="ExchangeRate">
+                <label asp-for="SRH_ExchangeRate" class="col-sm-5 col-form-label ps-0 text-nowrap"></label>
+                <div class="col-sm-7">
+                    <input asp-for="SRH_ExchangeRate" class="form-control Key decimal" autocomplete="off" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-auto right-menu text-center border-start">
+    @if (Model.SRH_Number != 0)
+    {
+        <input type="submit" name="Mode" value="Update" class="btn btn-primary btn-sm px-2 w-100 mb-1" />
+        <input type="submit" name="Mode" value="Clear All" class="btn btn-primary btn-sm px-2 w-100 mb-1" />
+    }
+    else
+    {
+        <input type="submit" name="Mode" value="Save" class="btn btn-primary btn-sm px-2 w-100 mb-1" />
+        <input type="submit" name="Mode" value="Clear All" class="btn btn-primary btn-sm px-2 w-100 mb-1" />
+    }
+    <button type="button" class="btn btn-primary btn-sm px-1 w-100 mb-1" id="HeaderIncomeModal" data-bs-toggle="modal" data-bs-target="#Income">
+        Header Misc. Income
+    </button>
+    <button type="button" class="btn btn-primary btn-sm px-2 w-100 mb-1" id="SIViewModel" data-bs-toggle="modal" data-bs-target="#SIView">
+        Sale Invoice
+    </button>
+    <button type="button" class="btn btn-primary btn-sm px-1 w-100 mb-1" data-bs-toggle="modal" data-bs-target="#BuyerAddress">
+        Address
+    </button>
+</div>

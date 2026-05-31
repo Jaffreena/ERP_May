@@ -1,0 +1,479 @@
+﻿@model List<ERP_DTO.PurchaseInvoiceIExpense_DTO>
+
+<table class="table table-bordered table-hover align-middle w-100">
+    <thead>
+        <tr class="table-info">
+            <th>Expense Code</th>
+            <th>Description</th>
+            <th>Remarks</th>
+            <th>Occurrence</th>
+            <th>Chargeable method</th>
+            <th>Expense Base</th>
+            <th>Expense Value</th>
+            <th>Allocate</th>
+            <th>Ledger account</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody id="IExTableBody">
+        <tr id="IExTempRow" style="display: none;">
+            <td>
+                <input id="PII_EXP_PII_Number" type="hidden" class="PII_EXP_PII_Number"/>
+                <input id="PII_EXP_Item_Number" class="PII_EXP_Item_Number" type="hidden" />
+                <input id="PII_EXP_Item_Index" class="PII_EXP_Item_Index" type="hidden" />
+                <select id="PII_EXP_Expense_Number" class="form-select PII_EXP_Expense_Number" asp-items="@ViewBag.ExpenseCode"></select>
+            </td>
+            <td>
+                <input id="PII_EXP_Description" class="form-control PII_EXP_Description" readonly autocomplete="off" />
+            </td>
+            <td>
+                <input id="PII_PII_EXP_Remarks" class="form-control PII_EXP_Remarks" autocomplete="off" />
+            </td>
+            <td>
+                <select id="PII_EXP_Occurrence_Number" class="form-select PII_EXP_Occurrence_Number" asp-items="@ViewBag.Occurrence"></select>
+            </td>
+            <td>
+                <select id="PII_EXP_CM_Number" class="form-select PII_EXP_CM_Number" asp-items="@ViewBag.ChargeableMethod"></select>
+            </td>
+            <td>
+                <input id="PII_EXP_ExpenseBase" class="form-control PII_EXP_ExpenseBase decimal text-end" autocomplete="off" />
+            </td>
+            <td>
+                <input id="PII_EXP_ExpenseValue" class="form-control PII_EXP_ExpenseValue decimal text-end" readonly autocomplete="off" />
+            </td>
+            <td>
+                <select id="PII_EXP_Allocate_Number" class="form-select PII_EXP_Allocate_Number" asp-items="@ViewBag.Allocate"></select>
+            </td>
+            <td>
+                <input id="PII_EXP_LA_Number" class="form-control PII_EXP_LA_Number" readonly autocomplete="off" />
+            </td>
+            <td>
+                <input id="PII_EXP_IsDeleted" type="hidden" name="PII_EXP_IsDeleted" class="PII_EXP_IsDeleted" value="false" />
+                <a class="IExRowRemove btn btn-sm btn-danger p-1 icon-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                    </svg>
+                </a>
+            </td>
+        </tr>
+        @if (Model != null)
+        {
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <tr class="IExNewRow" style="@(@Model[i].PII_EXP_IsDeleted == "true" ? "display: none;":"")">
+                    <td>
+                        <input id="PII_EXP_PII_Number" name="ItemExpenses[@i].PII_EXP_PII_Number" type="hidden" class="PII_EXP_PII_Number" value="@Model[i].PII_EXP_PII_Number" />
+                        <input id="PII_EXP_Item_Number" name="ItemExpenses[@i].PII_EXP_Item_Number" class="PII_EXP_Item_Number" type="hidden" value="@Model[i].PII_EXP_Item_Number" />
+                        <input id="PII_EXP_Item_Index" name="ItemExpenses[@i].PII_EXP_Item_Index" class="PII_EXP_Item_Index" type="hidden" value="@Model[i].PII_EXP_Item_Index" />
+                        <select id="PII_EXP_Expense_Number" name="ItemExpenses[@i].PII_EXP_Expense_Number" class="form-select PII_EXP_Expense_Number">
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.ExpenseCode)
+                            {
+                                if (item.Value == Model[i].PII_EXP_Expense_Number)
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input id="PII_EXP_Description" name="ItemExpenses[@i].PII_EXP_Description" readonly class="form-control PII_EXP_Description" autocomplete="off" value="@Model[i].PII_EXP_Description" />
+                    </td>
+                    <td>
+                        <input id="PII_EXP_Remarks" name="ItemExpenses[@i].PII_EXP_Remarks" class="form-control PII_EXP_Remarks" autocomplete="off" value="@Model[i].PII_EXP_Remarks" />
+                    </td>
+                    <td>
+                        <select id="PII_EXP_Occurrence_Number" name="ItemExpenses[@i].PII_EXP_Occurrence_Number" class="form-select PII_EXP_Occurrence_Number">
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Occurrence)
+                            {
+                                if (item.Value == Model[i].PII_EXP_Occurrence_Number)
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <select id="PII_EXP_CM_Number" name="ItemExpenses[@i].PII_EXP_CM_Number" class="form-select PII_EXP_CM_Number">
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.ChargeableMethod)
+                            {
+                                if (item.Value == Model[i].PII_EXP_CM_Number)
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input id="PII_EXP_ExpenseBase" name="ItemExpenses[@i].PII_EXP_ExpenseBase" class="form-control PII_EXP_ExpenseBase decimal text-end" autocomplete="off" value="@Model[i].PII_EXP_ExpenseBase" />
+                    </td>
+                    <td>
+                        <input id="PII_EXP_ExpenseValue" name="ItemExpenses[@i].PII_EXP_ExpenseValue" readonly class="form-control PII_EXP_ExpenseValue decimal text-end" autocomplete="off" value="@Model[i].PII_EXP_ExpenseValue" />
+                    </td>
+                    <td>
+                        <select id="PII_EXP_Allocate_Number" name="ItemExpenses[@i].PII_EXP_Allocate_Number" class="form-select PII_EXP_Allocate_Number">
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Allocate)
+                            {
+                                if (item.Value == Model[i].PII_EXP_Allocate_Number)
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input id="PII_EXP_LA_Number" name="ItemExpenses[@i].PII_EXP_LA_Number" readonly class="form-control PII_EXP_LA_Number" autocomplete="off" value="@Model[i].PII_EXP_LA_Number" />
+                    </td>
+                    <td>
+                        @if (@Model[i].PII_EXP_Number != 0)
+                        {
+                            <input name="ItemExpenses[@i].PII_EXP_Number" type="hidden" class="PII_EXP_Number" id="PII_EXP_Number" value="@Model[i].PII_EXP_Number" />
+                        }
+                        <input type="hidden" id="PII_EXP_IsDeleted" name="ItemExpenses[@i].PII_EXP_IsDeleted" class="PII_EXP_IsDeleted" value="@Model[i].PII_EXP_IsDeleted" />
+                        <a class="IExRowRemove btn btn-sm btn-danger p-1 icon-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                            </svg>
+                        </a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+<a id="IExNewRowButton" class="btn btn-primary">Add Row</a>
+<script>
+    $(document).ready(function () {
+        var irowCount = @(Model != null ? Model.Count : 0);
+        var isiAddingRow = false;
+
+        function IExNewRow() {
+            var IExNewRow = $("#IExTempRow").clone().removeAttr("style").removeAttr("id").addClass("IExNewRow");
+            IExNewRow.find("input.PII_EXP_PII_Number").attr("name", "ItemExpenses[" + irowCount + "].PII_EXP_PII_Number").val($("#PII_EXP_PIINumber").val());
+            IExNewRow.find("input.PII_EXP_Item_Number").attr("name", "ItemExpenses[" + irowCount + "].PII_EXP_Item_Number").val($("#PII_EXP_ItemNumber").val());
+            IExNewRow.find("input.PII_EXP_Item_Index").attr("name", "ItemExpenses[" + irowCount + "].PII_EXP_Item_Index").val($("#PII_EXP_ItemIndex").val());
+            IExNewRow.find("select.PII_EXP_Expense_Number").attr("name", "ItemExpenses[" + irowCount + "].PII_EXP_Expense_Number");
+            IExNewRow.find("input.PII_EXP_Description").attr("name", "ItemExpenses[" + irowCount + "].PII_EXP_Description");
+            IExNewRow.find("input.PII_PII_EXP_Remarks").attr("name", "ItemExpenses[" + irowCount + "].PII_PII_EXP_Remarks");
+            IExNewRow.find("select.PII_EXP_Occurrence_Number").attr("name", "ItemExpenses[" + irowCount + "].PII_EXP_Occurrence_Number");
+            IExNewRow.find("select.PII_EXP_CM_Number").attr("name", "ItemExpenses[" + irowCount + "].PII_EXP_CM_Number");
+            IExNewRow.find("input.PII_EXP_ExpenseBase").attr("name", "ItemExpenses[" + irowCount + "].PII_EXP_ExpenseBase");
+            IExNewRow.find("input.PII_EXP_ExpenseValue").attr("name", "ItemExpenses[" + irowCount + "].PII_EXP_ExpenseValue");
+            IExNewRow.find("select.PII_EXP_Allocate_Number").attr("name", "ItemExpenses[" + irowCount + "].PII_EXP_Allocate_Number");
+            IExNewRow.find("input.PII_EXP_LA_Number").attr("name", "ItemExpenses[" + irowCount + "].PII_EXP_LA_Number");
+            IExNewRow.find("input.PII_EXP_IsDeleted").attr("name", "ItemExpenses[" + irowCount + "].PII_EXP_IsDeleted").val("false");
+
+            $("#IExTableBody").append(IExNewRow);
+            irowCount++;
+            IExNewRow.data("isValid", false);
+            isiAddingRow = false;
+        }
+
+        $(document).on('click', '.ItemExpense', function () {
+            let CheckedCheckbox = document.querySelector('.CheckItem:checked');
+            if (CheckedCheckbox) {
+                var currentRow = $(CheckedCheckbox).closest('tr.NewRow');
+
+                var ItemNumber = currentRow.find('input.PII_Item_Number').val();
+                var Index = currentRow.find('input.PII_Index').val();
+                var PIINumber = currentRow.find('input.PII_Number').val();
+                var Qty = currentRow.find('input.PII_Qty').val();
+                var MatrialValue = currentRow.find('input.PII_Amount').val();
+
+                if (PIINumber) {
+                    $("#PII_EXP_ItemNumber").val(ItemNumber);
+                    $("#PII_EXP_PIINumber").val(PIINumber);
+                    $("#PII_EXP_ItemIndex").val(Index);
+                    $("#PII_EXP_Qty").val(Qty);
+                    $("#PII_EXP_MatrialValue").val(MatrialValue);
+
+                    $("tr.IExNewRow").each(function () {
+                        var PII_EXP_IsDeleted = $(this).find("input.PII_EXP_IsDeleted").val() === "true";
+                        if (!PII_EXP_IsDeleted) {
+                            $(this).show();
+                        }
+                        else {
+                            $(this).closest('tr').find("input.PII_EXP_IsDeleted").val("true");
+                            $(this).closest('tr').hide();
+                        }
+                    });
+
+                    var cout = 0;
+                    $("tr.IExNewRow").each(function () {
+                        var RowPIINumber = $(this).find("input.PII_EXP_PII_Number").val();
+                        var PII_EXP_IsDeleted = $(this).find("input.PII_EXP_IsDeleted").val(); 
+
+                        if (RowPIINumber === PIINumber && PII_EXP_IsDeleted !== 'true') {
+                            $(this).show();
+                            cout++;
+                        } else {
+                            $(this).hide();
+                        }
+                    });
+
+                    if (cout === 0) {
+                        IExNewRow();
+                    }
+
+                    new bootstrap.Modal($("#IExpense")).show();
+                    $('#IExpense').on('shown.bs.modal', function () {
+                        $(this).find('[autofocus]').focus();
+                    });
+                }
+                else if (ItemNumber) {
+                    $("#PII_EXP_ItemNumber").val(ItemNumber);
+                    $("#PII_EXP_ItemIndex").val(Index);
+                    $("#PII_EXP_Qty").val(Qty);
+                    $("#PII_EXP_MatrialValue").val(MatrialValue);
+
+                    $("tr.IExNewRow").each(function () {
+                        var PII_EXP_IsDeleted = $(this).find("input.PII_EXP_IsDeleted").val() === "true";
+                        if (!PII_EXP_IsDeleted) {
+                            $(this).show();
+                        }
+                    });
+
+                    var cout = 0;
+                    $("tr.IExNewRow").each(function () {
+                        var RowItemNumber = $(this).find("input.PII_EXP_Item_Number").val();
+                        var RowItemIndex = $(this).find("input.PII_EXP_Item_Index").val();
+                        var PII_EXP_IsDeleted = $(this).find("input.PII_EXP_IsDeleted").val();
+
+                        if (RowItemNumber === ItemNumber && RowItemIndex === Index && PII_EXP_IsDeleted !== 'true') {
+                            $(this).show();
+                            cout++;
+                        } else {
+                            $(this).hide();
+                        }
+                    });
+
+                    if (cout === 0) {
+                        IExNewRow();
+                    }
+
+                    new bootstrap.Modal($("#IExpense")).show();
+                    $('#IExpense').on('shown.bs.modal', function () {
+                        $(this).find('[autofocus]').focus();
+                    });
+                }
+            }
+        });
+
+        $(document).on('click', '.IExRowRemove', function () {
+            $(this).closest('tr').find("input.PII_EXP_IsDeleted").val("true");
+            $(this).closest('tr').hide();
+        });
+
+        $(document).on('keydown', "tr.IExNewRow select, tr.IExNewRow input.PII_EXP_ExpenseBase, tr.IExNewRow input[type='text']", function (event) {
+            if (event.keyCode === 9) {
+                if (!IExValidateField($(this)))
+                    event.preventDefault();
+            }
+        });
+
+        $(document).on("change", "tr.IExNewRow select, tr.IExNewRow input.PII_EXP_ExpenseBase, input[type='text']", function () {
+            if (isiAddingRow)
+                return;
+            isiAddingRow = true;
+
+            var currentInput = $(this);
+            var isValid = IExValidateField(currentInput);
+            var currentRow = $(this).closest("tr.IExNewRow");
+            if (isValid) {
+                if (IExCheckAllFieldsValid(currentRow)) {
+                    currentRow.data("isValid", true);
+                }
+                else {
+                    currentRow.data("isValid", false);
+                }
+            }
+            else {
+                currentRow.data("isValid", false);
+            }
+            if (currentRow.data("isValid")) {
+                var lastRow = $("tr.IExNewRow").last();
+                if (IExCheckAllFieldsValid(lastRow))
+                    IExNewRow();
+            }
+            else {
+                isiAddingRow = false;
+            }
+        });
+
+        function IExCheckAllFieldsValid(currentRow) {
+            var allFieldsValid = true;
+            $("tr.IExNewRow:visible").each(function () {
+                $(this).find("select, input.PII_EXP_ExpenseBase, input[type='text']").each(function () {
+                    if (!IExValidateField($(this))) {
+                        allFieldsValid = false;
+                        return false;
+                    }
+                });
+                if (!allFieldsValid) return false;
+            });
+            return allFieldsValid;
+        }
+
+        function IExValidateField(currentInput) {
+            var valid = 1;
+            var inputValue = currentInput.val();
+            if (inputValue === "") {
+                valid = 0;
+            }
+            if (currentInput.hasClass(".PII_EXP_ExpenseBase")) {
+                valid = ExValidateAmount(currentInput);
+            }
+            if (valid == 0) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+        function ExValidateAmount(currentInput) {
+            var valid = 1;
+
+            var currentRow = currentInput.closest("tr.IExNewRow");
+            var PercentInput = currentRow.find("input.PII_EXP_ExpenseBase");
+            var Percent = removeCommas(PercentInput.val());
+            if (Percent > 0) {
+            }
+            else {
+                valid = 0;
+            }
+            return valid;
+        }
+
+        $(document).on('change', "tr.IExNewRow select.PII_EXP_Expense_Number", function () {
+            var selectedValue = $(this).val();
+            var Description = $(this).closest("tr.IExNewRow").find(".PII_EXP_Description");
+            var Ledger = $(this).closest("tr.IExNewRow").find(".PII_EXP_LA_Number");
+            var Allocate = $(this).closest("tr.IExNewRow").find(".PII_EXP_Allocate_Number");
+
+            $.ajax({
+                type: "get",
+                url: "../expense/des",
+                data: { Title: selectedValue },
+                datatype: "json",
+                traditional: true,
+                success: function (Expense) {
+                    Description.val(Expense.piH_EXP_Description);
+                    Ledger.val(Expense.piH_EXP_LA_Number);
+                    if (Allocate.val() === "") {
+                        Allocate.val(1);
+                    }
+                }
+            });
+        });
+
+        $("#IExCloseButton").click(function () {
+            $("tr.IExNewRow").each(function () {
+                var ExpenseCode = $(this).find("select.PII_EXP_Expense_Number").val();
+                var Occurrence = $(this).find("select.PII_EXP_Occurrence_Number").val();
+                var ChargeableMethod = $(this).find("select.PII_EXP_CM_Number").val();
+                var ExpenseBase = removeCommas($(this).find("input.PII_EXP_ExpenseBase").val());
+                var Allocate = $(this).find("select.PII_EXP_Allocate_Number").val();
+                var LedgerAccount = $(this).find("select.PII_EXP_LA_Number").val();
+
+                if (!ExpenseCode && !Occurrence && !ChargeableMethod && !Allocate && !LedgerAccount && !(ExpenseBase > 0)) {
+                    $(this).closest('tr').find("input.PII_EXP_IsDeleted").val("true");
+                    $(this).closest('tr').hide();
+                }
+            });
+
+            var lastRow = $("tr.IExNewRow").last();
+            if (IExCheckAllFieldsValid(lastRow)) {
+                $("#IExpense").modal('hide');
+            }
+            else {
+                alert("Please complete all fields !");
+            }
+
+            $("tr.IExNewRow").each(function () {
+                var PII_EXP_IsDeleted = $(this).find("input.PII_EXP_IsDeleted").val() === "true";
+                if (!PII_EXP_IsDeleted) {
+                    $(this).show();
+                }
+            });
+
+            CalAmount();
+        });
+
+        $("#IExNewRowButton").click(function () {
+            var lastRow = $("tr.IExNewRow").last();
+            if (IExCheckAllFieldsValid(lastRow)) {
+                IExNewRow();
+            }
+            else {
+                var firstInvalidField = null;
+                lastRow.find("select, input.PII_EXP_ExpenseBase, input[type='text']").each(function () {
+                    if (!IExValidateField($(this))) {
+                        if (firstInvalidField == null)
+                            firstInvalidField = $(this);
+                        return false;
+                    }
+                });
+                if (firstInvalidField != null) {
+                    alert("Please complete all fields !");
+                    firstInvalidField.focus();
+                }
+            }
+        });
+
+        $(document).on('input', "input.PII_EXP_ExpenseBase", function (event) {
+            IExAssignValue($(this));
+        });
+
+        $(document).on('change', "tr.IExNewRow select.PII_EXP_CM_Number", function () {
+            IExAssignValue($(this));
+        });
+    });
+
+    function IExAssignValue(currentInput) {
+        var row = currentInput.closest("tr.IExNewRow");
+
+        var Charge = row.find("select.PII_EXP_CM_Number").val();
+
+        if (Charge === "1") {
+            var ExpenseBase = parseFloat(removeCommas(row.find("input.PII_EXP_ExpenseBase").val())) || 0;
+            row.find("input.PII_EXP_ExpenseValue").val(DecimalIndianRupees(ExpenseBase));
+        }
+        else if (Charge === "2") {
+            var ItemQty = parseFloat(removeCommas($("#PII_EXP_Qty").val())) || 0;
+            var ExpenseBase = parseFloat(removeCommas(row.find("input.PII_EXP_ExpenseBase").val())) || 0;
+            var ExpenseValue = ItemQty * ExpenseBase;
+            row.find("input.PII_EXP_ExpenseValue").val(DecimalIndianRupees(ExpenseValue));
+        }
+        else if (Charge === "3") {
+            var ItemAmount = parseFloat(removeCommas($("#PII_EXP_MatrialValue").val())) || 0;
+            var ExpenseBase = parseFloat(removeCommas(row.find("input.PII_EXP_ExpenseBase").val())) || 0;
+            var ExpenseValue = ItemAmount * ExpenseBase / 100;
+            row.find("input.PII_EXP_ExpenseValue").val(DecimalIndianRupees(ExpenseValue));
+        }
+    }
+</script>
+<style>
+    .search-results {
+        position: absolute;
+        z-index: 1000;
+        overflow-y: auto;
+        width: 400px;
+        max-height: 300px;
+    }
+</style>

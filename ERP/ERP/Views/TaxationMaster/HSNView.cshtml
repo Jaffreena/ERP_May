@@ -1,0 +1,28 @@
+﻿@model ERP_DTO.HSN_DTO
+
+
+@if (Model != null)
+{
+    <input asp-for="HSN_Number" type="hidden" class="Number" />
+}
+<div class="mb-3">
+    <label asp-for="HSN_Code" class="control-label"></label>
+    <input asp-for="HSN_Code" class="form-control Key KeyDup number-only 8digit" autofocus="true" autocomplete="off" />
+</div>
+<div class="mb-3">
+    <label asp-for="Description" class="control-label"></label>
+    <textarea asp-for="Description" class="form-control Key" autocomplete="off"></textarea>
+    @* <span asp-validation-for="Notes" class="text-danger"></span> *@
+</div>
+<div>
+    @if(Model != null)
+    {
+        <input type="submit" name="Mode" value="Update" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+    else
+    {
+        <input type="submit" name="Mode" value="Save" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+</div>

@@ -1,0 +1,246 @@
+﻿@model ERP_DTO.JobInwardTransaction.ReceiptNoteHead_DTO;
+@{
+    ViewData["Title"] = "Receipt Note Create";
+}
+<style>
+    /* 🔒 Lock all controls */
+    input,
+    textarea,
+    select {
+        pointer-events: none;
+        background-color: #f8f9fa;
+    }
+
+        /* 🔓 Enable checkbox */
+        input[type="checkbox"] {
+            pointer-events: auto !important;
+        }
+
+    
+
+    /* ✅ Enable Batch button */
+    .ItemBatch {
+        pointer-events: auto !important;
+        opacity: 1 !important;
+        cursor: pointer !important;
+    }
+
+    /* ✅ Enable modal OK button */
+    #IBatCloseButton {
+        pointer-events: auto !important;
+        opacity: 1 !important;
+        cursor: pointer !important;
+    }
+
+    /* ✅ Enable modal Close(X) button */
+    #ExCloseButton {
+        pointer-events: auto !important;
+        opacity: 1 !important;
+        cursor: pointer !important;
+    }
+</style>
+<script>
+     function removeCommas(value) {
+        return (value || '').toString().replace(/,/g, '');
+    }
+
+    function DecimalIndianRupees(value) {
+        if (value === "" || isNaN(value)) {
+            return "0.00";
+        }
+
+        var formattedValue = parseFloat(value).toFixed(2);
+
+        var parts = formattedValue.split(".");
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+        return parts.join(".");
+    }
+    function NumberToIndianRupees(value, decimalPlaces) {
+        if (value === "" || isNaN(value)) return "0";
+
+        var formattedValue = parseFloat(value).toFixed(decimalPlaces);
+        var parts = formattedValue.split(".");
+        if (parts.length > 1) {
+            parts[1] = parts[1].replace(/0+$/, "");
+            if (parts[1].length === 0) parts.pop();
+        }
+
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+
+        return parts.join(".");
+    }
+</script>
+<form asp-action="CreateReceiptNote" class="h-100">
+
+    <div class="modal modal-lg fade" id="IBatch" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border">
+                <div class="modal-header">
+                    <p class="modal-title w-100">
+                        Batch <span class="float-end">
+                       @*  Item Qty : <span id="RNI_BATCHQty"></span> *@
+                        <button type="button" id="ExCloseButton" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </span>
+                </p>
+            </div>
+            <div class="modal-body p-0">
+                <div class="p-2 text-black h-100">
+                    <ul class="nav nav-tabs tab-header" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-tab-pane" type="button" role="tab" aria-controls="overview-tab-pane" aria-selected="true">Overview</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content tab-body">
+                        <div class="tab-pane fade show active border border-top-0 h-100 p-2" id="overview-tab-pane" role="tabpanel" aria-labelledby="overview-tab" tabindex="0">
+                            <div id="BatchBody">
+                            <partial name="CreateReceiptNoteBatchView.cshtml" model="@Model.ItemBatch" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+               @*  <a id="IBatNewRowButton" class="btn btn-primary">Add Row</a> *@
+                <button type="button" id="IBatCloseButton" class="btn btn-primary px-4" ref="always_focus" autofocus>Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row align-items-center panel-header gx-2">
+    <div class="col h-100 align-items-center">
+        <div class="h6 fw-light text-white h-100 align-content-center bg-secondary px-2">
+            Receipt Note
+            <a asp-controller="JobworkInward" asp-action="Index" class="float-end btn p-0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                </svg>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row panel-body gx-2">
+    <div class="col-12 panel-card-fixed h-100">
+        <div class="w-100 rounded-0 h-100 border border-primary bg-transparent" id="BodyHeight">
+            <div class="card rounded-0 bg-transparent shadow-none" id="CardHeader">
+                <div class="card-body pb-0">
+                    <div class="row ps-2">
+                        <partial name="CreateReceiptNoteHeadView.cshtml" model="@Model" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="card rounded-0 bg-transparent shadow-none" id="CardBody">
+                <div class="card-body h-100">
+                    <div class="row h-100">
+                        <div class="col-auto left-menu h-100">
+                            <ul class="nav nav-tabs tab-header">
+                                <li class="nav-item">
+                                    <a class="nav-link active" aria-current="page">Item</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark">Other</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content tab-body tab-body-h-o">
+                                <div class="tab-pane fade show active p-2 pb-0 border border-top-0 h-100" tabindex="0">
+                                    <div class="row h-100">
+                                        <partial name="CreateReceiptNoteItemView.cshtml" model="@Model.Items" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto right-menu text-center border-start">
+                            
+                            <a class="ItemBatch btn btn-sm btn-primary px-2 mb-2 w-100 OneItemMode" disabled>
+                                Batch
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+       
+        </div>
+    </div>
+</div>
+</form>
+
+<script>
+         $("#IBatCloseButton").click(function () {
+               $("#IBatch").modal('hide');
+         });
+    $(document).ready(function () {
+
+        var browCount = @(Model != null ? Model.ItemBatch.Count : 0);
+        var isbAddingRow = false;
+ 
+
+         
+            $(document).on('click', '.ItemBatch', function () {
+
+                  let checkedBoxes = $('.CheckItem:checked');
+
+            // ❌ Validation: No selection
+            if (checkedBoxes.length === 0) {
+                alert("Please select an item");
+                return;
+            }
+
+            // ❌ Validation: Multiple selection
+            if (checkedBoxes.length > 1) {
+                alert("Please select only one item");
+                return;
+            }
+
+            // ✅ Only one checkbox
+            let CheckedCheckbox = checkedBoxes[0];
+
+            var currentRow = $(CheckedCheckbox).closest('tr.NewRow');
+
+            var ItemNumber = currentRow.find('input.Item_Number').val();
+            var Index = currentRow.find('input.Item_Index').val();
+            var Qty = currentRow.find('input.Qty').val();
+            var MatrialValue = currentRow.find('input.UnitPrice').val();
+                 var ItemWareHouse = currentRow.find('select.WH_Number').val();
+
+                  var JIRNI_Number = currentRow.find('input.JIRNI_Number').val();
+                  var JIRNI_JIRNH_Number = currentRow.find('input.JIRNI_JIRNH_Number').val();
+              
+        // let JIRNH_Number = $(this).data('jirnh');
+        // let JIRNI_Number = $(this).data('jirni');
+
+        $.ajax({
+            url: '/jobinward/transactions/receipt-note/getbatch',
+            type: 'GET',
+
+            data: {
+                JIRNH_Number: JIRNI_JIRNH_Number,
+                JIRNI_Number: JIRNI_Number
+            },
+
+            success: function (response) {
+              
+                $('#BatchBody').html(response);
+
+                $('#IBatch').modal('show');
+            },
+
+            error: function () {
+
+                alert("Failed to load batch");
+            }
+        });
+
+    });
+        
+        
+      
+    });
+ 
+      
+</script>
+
+ 

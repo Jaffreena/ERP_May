@@ -1,0 +1,545 @@
+﻿@model List<ERP_DTO.SaleRejectionIIncome_DTO>
+
+<div class="w-100 table-responsive">
+    <table class="table table-bordered table-hover align-middle w-100 mb-0">
+        <thead>
+            <tr class="table-info">
+                <th>@Html.DisplayNameFor(M => M.First().SRI_INC_MIC_Number)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SRI_INC_MIC_Description)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SRI_INC_Remarks)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SRI_INC_OCRN_Number)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SRI_INC_CM_Number)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SRI_INC_IncomeBase)</th>
+                <th class="table-width-3xl text-end">@Html.DisplayNameFor(M => M.First().SRI_INC_IncomeValue)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SRI_INC_ALCT_Number)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SRI_INC_LA_Number)</th>
+                <th class="action text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody id="IInTableBody">
+            <tr id="IInTempRow" style="display: none;">
+                <td>
+                    <input id="SRI_INC_SRI_Number" class="SRI_INC_SRI_Number" type="hidden" />
+                    <input id="SRI_INC_ITM_Number" class="SRI_INC_ITM_Number" type="hidden" />
+                    <input id="SRI_INC_ITM_Index" class="SRI_INC_ITM_Index" type="hidden" />
+                    <select id="SRI_INC_MIC_Number" class="form-select SRI_INC_MIC_Number" asp-items="@ViewBag.IncomeCode"></select>
+                </td>
+                <td>
+                    <input id="SRI_INC_MIC_Description" class="form-control SRI_INC_MIC_Description" readonly autocomplete="off" />
+                </td>
+                <td>
+                    <input id="SRI_SRI_INC_Remarks" class="form-control SRI_INC_Remarks" autocomplete="off" />
+                </td>
+                <td>
+                    <select id="SRI_INC_OCRN_Number" class="form-select SRI_INC_OCRN_Number" asp-items="@ViewBag.Occurrence"></select>
+                </td>
+                <td>
+                    <select id="SRI_INC_CM_Number" class="form-select SRI_INC_CM_Number" asp-items="@ViewBag.ChargeableMethod"></select>
+                </td>
+                <td class="table-width-xl">
+                    <input id="SRI_INC_IncomeBase" class="form-control SRI_INC_IncomeBase decimal text-end" autocomplete="off" />
+                </td>
+                <td class="table-width-3xl">
+                    <input id="SRI_INC_IncomeValue" class="form-control SRI_INC_IncomeValue decimal text-end" readonly autocomplete="off" />
+                </td>
+                <td>
+                    <select id="SRI_INC_ALCT_Number" class="form-select SRI_INC_ALCT_Number" asp-items="@ViewBag.Allocate"></select>
+                </td>
+                <td>
+                    <select id="SRI_INC_LA_Number" class="form-select SRI_INC_LA_Number" asp-items="@ViewBag.LedgerAccount"></select>
+                </td>
+                <td class="action text-center">
+                    <input id="SRI_INC_IsDeleted" type="hidden" name="SRI_INC_IsDeleted" class="SRI_INC_IsDeleted" />
+                    <a class="InRowRemove text-danger icon-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                        </svg>
+                    </a>
+                </td>
+            </tr>
+            @if (Model != null)
+            {
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr class="IInNewRow" style="@(@Model[i].SRI_INC_IsDeleted == 1 ? "display: none;" : "")">
+                        <td>
+                            <input id="SRI_INC_SRI_Number" name="ItemIncome[@i].SRI_INC_SRI_Number" class="SRI_INC_SRI_Number" type="hidden" value="@Model[i].SRI_INC_SRI_Number" />
+                            <input id="SRI_INC_ITM_Number" name="ItemIncome[@i].SRI_INC_ITM_Number" class="SRI_INC_ITM_Number" type="hidden" value="@Model[i].SRI_INC_ITM_Number" />
+                            <input id="SRI_INC_ITM_Index" name="ItemIncome[@i].SRI_INC_ITM_Index" class="SRI_INC_ITM_Index" type="hidden" value="@Model[i].SRI_INC_ITM_Index" />
+                            <select id="SRI_INC_MIC_Number" name="ItemIncome[@i].SRI_INC_MIC_Number" class="form-select SRI_INC_MIC_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.IncomeCode)
+                                {
+                                    if (item.Value == Model[i].SRI_INC_MIC_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <input id="SRI_INC_MIC_Description" name="ItemIncome[@i].SRI_INC_MIC_Description" readonly class="form-control SRI_INC_MIC_Description" autocomplete="off" value="@Model[i].SRI_INC_MIC_Description" />
+                        </td>
+                        <td>
+                            <input id="SRI_INC_Remarks" name="ItemIncome[@i].SRI_INC_Remarks" class="form-control SRI_INC_Remarks" autocomplete="off" value="@Model[i].SRI_INC_Remarks" />
+                        </td>
+                        <td>
+                            <select id="SRI_INC_OCRN_Number" name="ItemIncome[@i].SRI_INC_OCRN_Number" class="form-select SRI_INC_OCRN_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Occurrence)
+                                {
+                                    if (item.Value == Model[i].SRI_INC_OCRN_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <select id="SRI_INC_CM_Number" name="ItemIncome[@i].SRI_INC_CM_Number" class="form-select SRI_INC_CM_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.ChargeableMethod)
+                                {
+                                    if (item.Value == Model[i].SRI_INC_CM_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="SRI_INC_IncomeBase" name="ItemIncome[@i].SRI_INC_IncomeBase" class="form-control SRI_INC_IncomeBase decimal text-end" autocomplete="off" value="@Model[i].SRI_INC_IncomeBase" />
+                        </td>
+                        <td class="table-width-3xl">
+                            <input id="SRI_INC_IncomeValue" name="ItemIncome[@i].SRI_INC_IncomeValue" readonly class="form-control SRI_INC_IncomeValue decimal text-end" autocomplete="off" value="@Model[i].SRI_INC_IncomeValue" />
+                        </td>
+                        <td>
+                            <select id="SRI_INC_ALCT_Number" name="ItemIncome[@i].SRI_INC_ALCT_Number" class="form-select SRI_INC_ALCT_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Allocate)
+                                {
+                                    if (item.Value == Model[i].SRI_INC_ALCT_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <select id="SRI_INC_LA_Number" name="ItemIncome[@i].SRI_INC_LA_Number" class="form-select SRI_INC_LA_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.LedgerAccount)
+                                {
+                                    if (item.Value == Model[i].SRI_INC_LA_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td class="action text-center">
+                            <input type="hidden" id="SRI_INC_IsDeleted" name="ItemIncome[@i].SRI_INC_IsDeleted" class="SRI_INC_IsDeleted" value="@Model[i].SRI_INC_IsDeleted" />
+                            @if (@Model[i].SRI_INC_Number != 0)
+                            {
+                                <input name="ItemIncome[@i].SRI_INC_Number" type="hidden" class="Number" value="@Model[i].SRI_INC_Number" />
+                            }
+                            <a class="InRowRemove text-danger icon-link">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                    <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+        <tfoot>
+            <tr class="table-info">
+                <td colspan="6" class="text-end py-2">Total</td>
+                <td class="table-width-3xl text-end">
+                    <input id="TotalIIncAmount" class="form-control text-end" readonly />
+                </td>
+                <td colspan="3">
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+@* <a id="IInNewRowButton" class="btn btn-primary">Add Row</a> *@
+<script>
+    $(document).ready(function () {
+        var irowCount = @(Model != null ? Model.Count : 0);
+        var isiAddingRow = false;
+
+        function IInNewRow() {
+            var IInNewRow = $("#IInTempRow").clone().removeAttr("style").removeAttr("id").addClass("IInNewRow");
+            IInNewRow.find("input.SRI_INC_SRI_Number").attr("name", "ItemIncome[" + irowCount + "].SRI_INC_SRI_Number").val($("#SRI_TEMP_SRI_Number").val());
+            IInNewRow.find("input.SRI_INC_ITM_Number").attr("name", "ItemIncome[" + irowCount + "].SRI_INC_ITM_Number").val($("#SRI_TEMP_ITM_Number").val());
+            IInNewRow.find("input.SRI_INC_ITM_Index").attr("name", "ItemIncome[" + irowCount + "].SRI_INC_ITM_Index").val($("#SRI_TEMP_Index").val());
+            IInNewRow.find("select.SRI_INC_MIC_Number").attr("name", "ItemIncome[" + irowCount + "].SRI_INC_MIC_Number");
+            IInNewRow.find("input.SRI_INC_MIC_Description").attr("name", "ItemIncome[" + irowCount + "].SRI_INC_MIC_Description");
+            IInNewRow.find("input.SRI_SRI_INC_Remarks").attr("name", "ItemIncome[" + irowCount + "].SRI_SRI_INC_Remarks");
+            IInNewRow.find("select.SRI_INC_OCRN_Number").attr("name", "ItemIncome[" + irowCount + "].SRI_INC_OCRN_Number");
+            IInNewRow.find("select.SRI_INC_CM_Number").attr("name", "ItemIncome[" + irowCount + "].SRI_INC_CM_Number");
+            IInNewRow.find("input.SRI_INC_IncomeBase").attr("name", "ItemIncome[" + irowCount + "].SRI_INC_IncomeBase");
+            IInNewRow.find("input.SRI_INC_IncomeValue").attr("name", "ItemIncome[" + irowCount + "].SRI_INC_IncomeValue");
+            IInNewRow.find("select.SRI_INC_ALCT_Number").attr("name", "ItemIncome[" + irowCount + "].SRI_INC_ALCT_Number");
+            IInNewRow.find("select.SRI_INC_LA_Number").attr("name", "ItemIncome[" + irowCount + "].SRI_INC_LA_Number");
+            IInNewRow.find("input.SRI_INC_IsDeleted").attr("name", "ItemIncome[" + irowCount + "].SRI_INC_IsDeleted").val(0);
+
+            $("#IInTableBody").append(IInNewRow);
+            irowCount++;
+            IInNewRow.data("isValid", false);
+            isiAddingRow = false;
+        }
+
+        $(document).on('click', '.ItemIncome', function () {
+            let CheckedCount = document.querySelectorAll('.CheckItem:checked').length;
+            let CheckedCheckbox = document.querySelector('.CheckItem:checked');
+            if(CheckedCount==0){
+                alert("Select any one row from the list");
+
+            } else if(CheckedCount>1){
+                alert("Select only one row from the list");
+            }
+            else if(CheckedCount==1){
+                var currentRow = $(CheckedCheckbox).closest('tr.NewRow');
+
+                var ItemNumber = currentRow.find('input.SRI_ITM_Number').val();
+                var SIINumber = currentRow.find('input.SRI_Number').val();
+                var Index = currentRow.find('input.SRI_Index').val();
+                var Qty = currentRow.find('input.SRI_Qty').val();
+                var MatrialValue = currentRow.find('input.SRI_Amount').val();
+
+                if(SIINumber)
+                {
+                    $("#SRI_TEMP_SRI_Number").val(SIINumber);
+                    $("#SRI_TEMP_ITM_Number").val(ItemNumber);
+                    $("#SRI_TEMP_Index").val(Index);
+                    $("#SRI_TEMP_Qty").val(Qty);
+                    $("#SRI_TEMP_Amount").val(MatrialValue);
+
+                    var cout = 0;
+                    $("tr.IInNewRow").each(function () {
+                        var RowSIINumber = $(this).find("input.SRI_INC_SRI_Number").val();
+                        var RowIsDeleted = parseInt($(this).find("input.SRI_INC_IsDeleted").val());
+
+                        if (RowSIINumber === SIINumber && RowIsDeleted !== 1) {
+                            $(this).show();
+                            cout++;
+                        } else {
+                            $(this).hide();
+                        }
+                    });
+
+                    if (cout === 0) {
+                        IInNewRow();
+                    }
+
+                    new bootstrap.Modal($("#IIncome")).show();
+                    $('#IIncome').on('shown.bs.modal', function () {
+                        $(this).find('[autofocus]').focus();
+
+                        (async () => {
+                            await CalculateAllIncomes();
+                            await IIncCalculateFooter();
+                        })();
+                    });
+                }
+                else if (ItemNumber) {
+                    $("#SRI_TEMP_ITM_Number").val(ItemNumber);
+                    $("#SRI_TEMP_Index").val(Index);
+                    $("#SRI_TEMP_Qty").val(Qty);
+                    $("#SRI_TEMP_Amount").val(MatrialValue);
+
+                    var cout = 0;
+                    $("tr.IInNewRow").each(function () {
+                        var RowItemNumber = $(this).find("input.SRI_INC_ITM_Number").val();
+                        var RowItemIndex = $(this).find("input.SRI_INC_ITM_Index").val();
+                        var SRI_INC_IsDeleted = parseInt($(this).find("input.SRI_INC_IsDeleted").val());
+
+                        if (RowItemNumber === ItemNumber && RowItemIndex === Index && SRI_INC_IsDeleted !== 1) {
+                            $(this).show();
+                            cout++;
+                        } else {
+                            $(this).hide();
+                        }
+                    });
+
+                    if (cout === 0) {
+                        IInNewRow();
+                    }
+
+                    new bootstrap.Modal($("#IIncome")).show();
+                    $('#IIncome').on('shown.bs.modal', function () {
+                        $(this).find('[autofocus]').focus();
+
+                        (async () => {
+                            await CalculateAllIncomes();
+                            await IIncCalculateFooter();
+                        })();
+                    });
+                }
+            }
+        });
+
+        $(document).on('click', '.IInRowRemove', function () {
+            $(this).closest('tr').find("input.SRI_INC_IsDeleted").val(1);
+            $(this).closest('tr').hide();
+
+            (async () => {
+                await CalculateAllIncomes();
+                await IIncCalculateFooter();
+            })();
+        });
+
+        $(document).on('keydown', "tr.IInNewRow select, tr.IInNewRow input.SRI_INC_IncomeBase, tr.IInNewRow input[type='text']", function (event) {
+            if (event.keyCode === 9) {
+                if (!IInValidateField($(this)))
+                    event.preventDefault();
+            }
+        });
+
+        $(document).on("change", "tr.IInNewRow select, tr.IInNewRow input.SRI_INC_IncomeBase, input[type='text']", function () {
+            if (isiAddingRow)
+                return;
+            isiAddingRow = true;
+
+            var currentInput = $(this);
+            var isValid = IInValidateField(currentInput);
+            var currentRow = $(this).closest("tr.IInNewRow");
+            if (isValid) {
+                if (IInCheckAllFieldsValid(currentRow)) {
+                    currentRow.data("isValid", true);
+                }
+                else {
+                    currentRow.data("isValid", false);
+                }
+            }
+            else {
+                currentRow.data("isValid", false);
+            }
+            if (currentRow.data("isValid")) {
+                var lastRow = $("tr.IInNewRow").last();
+                if (IInCheckAllFieldsValid(lastRow))
+                    IInNewRow();
+            }
+            else {
+                isiAddingRow = false;
+            }
+        });
+
+        function IInCheckAllFieldsValid(currentRow) {
+            var allFieldsValid = true;
+            $("tr.IInNewRow:visible").each(function () {
+                $(this).find("select, input.SRI_INC_IncomeBase, input[type='text']").each(function () {
+                    if (!IInValidateField($(this))) {
+                        allFieldsValid = false;
+                        return false;
+                    }
+                });
+                if (!allFieldsValid) return false;
+            });
+            return allFieldsValid;
+        }
+
+        function IInValidateField(currentInput) {
+            var valid = 1;
+            var inputValue = currentInput.val();
+            if (inputValue === "") {
+                valid = 0;
+            }
+            if (currentInput.hasClass(".SRI_INC_IncomeBase")) {
+                valid = ExValidateAmount(currentInput);
+            }
+            if (valid == 0) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+        function ExValidateAmount(currentInput) {
+            var valid = 1;
+
+            var currentRow = currentInput.closest("tr.IInNewRow");
+            var PercentInput = currentRow.find("input.SRI_INC_IncomeBase");
+            var Percent = removeCommas(PercentInput.val());
+            if (Percent > 0) {
+            }
+            else {
+                valid = 0;
+            }
+            return valid;
+        }
+
+        $(document).on('change', "tr.IInNewRow select.SRI_INC_MIC_Number", function () {
+            var selectedValue = $(this).val();
+            var Description = $(this).closest("tr.IInNewRow").find(".SRI_INC_MIC_Description");
+            var Ledger = $(this).closest("tr.IInNewRow").find(".SRI_INC_LA_Number");
+            var Allocate = $(this).closest("tr.IInNewRow").find(".SRI_INC_ALCT_Number");
+            var Occurrence = $(this).closest("tr.IInNewRow").find(".SRI_INC_OCRN_Number");
+            var Chargeable = $(this).closest("tr.IInNewRow").find(".SRI_INC_CM_Number");
+
+            $.ajax({
+                type: "get",
+                url: "../income/des",
+                data: { Title: selectedValue },
+                datatype: "json",
+                traditional: true,
+                success: function (Income) {
+                    Description.val(Income.miC_Description);
+                    Ledger.val(Income.miC_LA_Number);
+                    console.log("Ledger",Income.miC_LA_Number);
+                    Occurrence.val(Income.miC_OCRN_Number);
+                    Chargeable.val(Income.miC_CM_Number);
+                    Allocate.val(Income.miC_ALCT_Number);
+                }
+            });
+
+            var $row = $(this).closest("tr.IInNewRow");
+            (async () => {
+                await CalculateAllIncomes();
+                await IIncCalculateFooter();
+            })();
+        });
+
+        $("#IInOkayButton").click(function () {
+            IInCloseEvent();
+        });
+
+        $("#IInCloseButton").click(function () {
+            IInCloseEvent();
+        });
+
+        function IInCloseEvent(){
+            $("tr.IInNewRow").each(function () {
+                var IncomeCode = $(this).find("select.SRI_INC_MIC_Number").val();
+                var Occurrence = $(this).find("select.SRI_INC_OCRN_Number").val();
+                var ChargeableMethod = $(this).find("select.SRI_INC_CM_Number").val();
+                var IncomeBase = removeCommas($(this).find("input.SRI_INC_IncomeBase").val());
+                var Allocate = $(this).find("select.SRI_INC_ALCT_Number").val();
+                var LedgerAccount = $(this).find("select.SRI_INC_LA_Number").val();
+
+                if (!IncomeCode && !Occurrence && !ChargeableMethod && !Allocate && !LedgerAccount && !(IncomeBase > 0)) {
+                    $(this).closest('tr').find("input.SRI_INC_IsDeleted").val(1);
+                    $(this).closest('tr').hide();
+                }
+            });
+
+            var lastRow = $("tr.IInNewRow").last();
+            if (IInCheckAllFieldsValid(lastRow)) {
+                $("#IIncome").modal('hide');
+            }
+            else {
+                alert("Please complete all fields !");
+            }
+
+            $("tr.IInNewRow").each(function () {
+                var SRI_INC_IsDeleted = parseInt($(this).find("input.SRI_INC_IsDeleted").val()) === 1;
+                if (!SRI_INC_IsDeleted) {
+                    $(this).show();
+                }
+            });
+
+            (async () => {
+                await CalculateAllIncomes();
+            })();
+        }
+
+        $("#IInNewRowButton").click(function () {
+            var lastRow = $("tr.IInNewRow").last();
+            if (IInCheckAllFieldsValid(lastRow)) {
+                IInNewRow();
+            }
+            else {
+                var firstInvalidField = null;
+                lastRow.find("select, input.SRI_INC_IncomeBase, input[type='text']").each(function () {
+                    if (!IInValidateField($(this))) {
+                        if (firstInvalidField == null)
+                            firstInvalidField = $(this);
+                        return false;
+                    }
+                });
+                if (firstInvalidField != null) {
+                    alert("Please complete all fields !");
+                    firstInvalidField.focus();
+                }
+            }
+        });
+
+        $(document).on('input', "tr.IInNewRow input.SRI_INC_IncomeBase", function (event) {
+            // IInAssignValue($(this));
+
+            (async () => {
+                await CalculateAllIncomes();
+                await IIncCalculateFooter();
+            })();
+        });
+
+        $(document).on('change', "tr.IInNewRow select.SRI_INC_CM_Number", function () {
+            // IInAssignValue($(this));
+
+            (async () => {
+                await CalculateAllIncomes();
+                await IIncCalculateFooter();
+            })();
+        });
+    });
+
+    // function IInAssignValue(currentInput) {
+    //     let IncomeValue = 0;
+    //     var row = currentInput.closest("tr.IInNewRow");
+
+    //     var Charge = row.find("select.SRI_INC_CM_Number").val();
+    //     var IncomeBase = parseFloat(removeCommas(row.find("input.SRI_INC_IncomeBase").val())) || 0;
+    //     var ItemQty = parseFloat(removeCommas($("#SRI_TEMP_Qty").val())) || 0;
+    //     var ItemAmount = parseFloat(removeCommas($("#SRI_TEMP_Amount").val())) || 0;
+
+    //     if (Charge === "1") {
+    //         IncomeValue = IncomeBase;
+    //     }
+    //     else if (Charge === "2") {
+    //         IncomeValue = ItemQty * IncomeBase;
+    //     }
+    //     else if (Charge === "3") {
+    //         IncomeValue = ItemAmount * IncomeBase / 100;
+    //     }
+    //     IncomeValue = DecimalIndianRupees(IncomeValue);
+    //     row.find("input.SRI_INC_IncomeValue").val(IncomeValue);
+    // }
+
+    async function IIncCalculateFooter() {
+        var TotalIncAmount = 0;
+        $("tr.IInNewRow:visible").each(function () {
+            var IncAmount = $(this).find(".SRI_INC_IncomeValue").val();
+            TotalIncAmount += parseFloat(removeCommas(IncAmount));
+        });
+        $("#TotalIIncAmount").val(DecimalIndianRupees(TotalIncAmount.toFixed(2)));
+    }
+</script>
+<style>
+    .search-results {
+        position: absolute;
+        z-index: 1000;
+        overflow-y: auto;
+        width: 400px;
+        max-height: 300px;
+    }
+</style>

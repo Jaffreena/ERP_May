@@ -1,0 +1,515 @@
+﻿@model ERP_DTO.PurchaseOrderHead_DTO
+
+@{
+    ViewData["Title"] = "Purchase Order Preview";
+}
+@using System.Globalization;
+@{
+    CultureInfo India = new CultureInfo("hi-IN");
+}
+
+
+<div class="row align-items-center panel-header gx-2">
+    <div class="col h-100">
+        <div class="h6 fw-light text-white h-100 align-content-center bg-secondary px-2">
+            Purchase Order
+            <a asp-controller="Procurement" asp-action="Index" class="float-end btn  p-0 shadow-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                </svg>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row panel-body gx-2">
+    <div class="col-12 panel-card-fixed h-100">
+        <form asp-action="PurchaseOrderPreview" class="h-100">
+
+            <input id="POI_EXP_ItemNumber" type="hidden" />
+            <input id="POI_EXP_ItemIndex" type="hidden" />
+
+            <div class="modal modal-lg modal-xl fade" id="Expense" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <p class="modal-title">Header Misc. Expense</p>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="card bg-transparent shadow-none h-100">
+                            <div class="p-2 text-black h-100 nav-tab-fix">
+                                <ul class="nav nav-tabs tab-header" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-tab-pane" type="button" role="tab" aria-controls="overview-tab-pane" aria-selected="true">Overview</button>
+                                    </li>
+                                </ul>
+
+                                <div class="tab-content tab-body">
+                                    <div class="tab-pane fade show active pb-0 border border-top-0 h-100" id="overview-tab-pane" role="tabpanel" aria-labelledby="overview-tab" tabindex="0">
+                                        <div class="modal-body p-2 justify-content-center">
+                                                    <partial name="PurchaseOrderExpensePreview.cshtml" model="@Model.Expenses" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-end">
+                            <button type="button" id="ExOkayButton" class="btn btn-primary px-4" ref="always_focus" data-bs-dismiss="modal">Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal modal-lg modal-xl fade" id="IExpense" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <p class="modal-title">Item Misc.Expense</p>
+                            <button type="button" class="btn-close" id="IExCloseButton" aria-label="Close"></button>
+                        </div>
+                        <div class="card bg-transparent shadow-none h-100">
+                            <div class="p-2 text-black h-100 nav-tab-fix">
+                                <ul class="nav nav-tabs tab-header" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-tab-pane" type="button" role="tab" aria-controls="overview-tab-pane" aria-selected="true">Overview</button>
+                                    </li>
+                                </ul>
+                                <div class="tab-content tab-body">
+                                    <div class="tab-pane fade show active pb-0 border border-top-0 h-100" id="overview-tab-pane" role="tabpanel" aria-labelledby="overview-tab" tabindex="0">
+                                        <div class="modal-body p-2 justify-content-center">
+                                                    <partial name="PurchaseOrderIExpensePreview.cshtml" model="@Model.ItemExpenses" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-end">
+                            <button type="button" id="IExOkayButton" class="btn btn-primary px-4" ref="always_focus" data-bs-dismiss="modal">Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal modal-lg modal-xl fade" id="PrintPreview" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <p class="modal-title">Print Preview</p>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body py-4 fs-6 text-center icon-link justify-content-center">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col pb-1 pt-4">
+                                        <div class="po-container" name="PrintPage" id="PrintPage" style="background-color: #fff;color:#000">
+                                            <style>
+                                                .po-container {
+                                                    max-width: 800px;
+                                                    margin: auto;
+                                                    background-color: #fff;
+                                                    padding: 20px;
+                                                    height: 100%;
+                                                    font-size: 10px;
+                                                    font-family: "Noto Sans", sans-serif;
+                                                }
+
+                                                .po-table {
+                                                    width: 100%;
+                                                    border-collapse: collapse;
+                                                    border: 0.1px solid #ccc;
+                                                    font-family: "Noto Sans", sans-serif;
+                                                }
+
+                                                    .po-table th, .po-table td {
+                                                        border: 0.1px solid #ccc;
+                                                        padding: 5px 8px;
+                                                        vertical-align: top;
+                                                        line-height: 1.4;
+                                                    }
+
+                                                    .po-table th {
+                                                        font-weight: bold;
+                                                    }
+
+                                                    .po-table tr td {
+                                                        height: 29px;
+                                                    }
+
+                                                .header-main {
+                                                    background-color: #1E8449;
+                                                    color: white;
+                                                    font-weight: bold;
+                                                    text-align: center;
+                                                }
+
+                                                .header-section {
+                                                    background-color: #2ECC71;
+                                                    color: white;
+                                                    font-weight: bold;
+                                                    text-align: center;
+                                                }
+
+                                                .header-sub {
+                                                    background-color: #ABEBC6;
+                                                    color: #333;
+                                                    font-weight: bold;
+                                                }
+
+                                                .align-right {
+                                                    text-align: right;
+                                                }
+
+                                                .align-center {
+                                                    text-align: center;
+                                                }
+
+                                                .company-title {
+                                                    font-size: 1.4em;
+                                                    font-weight: bold;
+                                                    text-align: center;
+                                                    vertical-align: middle;
+                                                }
+
+                                                .po-title {
+                                                    font-size: 1.2em;
+                                                    font-weight: bold;
+                                                    text-align: center;
+                                                    vertical-align: middle;
+                                                }
+
+                                                .placeholder {
+                                                    color: #777;
+                                                    font-style: italic;
+                                                }
+
+                                                .total-row td {
+                                                    background-color: #2ECC71;
+                                                    color: white;
+                                                    font-weight: bold;
+                                                }
+
+                                                .no-border {
+                                                    border: none !important;
+                                                }
+
+                                                .signature-area td {
+                                                    border: none;
+                                                    padding-top: 15px;
+                                                    padding-bottom: 5px;
+                                                }
+
+                                                a.details-link {
+                                                    color: #0000EE;
+                                                    text-decoration: underline;
+                                                }
+                                            </style>
+                                            <table class="po-table" style="background-color: #fff;color:#000">
+                                                <tbody>
+                                                    <tr>
+                                                        <td colspan="2" style="vertical-align: middle; text-align: center;">[LOGO]</td>
+                                                        <td colspan="10" class="company-title">ABC PRIVATE LIMITED</td>
+                                                    </tr>
+                                                    <tr class="header-main">
+                                                        <td colspan="4" class="po-title">PURCHASE ORDER</td>
+                                                        <td class="align-right" style="vertical-align: middle;">PO #</td>
+                                                        <td colspan="3" style="vertical-align: middle;">@ViewBag.HeadPreview.POH_OrderNo</td>
+                                                        <td></td>
+                                                        <td class="align-right" style="vertical-align: middle;">Date</td>
+                                                        <td colspan="2" style="vertical-align: middle;">@ViewBag.HeadPreview.POH_Date</td>
+                                                    </tr>
+                                                    <tr class="header-section">
+                                                        <td colspan="6">VENDOR</td>
+                                                        <td colspan="6">SHIP TO</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="6">@ViewBag.VendorPreview.VendorName</td>
+                                                        <td colspan="6">@ViewBag.VendorPreview.VendorName</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="6">@ViewBag.VendorPreview.Address</td>
+                                                        <td colspan="6">@ViewBag.VendorPreview.Address</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="6">@ViewBag.VendorPreview.City, @ViewBag.VendorPreview.State, @ViewBag.VendorPreview.Pincode</td>
+                                                        <td colspan="6">@ViewBag.VendorPreview.City, @ViewBag.VendorPreview.State, @ViewBag.VendorPreview.Pincode</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="6">GST: @ViewBag.VendorPreview.GSTIN</td>
+                                                        <td colspan="6">GST: @ViewBag.VendorPreview.GSTIN</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="6">PAN: @ViewBag.VendorPreview.PAN</td>
+                                                        <td colspan="6">PAN: @ViewBag.VendorPreview.PAN</td>
+                                                    </tr>
+                                                    <tr class="header-section">
+                                                        <th>Currency</th>
+                                                        <th colspan="3">Payment Terms</th>
+                                                        <th colspan="2">Method of payment</th>
+                                                        <th colspan="4">Delivery terms</th>
+                                                        <th colspan="2">Mode of delivery</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>@ViewBag.HeadPreview.POH_PaymentTerms</td>
+                                                        <td colspan="3">@ViewBag.HeadPreview.POH_PaymentTerms</td>
+                                                        <td colspan="2">@ViewBag.HeadPreview.POH_MOP</td>
+                                                        <td colspan="4">@ViewBag.HeadPreview.POH_DeliveryTerms</td>
+                                                        <td colspan="2">@ViewBag.HeadPreview.POH_MOD</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="6"><a href="#" class="details-link">Inspection Details</a></td>
+                                                        <td colspan="6"><a href="#" class="details-link">Technical delivery conditions</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="6"></td>
+                                                        <td colspan="6"></td>
+                                                    </tr>
+                                                    <tr class="header-section">
+                                                        <th colspan="2">Item Code</th>
+                                                        <th colspan="3">Description</th>
+                                                        <th class="align-center">Uom</th>
+                                                        <th colspan="2" class="align-center">Qty</th>
+                                                        <th colspan="2" class="align-right">Unit Price</th>
+                                                        <th colspan="2" class="align-right">Value</th>
+                                                    </tr>
+                                                    @if (ViewBag.ItemPreview != null)
+                                                    {
+                                                        for (Int32 i = 0; i < ViewBag.ItemPreview.Count; i++)
+                                                        {
+                                                            <tr>
+                                                                <td colspan="2">@ViewBag.ItemPreview[i].POI_ItemCode</td>
+                                                                <td colspan="3">@ViewBag.ItemPreview[i].POI_Description</td>
+                                                                <td class="align-center">@ViewBag.ItemPreview[i].POI_UoM</td>
+                                                                <td colspan="2" class="align-center">@ViewBag.ItemPreview[i].POI_Qty</td>
+                                                                <td colspan="2" class="align-right">@String.Format(India, "{0:N2}", Convert.ToDouble(ViewBag.ItemPreview[i].POI_UnitPrice))</td>
+                                                                <td colspan="2" class="align-right">@String.Format(India, "{0:N2}", Convert.ToDouble(ViewBag.ItemPreview[i].POI_Amount))</td>
+                                                            </tr>
+                                                        }
+
+                                                        Int32 Count = 10 - Convert.ToInt32(ViewBag.ItemPreview.Count);
+                                                        if (Count > 0)
+                                                        {
+                                                            for (Int32 i = 0; i < Count; i++)
+                                                            {
+                                                                <tr>
+                                                                    <td colspan="2"></td>
+                                                                    <td colspan="3"></td>
+                                                                    <td></td>
+                                                                    <td colspan="2"></td>
+                                                                    <td colspan="2"></td>
+                                                                    <td colspan="2"></td>
+                                                                </tr>
+                                                            }
+                                                        }
+                                                    }
+
+                                                    <tr class="total-row">
+                                                        <td colspan="6" class="align-right">Total</td>
+                                                        <td colspan="2" class="align-center">@ViewBag.HeadPreview.TotalQty</td>
+                                                        <td colspan="2"></td>
+                                                        <td colspan="2" class="align-right">@String.Format(India, "{0:N2}", Convert.ToDouble(ViewBag.HeadPreview.MaterialValue))</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="no-border" style="font-weight: bold;">Tax</td>
+                                                        <td colspan="5" class="no-border"></td>
+                                                        <td colspan="6" class="no-border"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="no-border" style="font-weight: bold;">Remarks</td>
+                                                        <td colspan="11" class="no-border"></td>
+                                                    </tr>
+                                                    <tr class="signature-area"> <td colspan="12"> </td> </tr>
+                                                    <tr class="signature-area"> <td colspan="12"> </td> </tr>
+                                                    <tr class="signature-area">
+                                                        <td colspan="8"></td>
+                                                        <td colspan="4" class="align-center">for ABC Private Limited</td>
+                                                    </tr>
+                                                    <tr class="signature-area"> <td colspan="12"> </td> </tr>
+                                                    <tr class="signature-area">
+                                                        <td colspan="8"></td>
+                                                        <td colspan="4" class="align-center" style="border-top: 1px solid #000; padding-top: 5px;">Authorized Signatory</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <a onclick="Print()" class="btn btn-primary me-5">Print</a>
+                            <button type="button" id="PreviewButton" class="btn btn-primary px-4" ref="always_focus" data-bs-dismiss="modal">Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-100 rounded-0 h-100 border border-primary bg-transparent" id="BodyHeight">
+                <div class="card rounded-0 bg-transparent shadow-none" id="BodyCardHeader">
+                    <div class="card-body pt-2 pb-0">
+                        <div class="row">
+                            <div class="col-auto left-menu text-black">
+                                <div class="row">
+                                    <div class="col pb-3">
+                                        <a onclick="Print()" class="float-end btn btn-primary">Print</a>
+                                        <button type="button" class="float-end btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#PrintPreview">
+                                            Print View
+                                        </button>
+
+                                        <button class="float-end btn me-2 btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Download
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><input type="submit" name="Mode" value="Ascii" class="dropdown-item" /></li>
+                                            <li><input type="submit" name="Mode" value="Excel" class="dropdown-item" /></li>
+                                            <li><input type="submit" name="Mode" value="PDF" class="dropdown-item" /></li>
+                                        </ul>
+
+                                        <input type="submit" name="Mode" value="Delete" class="float-end btn btn-danger me-2" />
+
+                                        <a asp-controller="Procurement" asp-action="PurchaseOrderEdit" class="float-end btn btn-primary me-2" asp-all-route-data="@(new Dictionary<String, String> { { "PO_No", ViewBag.PO_No.ToString() } })">
+                                            Edit
+                                        </a>
+                                    </div>
+                                </div>
+                                <partial name="PurchaseOrderHeadPreview.cshtml" model="@Model" />
+                            </div>
+                            <div class="col-auto right-menu text-center border-start">
+                                <button type="button" class="btn btn-primary btn-sm px-1 w-100 mb-1" id="MiscExpenseModal" data-bs-toggle="modal" data-bs-target="#Expense">
+                                    Header Misc.Expense
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card rounded-0 bg-transparent shadow-none" id="BodyCardBody">
+                    <div class="card-body h-100">
+                        <div class="row h-100">
+                            <div class="col-auto left-menu h-100">
+                                <ul class="nav nav-tabs tab-header">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" aria-current="page">Item</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link">Other</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content tab-body tab-body-h-o">
+                                    <div class="tab-pane fade show active p-2 border border-top-0 h-100" tabindex="0">
+                                        <partial name="PurchaseOrderItemPreview.cshtml" model="@Model.PurchaseItems" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto right-menu text-center border-start">
+                                <button type="button" class="ItemExpense btn btn-sm btn-primary px-2 w-100" value="Item Misc.Expense">Item Misc.Expense</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card rounded-0 bg-transparent shadow-none" id="BodyCardFooter">
+                    <div class="card-body text-black pt-0">
+                        <div class="row">
+                            <div class="col-auto left-menu">
+                                <div class="row ps-2">
+                                    <div class="col-12 col-md-6 col-xl-5 col-xxl-4">
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="POH_MaterialValue" class="col-7 col-xl-6 col-xxl-5 ps-0"></label>
+                                            <div class="col-5 col-xl-5 col-xxl-4">
+                                                <input asp-for="POH_MaterialValue" class="form-control Key decimal text-end" autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="POH_ItemMiscExpense" class="col-7 col-xl-6 col-xxl-5 ps-0"></label>
+                                            <div class="col-5 col-xl-5 col-xxl-4">
+                                                <input asp-for="POH_ItemMiscExpense" class="form-control decimal Key text-end" autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="POH_HeadMiscExpense" class="col-7 col-xl-6 col-xxl-5 ps-0"></label>
+                                            <div class="col-5 col-xl-5 col-xxl-4">
+                                                <input asp-for="POH_HeadMiscExpense" class="form-control decimal Key text-end" autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="POH_OrderValue" class="col-7 col-xl-6 col-xxl-5 ps-0"></label>
+                                            <div class="col-5 col-xl-5 col-xxl-4">
+                                                <input asp-for="POH_OrderValue" class="form-control Key decimal text-end" autocomplete="off" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-auto right-menu text-centert">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    $('.navbar-nav > .nav-item.procurement > a').addClass("active");
+</script>
+<script>
+    function Print() {
+        $("#PreviewButton").click();
+
+        setTimeout(() => {
+            var printContents = document.getElementById("PrintPage").innerHTML;
+            var originalContents = document.body.innerHTML;
+
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+        }, 1000);
+    }
+
+
+    // flatpickr(".datepicker", {
+    //     dateFormat: "d-M-Y",
+    //     altInput: false,
+    // });
+
+
+    function removeCommas(value) {
+        return value.replace(/,/g, '');
+    }
+
+
+    function DecimalIndianRupees(value) {
+        if (value === "" || isNaN(value)) {
+            return "0.00";
+        }
+
+        var formattedValue = parseFloat(value).toFixed(2);
+
+        var parts = formattedValue.split(".");
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+        return parts.join(".");
+    }
+
+    $(".decimal").each(function () {
+        var value = $(this).val();
+        $(this).val(DecimalIndianRupees(removeCommas(value)));
+    });
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const MainDiv = document.getElementById('BodyHeight');
+        const HeadDiv = document.getElementById('BodyCardHeader');
+        const BodyDiv = document.getElementById('BodyCardBody');
+        const FooterDiv = document.getElementById('BodyCardFooter');
+
+        if (HeadDiv && BodyDiv) {
+            const MainHeight = MainDiv.offsetHeight;
+            const HeadHeight = HeadDiv.offsetHeight;
+            const FooterHeight = FooterDiv.offsetHeight;
+            BodyDiv.style.height = (MainHeight - HeadHeight - FooterHeight) + 'px';
+        } else {
+        }
+    });
+</script>
+

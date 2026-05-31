@@ -1,0 +1,1191 @@
+﻿@model ERP_DTO.SaleInvoiceHead_DTO
+
+@using System.Globalization;
+@{
+    CultureInfo India = new CultureInfo("hi-IN");
+}
+@{
+    ViewData["Title"] = "Sale Invoice Preview";
+}
+<script>
+    function removeCommas(value) {
+        return (value || '').toString().replace(/,/g, '');
+    }
+
+    function DecimalIndianRupees(value) {
+        if (value === "" || isNaN(value)) {
+            return "0.00";
+        }
+
+        var formattedValue = parseFloat(value).toFixed(2);
+
+        var parts = formattedValue.split(".");
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+        return parts.join(".");
+    }
+    function QtyDecimalRupees(value, decimalPlaces) {
+        if (value === "" || isNaN(value)) return "0";
+
+        var formattedValue = parseFloat(value).toFixed(decimalPlaces);
+        var parts = formattedValue.split(".");
+        if (parts.length > 1) {
+            parts[1] = parts[1].replace(/0+$/, "");
+            if (parts[1].length === 0) parts.pop();
+        }
+
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+
+        return parts.join(".");
+    }
+    function UnitDecimalRupees(value, UnitDecimalPlaces) {
+        if (value === "" || isNaN(value)) return "0";
+
+        var num = parseFloat(value);
+
+        var formattedValue = num.toFixed(UnitDecimalPlaces);
+        var parts = formattedValue.split(".");
+
+        if (parts.length > 1) {
+            parts[1] = parts[1].replace(/0+$/, "");
+
+            if (parts[1].length < 2) {
+                parts[1] = parts[1].padEnd(2, "0");
+            }
+        } else {
+            parts.push("00");
+        }
+
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+        return parts.join(".");
+    }
+</script>
+<form asp-action="PreviewSaleInvoice" class="h-100">
+    <input id="SII_TEMP_ITM_Number" type="hidden" />
+    <input id="SII_TEMP_Index" type="hidden" />
+    <input id="SII_TEMP_Qty" type="hidden" />
+    <input id="SII_TEMP_Amount" type="hidden" />
+    <input id="SII_TEMP_UnitPrice" type="hidden" />
+    <input id="SII_TEMP_WH_Number" type="hidden" />
+
+    <div class="modal modal-lg modal-xl fade" id="BuyerAddress" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title">Address</p>
+                    <button type="button" class="btn-close" id="AddCloseButton" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs tab-header" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-tab-pane" type="button" role="tab" aria-controls="overview-tab-pane" aria-selected="true">Overview</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content tab-body">
+                        <div class="tab-pane fade show active p-2 border border-top-0 h-100" id="overview-tab-pane" role="tabpanel" aria-labelledby="overview-tab" tabindex="0">
+                            <partial name="PreviewSaleInvoiceAddress.cshtml" model="@Model.BuyerAddress" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-end">
+                    <button type="button" id="AddOkayButton" class="btn btn-primary px-4" ref="always_focus" autofocus>Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-lg modal-xl fade" id="Income" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title">Header Misc.Income</p>
+                    <button type="button" class="btn-close" id="InCloseButton" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs tab-header" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-tab-pane" type="button" role="tab" aria-controls="overview-tab-pane" aria-selected="true">Overview</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content tab-body">
+                        <div class="tab-pane fade show active p-2 border border-top-0 h-100" id="overview-tab-pane" role="tabpanel" aria-labelledby="overview-tab" tabindex="0">
+                            <partial name="PreviewSaleInvoiceIncome.cshtml" model="@Model.Income" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-end">
+                    <button type="button" id="InOkayButton" class="btn btn-primary px-4" ref="always_focus" autofocus>Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-lg modal-xl fade" id="IIncome" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title">Item Misc.Income</p>
+                    <button type="button" class="btn-close" id="IInCloseButton" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs tab-header" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-tab-pane" type="button" role="tab" aria-controls="overview-tab-pane" aria-selected="true">Overview</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content tab-body">
+                        <div class="tab-pane fade show active p-2 border border-top-0 h-100" id="overview-tab-pane" role="tabpanel" aria-labelledby="overview-tab" tabindex="0">
+                            <partial name="PreviewSaleInvoiceIIncome.cshtml" model="@Model.ItemIncome" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-end">
+                    <button type="button" id="IInOkayButton" class="btn btn-primary px-4" ref="always_focus" autofocus>Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-lg fade" id="GSTView" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title">GST</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs tab-header">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page">Overview</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content tab-body tab-body-h-o">
+                        <div class="tab-pane fade show active p-2 border border-top-0 h-100" tabindex="0">
+                            <div class="row h-100">
+                                <div id="GSTTableView" class="w-100 table-responsive"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-lg fade" id="TaxView" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title">Header GST View</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs tab-header">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page">Overview</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content tab-body tab-body-h-o">
+                        <div class="tab-pane fade show active p-2 border border-top-0 h-100" tabindex="0">
+                            <div class="row h-100">
+                                <div id="TaxTableView" class="w-100 table-responsive"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-lg fade" id="IBatch" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title w-100 text-center">
+                        <span class="float-start">
+                            Batch
+                        </span>
+                        <span>
+                            Item Qty : <span id="SII_HIDE_BCH_Qty"></span>
+                        </span>
+                    </p>
+
+                    <button type="button" class="btn-close" id="IBatCloseButton" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <partial name="PreviewSaleInvoiceBatch.cshtml" model="@Model.ItemBatch" />
+                </div>
+                <div class="modal-footer justify-content-end">
+                    <button type="button" id="IBatOkayButton" class="btn btn-primary px-4" ref="always_focus" autofocus>Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row align-items-center panel-header gx-2">
+        <div class="col h-100 align-items-center">
+            <div class="h6 fw-light text-white h-100 align-content-center bg-secondary px-2">
+                Sale Invoice
+                <a asp-controller="Sale" asp-action="Index" class="float-end btn p-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row panel-body gx-2">
+        <div class="col-12 panel-card-fixed h-100">
+            <div class="w-100 rounded-0 h-100 border border-primary bg-transparent" id="BodyHeight">
+                <div class="card rounded-0 bg-transparent shadow-none" id="CardHeader">
+                    <div class="card-body pb-0 pt-2">
+                        <div class="row ps-2">
+                            <div class="col-auto left-menu text-black">
+                                <div class="row align-items-center">
+                                    <div class="col-12 col-sm-5 col-lg-4 pb-2">
+                                        <div class="row">
+                                            <div class="col-auto">
+                                                <input class="form-check-input" type="radio" @(Model.SIH_Mode == 1 ? "checked" : "") disabled /> Direct
+                                            </div>
+                                            <div class="col-auto">
+                                                <input class="form-check-input" type="radio" @(Model.SIH_Mode == 2 ? "checked" : "") disabled /> SO To Item
+                                            </div>
+                                            <div class="col-auto">
+                                                <input class="form-check-input" type="radio" @(Model.SIH_Mode == 3 ? "checked" : "") disabled /> Item To SO
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-7 col-lg-8 pb-2">
+                                        <a onclick="Print()" class="float-end btn btn-primary">Print</a>
+                                        <button type="button" class="float-end btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#PrintPreview">
+                                            Print View
+                                        </button>
+
+                                        <button class="float-end btn me-2 btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Download
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><input type="submit" name="Mode" value="Ascii" class="dropdown-item" /></li>
+                                            <li><input type="submit" name="Mode" value="Excel" class="dropdown-item" /></li>
+                                            <li><input type="submit" name="Mode" value="PDF" class="dropdown-item" /></li>
+                                        </ul>
+
+                                        <input type="submit" name="Mode" value="Delete" class="float-end btn btn-danger me-2" />
+                                        @if (Model.SIH_Mode == 1)
+                                        {
+                                            <a asp-controller="SaleInvoice" asp-action="EditSaleInvoice" class="float-end btn btn-primary me-2" asp-all-route-data="@(new Dictionary<String, String> { { "SI_No", ViewBag.SI_No.ToString() } })">
+                                                Edit
+                                            </a>
+                                        }
+                                        else if (Model.SIH_Mode == 2)
+                                        {
+                                            <a asp-controller="SaleInvoice" asp-action="SOToEditSaleInvoice" class="float-end btn btn-primary me-2" asp-all-route-data="@(new Dictionary<String, String> { { "SI_No", ViewBag.SI_No.ToString() } })">
+                                                Edit
+                                            </a>
+                                        }
+                                        else if (Model.SIH_Mode == 3)
+                                        {
+                                            <a asp-controller="SaleInvoice" asp-action="SOItemToEditSaleInvoice" class="float-end btn btn-primary me-2" asp-all-route-data="@(new Dictionary<String, String> { { "SI_No", ViewBag.SI_No.ToString() } })">
+                                                Edit
+                                            </a>
+                                        }
+                                    </div>
+                                </div>
+                                <partial name="PreviewSaleInvoiceHead.cshtml" model="@Model" />
+                            </div>
+                            <div class="col-auto right-menu text-center border-start">
+                                <button type="button" class="btn btn-primary btn-sm px-1 w-100 mb-1 HeaderIncome" id="HeaderIncomeModal">
+                                    Header Misc. Income
+                                </button>
+                                <button type="button" class="btn btn-primary btn-sm px-1 w-100 mb-1" data-bs-toggle="modal" data-bs-target="#BuyerAddress">
+                                    Address
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card rounded-0 bg-transparent shadow-none" id="CardBody">
+                    <div class="card-body h-100">
+                        <div class="row h-100">
+                            <div class="col-auto left-menu h-100">
+                                <ul class="nav nav-tabs tab-header">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" aria-current="page">Item</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark">Other</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content tab-body tab-body-h-o">
+                                    <div class="tab-pane fade show active p-2 pb-0 border border-top-0 h-100" tabindex="0">
+                                        <div class="row h-100">
+                                            <partial name="PreviewSaleInvoiceItem.cshtml" model="@Model.InvoiceItem" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto right-menu text-center border-start">
+                                <a class="ItemIncome btn btn-sm btn-primary px-2 mb-2 w-100 OneItemMode" disabled>
+                                    Item Misc. Income
+                                </a>
+                                <a class="GSTView btn btn-sm btn-primary px-2 mb-2 w-100 OneItemMode" disabled>
+                                    GST
+                                </a>
+                                <a class="ItemBatch btn btn-sm btn-primary px-2 mb-2 w-100 OneItemMode" disabled>
+                                    Batch
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card rounded-0 bg-transparent shadow-none pt-0" id="CardFooter">
+                    <div class="card-body text-black pt-0">
+                        <div class="row">
+                            <div class="col-auto left-menu">
+                                <div class="row ps-2">
+                                    <div class="col-12 col-md-4 col-lg-3">
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="SIH_MaterialCost" class="col-md-7 col-form-label ps-0"></label>
+                                            <div class="col-md-5">
+                                                <input asp-for="SIH_MaterialCost" class="form-control text-black text-end" readonly autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="SIH_ItemMiscIncome" class="col-md-7 col-form-label ps-0"></label>
+                                            <div class="col-md-5">
+                                                <input asp-for="SIH_ItemMiscIncome" class="form-control text-black text-end" readonly autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="SIH_HeaderMiscIncome" class="col-md-7 col-form-label ps-0"></label>
+                                            <div class="col-md-5">
+                                                <input asp-for="SIH_HeaderMiscIncome" class="form-control text-black text-end" readonly autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="SIH_GST_Amount" class="col-md-7 col-form-label ps-0"></label>
+                                            <div class="col-md-5">
+                                                <input asp-for="SIH_GST_Amount" class="form-control text-black text-end" readonly autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="SIH_InvoiceAmount" class="col-md-7 col-form-label ps-0"></label>
+                                            <div class="col-md-5">
+                                                <input asp-for="SIH_InvoiceAmount" class="form-control text-black text-end" readonly autocomplete="off" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-4 col-lg-3 px-4">
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="SIH_WHT_Amount" class="col-md-7 col-form-label ps-0"></label>
+                                            <div class="col-md-5">
+                                                <input asp-for="SIH_WHT_Amount" class="form-control text-black text-end" readonly autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="SIH_RoundOff" class="col-md-7 col-form-label ps-0"></label>
+                                            <div class="col-md-5">
+                                                <input asp-for="SIH_RoundOff" class="form-control text-black text-end" readonly autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="SIH_BuyerReceivable" class="col-md-7 col-form-label ps-0"></label>
+                                            <div class="col-md-5">
+                                                <input asp-for="SIH_BuyerReceivable" class="form-control text-black text-end" readonly autocomplete="off" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto right-menu text-centert">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-lg modal-xl fade" id="PrintPreview" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title">Print Preview</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body py-4 text-dark fs-6 text-center icon-link justify-content-center">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col pb-1 pt-4">
+                                <div class="po-container" name="PrintPage" id="PrintPage" style="background-color: #fff;color:#000">
+                                    <style>
+                                        .po-container {
+                                            max-width: 800px;
+                                            margin: auto;
+                                            background-color: #fff;
+                                            padding: 20px;
+                                            height: 100%;
+                                            font-size: 10px;
+                                            font-family: "Noto Sans", sans-serif;
+                                        }
+
+                                        .po-table {
+                                            width: 100%;
+                                            border-collapse: collapse;
+                                            border: 0.1px solid #ccc;
+                                            font-size: 10px;
+                                            font-family: "Noto Sans", sans-serif;
+                                        }
+
+                                            .po-table th, .po-table td {
+                                                border: 0.1px solid #ccc;
+                                                padding: 5px 8px;
+                                                vertical-align: top;
+                                                line-height: 1.4;
+                                            }
+
+                                            .po-table th {
+                                                font-weight: bold;
+                                            }
+
+                                            .po-table tr td {
+                                                height: 29px;
+                                            }
+
+                                        .header-main {
+                                            background-color: #1E8449;
+                                            color: white;
+                                            font-weight: bold;
+                                            text-align: center;
+                                        }
+
+                                        .header-section {
+                                            background-color: #2ECC71;
+                                            color: white;
+                                            font-weight: bold;
+                                            text-align: center;
+                                        }
+
+                                        .header-sub {
+                                            background-color: #ABEBC6;
+                                            color: #333;
+                                            font-weight: bold;
+                                        }
+
+                                        .align-right {
+                                            text-align: right;
+                                        }
+
+                                        .align-center {
+                                            text-align: center;
+                                        }
+
+                                        .company-title {
+                                            font-size: 1.4em;
+                                            font-weight: bold;
+                                            text-align: center;
+                                            vertical-align: middle;
+                                        }
+
+                                        .po-title {
+                                            font-size: 1.2em;
+                                            font-weight: bold;
+                                            text-align: center;
+                                            vertical-align: middle;
+                                        }
+
+                                        .placeholder {
+                                            color: #777;
+                                            font-style: italic;
+                                        }
+
+                                        .total-row td {
+                                            background-color: #2ECC71;
+                                            color: white;
+                                            font-weight: bold;
+                                        }
+
+                                        .no-border {
+                                            border: none !important;
+                                        }
+
+                                        .signature-area td {
+                                            border: none;
+                                            padding-top: 15px;
+                                            padding-bottom: 5px;
+                                        }
+
+                                        a.details-link {
+                                            color: #0000EE;
+                                            text-decoration: underline;
+                                        }
+                                    </style>
+                                    <table class="po-table" style="background-color: #fff;color:#000">
+                                        <tbody>
+                                            <tr>
+                                                <td colspan='2' style='vertical-align: middle; text-align: center;'>[LOGO]</td>
+                                                <td colspan='10' class='company-title'>ABC PRIVATE LIMITED</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan='12'></td>
+                                            </tr>
+                                            <tr class='header-section'>
+                                                <td colspan='6'>Buyer</td>
+                                                <td colspan='6'>Sale Invoice</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan='6'>@ViewBag.BuyerPreview.BUY_Name</td>
+                                                <td colspan='3'>Sale Invoice Number</td>
+                                                <td colspan='3'>@ViewBag.HeadPreview.SIH_InvoiceNo</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan='6' rowspan='3'></td>
+                                                <td colspan='3'>Date</td>
+                                                <td colspan='3'>@ViewBag.HeadPreview.SIH_InvoiceDate</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan='3'>Sale Order Number</td>
+                                                <td colspan='3'></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan='3'>Date</td>
+                                                <td colspan='3'></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan='6'>GST: </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan='6'>PAN: </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan='6'></td>
+                                                <td colspan='3'>Currency</td>
+                                                <td colspan='3'>@ViewBag.HeadPreview.SIH_CUR_Name</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan='6'></td>
+                                                <td colspan='3'>Exchange Rate</td>
+                                                <td colspan='3'>@ViewBag.HeadPreview.SIH_ExchangeRate</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan='6'></td>
+                                                <td colspan='3'>Tax Cluster</td>
+                                                <td colspan='3'></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan='6'></td>
+                                                <td colspan='3'>Withhold Tax Code</td>
+                                                <td colspan='3'></td>
+                                            </tr>
+                                            <tr class='header-section'>
+                                                <th>HSN Code</th>
+                                                <th>Item group</th>
+                                                <th>Item Code</th>
+                                                <th colspan='3'>Description</th>
+                                                <th class='align-center'>Uom</th>
+                                                <th colspan='1' class='align-center'>Qty</th>
+                                                <th colspan='2' class='align-right'>Unit Price</th>
+                                                <th colspan='2' class='align-right'>Value</th>
+                                            </tr>
+                                            @if (ViewBag.ItemPreview != null)
+                                            {
+                                                for (Int32 i = 0; i < ViewBag.ItemPreview.Count; i++)
+                                                {
+                                                    <tr>
+                                                        <td colspan="1"></td>
+                                                        <td colspan="1">@ViewBag.ItemPreview[i].SII_ITM_Group</td>
+                                                        <td colspan="1">@ViewBag.ItemPreview[i].SII_ITM_Code</td>
+                                                        <td colspan="3">@ViewBag.ItemPreview[i].SII_ITM_Description</td>
+                                                        <td class="align-center"></td>
+                                                        <td colspan="1" class="align-center">@ViewBag.ItemPreview[i].SII_Qty</td>
+                                                        <td colspan="2" class="align-right">@String.Format(India, "{0:N2}", Convert.ToDouble(ViewBag.ItemPreview[i].SII_UnitPrice))</td>
+                                                        <td colspan="2" class="align-right">@String.Format(India, "{0:N2}", Convert.ToDouble(ViewBag.ItemPreview[i].SII_Amount))</td>
+                                                    </tr>
+                                                }
+
+                                                Int32 Count = 10 - Convert.ToInt32(ViewBag.ItemPreview.Count);
+                                                if (Count > 0)
+                                                {
+                                                    for (Int32 i = 0; i < Count; i++)
+                                                    {
+                                                        <tr>
+                                                            <td colspan='1'></td>
+                                                            <td colspan='1'></td>
+                                                            <td colspan='1'></td>
+                                                            <td colspan='3'></td>
+                                                            <td class='align-center'></td>
+                                                            <td colspan='1' class='align-center'></td>
+                                                            <td colspan='2' class='align-right'></td>
+                                                            <td colspan='2' class='align-right'></td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            }
+
+                                            @{
+                                                Double Mis = Convert.ToDouble(@ViewBag.HeadPreview.SIH_ItemMiscIncome) + Convert.ToDouble(@ViewBag.HeadPreview.SIH_HeaderMiscIncome);
+                                            }
+                                            <tr>
+                                                <td colspan='2'>Matrial Cost</td>
+                                                <td colspan='2'>Misc. Expense</td>
+                                                <td colspan='1'>GST</td>
+                                                <td colspan='2'>Invoice Amount</td>
+                                                <td colspan='2'>WH Tax</td>
+                                                <td colspan='1'>Round off</td>
+                                                <td colspan='2'>Payable</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan='2'>@ViewBag.HeadPreview.SIH_MaterialCost</td>
+                                                <td colspan='2'>@Mis</td>
+                                                <td colspan='1'>@ViewBag.HeadPreview.SIH_GST_Amount</td>
+                                                <td colspan='2'>@ViewBag.HeadPreview.SIH_InvoiceAmount</td>
+                                                <td colspan='2'>@ViewBag.HeadPreview.SIH_WHT_Amount</td>
+                                                <td colspan='1'>@ViewBag.HeadPreview.SIH_RoundOff</td>
+                                                <td colspan='2'>@ViewBag.HeadPreview.SIH_BuyerReceivable</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="no-border" style="font-weight: bold;">Tax</td>
+                                                <td colspan="5" class="no-border"></td>
+                                                <td colspan="6" class="no-border"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="no-border" style="font-weight: bold;">Remarks</td>
+                                                <td colspan="11" class="no-border"></td>
+                                            </tr>
+                                            <tr class="signature-area"> <td colspan="12"> </td> </tr>
+                                            <tr class="signature-area"> <td colspan="12"> </td> </tr>
+                                            <tr class="signature-area">
+                                                <td colspan="8"></td>
+                                                <td colspan="4" class="align-center">for ABC Private Limited</td>
+                                            </tr>
+                                            <tr class="signature-area"> <td colspan="12"> </td> </tr>
+                                            <tr class="signature-area">
+                                                <td colspan="8"></td>
+                                                <td colspan="4" class="align-center" style="border-top: 1px solid #000; padding-top: 5px;">Authorized Signatory</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <a onclick="Print()" class="btn btn-primary me-5">Print</a>
+                    <button type="button" id="PreviewButton" class="btn btn-primary px-4" ref="always_focus" data-bs-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script src="~/js/site.js"></script>
+
+<script>
+    $('.navbar-nav > .nav-item.sale > a').addClass("active");
+</script>
+
+<script>
+     function Print() {
+        $("#PreviewButton").click();
+
+        var printContents = document.getElementById("PrintPage").innerHTML;
+
+        const iframe = document.createElement('iframe');
+        document.body.appendChild(iframe);
+        const iframeDoc = iframe.contentWindow.document;
+        iframeDoc.open();
+        iframeDoc.write(printContents);
+        iframeDoc.close();
+
+        setTimeout(() => {
+            try {
+                iframe.contentWindow.focus();
+                iframe.contentWindow.print();
+            } catch (error) { console.error("Printing from iframe failed:", error); }
+            finally { setTimeout(() => { document.body.removeChild(iframe); }, 1000); }
+        }, 250);
+    }
+
+
+    $(".QtyNumbers").each(function () {
+        var value = $(this).val();
+        var decimalPlaces = $(this).closest("tr").find("input.PII_DecimalPlaces").val();
+        if (decimalPlaces === "" || isNaN(decimalPlaces)) decimalPlaces = 2;
+        $(this).val(QtyDecimalRupees(value, decimalPlaces));
+    });
+    $(document).on("blur", ".QtyNumbers", function () {
+        var value = $(this).val();
+        var decimalPlaces = $(this).closest("tr").find("input.PII_DecimalPlaces").val();
+        if (value.trim() === "" || isNaN(value)) {
+            $(this).val("0");
+        } else {
+            $(this).val(QtyDecimalRupees(value, decimalPlaces));
+        }
+    });
+    $(document).on("input", ".QtyNumbers", function () {
+        var $this = $(this);
+        var decimalPlaces = parseInt($this.closest("tr").find("input.PII_DecimalPlaces").val(), 10);
+        if (isNaN(decimalPlaces)) decimalPlaces = 0;
+
+        let clean = $this.val()
+            .replace(/-/g, "")
+            .replace(/[^0-9.]/g, "");
+
+        const firstDot = clean.indexOf(".");
+        if (firstDot !== -1) {
+            clean =
+                clean.substring(0, firstDot + 1) +
+                clean.substring(firstDot + 1).replace(/\./g, "");
+        }
+
+        if (decimalPlaces === 0) {
+            clean = clean.replace(/\./g, "");
+        }
+        else if (decimalPlaces > 0 && firstDot !== -1) {
+            const parts = clean.split(".");
+            if (parts[1].length > decimalPlaces) {
+                parts[1] = parts[1].slice(0, decimalPlaces);
+                clean = parts.join(".");
+            }
+        }
+
+        $this.val(clean);
+    });
+    $(document).on("focus", ".QtyNumbers", function () {
+        var value = $(this).val();
+        $(this).val(removeCommas(value));
+        $(this).select();
+    });
+
+    $(".UnitDecimal").each(function () {
+        var ValueResult = "0";
+        var value = $(this).val();
+        var decimalPlaces = $("#PIH_DecimalPlaces").val();
+        if (decimalPlaces === "" || isNaN(value)) {
+            decimalPlaces = 2;
+        }
+        ValueResult = UnitDecimalRupees(removeCommas(value), decimalPlaces);
+        $(this).val(ValueResult);
+    });
+    $(document).on("blur", ".UnitDecimal", function () {
+        var ValueResult = "0";
+        var value = $(this).val();
+
+        var decimalPlaces = $("#PIH_DecimalPlaces").val();
+
+        if (decimalPlaces === "" || isNaN(value)) {
+            decimalPlaces = 2;
+        }
+
+        if (value.trim() === "" || isNaN(value)) {
+        } else {
+            ValueResult = UnitDecimalRupees(value, decimalPlaces);
+            $(this).val(ValueResult);
+        }
+    });
+    $(document).on("focus", ".UnitDecimal", function () {
+        var value = $(this).val();
+        $(this).val(removeCommas(value));
+        $(this).select();
+    });
+    $(document).on("input", ".UnitDecimal", function () {
+        var Value = $(this).val();
+        var decimalPlaces = parseInt($("#PIH_DecimalPlaces").val());
+        if (isNaN(decimalPlaces)) decimalPlaces = 0;
+
+        var UnitValue = Value.replace(/[^\d.]/g, '');
+        var parts = UnitValue.split('.');
+
+        if (parts.length > 2) {
+            UnitValue = parts[0] + '.' + parts.slice(1).join('');
+            parts = UnitValue.split('.');
+        }
+
+        if (decimalPlaces === 0) {
+            UnitValue = parts[0];
+        }
+        else if (parts.length === 2 && parts[1].length > decimalPlaces) {
+            UnitValue = parts[0] + '.' + parts[1].substring(0, decimalPlaces);
+        }
+
+        $(this).val(UnitValue);
+    });
+
+
+    
+
+     $(".decimal").each(function () {
+        var value = $(this).val();
+        $(this).val(DecimalIndianRupees(removeCommas(value)));
+    });
+    $(document).on("blur", ".decimal", function () {
+        var value = $(this).val();
+        if (value.trim() === "" || isNaN(value)) {
+            $(this).val("0.00");
+        } else {
+            $(this).val(DecimalIndianRupees(removeCommas(value)));
+        }
+    });
+    $(document).on("focus", ".decimal", function () {
+        var value = $(this).val();
+        $(this).val(removeCommas(value));
+        $(this).select();
+    });
+
+    $(document).on('change', "#SIH_InvoiceDate", function () {
+        var SIHDate = $('#SIH_InvoiceDate').val();
+        const date  = new Date(SIHDate);
+        date.setDate(date.getDate() + 1);
+        const ForDate = date.toISIString().slice(0, 10).replace(/-/g, '');
+
+        $.ajax({
+            url: 'numbering',
+            data: { SIDate: ForDate },
+            type: 'GET',
+            success: function (data) {
+                if (data === "") {
+
+                }
+                else {
+                    $('#SIH_InvoiceNo').val(data);
+                }
+            },
+            error: function () {
+            }
+        });
+    });
+
+
+    function OnClustorInput(inputElement) {
+        SearchClustor(inputElement);
+    }
+    function OnClustorFocus(inputElement) {
+        var tax = inputElement.value;
+        if (!tax) {
+            SearchClustor(inputElement);
+        }
+        else {
+            $(this).select();
+        }
+    }
+    function SearchClustor(Buyer, taxNumber) {
+        if (Buyer) {
+            $.ajax({
+                url: '../cluster',
+                data: { Buyer: Buyer },
+                type: 'GET',
+                success: function (data) {
+                    if (data && data.length > 0) {
+                        var dropdown = document.getElementById("SIH_TCT_Number");
+                        dropdown.innerHTML = "";
+
+                        var option = document.createElement("option");
+                        option.value = "";
+                        option.text = "";
+                        dropdown.appendChild(option);
+
+                        data.forEach(function (item) {
+                            var option = document.createElement("option");
+                            option.value = item.taxClusterNumber;
+                            option.text = item.taxCluster;
+                            dropdown.appendChild(option);
+                        });
+                        console.log("taxNumber",taxNumber);
+                        if (taxNumber) {
+                            $("#SIH_TCT_Number").val(taxNumber);
+                        }
+                        else {
+                            AssignGST();
+                        }
+                    }
+                    console.log(data.length);
+                },
+                error: function () {
+                }
+            });
+        }
+    }
+
+    function addDays(date, days) {
+        const dateAfterAddingDays = new Date(date);
+        dateAfterAddingDays.setDate(dateAfterAddingDays.getDate() + parseInt(days));
+
+        const day = dateAfterAddingDays.getDate().toString().padStart(2, '0');
+        const year = dateAfterAddingDays.getFullYear();
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const monthAbbr = monthNames[dateAfterAddingDays.getMonth()];
+
+        const result = `${day}-${monthAbbr}-${year}`;
+        return result;
+    }
+
+    function ExchangeVisibility() {
+        if ($('#SIH_ExportOrder').is(':checked')) {
+            $('#ExchangeRate').show();
+        } else {
+            $('#ExchangeRate').hide();
+        }
+    }
+
+    flatpickr(".datepicker", {
+        dateFormat: "d-M-Y",
+        altInput: false,
+    });
+
+    
+    document.addEventListener("DOMContentLoaded", function () {
+        ExchangeVisibility();
+
+        const MainDiv = document.getElementById('BodyHeight');
+        const HeadDiv = document.getElementById('CardHeader');
+        const BodyDiv = document.getElementById('CardBody');
+        const FooterDiv = document.getElementById('CardFooter');
+
+        if (HeadDiv && BodyDiv) {
+            const MainHeight = MainDiv.offsetHeight;
+            const HeadHeight = HeadDiv.offsetHeight;
+            const FooterHeight = FooterDiv.offsetHeight;
+            BodyDiv.style.height = (MainHeight - HeadHeight - FooterHeight - 2) + 'px';
+        } else {
+        }
+    });
+
+    function AssignGST() {
+        var TaxCluster = $("#SIH_HIDE_TCT_Number").val();
+        $("#SIH_TCT_Number").val(TaxCluster);
+    }
+    AssignGST();
+
+
+
+
+    async function CalculateAll() {
+        const $newRows = $("tr.NewRow");
+        const $inNewRows = $("tr.InNewRow");
+        const $iInxNewRows = $("tr.IInNewRow");
+        const cluster = $("#SIH_TCT_Number").val() || $("#SIH_HIDE_TCT_Number").val();
+        const invoiceDate = $("#SIH_InvoiceDate").val();
+        const whNumber = $("#SIH_WHT_Number").val();
+
+        // Pre-calculate values that don't change during iteration
+        const whTax = whNumber ? $("#SIH_WHT_Tax").val() : "1";
+        const whPercent = whNumber ? $("#SIH_WHT_Percent").val() : 0;
+
+        // Process items and Incomes in parallel
+        const [itemResults, headerIncomeResults] = await Promise.all([
+            processItems($newRows, $iInxNewRows, cluster, invoiceDate, whTax, whPercent),
+        ]);
+
+        // Calculate footer with all results
+        await calculateFooter(itemResults, headerIncomeResults);
+    }
+
+    // Function to generate unique item key
+    function generateItemKey(SII_Number, SII_ITM_Number, SII_Index) {
+        // Priority 1: Use SII_Number if available and valid
+        if (SII_Number && parseInt(SII_Number) > 0) {
+            return `SII_${SII_Number}`;
+        }
+        // Priority 2: Use combination of ITM_Number and ITM_Index
+        else if (SII_ITM_Number && SII_Index) {
+            return `ITM_${SII_ITM_Number}_${SII_Index}`;
+        }
+        // Fallback: Generate random key for new items
+        return `NEW_${Math.random().toString(36).substr(2, 9)}`;
+    }
+
+    async function processItems($newRows, $iInxNewRows, cluster, invoiceDate, whTax, whPercent) {
+        const itemPromises = [];
+        const itemIncomeMap = new Map();
+
+        // Pre-calculate item Incomes with dual identification
+        $iInxNewRows.each(function() {
+            const $row = $(this);
+            // ParseInt and compare to 1
+            if (parseInt($row.find("input.SII_INC_IsDeleted").val()) === 1) return;
+
+            // Get both identification methods - FIXED FIELD NAMES
+            const SII_Number = $row.find("input.SII_INC_SII_Number").val();
+            const SII_ITM_Number = $row.find("input.SII_INC_ITM_Number").val(); // FIXED
+            const SII_Index = $row.find("input.SII_INC_ITM_Index").val(); // FIXED
+
+            // Create unique key based on available identifiers
+            const key = generateItemKey(SII_Number, SII_ITM_Number, SII_Index);
+
+            if (!itemIncomeMap.has(key)) {
+                itemIncomeMap.set(key, []);
+            }
+
+            itemIncomeMap.get(key).push({
+                IncomeBase: parseFloat(removeCommas($row.find("input.SII_INC_IncomeBase").val())) || 0,
+                charge: $row.find("select.SII_INC_CM_Number").val(),
+                row: $row
+            });
+        });
+
+        // Process each item row
+        $newRows.each(function() {
+            const $row = $(this);
+            // ParseInt and compare to 1
+            if (parseInt($row.find('input.SII_IsDeleted').val()) === 1) return;
+
+            const promise = processSingleItem($row, itemIncomeMap, cluster, invoiceDate, whTax, whPercent);
+            itemPromises.push(promise);
+        });
+
+        return Promise.all(itemPromises);
+    }
+
+    async function processSingleItem($row, itemIncomeMap, cluster, invoiceDate, whTax, whPercent) {
+        // Get both identification methods for the current item
+        const SII_Number = $row.find('input.SII_Number').val();
+        const SII_ITM_Number = $row.find('input.SII_ITM_Number').val();
+        const SII_Index = $row.find('input.SII_Index').val();
+
+        // Generate the key to find matching incomes
+        const key = generateItemKey(SII_Number, SII_ITM_Number, SII_Index);
+        const hsnNumber = $row.find('.SII_HSN_Number').val();
+
+        const qty = parseFloat(removeCommas($row.find('input.SII_Qty').val())) || 0;
+        const unitPrice = parseFloat(removeCommas($row.find('input.SII_UnitPrice').val())) || 0;
+        const materialValue = parseFloat(removeCommas($row.find('input.SII_Amount').val())) || 0;
+
+        // Process item Incomes
+        let IncomeTotal = parseFloat(removeCommas($row.find('input.SII_IncomeValue').val())) || 0;
+        let gstAmount = parseFloat(removeCommas($row.find('input.SII_GST_Amount').val())) || 0;
+        let whtAmount = parseFloat(removeCommas($row.find('input.SII_WHT_Amount').val())) || 0;
+
+
+        return {
+            qty: qty,
+            amount: materialValue,
+            Income: IncomeTotal,
+            gst: gstAmount,
+            wht: whtAmount
+        };
+    }
+
+    // Utility function for safe number operations
+    function safeNumber(value, defaultValue = 0) {
+        const num = parseFloat(value);
+        return isNaN(num) ? defaultValue : num;
+    }
+
+    async function calculateFooter(itemResults) {
+        // Use safe number handling
+        const itemTotals = itemResults.reduce((acc, item) => ({
+            totalQty: acc.totalQty + safeNumber(item.qty),
+            totalAmount: acc.totalAmount + safeNumber(item.amount),
+            totalIncome: acc.totalIncome + safeNumber(item.Income),
+            totalGst: acc.totalGst + safeNumber(item.gst),
+            totalWHT: acc.totalWHT + safeNumber(item.wht)
+        }), { totalQty: 0, totalAmount: 0, totalIncome: 0, totalGst: 0, totalWHT: 0 });
+
+        const totalGst = parseFloat(safeNumber(itemTotals.totalGst).toFixed(2));
+        const totalAmount = parseFloat(safeNumber(itemTotals.totalAmount).toFixed(2));
+        const totalIncome = parseFloat(safeNumber(itemTotals.totalIncome).toFixed(2));
+        const totalWHT = parseFloat(safeNumber(itemTotals.totalWHT).toFixed(2));
+
+        $("#TotalQty").val(FormatNumber(parseFloat(itemTotals.totalQty).toPrecision(15)));
+        $("#TotalAmount").val(DecimalIndianRupees(totalAmount.toFixed(2)));
+        $("#TotalIncomeValue").val(DecimalIndianRupees(totalIncome.toFixed(2)));
+        $("#TotalGST").val(DecimalIndianRupees(totalGst.toFixed(2)));
+        $("#TotalWHT").val(DecimalIndianRupees(totalWHT.toFixed(2)));
+
+        // const invoiceAmount = parseFloat((totalAmount + totalIncome + headerTotal + totalGst).toFixed(2));
+        // const total = parseFloat((invoiceAmount + totalWHT).toFixed(2));
+        // const WHtAmount = parseFloat((safeNumber(headerIncomeTotals.headerWHT) + totalWHT).toFixed(2));
+        // const roundedValue = customRound(total);
+        // const rounded = parseFloat((roundedValue - total).toFixed(2));
+
+        // $("#SIH_MaterialCost").val(DecimalIndianRupees(totalAmount.toFixed(2)));
+        // $("#SIH_ItemMiscIncome").val(DecimalIndianRupees(totalIncome.toFixed(2)));
+        // $("#SIH_HeaderMiscIncome").val(DecimalIndianRupees(headerTotal.toFixed(2)));
+        // $("#SIH_GST_Amount").val(DecimalIndianRupees(totalGst.toFixed(2)));
+        // $("#SIH_InvoiceAmount").val(DecimalIndianRupees(invoiceAmount.toFixed(2)));
+        // $("#SIH_WHT_Amount").val(DecimalIndianRupees(WHtAmount.toFixed(2)));
+        // $("#SIH_RoundOff").val(rounded.toFixed(2));
+        // $("#SIH_BuyerReceivable").val(DecimalIndianRupees(roundedValue.toFixed(2)));
+    }
+
+    // Main entry point
+    async function CalculateAllIncomes() {
+        try {
+            await CalculateAll();
+        } catch (error) {
+            console.error("Error in calculation:", error);
+        }
+    }
+    window.onload = CalculateAllIncomes();
+
+</script>
+
+<script>
+        $('#ExchangeRate').hide();
+        ExchangeVisibility();
+        GetCustor();
+
+        $("#SIH_ExportOrder").change(function () {
+            var isChecked = $(this).is(':checked');
+
+            var resultsDiv = $(".buyer-search-results");
+            resultsDiv.hide();
+
+            if ($("#SOH_BUY_LOC_Number").val() != "") {
+                if (isChecked && $("#SOH_BUY_LOC_Number").val() != "2") {
+                    if (confirm("Do you want to change the status of the Export Order? This action will clear the already selected Buyer.")) {
+                        $("#SIH_BUY_Name").val("");
+                        $("#SIH_BUY_Number").val("");
+                        $("#SIH_CUR_Name").val("");
+                        $("#SIH_CUR_Number").val("");
+                        $("#SIH_BUY_LOC_Number").val("");
+                        $("#SIH_WHT_Number").val("");
+
+                        var dropdown = document.getElementById("SIH_TCT_Number");
+                        dropdown.innerHTML = "";
+
+                        var SIHDate = $("#SIH_InvoiceDate").val();
+                        GetWHT(0, 0, SIHDate);
+                    }
+                    else {
+                        $(this).prop('checked', false);
+                    }
+                }
+                else if (!isChecked && $("#SOH_BUY_LOC_Number").val() != "1") {
+                    if (confirm("Do you want to change the status of the Export Order? This action will clear the already selected Buyer.")) {
+                        $("#SIH_BUY_Name").val("");
+                        $("#SIH_BUY_Number").val("");
+                        $("#SIH_CUR_Name").val("");
+                        $("#SIH_CUR_Number").val("");
+                        $("#SIH_BUY_LOC_Number").val("");
+                        $("#SIH_WHT_Number").val("");
+
+                        var dropdown = document.getElementById("SIH_TCT_Number");
+                        dropdown.innerHTML = "";
+
+                        var SIHDate = $("#SIH_InvoiceDate").val();
+                        GetWHT(0, 0, SIHDate);
+                    }
+                    else {
+                        $(this).prop('checked', true);
+                    }
+                }
+            }
+            ExchangeVisibility();
+        });
+
+        function GetCustor() {
+            SearchClustor($('#SIH_BUY_Number').val(), "");
+        }
+        function ExchangeVisibility() {
+            if ($('#SIH_ExportOrder').is(':checked')) {
+                $('#ExchangeRate').show();
+            } else {
+                $('#ExchangeRate').hide();
+            }
+        }
+</script>
+

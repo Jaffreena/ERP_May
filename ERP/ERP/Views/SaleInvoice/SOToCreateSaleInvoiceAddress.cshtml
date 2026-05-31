@@ -1,0 +1,382 @@
+﻿@model List<ERP_DTO.SOToSaleInvoiceAddress_DTO>
+
+<div class="w-100 table-responsive">
+    <table class="table table-bordered table-hover align-middle w-100 mb-0">
+        <thead>
+            <tr class="table-info">
+                <th>@Html.DisplayNameFor(model => model.First().SIH_ADD_ADTP_Number)</th>
+                <th>@Html.DisplayNameFor(model => model.First().SIH_ADD_AddressID)</th>
+                <th class="table-col-min-lg">@Html.DisplayNameFor(model => model.First().SIH_ADD_Address)</th>
+                <th>@Html.DisplayNameFor(model => model.First().SIH_ADD_City)</th>
+                <th>@Html.DisplayNameFor(model => model.First().SIH_ADD_State)</th>
+                <th>@Html.DisplayNameFor(model => model.First().SIH_ADD_Country)</th>
+                <th>@Html.DisplayNameFor(model => model.First().SIH_ADD_Pin)</th>
+                <th>@Html.DisplayNameFor(model => model.First().SIH_ADD_GSTIN)</th>
+                <th class="action text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody id="AddTableBody">
+            <tr id="AddTempRow" style="display: none;">
+                <td>
+                    <select id="SIH_ADD_ADTP_Number" class="form-select SIH_ADD_ADTP_Number" asp-items="@ViewBag.AddressType"></select>
+                </td>
+                <td>
+                    <select id="SIH_ADD_AddressID" class="form-select SIH_ADD_AddressID" asp-items="@ViewBag.AddressID"></select>
+                </td>
+                <td class="table-col-min-lg">
+                    <input id="SIH_ADD_Address" class="form-control SIH_ADD_Address" readonly autocomplete="off" />
+                </td>
+                <td>
+                    <input id="SIH_ADD_City" class="form-control SIH_ADD_City" readonly autocomplete="off" />
+                </td>
+                <td>
+                    <input id="SIH_ADD_State" class="form-control SIH_ADD_State" readonly autocomplete="off" />
+                </td>
+                <td>
+                    <input id="SIH_ADD_Country" class="form-control SIH_ADD_Country" readonly autocomplete="off" />
+                </td>
+                <td>
+                    <input id="SIH_ADD_Pin" class="form-control SIH_ADD_Pin" readonly autocomplete="off" />
+                </td>
+                <td>
+                    <input id="SIH_ADD_GSTIN" class="form-control SIH_ADD_GSTIN" readonly autocomplete="off" />
+                </td>
+                <td class="action text-center">
+                    <input type="hidden" name="SIH_ADD_IsDeleted" class="SIH_ADD_IsDeleted" />
+                    <a class="AddRowRemove btn text-danger p-0 icon-link shadow-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                        </svg>
+                    </a>
+                </td>
+            </tr>
+
+            @if (Model != null)
+            {
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr class="AddNewRow" style="@(@Model[i].SIH_ADD_IsDeleted == 1 ? "display: none;" : "")">
+                        <td>
+                            <select id="SIH_ADD_ADTP_Number" name="BuyerAddress[@i].SIH_ADD_ADTP_Number" class="form-select SIH_ADD_ADTP_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.AddressType)
+                                {
+                                    if (item.Value == Model[i].SIH_ADD_ADTP_Number.ToString())
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <select id="SIH_ADD_AddressID" name="BuyerAddress[@i].SIH_ADD_AddressID" class="form-select SIH_ADD_AddressID"></select>
+                            <input id="SIH_ADD_HIDE_AddressID" type="hidden" name="BuyerAddress[@i].SIH_ADD_HIDE_AddressID" readonly class="form-control SIH_ADD_HIDE_AddressID" autocomplete="off" value="@Model[i].SIH_ADD_AddressID" />
+                        </td>
+                        <td class="table-col-min-lg">
+                            <input id="SIH_ADD_Address" name="BuyerAddress[@i].SIH_ADD_Address" readonly class="form-control SIH_ADD_Address" autocomplete="off" value="@Model[i].SIH_ADD_Address" />
+                        </td>
+                        <td>
+                            <input id="SIH_ADD_City" name="BuyerAddress[@i].SIH_ADD_City" readonly class="form-control SIH_ADD_City" autocomplete="off" value="@Model[i].SIH_ADD_City" />
+                        </td>
+                        <td>
+                            <input id="SIH_ADD_State" name="BuyerAddress[@i].SIH_ADD_State" readonly class="form-control SIH_ADD_State" autocomplete="off" value="@Model[i].SIH_ADD_State" />
+                        </td>
+                        <td>
+                            <input id="SIH_ADD_Country" name="BuyerAddress[@i].SIH_ADD_Country" readonly class="form-control SIH_ADD_Country" autocomplete="off" value="@Model[i].SIH_ADD_Country" />
+                        </td>
+                        <td>
+                            <input id="SIH_ADD_Pin" name="BuyerAddress[@i].SIH_ADD_Pin" readonly class="form-control SIH_ADD_Pin" autocomplete="off" value="@Model[i].SIH_ADD_Pin" />
+                        </td>
+                        <td>
+                            <input id="SIH_ADD_GSTIN" name="BuyerAddress[@i].SIH_ADD_GSTIN" readonly class="form-control SIH_ADD_GSTIN" autocomplete="off" value="@Model[i].SIH_ADD_GSTIN" />
+                        </td>
+                        <td class="action text-center">
+                            @if (@Model[i].SIH_ADD_Number != 0)
+                            {
+                                <input name="BuyerAddress[@i].SIH_ADD_Number" type="hidden" class="SIH_ADD_Number" value="@Model[i].SIH_ADD_Number" />
+                            }
+                            <input type="hidden" name="BuyerAddress[@i].SIH_ADD_IsDeleted" value="@Model[i].SIH_ADD_IsDeleted" class="SIH_ADD_IsDeleted" />
+                            <a class="AddRowRemove btn text-danger p-0 icon-link shadow-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                    <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        var AddRowCount = @(Model != null ? Model.Count : 0);
+        var isAddRow = false;
+
+        function AddaddRow() {
+            var AddNewRow = $("#AddTempRow").clone().removeAttr("style").removeAttr("id").addClass("AddNewRow");
+            AddNewRow.find("select.SIH_ADD_ADTP_Number").attr("name", "BuyerAddress[" + AddRowCount + "].SIH_ADD_ADTP_Number");
+            AddNewRow.find("select.SIH_ADD_AddressID").attr("name", "BuyerAddress[" + AddRowCount + "].SIH_ADD_AddressID");
+            AddNewRow.find("input.SIH_ADD_Address").attr("name", "BuyerAddress[" + AddRowCount + "].SIH_ADD_Address");
+            AddNewRow.find("input.SIH_ADD_City").attr("name", "BuyerAddress[" + AddRowCount + "].SIH_ADD_City");
+            AddNewRow.find("input.SIH_ADD_State").attr("name", "BuyerAddress[" + AddRowCount + "].SIH_ADD_State");
+            AddNewRow.find("input.SIH_ADD_Country").attr("name", "BuyerAddress[" + AddRowCount + "].SIH_ADD_Country");
+            AddNewRow.find("input.SIH_ADD_Pin").attr("name", "BuyerAddress[" + AddRowCount + "].SIH_ADD_Pin");
+            AddNewRow.find("input.SIH_ADD_GSTIN ").attr("name", "BuyerAddress[" + AddRowCount + "].SIH_ADD_GSTIN ");
+            // NewRow.find("input.SIH_ADD_Primary").attr("name", "BuyerAddress[" + AddRowCount + "].SIH_ADD_Primary").val("false");
+            AddNewRow.find("input.SIH_ADD_IsDeleted").attr("name", "BuyerAddress[" + AddRowCount + "].SIH_ADD_IsDeleted").val(0);
+
+            $("#AddTableBody").append(AddNewRow);
+            AddRowCount++;
+            AddNewRow.data("isValid", false);
+            isAddRow = false;
+        }
+
+        if ($("tr.AddNewRow").length == 0) {
+            AddaddRow();
+        }
+
+        $(document).on('click', '.AddRowRemove', function () {
+            $(this).closest('tr').find("input.SIH_ADD_IsDeleted").val(1);
+            $(this).closest('tr').hide();
+        });
+
+        $(document).on('keydown', "tr.AddNewRow select", function (event) {
+            if (event.keyCode === 9) {
+                if (!AddValidateField($(this)))
+                    event.preventDefault();
+            }
+        });
+
+
+        $(document).on("change", "tr.AddNewRow select, tr.AddNewRow select.SIH_ADD_ADTP_Number, tr.AddNewRow select.SIH_ADD_AddressID", function () {
+            if (isAddRow)
+                return;
+            isAddRow = true;
+
+            var currentInput = $(this);
+            var isValid = AddValidateField(currentInput);
+            var currentRow = $(this).closest("tr.AddNewRow");
+            if (isValid) {
+                if (AddCheckAllFieldsValid(currentRow)) {
+                    currentRow.data("isValid", true);
+                }
+                else {
+                    currentRow.data("isValid", false);
+                }
+            }
+            else {
+                currentRow.data("isValid", false);
+            }
+            if (currentRow.data("isValid")) {
+                var lastRow = $("tr.AddNewRow").last();
+                if (AddCheckAllFieldsValid(lastRow))
+                    AddaddRow();
+            }
+            else {
+                isAddRow = false;
+            }
+        });
+
+        function AddCheckAllFieldsValid(currentRow) {
+            var allFieldsValid = true;
+            $("tr.AddNewRow:visible").each(function () {
+                $(this).find("select.SIH_ADD_ADTP_Number, select.SIH_ADD_AddressID").each(function () {
+                    if (!AddValidateField($(this))) {
+                        allFieldsValid = false;
+                        return false;
+                    }
+                });
+                if (!allFieldsValid) return false;
+            });
+            return allFieldsValid;
+        }
+
+        function AddValidateField(currentInput) {
+            var valid = 1;
+            var inputValue = currentInput.val();
+            if (inputValue === "") {
+                valid = 0;
+            }
+
+            if (valid == 0) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+
+        $("#AddressAddButton").click(function () {
+            var lastRow = $("tr.AddNewRow").last();
+            if (AddCheckAllFieldsValid(lastRow)) {
+                AddaddRow();
+            }
+            else {
+                var firstInvalidField = null;
+                lastRow.find("select.SIH_ADD_ADTP_Number, select.SIH_ADD_AddressID").each(function () {
+                    if (!AddValidateField($(this))) {
+                        if (firstInvalidField == null)
+                            firstInvalidField = $(this);
+                        return false;
+                    }
+                });
+                if (firstInvalidField != null) {
+                    alert("Please complete all fields !");
+                    firstInvalidField.focus();
+                }
+            }
+        });
+
+        $("#AddCloseButton").click(function () {
+            AddCloseIncome();
+        });
+        $("#AddOkayButton").click(function () {
+            AddCloseIncome();
+        });
+        function AddCloseIncome(){
+            $("tr.AddNewRow").each(function () {
+                var Address = $(this).find("select.SIH_ADD_ADTP_Number").val();
+                var AddressId = $(this).find("select.SIH_ADD_AddressID").val();
+
+                if (!Address && !AddressId) {
+                    $(this).closest('tr').find("input.SIH_ADD_IsDeleted").val(1);
+                    $(this).closest('tr').hide();
+                }
+            });
+
+            var lastRow = $("tr.AddNewRow").last();
+            if (AddCheckAllFieldsValid(lastRow)) {
+                $("#BuyerAddress").modal('hide');
+            }
+            else {
+                alert("Please complete all fields !");
+            }
+
+        }
+
+        function isDuplicateAddress(type, currentRow) {
+            var isDuplicate = false;
+
+            $('tr.AddNewRow').not(currentRow).each(function() {
+                var rowType = $(this).find('select.SIH_ADD_ADTP_Number').val();
+                var IsDeleted = parseInt($(this).find("input.SIH_ADD_IsDeleted").val());
+
+                if(IsDeleted!==1){
+                    if (rowType === type) {
+                        isDuplicate = true;
+                        return false;
+                    }
+                }
+            });
+
+            return isDuplicate;
+        }
+
+        $(document).on('change', 'tr.AddNewRow select.SIH_ADD_ADTP_Number', function() {
+            var currentRow = $(this).closest('tr.AddNewRow');
+            var ADTPNumber = currentRow.find('.SIH_ADD_ADTP_Number').val();
+            var Buyer = $('#SIH_BUY_Number').val();
+
+            var ADDAddress = currentRow.find('.SIH_ADD_Address');
+            var ADDCity = currentRow.find('.SIH_ADD_City');
+            var ADDState = currentRow.find('.SIH_ADD_State');
+            var ADDCountry = currentRow.find('.SIH_ADD_Country');
+            var ADDPin = currentRow.find('.SIH_ADD_Pin');
+            var ADDGSTIN = currentRow.find('.SIH_ADD_GSTIN');
+
+            if (ADTPNumber && isDuplicateAddress(ADTPNumber, currentRow)) {
+                alert('This Address Type already exists!');
+                $(this).focus();
+                $(this).val('');
+            }
+            else{
+                console.log("Buyer",Buyer);
+                console.log("ADTPNumber",ADTPNumber);
+
+                $.ajax({
+                    type: "get",
+                    url: "buyer/address",
+                    data: { Buyer: Buyer, ADTPNumber: ADTPNumber },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        var AddressID = data.buyerAddressId;
+                        var AddressDefault = data.buyerAddress;
+
+                        var $AddressDropdown = currentRow.find('.SIH_ADD_AddressID');
+
+                        $AddressDropdown.empty();
+
+                        $AddressDropdown.append($('<option>', {
+                            value: '',
+                            text: ''
+                        }));
+
+                        AddressID.forEach(function (item) {
+                            $AddressDropdown.append($('<option>', {
+                                value: item.buY_ADD_AddressID,
+                                text: item.buY_ADD_AddressID
+                            }));
+                        });
+
+                        if(AddressDefault !=null)
+                        {
+                            $AddressDropdown.val(AddressDefault.buY_ADD_AddressID);
+                            ADDAddress.val(AddressDefault.buY_ADD_Address);
+                            ADDCity.val(AddressDefault.buY_ADD_City);
+                            ADDState.val(AddressDefault.buY_ADD_State);
+                            ADDCountry.val(AddressDefault.buY_ADD_Country);
+                            ADDPin.val(AddressDefault.buY_ADD_Pin);
+                            ADDGSTIN.val(AddressDefault.buY_ADD_GSTIN);
+                        }
+                    }
+                });
+            }
+        });
+
+        $(document).on('change', 'tr.AddNewRow select.SIH_ADD_AddressID', function() {
+            var currentRow = $(this).closest('tr.AddNewRow');
+            var ADTPNumber = currentRow.find('select.SIH_ADD_ADTP_Number').val();
+            var AddressID = currentRow.find('select.SIH_ADD_AddressID').val();
+            var Buyer = $('#SIH_BUY_Number').val();
+
+            var ADDAddress = currentRow.find('.SIH_ADD_Address');
+            var ADDCity = currentRow.find('.SIH_ADD_City');
+            var ADDState = currentRow.find('.SIH_ADD_State');
+            var ADDCountry = currentRow.find('.SIH_ADD_Country');
+            var ADDPin = currentRow.find('.SIH_ADD_Pin');
+            var ADDGSTIN = currentRow.find('.SIH_ADD_GSTIN');
+
+                $.ajax({
+                    type: "get",
+                    url: "buyer/address/addressid",
+                    data: { Buyer: Buyer, ADTPNumber: ADTPNumber,AddressID : AddressID },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                            ADDAddress.val(data.buY_ADD_Address);
+                            ADDCity.val(data.buY_ADD_City);
+                            ADDState.val(data.buY_ADD_State);
+                            ADDCountry.val(data.buY_ADD_Country);
+                            ADDPin.val(data.buY_ADD_Pin);
+                            ADDGSTIN.val(data.buY_ADD_GSTIN);
+                    }
+                });
+        });
+    });
+
+</script>
+<style>
+    .search-results {
+        position: absolute;
+        z-index: 1000;
+        overflow-y: auto;
+        width: 400px;
+        max-height: 300px;
+    }
+</style>

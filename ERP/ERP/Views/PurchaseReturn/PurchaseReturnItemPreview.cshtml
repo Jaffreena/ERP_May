@@ -1,0 +1,528 @@
+﻿@model List<ERP_DTO.PurchaseReturnItem_DTO>
+
+<div class="col">
+    <div class="w-12 table-responsive table-body">
+        <table class="table table-bordered table-hover align-middle w-100">
+            <thead>
+                <tr class="table-info text-center">
+                    <th class="px-2 del">
+                    </th>
+                    @if (ViewBag.Mode == "2" || ViewBag.Mode == "3")
+                    {
+                        <th class="text-start">
+                            Supplier Invoice No.
+                        </th>
+                        <th class="text-start">
+                            PO Number
+                        </th>
+                    }
+                    <th class="text-start">Item Code</th>
+                    <th class="text-start">Description</th>
+                    <th class="text-start">Item Group</th>
+                    <th class="text-start">Warehouse</th>
+                    <th class="table-width-md">UoM</th>
+                    <th class="table-width-xl">Qty</th>
+                    <th class="table-width-xl">Unit Price</th>
+                    <th class="table-width-3xl">Amount</th>
+                    <th class="table-width-3xl">
+                        Expense value
+                    </th>
+                    <th class="table-width-lg">
+                        HSN
+                    </th>
+                    <th class="table-width-xxl">
+                        GST Amount
+                    </th>
+                    <th class="table-width-sm">
+                        WHT Percent
+                    </th>
+                    <th class="table-width-xxl">
+                        WH_Tax Amount
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="TableBody">
+                <tr id="TempRow" style="display: none;">
+                    <td class="p-2 del">
+                        <input type="checkbox" class="CheckItem form-check-input" name="CheckItem">
+                    </td>
+                    @if (ViewBag.Mode == "2" || ViewBag.Mode == "3")
+                    {
+                        <td>
+                            <input id="PRI_SupplierInvoiceNo" class="form-control PRI_SupplierInvoiceNo" autocomplete="off" readonly />
+                        </td>
+                        <td>
+                            <input id="PRI_POH_Order" class="form-control PRI_POH_Order" autocomplete="off" readonly />
+                        </td>
+                    }
+                    <td>
+                        <input id="PRI_Index" type="hidden" class="form-control PRI_Index" autocomplete="off" />
+                        <input id="PRI_MS_Number" class="PRI_MS_Number" type="hidden" />
+                        <input id="PRI_Item_Number" class="PRI_Item_Number" type="hidden" />
+                        <input id="PRI_ItemCode" class="form-control PRI_ItemCode" autocomplete="off" oninput="OnInput(this)" onfocus="OnFocus(this)" />
+                        <div class="search-results card" style="display:none"></div>
+                    </td>
+                    <td>
+                        <input id="PRI_Description" class="form-control PRI_Description" autocomplete="off" readonly />
+                    </td>
+                    <td>
+                        <input id="PRI_ItemGroup" class="form-control PRI_ItemGroup" autocomplete="off" readonly />
+                    </td>
+                    <td>
+                        <select id="PRI_Warehouse_Number" class="form-select PRI_Warehouse_Number" asp-items="@ViewBag.Warehouse"></select>
+                    </td>
+                    <td class="table-width-md">
+                        <select id="PRI_UoM_Number" class="form-select PRI_UoM_Number text-center" asp-items="@ViewBag.UoM"></select>
+                        <input type="hidden" id="PRI_DecimalPlaces" class="form-control PRI_DecimalPlaces" autocomplete="off" />
+                        <input type="hidden" id="PRI_UoM" class="form-control PRI_UoM" autocomplete="off" />
+                    </td>
+                    <td class="table-width-xl">
+                        <input id="PRI_Qty" class="form-control PRI_Qty text-center" autocomplete="off" />
+                    </td>
+                    <td class="table-width-xl">
+                        <input id="PRI_UnitPrice" class="form-control PRI_UnitPrice text-end" autocomplete="off" />
+                    </td>
+                    <td class="table-width-3xl">
+                        <input id="PRI_Amount" class="form-control PRI_Amount text-end" autocomplete="off" readonly />
+                    </td>
+                    <td class="table-width-3xl">
+                        <input id="PRI_ExpenseValue" class="form-control PRI_ExpenseValue text-end" autocomplete="off" readonly />
+                    </td>
+                    <td class="table-width-lg">
+                        <select id="PRI_HSN_Number" class="form-select PRI_HSN_Number text-center" asp-items="@ViewBag.HSN"></select>
+                    </td>
+                    <td class="table-width-xxl">
+                        <input id="PRI_GST_Amount" class="form-control PRI_GST_Amount text-end" autocomplete="off" readonly />
+                    </td>
+                    <td class="table-width-sm">
+                        <input id="PRI_WHT_Percent" class="form-control PRI_WHT_Percent text-center" autocomplete="off" readonly />
+                    </td>
+                    <td class="table-width-xxl">
+                        <input id="PRI_WHT_Amount" class="form-control PRI_WHT_Amount text-end" autocomplete="off" readonly />
+                    </td>
+                </tr>
+                @if (Model != null)
+                {
+                    @for (int i = 0; i < Model.Count; i++)
+                    {
+                        <tr class="NewRow">
+                            <td class="p-2 del">
+                                <input type="checkbox" class="CheckItem form-check-input" name="CheckItem">
+                            </td>
+
+                            @if (ViewBag.Mode == "2" || ViewBag.Mode == "3")
+                            {
+                                <td>
+                                    <input id="PRI_SupplierInvoiceNo" name="ReturnItems[@i].PRI_SupplierInvoiceNo" class="form-control PRI_SupplierInvoiceNo" autocomplete="off" readonly value="@Model[i].PRI_SupplierInvoiceNo" />
+                                </td>
+                                <td>
+                                    <input id="PRI_POH_Number" type="hidden" type="hidden" name="ReturnItems[@i].PRI_POH_Number" class="form-control PRI_POH_Number" autocomplete="off" readonly value="@Model[i].PRI_POH_Number" />
+                                </td>
+                            }
+                            <td>
+                                <input id="PRI_Index" name="ReturnItems[@i].PRI_Index" type="hidden" class="PRI_Index" autocomplete="off" value="@Model[i].PRI_Index" />
+                                <input id="PRI_MS_Number" name="ReturnItems[@i].PRI_MS_Number" class="PRI_MS_Number" type="hidden" value="@Model[i].PRI_MS_Number" />
+                                <input id="PRI_Item_Number" name="ReturnItems[@i].PRI_Item_Number" class="PRI_Item_Number" type="hidden" value="@Model[i].PRI_Item_Number" />
+                                <input id="PRI_ItemCode" name="ReturnItems[@i].PRI_ItemCode" class="form-control PRI_ItemCode" readonly autocomplete="off" value="@Model[i].PRI_ItemCode" oninput="OnInput(this)" onfocus="OnFocus(this)" />
+                                <div class="search-results card" style="display:none"></div>
+                            </td>
+                            <td>
+                                <input id="PRI_Description" name="ReturnItems[@i].PRI_Description" class="form-control PRI_Description" readonly value="@Model[i].PRI_Description" />
+                            </td>
+                            <td>
+                                <input id="PRI_ItemGroup" name="ReturnItems[@i].PRI_ItemGroup" class="form-control PRI_ItemGroup" readonly value="@Model[i].PRI_ItemGroup" />
+                            </td>
+                            <td>
+                                <select id="PRI_Warehouse_Number" name="ReturnItems[@i].PRI_Warehouse_Number" class="form-select PRI_Warehouse_Number" disabled>
+                                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Warehouse)
+                                    {
+                                        if (item.Value == Model[i].PRI_Warehouse_Number)
+                                        {
+                                            <option value="@item.Value" selected>@item.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    }
+                                </select>
+                            </td>
+                            <td class="table-width-md">
+                                <select id="PRI_UoM_Number" name="ReturnItems[@i].PRI_UoM_Number" class="form-select PRI_UoM_Number" disabled>
+                                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.UoM)
+                                    {
+                                        if (item.Value == Model[i].PRI_UoM_Number)
+                                        {
+                                            <option value="@item.Value" selected>@item.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    }
+                                </select>
+                                <input id="PRI_UoM" name="ReturnItems[@i].PRI_UoM" class="form-control PRI_UoM" type="hidden" value="@Model[i].PRI_UoM" readonly />
+                                <input type="hidden" id="PRI_DecimalPlaces" name="ReturnItems[@i].PRI_DecimalPlaces" class="form-control PRI_DecimalPlaces" autocomplete="off" value="@Convert.ToDouble(@Model[i].PRI_DecimalPlaces)" />
+                            </td>
+                            <td class="table-width-xl">
+                                <input id="PRI_Qty" name="ReturnItems[@i].PRI_Qty" class="form-control PRI_Qty text-center" autocomplete="off" readonly value="@Convert.ToDouble(@Model[i].PRI_Qty)" />
+                            </td>
+                            <td class="table-width-xl">
+                                <input id="PRI_UnitPrice" name="ReturnItems[@i].PRI_UnitPrice" class="form-control PRI_UnitPrice text-end" readonly autocomplete="off" value="@Convert.ToDouble(@Model[i].PRI_UnitPrice)" />
+                            </td>
+                            <td class="table-width-3xl">
+                                <input id="PRI_Amount" name="ReturnItems[@i].PRI_Amount" class="form-control PRI_Amount text-end" readonly autocomplete="off" value="@Convert.ToDouble(@Model[i].PRI_Amount)" />
+                                @if (@Model[i].PRI_Number != 0)
+                                {
+                                    <input name="ReturnItems[@i].PRI_Number" type="hidden" class="PRI_Number" value="@Model[i].PRI_Number" />
+                                }
+                            </td>
+                            <td class="table-width-3xl">
+                                <input id="PRI_ExpenseValue" name="ReturnItems[@i].PRI_ExpenseValue" class="form-control PRI_ExpenseValue text-end" autocomplete="off" readonly value="@Convert.ToDouble(@Model[i].PRI_ExpenseValue)" />
+                            </td>
+                            <td class="table-width-lg">
+                                <select id="PRI_HSN_Number" name="ReturnItems[@i].PRI_HSN_Number" class="form-select PRI_HSN_Number" disabled>
+                                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.HSN)
+                                    {
+                                        if (item.Value == Model[i].PRI_HSN_Number)
+                                        {
+                                            <option value="@item.Value" selected>@item.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    }
+                                </select>
+                            </td>
+                            <td class="table-width-xxl">
+                                <input id="PRI_GST_Amount" name="ReturnItems[@i].PRI_GST_Amount" class="form-control PRI_GST_Amount text-end" autocomplete="off" readonly value="@Convert.ToDouble(@Model[i].PRI_GST_Amount)" />
+                            </td>
+                            <td class="table-width-sm">
+                                <input id="PRI_WHT_Percent" name="ReturnItems[@i].PRI_WHT_Percent" class="form-control PRI_WHT_Percent text-center" autocomplete="off" readonly value="@Convert.ToDouble(@Model[i].PRI_WHT_Percent)" />
+                            </td>
+                            <td class="table-width-xxl">
+                                <input id="PRI_WHT_Amount" name="ReturnItems[@i].PRI_WHT_Amount" class="form-control PRI_WHT_Amount text-end" autocomplete="off" readonly value="@Convert.ToDouble(@Model[i].PRI_WHT_Amount)" />
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+            <tfoot>
+                <tr class="table-info">
+                    @if (ViewBag.Mode == "2" || ViewBag.Mode == "3")
+                    {
+                        <td colspan="8" class="text-end py-2"><span class="float-end  pe-3">Total</span></td>
+                    }
+                    else
+                    {
+                        <td colspan="6" class="text-end py-2"><span class="float-end  pe-3">Total</span></td>
+                    }
+                    <td>
+                        <input id="TotalQty" class="form-control text-center" readonly />
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        <input id="TotalAmount" class="form-control text-end" readonly />
+                    </td>
+                    <td>
+                        <input id="TotalExpenseValue" class="form-control text-end" readonly />
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        <input id="TotalGST" class="form-control text-end" readonly />
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        <input id="TotalWHT" class="form-control text-end" readonly />
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        var rowCount = @(Model != null ? Model.Count : 0);
+        var isAddingRow = false;
+    });
+
+
+    $(document).on('click', '.GSTView', function () {
+        let CheckedCheckbox = document.querySelector('.CheckItem:checked');
+        if (CheckedCheckbox) {
+            var currentRow = $(CheckedCheckbox).closest('tr.NewRow');
+
+            var ItemNumber = currentRow.find('input.PRI_Item_Number').val();
+            var Index = currentRow.find('input.PRI_Index').val();
+            var HSNNumber = currentRow.find('select.PRI_HSN_Number').val();
+            var Expensive = currentRow.find('input.PRI_ExpenseValue').val();
+
+            var Cluster = $("#PRH_TaxCluster_Number").val();
+            var PRHDATE = $("#PRH_ReturnDate").val();
+
+            var qty = parseFloat(removeCommas(currentRow.find("input.PRI_Qty").val())) || 0;
+            var unitPrice = parseFloat(removeCommas(currentRow.find("input.PRI_UnitPrice").val())) || 0;
+
+            var amo = qty * unitPrice;
+            var amount = DecimalIndianRupees(amo);
+            var BaseAmount = parseFloat(removeCommas(amount)) + parseFloat(removeCommas(Expensive));
+
+            if (ItemNumber && HSNNumber) {
+                $.ajax({
+                    type: "get",
+                    url: "../gst/view",
+                    data: { Cluster: Cluster, PRHDATE: PRHDATE, HSN: HSNNumber, BaseAmount: BaseAmount },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        const Table = document.getElementById('GSTTableView');
+                        Table.innerHTML = "";
+
+                        if (Table) {
+                            const TaxView = ClusterTaxView(data);
+                            Table.appendChild(TaxView);
+                        }
+
+                        new bootstrap.Modal($("#GSTView")).show();
+                        $('#GSTView').on('shown.bs.modal', function () {
+                            $(this).find('[autofocus]').focus();
+                        });
+                    }
+                });
+            }
+        }
+    });
+
+    async function CalculateFooter() {
+        var totalQty = 0;
+        var totalAmount = 0;
+        var totalExpense = 0;
+        var totalGst = 0;
+        var totalWHT = 0;
+
+        $("tr.NewRow").each(function () {
+            var row = $(this);
+            var PRI_IsDeleted = $(this).find("input[name*='PRI_IsDeleted']").val() === "true";
+            if (!PRI_IsDeleted) {
+                var QtyField = row.find(".PRI_Qty").val();
+                var AmountField = row.find(".PRI_Amount").val();
+                var ExpenseField = row.find(".PRI_ExpenseValue").val();
+                var GstField = row.find(".PRI_GST_Amount").val();
+                var WHTtField = row.find(".PRI_WHT_Amount").val();
+
+                totalQty += parseFloat(removeCommas(QtyField));
+                totalAmount += parseFloat(removeCommas(AmountField));
+                totalExpense += parseFloat(removeCommas(ExpenseField));
+                totalGst += parseFloat(removeCommas(GstField));
+                totalWHT += parseFloat(removeCommas(WHTtField));
+            }
+        });
+
+
+        $("#TotalQty").val(FormatNumber(totalQty.toFixed(2)));
+        $("#TotalAmount").val(totalAmount.toFixed(2));
+        $("#TotalExpenseValue").val(totalExpense.toFixed(2));
+        $("#TotalGST").val(totalGst.toFixed(2));
+        $("#TotalWHT").val(totalWHT.toFixed(2));
+
+        var MaterialCost = $("#PRH_MaterialCost");
+        var ItemMiscExpense = $("#PRH_ItemMiscExpense");
+        var HeaderMiscExpense = $("#PRH_HeaderMiscExpense");
+        var GST_Amount = $("#PRH_GST_Amount");
+        var ReturnAmount = $("#PRH_ReturnAmount");
+        var WHT_Amount = $("#PRH_WHT_Amount");
+        var RoundOff = $("#PRH_RoundOff");
+        var VendorPayable = $("#PRH_VendorReceivable");
+
+        var HeaderExpenseTotal = 0;
+        $("tr.ExNewRow").each(function () {
+            var irow = $(this);
+            var PRI_IsDeleted = $(this).find("input[name*='PRI_IsDeleted']").val() === "true";
+            if (!PRI_IsDeleted) {
+                var expenseBase = parseFloat(removeCommas(irow.find(".PRH_EXP_ExpenseBase").val())) || 0;
+
+                HeaderExpenseTotal += expenseBase;
+            }
+        });
+
+        var MaterialAmo = parseFloat(totalAmount);
+        var ReturnAmo = parseFloat(MaterialAmo) + parseFloat(totalExpense) + parseFloat(HeaderExpenseTotal) + parseFloat(totalGst);
+        var Total = parseFloat(ReturnAmo) - parseFloat(totalWHT);
+        var RoundedValue = customRound(Total);
+        var Rounded = parseFloat(RoundedValue) - parseFloat(Total);
+
+        totalWHT = -totalWHT;
+
+        MaterialCost.val(MaterialAmo.toFixed(2));
+        ItemMiscExpense.val(totalExpense.toFixed(2));
+        HeaderMiscExpense.val(HeaderExpenseTotal.toFixed(2));
+        GST_Amount.val(totalGst.toFixed(2));
+        ReturnAmount.val(ReturnAmo.toFixed(2));
+        WHT_Amount.val(totalWHT.toFixed(2));
+
+        RoundOff.val(Rounded.toFixed(2));
+        VendorPayable.val(RoundedValue.toFixed(2));
+    }
+    window.onload = CalculateFooter();
+
+    function ClusterTaxView(data) {
+        const table = document.createElement('table');
+        table.classList.add('table', 'table-bordered', 'table-hover', 'align-middle', 'w-100');
+
+        const thead = table.createTHead();
+        const headerRow = thead.insertRow();
+        const headers = ["Tax Index", "Tax Element", "Category", "Type", "Load on Inventory", "Load on Inventory %", "Assessable Value", "Percentage", "Tax Amount",];
+        headers.forEach(headerText => {
+            const th = document.createElement('th');
+            th.textContent = headerText;
+            th.classList.add('table-info');
+            headerRow.appendChild(th);
+        });
+
+        const tbody = table.createTBody();
+        let totalAssessable = 0;
+        let totalTaxAmount = 0;
+
+
+        data.forEach(tax => {
+            const row = tbody.insertRow();
+            const TaxIndexCell = row.insertCell();
+            const TaxElementCell = row.insertCell();
+            const CategoryCell = row.insertCell();
+            const TypeCell = row.insertCell();
+            const LoadonCell = row.insertCell();
+            const LoadonPerCell = row.insertCell();
+            const AssessableCell = row.insertCell();
+            const PercentageCell = row.insertCell();
+            const AmountCell = row.insertCell();
+
+            TaxIndexCell.textContent = tax.taxIndex;
+            TaxElementCell.textContent = tax.taxElement;
+            CategoryCell.textContent = tax.taxCategory;
+            TypeCell.textContent = tax.taxType;
+            LoadonCell.textContent = tax.loadonInventory;
+            LoadonPerCell.textContent = tax.loadonInventoryPercent;
+            AssessableCell.textContent = tax.assessableValue.toFixed(2);
+            AssessableCell.style.textAlign = 'right';
+
+            PercentageCell.textContent = tax.percentage.toFixed(2);
+            PercentageCell.style.textAlign = 'right';
+
+            AmountCell.textContent = tax.amount.toFixed(2);
+            AmountCell.style.textAlign = 'right';
+
+            totalAssessable += tax.assessableValue;
+            totalTaxAmount += tax.amount;
+        });
+
+        const tfoot = table.createTFoot();
+        const footerRow = tfoot.insertRow();
+
+        const footerCells = headers.map(() => footerRow.insertCell());
+        footerCells.forEach(cell => {
+            cell.classList.add('table-info'); // Add the class to each footer cell
+        });
+
+        footerCells[footerCells.length - 2].textContent = `Total:`;
+        footerCells[footerCells.length - 2].style.textAlign = 'right';
+        footerCells[footerCells.length - 1].textContent = totalTaxAmount.toFixed(2);
+        footerCells[footerCells.length - 1].style.textAlign = 'right';
+
+        return table;
+    }
+    function FormatNumber(num) {
+        if (num === "" || isNaN(num)) return "0";
+
+        var formattedValue = parseFloat(num).toFixed(10);
+        var parts = formattedValue.split(".");
+        if (parts.length > 1) {
+            parts[1] = parts[1].replace(/0+$/, "");
+            if (parts[1].length === 0) parts.pop();
+        }
+
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+
+        return parts.join(".");
+    }
+    function customRound(number) {
+        const num = parseFloat(number);
+        const decimal = num % 1;
+
+        if (decimal >= 0.5) {
+            return Math.ceil(num);
+        } else {
+            return Math.floor(num);
+        }
+    }
+
+    $(document).on('focus', 'tr.NewRow input, tr.NewRow select, tr.NewRow .datePRcker', function () {
+        $(this).closest('tr').find('.CheckItem').prop('checked', true);
+        $('.CheckItem').not($(this).closest('tr').find('.CheckItem')).prop('checked', false);
+    });
+</script>
+<style>
+    .search-results {
+        width: 400px;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        $('#ExchangeRate').hide();
+        ExchangeVisibility();
+
+        $("#PRH_ImportOrder").change(function () {
+            var isChecked = $(this).is(':checked');
+
+
+            var resultsDiv = $(".vendor-search-results");
+            resultsDiv.hide();
+
+            if ($("#PRH_VendorLocation").val() != "") {
+                if (isChecked && $("#PRH_VendorLocation").val() != "2") {
+                    if (confirm("Do you want to change the status of the Import Order? This action will clear the already selected vendor.")) {
+                        $("#PRH_Vendor").val("");
+                        $("#PRH_Vendor_Number").val("");
+                        $("#PRH_Currency").val("");
+                        $("#PRH_Currency_Number").val("");
+                        $("#PRH_VendorLocation").val("");
+                        $("#PRH_WHT_Number").val("");
+
+                        var dropdown = document.getElementById("PRH_TaxCluster_Number");
+                        dropdown.innerHTML = "";
+
+                        var PRHDATE = $("#PRH_ReturnDate").val();
+                        GetWHT(0, 0, PRHDATE);
+                    }
+                    else {
+                        $(this).prop('checked', false);
+                    }
+                }
+                else if (!isChecked && $("#PRH_VendorLocation").val() != "1") {
+                    if (confirm("Do you want to change the status of the Import Order? This action will clear the already selected vendor.")) {
+                        $("#PRH_Vendor").val("");
+                        $("#PRH_Vendor_Number").val("");
+                        $("#PRH_Currency").val("");
+                        $("#PRH_Currency_Number").val("");
+                        $("#PRH_VendorLocation").val("");
+                        $("#PRH_WHT_Number").val("");
+
+                        var dropdown = document.getElementById("PRH_TaxCluster_Number");
+                        dropdown.innerHTML = "";
+
+                        var PRHDATE = $("#PRH_ReturnDate").val();
+                        GetWHT(0, 0, PRHDATE);
+                    }
+                    else {
+                        $(this).prop('checked', true);
+                    }
+                }
+            }
+            ExchangeVisibility();
+        });
+
+    });
+</script>

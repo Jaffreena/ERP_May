@@ -1,0 +1,135 @@
+﻿@model List<ERP_DTO.SaleRejectionAddress_DTO>
+
+<div class="w-100 table-responsive">
+    <table class="table table-bordered table-hover align-middle w-100 mb-0">
+        <thead>
+            <tr class="table-info">
+                <th>@Html.DisplayNameFor(model => model.First().SRH_ADD_ADTP_Number)</th>
+                <th>@Html.DisplayNameFor(model => model.First().SRH_ADD_AddressID)</th>
+                <th class="table-col-min-lg">@Html.DisplayNameFor(model => model.First().SRH_ADD_Address)</th>
+                <th>@Html.DisplayNameFor(model => model.First().SRH_ADD_City)</th>
+                <th>@Html.DisplayNameFor(model => model.First().SRH_ADD_State)</th>
+                <th>@Html.DisplayNameFor(model => model.First().SRH_ADD_Country)</th>
+                <th>@Html.DisplayNameFor(model => model.First().SRH_ADD_Pin)</th>
+                <th>@Html.DisplayNameFor(model => model.First().SRH_ADD_GSTIN)</th>
+                <th class="action text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody id="AddTableBody">
+            <tr id="AddTempRow" style="display: none;">
+                <td>
+                    <select id="SRH_ADD_ADTP_Number" class="form-select SRH_ADD_ADTP_Number" asp-items="@ViewBag.AddressType"></select>
+                </td>
+                <td>
+                    <select id="SRH_ADD_AddressID" class="form-select SRH_ADD_AddressID" asp-items="@ViewBag.AddressID"></select>
+                </td>
+                <td class="table-col-min-lg">
+                    <input id="SRH_ADD_Address" class="form-control SRH_ADD_Address" readonly autocomplete="off" />
+                </td>
+                <td>
+                    <input id="SRH_ADD_City" class="form-control SRH_ADD_City" readonly autocomplete="off" />
+                </td>
+                <td>
+                    <input id="SRH_ADD_State" class="form-control SRH_ADD_State" readonly autocomplete="off" />
+                </td>
+                <td>
+                    <input id="SRH_ADD_Country" class="form-control SRH_ADD_Country" readonly autocomplete="off" />
+                </td>
+                <td>
+                    <input id="SRH_ADD_Pin" class="form-control SRH_ADD_Pin" readonly autocomplete="off" />
+                </td>
+                <td>
+                    <input id="SRH_ADD_GSTIN" class="form-control SRH_ADD_GSTIN" readonly autocomplete="off" />
+                </td>
+                <td class="action text-center">
+                    <input type="hidden" name="SRH_ADD_IsDeleted" class="SRH_ADD_IsDeleted" />
+                    <a class="AddRowRemove btn text-danger p-0 icon-link shadow-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                        </svg>
+                    </a>
+                </td>
+            </tr>
+
+            @if (Model != null)
+            {
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr class="AddNewRow" style="@(@Model[i].SRH_ADD_IsDeleted == 1 ? "display: none;" : "")">
+                        <td>
+                            <select id="SRH_ADD_ADTP_Number" name="BuyerAddress[@i].SRH_ADD_ADTP_Number" class="form-select SRH_ADD_ADTP_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.AddressType)
+                                {
+                                    if (item.Value == Model[i].SRH_ADD_ADTP_Number.ToString())
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <input id="SRH_ADD_HIDE_AddressID" name="BuyerAddress[@i].SRH_ADD_HIDE_AddressID" readonly class="form-control SRH_ADD_HIDE_AddressID" autocomplete="off" value="@Model[i].SRH_ADD_AddressID" />
+                        </td>
+                        <td class="table-col-min-lg">
+                            <input id="SRH_ADD_Address" name="BuyerAddress[@i].SRH_ADD_Address" readonly class="form-control SRH_ADD_Address" autocomplete="off" value="@Model[i].SRH_ADD_Address" />
+                        </td>
+                        <td>
+                            <input id="SRH_ADD_City" name="BuyerAddress[@i].SRH_ADD_City" readonly class="form-control SRH_ADD_City" autocomplete="off" value="@Model[i].SRH_ADD_City" />
+                        </td>
+                        <td>
+                            <input id="SRH_ADD_State" name="BuyerAddress[@i].SRH_ADD_State" readonly class="form-control SRH_ADD_State" autocomplete="off" value="@Model[i].SRH_ADD_State" />
+                        </td>
+                        <td>
+                            <input id="SRH_ADD_Country" name="BuyerAddress[@i].SRH_ADD_Country" readonly class="form-control SRH_ADD_Country" autocomplete="off" value="@Model[i].SRH_ADD_Country" />
+                        </td>
+                        <td>
+                            <input id="SRH_ADD_Pin" name="BuyerAddress[@i].SRH_ADD_Pin" readonly class="form-control SRH_ADD_Pin" autocomplete="off" value="@Model[i].SRH_ADD_Pin" />
+                        </td>
+                        <td>
+                            <input id="SRH_ADD_GSTIN" name="BuyerAddress[@i].SRH_ADD_GSTIN" readonly class="form-control SRH_ADD_GSTIN" autocomplete="off" value="@Model[i].SRH_ADD_GSTIN" />
+                        </td>
+                        <td class="action text-center">
+                            @if (@Model[i].SRH_ADD_Number != 0)
+                            {
+                                <input name="BuyerAddress[@i].SRH_ADD_Number" type="hidden" class="SRH_ADD_Number" value="@Model[i].SRH_ADD_Number" />
+                            }
+                            <input type="hidden" name="BuyerAddress[@i].SRH_ADD_IsDeleted" value="@Model[i].SRH_ADD_IsDeleted" class="SRH_ADD_IsDeleted" />
+                            <a class="AddRowRemove btn text-danger p-0 icon-link shadow-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                    <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#AddCloseButton").click(function () {
+            AddCloseIncome();
+        });
+        $("#AddOkayButton").click(function () {
+            AddCloseIncome();
+        });
+        function AddCloseIncome(){
+                $("#BuyerAddress").modal('hide');
+        }
+    });
+
+</script>
+<style>
+    .search-results {
+        position: absolute;
+        z-index: 1000;
+        overflow-y: auto;
+        width: 400px;
+        max-height: 300px;
+    }
+</style>

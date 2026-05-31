@@ -1,0 +1,560 @@
+﻿@model List<ERP_DTO.SaleInvoiceItem_DTO>
+
+<div class="col table-fixed h-100">
+    <div class="w-12 table-responsive table-body table-body-f">
+        <table class="table table-one table-striped table-bordered table-hover align-middle w-100" id="ItemTable">
+            <thead>
+                <tr class="table-info">
+                    <th class="px-2 del text-center">
+                        <input type="checkbox" class="IndexAllCheckItem form-check-input border-white" name="IndexAllCheckItem" id="IndexAllCheckItem">
+                    </th>
+                    @if (ViewBag.Mode == "2" || ViewBag.Mode == "3")
+                    {
+                        <th>Sale Order Number</th>
+                    }
+                    <th>@Html.DisplayNameFor(M => M.First().SII_ITM_Number)</th>
+                    <th>@Html.DisplayNameFor(M => M.First().SII_ITM_Description)</th>
+                    <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SII_ITM_OuterDia)</th>
+                    <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SII_ITM_Thickness)</th>
+                    <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SII_ITM_Length)</th>
+                    <th>@Html.DisplayNameFor(M => M.First().SII_ITM_MaterialGrade)</th>
+                    <th>@Html.DisplayNameFor(M => M.First().SII_ITM_Group)</th>
+                    <th>@Html.DisplayNameFor(M => M.First().SII_WH_Number)</th>
+                    <th class="table-width-md text-center">@Html.DisplayNameFor(M => M.First().SII_UoM_Number)</th>
+                    <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SII_Qty)</th>
+                    <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SII_UnitPrice)</th>
+                    <th class="table-width-3xl text-end">@Html.DisplayNameFor(M => M.First().SII_Amount)</th>
+                    <th class="table-width-3xl text-end">@Html.DisplayNameFor(M => M.First().SII_IncomeValue)</th>
+                    <th class="table-width-lg text-center">@Html.DisplayNameFor(M => M.First().SII_HSN_Number)</th>
+                    <th class="table-width-xxl text-end">@Html.DisplayNameFor(M => M.First().SII_GST_Amount)</th>
+                    <th class="table-width-md text-end">@Html.DisplayNameFor(M => M.First().SII_WHT_Percent)</th>
+                    <th class="table-width-xxl text-end">@Html.DisplayNameFor(M => M.First().SII_WHT_Amount)</th>
+                </tr>
+            </thead>
+            <tbody id="TableBody">
+                @if (Model != null)
+                {
+                    @for (int i = 0; i < Model.Count; i++)
+                    {
+                        <tr class="NewRow">
+                            <td class="p-2 del">
+                                <input type="checkbox" class="CheckItem form-check-input" name="CheckItem">
+                            </td>
+                            @if (ViewBag.Mode == "2" || ViewBag.Mode == "3")
+                            {
+                                <td>
+                                    <input id="SII_SOH_OrderNo" name="InvoiceItem[@i].SII_SOH_OrderNo" class="form-control SII_SOH_OrderNo" readonly value="@Model[i].SII_SOH_OrderNo" />
+                                </td>
+                            }
+                            <td>
+                                <input id="SII_Index" name="InvoiceItem[@i].SII_Index" type="hidden" class="SII_Index" autocomplete="off" value="@Model[i].SII_Index" />
+                                <input id="SII_MS_Number" name="InvoiceItem[@i].SII_MS_Number" class="SII_MS_Number" type="hidden" value="@Model[i].SII_MS_Number" />
+                                <input id="SII_ITM_Number" name="InvoiceItem[@i].SII_ITM_Number" class="SII_ITM_Number" type="hidden" value="@Model[i].SII_ITM_Number" />
+                                <input id="SII_ITM_Code" name="InvoiceItem[@i].SII_ITM_Code" class="form-control SII_ITM_Code" readonly autocomplete="off" value="@Model[i].SII_ITM_Code" oninput="OnInput(this)" onfocus="OnFocus(this)" />
+                                <div class="search-results card" style="display:none"></div>
+                            </td>
+                            <td>
+                                <input id="SII_ITM_Description" name="InvoiceItem[@i].SII_ITM_Description" class="form-control SII_ITM_Description" readonly value="@Model[i].SII_ITM_Description" />
+                            </td>
+                            <td class="table-width-xl">
+                                <input id="SII_ITM_OuterDia" name="InvoiceItem[@i].SII_ITM_OuterDia" class="form-control SII_ITM_OuterDia text-end" autocomplete="off" readonly value="@Model[i].SII_ITM_OuterDia" />
+                            </td>
+                            <td class="table-width-xl">
+                                <input id="SII_ITM_Thickness" name="InvoiceItem[@i].SII_ITM_Thickness" class="form-control SII_ITM_Thickness text-end" autocomplete="off" readonly value="@Model[i].SII_ITM_Thickness" />
+                            </td>
+                            <td class="table-width-xl">
+                                <input id="SII_ITM_Length" name="InvoiceItem[@i].SII_ITM_Length" class="form-control SII_ITM_Length text-end" autocomplete="off" readonly value="@Model[i].SII_ITM_Length" />
+                            </td>
+                            <td>
+                                <input id="SII_ITM_MaterialGrade" name="InvoiceItem[@i].SII_ITM_MaterialGrade" class="form-control SII_ITM_MaterialGrade" autocomplete="off" readonly value="@Model[i].SII_ITM_MaterialGrade" />
+                            </td>
+                            <td>
+                                <input id="SII_ITM_Group" name="InvoiceItem[@i].SII_ITM_Group" class="form-control SII_ITM_Group" readonly value="@Model[i].SII_ITM_Group" />
+                            </td>
+                            <td>
+                                <select id="SII_WH_Number" name="InvoiceItem[@i].SII_WH_Number" class="form-select SII_WH_Number text-center" disabled>
+                                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Warehouse)
+                                    {
+                                        if (item.Value == Model[i].SII_WH_Number.ToString())
+                                        {
+                                            <option value="@item.Value" selected>@item.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    }
+                                </select>
+                            </td>
+                            <td class="table-width-md">
+                                <select id="SII_UoM_Number" name="InvoiceItem[@i].SII_UoM_Number" class="form-select SII_UoM_Number text-center" disabled>
+                                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.UoM)
+                                    {
+                                        if (item.Value == Model[i].SII_UoM_Number.ToString())
+                                        {
+                                            <option value="@item.Value" selected>@item.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    }
+                                </select>
+                                <input id="SII_HIDE_UoM_Number" name="InvoiceItem[@i].SII_HIDE_UoM_Number" class="form-control SII_HIDE_UoM_Number" type="hidden" value="@Model[i].SII_HIDE_UoM_Number" />
+                                <input type="hidden" id="SII_UoM_DecimalPlaces" name="InvoiceItem[@i].SII_UoM_DecimalPlaces" class="form-control SII_UoM_DecimalPlaces" autocomplete="off" value="@Convert.ToDouble(@Model[i].SII_UoM_DecimalPlaces)" />
+                            </td>
+                            <td class="table-width-xl">
+                                <input id="SII_Qty" name="InvoiceItem[@i].SII_Qty" class="form-control SII_Qty number QtyNumbers text-end" readonly autocomplete="off" value="@Convert.ToDouble(@Model[i].SII_Qty)" />
+                            </td>
+                            <td class="table-width-xl">
+                                <input id="SII_UnitPrice" name="InvoiceItem[@i].SII_UnitPrice" class="form-control SII_UnitPrice number UnitDecimal text-end" readonly autocomplete="off" value="@Convert.ToDouble(@Model[i].SII_UnitPrice)" />
+                            </td>
+                            <td class="table-width-3xl">
+                                <input id="SII_Amount" name="InvoiceItem[@i].SII_Amount" class="form-control SII_Amount decimal text-end" readonly autocomplete="off" value="@Convert.ToDouble(@Model[i].SII_Amount)" />
+                                @if (@Model[i].SII_Number != 0)
+                                {
+                                    <input name="InvoiceItem[@i].SII_Number" type="hidden" class="SII_Number" value="@Model[i].SII_Number" />
+                                }
+                                <input type="hidden" id="SII_IsDeleted" name="InvoiceItem[@i].SII_IsDeleted" class="SII_IsDeleted" value="@Model[i].SII_IsDeleted" />
+                            </td>
+                            <td class="table-width-3xl">
+                                <input id="SII_IncomeValue" name="InvoiceItem[@i].SII_IncomeValue" class="form-control SII_IncomeValue decimal text-end" autocomplete="off" readonly value="@Convert.ToDouble(@Model[i].SII_IncomeValue)" />
+                            </td>
+                            <td class="table-width-lg">
+                                <select id="SII_HSN_Number" name="InvoiceItem[@i].SII_HSN_Number" class="form-select SII_HSN_Number" disabled>
+                                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.HSN)
+                                    {
+                                        if (item.Value == Model[i].SII_HSN_Number.ToString())
+                                        {
+                                            <option value="@item.Value" selected>@item.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    }
+                                </select>
+                            </td>
+                            <td class="table-width-xxl">
+                                <input id="SII_GST_Amount" name="InvoiceItem[@i].SII_GST_Amount" class="form-control SII_GST_Amount decimal text-end" autocomplete="off" readonly value="@Convert.ToDouble(@Model[i].SII_GST_Amount)" />
+                            </td>
+                            <td class="table-width-md">
+                                <input id="SII_WHT_Percent" name="InvoiceItem[@i].SII_WHT_Percent" class="form-control SII_WHT_Percent decimal text-end" autocomplete="off" readonly value="@Convert.ToDouble(@Model[i].SII_WHT_Percent)" />
+                            </td>
+                            <td class="table-width-xxl">
+                                <input id="SII_WHT_Amount" name="InvoiceItem[@i].SII_WHT_Amount" class="form-control SII_WHT_Amount decimal text-end" autocomplete="off" readonly value="@Convert.ToDouble(@Model[i].SII_WHT_Amount)" />
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+            <tfoot>
+                <tr class="table-info fw-bold">
+                    @if (ViewBag.Mode == "2" || ViewBag.Mode == "3")
+                    {
+                        <td colspan="11" class="text-end py-2"><span class="float-end  pe-3">Total</span></td>
+                    }
+                    else
+                    {
+                        <td colspan="10" class="text-end py-2"><span class="float-end  pe-3">Total</span></td>
+                    }
+                    <td>
+                        <input id="TotalQty" class="form-control text-end" readonly />
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        <input id="TotalAmount" class="form-control text-end" readonly />
+                    </td>
+                    <td>
+                        <input id="TotalIncomeValue" class="form-control text-end" readonly />
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        <input id="TotalGST" class="form-control text-end" readonly />
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        <input id="TotalWHT" class="form-control text-end" readonly />
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        var rowCount = @(Model != null ? Model.Count : 0);
+        var isAddingRow = false;
+
+        function addRow() {
+            var NewRow = $("#TempRow").clone().removeAttr("style").removeAttr("id").addClass("NewRow");
+            NewRow.find("input.SII_Index").attr("name", "InvoiceItem[" + rowCount + "].SII_Index").val(rowCount + 1);
+            NewRow.find("input.SII_MS_Number").attr("name", "InvoiceItem[" + rowCount + "].SII_MS_Number");
+            NewRow.find("input.SII_ITM_Number").attr("name", "InvoiceItem[" + rowCount + "].SII_ITM_Number");
+            NewRow.find("input.SII_ITM_OuterDia").attr("name", "InvoiceItem[" + rowCount + "].SII_ITM_OuterDia");
+            NewRow.find("input.SII_ITM_Thickness").attr("name", "InvoiceItem[" + rowCount + "].SII_ITM_Thickness");
+            NewRow.find("input.SII_ITM_Length").attr("name", "InvoiceItem[" + rowCount + "].SII_ITM_Length");
+            NewRow.find("input.SII_ITM_MaterialGrade").attr("name", "InvoiceItem[" + rowCount + "].SII_ITM_MaterialGrade");
+            NewRow.find("input.SII_ITM_Code").attr("name", "InvoiceItem[" + rowCount + "].SII_ITM_Code");
+            NewRow.find("input.SII_ITM_Description").attr("name", "InvoiceItem[" + rowCount + "].SII_ITM_Description");
+            NewRow.find("input.SII_UoM_DecimalPlaces").attr("name", "InvoiceItem[" + rowCount + "].SII_UoM_DecimalPlaces");
+            NewRow.find("input.SII_ITM_Group").attr("name", "InvoiceItem[" + rowCount + "].SII_ITM_Group");
+            NewRow.find("select.SII_WH_Number").attr("name", "InvoiceItem[" + rowCount + "].SII_WH_Number");
+            NewRow.find("select.SII_UoM_Number").attr("name", "InvoiceItem[" + rowCount + "].SII_UoM_Number");
+            NewRow.find("select.SII_UoM").attr("name", "InvoiceItem[" + rowCount + "].SII_UoM");
+            NewRow.find("input.SII_Qty").attr("name", "InvoiceItem[" + rowCount + "].SII_Qty");
+            NewRow.find("input.SII_UnitPrice").attr("name", "InvoiceItem[" + rowCount + "].SII_UnitPrice");
+            NewRow.find("input.SII_Amount").attr("name", "InvoiceItem[" + rowCount + "].SII_Amount");
+
+            NewRow.find("input.SII_IncomeValue").attr("name", "InvoiceItem[" + rowCount + "].SII_IncomeValue");
+            NewRow.find("select.SII_HSN_Number").attr("name", "InvoiceItem[" + rowCount + "].SII_HSN_Number");
+            NewRow.find("input.SII_GST_Amount").attr("name", "InvoiceItem[" + rowCount + "].SII_GST_Amount");
+            NewRow.find("input.SII_WHT_Percent").attr("name", "InvoiceItem[" + rowCount + "].SII_WHT_Percent");
+            NewRow.find("input.SII_WHT_Amount").attr("name", "InvoiceItem[" + rowCount + "].SII_WHT_Amount");
+            NewRow.find("input.SII_IsDeleted").attr("name", "InvoiceItem[" + rowCount + "].SII_IsDeleted").val(0);
+
+            $("#TableBody").append(NewRow);
+            rowCount++;
+            NewRow.data("isValid", false);
+            isAddingRow = false;
+        }
+
+        if ($("tr.NewRow").length == 0) {
+            addRow();
+        }
+
+        $(document).on('click', '.RowRemove', function () {
+            let CheckedCheckbox = document.querySelector('.CheckItem:checked');
+            if (CheckedCheckbox) {
+                $(CheckedCheckbox).closest('tr').find("input.CheckItem").prop('checked', false);
+                $(CheckedCheckbox).closest('tr').find("input.SII_IsDeleted").val(1);
+                $(CheckedCheckbox).closest('tr').hide();
+            }
+
+            (async () => {
+                await CalculateAllIncomes();
+            })();
+        });
+
+        $(document).on('focus', 'tr.NewRow input:not(.CheckItem), tr.NewRow select, tr.NewRow .datepicker', function () {
+            $(this).closest('tr').find('.CheckItem').prop('checked', true);
+            $('.CheckItem').not($(this).closest('tr').find('.CheckItem')).prop('checked', false);
+        });
+
+        $(document).on('keydown', "tr.NewRow select, tr.NewRow input.SII_DeliveryDate,tr.NewRow input.SII_ITM_Number,tr.NewRow input.SII_Qty,tr.NewRow input.SII_UnitPrice, tr.NewRow input[type='text']", function (event) {
+            if (event.keyCode === 9) {
+                if (!validateField($(this)))
+                    event.preventDefault();
+            }
+        });
+
+
+        $(document).on('change', "tr.NewRow select.SII_HSN_Number", function () {
+            (async () => {
+                await CalculateAllIncomes();
+            })();
+        });
+
+        $(document).on("change", "tr.NewRow select, input.SII_DeliveryDate,input.SII_ITM_Number,input.SII_Qty,input.SII_UnitPrice, input[type='text']", function () {
+            if (isAddingRow)
+                return;
+            isAddingRow = true;
+
+            var currentInput = $(this);
+            var isValid = validateField(currentInput);
+            var currentRow = $(this).closest("tr.NewRow");
+            if (isValid) {
+                if (checkAllFieldsValid(currentRow)) {
+                    currentRow.data("isValid", true);
+                }
+                else {
+                    currentRow.data("isValid", false);
+                }
+            }
+            else {
+                currentRow.data("isValid", false);
+            }
+            if (currentRow.data("isValid")) {
+                var lastRow = $("tr.NewRow").last();
+                if (checkAllFieldsValid(lastRow))
+                    addRow();
+            }
+            else {
+                isAddingRow = false;
+            }
+        });
+
+        function checkAllFieldsValid(currentRow) {
+            var allFieldsValid = true;
+            $("tr.NewRow:visible").each(function () {
+                $(this).find("select, input.SII_DeliveryDate,input.SII_ITM_Number,input.SII_Qty,input.SII_UnitPrice, input[type='text']").each(function () {
+                    if (!validateField($(this))) {
+                        allFieldsValid = false;
+                        return false;
+                    }
+                });
+                if (!allFieldsValid) return false;
+            });
+            return allFieldsValid;
+        }
+
+        function validateField(currentInput) {
+            var valid = 1;
+            var inputValue = currentInput.val();
+            if (inputValue === "") {
+                valid = 0;
+            }
+
+            if (valid == 0) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+        $("#AddRowButton").click(function () {
+            var lastRow = $("tr.NewRow").last();
+            if (checkAllFieldsValid(lastRow)) {
+                addRow();
+            }
+            else {
+                var firstInvalidField = null;
+                lastRow.find("select, input.SII_DeliveryDate,input.SII_ITM_Number,input.SII_Qty,input.SII_UnitPrice, input[type='text']").each(function () {
+                    if (!validateField($(this))) {
+                        if (firstInvalidField == null)
+                            firstInvalidField = $(this);
+                        return false;
+                    }
+                });
+                if (firstInvalidField != null) {
+                    alert("Please complete all fields !");
+                    firstInvalidField.focus();
+                }
+            }
+        });
+
+        $(document).on('input', "input.SII_UnitPrice, input.SII_Qty", function (event) {
+            var currentInput = $(this);
+
+            var row = currentInput.closest("tr.NewRow");
+
+            var itemIndex = row.find(".SII_Index").val();
+            var itemNumber = row.find(".SII_ITM_Number").val();
+            var HSNNumber = row.find(".SII_HSN_Number").val();
+
+            var qty = parseFloat(removeCommas(row.find("input.SII_Qty").val())) || 0;
+            var unitPrice = parseFloat(removeCommas(row.find("input.SII_UnitPrice").val())) || 0;
+            var amo = qty * unitPrice;
+            row.find("input.SII_Amount").val(DecimalIndianRupees(amo));
+
+            (async () => {
+                await CalculateAllIncomes();
+            })();
+        });
+
+        $(document).on('click', '.GSTView', function () {
+            let CheckedCheckbox = document.querySelector('.CheckItem:checked');
+            if (CheckedCheckbox) {
+                var currentRow = $(CheckedCheckbox).closest('tr.NewRow');
+
+                var ItemNumber = currentRow.find('input.SII_ITM_Number').val();
+                var Index = currentRow.find('input.SII_Index').val();
+                var HSNNumber = currentRow.find('select.SII_HSN_Number').val();
+                var Expensive = currentRow.find('input.SII_IncomeValue').val();
+
+                var Cluster = $("#SIH_TCT_Number").val();
+                var SIHDate = $("#SIH_InvoiceDate").val();
+
+                var qty = parseFloat(removeCommas(currentRow.find("input.SII_Qty").val())) || 0;
+                var unitPrice = parseFloat(removeCommas(currentRow.find("input.SII_UnitPrice").val())) || 0;
+                var Amount = parseFloat(removeCommas(currentRow.find("input.SII_Amount").val())) || 0;
+
+                var BaseAmount = parseFloat(removeCommas(Amount)) + parseFloat(removeCommas(Expensive));
+
+                if (ItemNumber && HSNNumber) {
+                    $.ajax({
+                        type: "get",
+                        url: "../gst/view",
+                        data: { Cluster: Cluster, SIHDate: SIHDate, HSN: HSNNumber, BaseAmount: BaseAmount },
+                        datatype: "json",
+                        traditional: true,
+                        success: function (data) {
+                            const Table = document.getElementById('GSTTableView');
+                            Table.innerHTML = "";
+
+                            if (Table) {
+                                const TaxView = ClusterTaxView(data);
+                                Table.appendChild(TaxView);
+                            }
+
+                            new bootstrap.Modal($("#GSTView")).show();
+                            $('#GSTView').on('shown.bs.modal', function () {
+                                $(this).find('[autofocus]').focus();
+                            });
+                        }
+                    });
+                }
+            }
+        });
+
+        $("#SIH_MS_Number").change(function () {
+            var SIH_MS_Number = $(this).val();
+            var SII_MS_Number = "";
+            var SIH_MS = $(this).val();
+            var AllMatch = true;
+
+            $("tr.NewRow").each(function () {
+                var irow = $(this);
+                var SII_IsDeleted = $(this).find("input.SII_IsDeleted").val() === 1;
+                if (!SII_IsDeleted) {
+                    SII_MS_Number = irow.find("input.SII_MS_Number").val();
+                    if (SII_MS_Number !== SIH_MS_Number) {
+                        AllMatch = false;
+                        return false;
+                    }
+                }
+            });
+
+            if (!AllMatch) {
+                if (SII_MS_Number != "") {
+                    if (confirm("Do you want to change the Material Segregation? This action will clear all existing items.")) {
+                        $("tr.NewRow").each(function () {
+                            var irow = $(this);
+                            var SII_IsDeleted = $(this).find("input.SII_IsDeleted").val() === 1;
+                            if (!SII_IsDeleted) {
+                                $(this).find("input.SII_IsDeleted").val(1);
+                                $(this).hide();
+                            }
+                        });
+                        addRow();
+                        (async () => {
+                            await CalculateAllIncomes();
+                        })();
+                    }
+                    else {
+                        $("#SIH_MS_Number").val(SII_MS_Number);
+                    }
+                }
+            }
+        });
+    });
+
+    function ClusterTaxView(data) {
+        const table = document.createElement('table');
+        table.classList.add('table', 'table-bordered', 'table-hover', 'align-middle', 'w-100', 'mb-0');
+
+        const thead = table.createTHead();
+        const headerRow = thead.insertRow();
+        const headers = ["Tax Category", "Tax Type", "Tax Index", "Tax Element", "Assessable Value", "Tax Rate",  "Tax Amount",  "Load on Inventory", "Load on Inventory %",];
+        headers.forEach(headerText => {
+            const th = document.createElement('th');
+            th.textContent = headerText;
+            th.classList.add('table-info');
+
+            if (headerText.includes('Assessable Value') || headerText.includes('Tax Rate') || headerText.includes('Tax Amount') || headerText.includes('Load on Inventory %')) {
+                th.classList.add('text-end', 'table-width-xl');
+            } else if (headerText.includes('Tax Index') || headerText.includes('Load on Inventory')) {
+                th.classList.add('text-center', 'table-width-md');
+            }
+
+            headerRow.appendChild(th);
+        });
+
+        const tbody = table.createTBody();
+        let totalAssessable = 0;
+        let totalTaxAmount = 0;
+
+
+        data.forEach(tax => {
+            const row = tbody.insertRow();
+            const CategoryCell = row.insertCell();
+            const TypeCell = row.insertCell();
+            const TaxIndexCell = row.insertCell();
+            const TaxElementCell = row.insertCell();
+            const AssessableCell = row.insertCell();
+            const PercentageCell = row.insertCell();
+            const AmountCell = row.insertCell();
+            const LoadonCell = row.insertCell();
+            const LoadonPerCell = row.insertCell();
+
+            CategoryCell.textContent = tax.taxCategory;
+            TypeCell.textContent = tax.taxType;
+            
+            TaxIndexCell.textContent = tax.taxIndex;
+            TaxIndexCell.classList.add("text-center", "table-width-md");
+
+            TaxElementCell.textContent = tax.taxElement;
+
+            AssessableCell.textContent = tax.assessableValue.toFixed(2);
+            AssessableCell.classList.add("text-end", "table-width-xl");
+
+            PercentageCell.textContent = tax.percentage.toFixed(2);
+            PercentageCell.classList.add("text-end", "table-width-xl");
+
+            AmountCell.textContent = tax.amount.toFixed(2);
+            AmountCell.classList.add("text-end", "table-width-xl");
+
+            LoadonCell.textContent = tax.loadonInventory;
+            LoadonCell.classList.add("text-center", "table-width-md");
+
+            LoadonPerCell.textContent = tax.loadonInventoryPercent;
+            LoadonPerCell.classList.add("text-end", "table-width-xl");
+
+            totalAssessable += tax.assessableValue;
+            totalTaxAmount += tax.amount;
+        });
+
+        const tfoot = table.createTFoot();
+        const footerRow = tfoot.insertRow();
+
+        const footerCells = headers.map(() => footerRow.insertCell());
+        footerCells.forEach(cell => {
+            cell.classList.add('table-info');
+        });
+
+        footerCells[footerCells.length - 4].textContent = `Total`;
+        footerCells[footerCells.length - 4].style.textAlign = 'right';
+        footerCells[footerCells.length - 3].textContent = totalTaxAmount.toFixed(2);
+        footerCells[footerCells.length - 3].style.textAlign = 'right';
+
+        return table;
+    }
+
+    function customRound(number) {
+        const num = parseFloat(number);
+        const decimal = num % 1;
+
+        if (decimal >= 0.5) {
+            return Math.ceil(num);
+        } else {
+            return Math.floor(num);
+        }
+    }
+
+    function FormatNumber(num) {
+        const numberValue = Number(num);
+        if (isNaN(numberValue)) {
+            return 0;
+        }
+        if (Number.isInteger(numberValue)) {
+            return numberValue.toString();
+        } else {
+            return numberValue.toString();
+        }
+    }
+
+    function SearchGST() {
+        (async () => {
+            await CalculateAllIncomes();
+        })();
+    }
+</script>
+<style>
+    .search-results {
+        width: 400px;
+    }
+</style>

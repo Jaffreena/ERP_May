@@ -1,0 +1,216 @@
+﻿@model List<ERP_DTO.SaleOrderIIncome_DTO>
+
+<div class="w-100 table-responsive">
+    <table class="table table-bordered table-hover align-middle table-grid mb-0">
+        <thead>
+            <tr class="table-info">
+                <th>@Html.DisplayNameFor(M => M.First().SOI_INC_MIC_Number)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SOI_INC_MIC_Description)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SOI_INC_Remarks)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SOI_INC_OCRN_Number)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SOI_INC_CM_Number)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SOI_INC_IncomeBase)</th>
+                <th class="table-width-3xl text-end">@Html.DisplayNameFor(M => M.First().SOI_INC_IncomeValue)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SOI_INC_ALCT_Number)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SOI_INC_LA_Number)</th>
+            </tr>
+        </thead>
+        <tbody id="IInTableBody">
+            @if (Model != null)
+            {
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr class="IInNewRow" style="@(@Model[i].SOI_INC_IsDeleted == 1 ? "display: none;" : "")">
+                        <td>
+                            <input id="SOI_INC_SOI_Number" name="ItemExpenses[@i].SOI_INC_SOI_Number" class="SOI_INC_SOI_Number" type="hidden" value="@Model[i].SOI_INC_SOI_Number" />
+                            <input id="SOI_INC_ITM_Number" readonly name="ItemIncome[@i].SOI_INC_ITM_Number" class="SOI_INC_ITM_Number" type="hidden" value="@Model[i].SOI_INC_ITM_Number" />
+                            <select id="SOI_INC_MIC_Number" name="ItemIncome[@i].SOI_INC_MIC_Number" disabled class="form-select SOI_INC_MIC_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.IncomeCode)
+                                {
+                                    if (item.Value == Model[i].SOI_INC_MIC_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <input id="SOI_INC_MIC_Description" name="ItemIncome[@i].SOI_INC_MIC_Description" readonly class="form-control SOI_INC_MIC_Description" autocomplete="off" value="@Model[i].SOI_INC_MIC_Description" />
+                        </td>
+                        <td>
+                            <input id="SOI_INC_Remarks" name="ItemIncome[@i].SOI_INC_Remarks" readonly class="form-control SOI_INC_Remarks" autocomplete="off" value="@Model[i].SOI_INC_Remarks" />
+                        </td>
+                        <td>
+                            <select id="SOI_INC_OCRN_Number" name="ItemIncome[@i].SOI_INC_OCRN_Number" disabled class="form-select SOI_INC_OCRN_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Occurrence)
+                                {
+                                    if (item.Value == Model[i].SOI_INC_OCRN_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <select id="SOI_INC_CM_Number" name="ItemIncome[@i].SOI_INC_CM_Number" disabled class="form-select SOI_INC_CM_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.ChargeableMethod)
+                                {
+                                    if (item.Value == Model[i].SOI_INC_CM_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="SOI_INC_IncomeBase" name="ItemIncome[@i].SOI_INC_IncomeBase" readonly class="form-control SOI_INC_IncomeBase decimal text-end" autocomplete="off" value="@Model[i].SOI_INC_IncomeBase" />
+                        </td>
+                        <td class="table-width-3xl">
+                            <input id="SOI_INC_IncomeValue" name="ItemIncome[@i].SOI_INC_IncomeValue" readonly class="form-control SOI_INC_IncomeValue decimal text-end" autocomplete="off" value="@Model[i].SOI_INC_IncomeValue" />
+                        </td>
+                        <td>
+                            <select id="SOI_INC_ALCT_Number" name="ItemIncome[@i].SOI_INC_ALCT_Number" disabled class="form-select SOI_INC_ALCT_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Allocate)
+                                {
+                                    if (item.Value == Model[i].SOI_INC_ALCT_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <select id="SOI_INC_LA_Number" name="ItemIncome[@i].SOI_INC_LA_Number" disabled class="form-select SOI_INC_LA_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.LedgerAccount)
+                                {
+                                    if (item.Value == Model[i].SOI_INC_LA_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                            @if (@Model[i].SOI_INC_Number != 0)
+                            {
+                                <input name="ItemIncome[@i].SOI_INC_Number" type="hidden" class="SOI_INC_Number" value="@Model[i].SOI_INC_Number" />
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+        <tfoot>
+            <tr class="table-info">
+                <td colspan="6" class="text-end py-2">Total</td>
+                <td class="table-width-3xl text-end">
+                    <input id="TotalIIncAmount" class="form-control text-end" readonly />
+                </td>
+                <td colspan="3">
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#IInCloseButton").click(function () {
+            IInCloseButton();
+        });
+
+        $("#IInOkayButton").click(function () {
+            IInCloseButton();
+        });
+
+        function IInCloseButton() {
+            $("#IIncome").modal('hide');
+        }
+
+        $(document).on('click', '.ItemIncomeView', function () {
+            let CheckedCount = document.querySelectorAll('.CheckItem:checked').length;
+            let CheckedCheckbox = document.querySelector('.CheckItem:checked');
+            if(CheckedCount==0){
+                alert("Select any one row from the list");
+
+            } else if(CheckedCount>1){
+                alert("Select only one row from the list");
+            }
+            else if(CheckedCount==1){
+                var currentRow = $(CheckedCheckbox).closest('tr.NewRow');
+
+                var ItemNumber = currentRow.find('input.SOI_ITM_Number').val();
+                var Qty = currentRow.find('input.SOI_Qty').val();
+                var MatrialValue = currentRow.find('input.SOI_Amount').val();
+                var SOINumber = currentRow.find('input.SOI_Number').val();
+
+                if (SOINumber) {
+                    $("#SOI_TEMP_Number").val(SOINumber);
+
+                    var cout = 0;
+                    $("tr.IInNewRow").each(function () {
+                        var RowSOINumber = $(this).find("input.SOI_INC_SOI_Number").val();
+
+                        if (RowSOINumber === SOINumber) {
+                            $(this).closest('tr').show();
+                            cout++;
+                        } else {
+                            $(this).closest('tr').hide();
+                        }
+                    });
+
+                    if(cout>0){
+                        new bootstrap.Modal($("#IIncome")).show();
+                        $('#IIncome').on('shown.bs.modal', function () {
+                            $(this).find('[autofocus]').focus();
+
+                            (async () => {
+                                IIncCalculateFooter();
+                            })();
+                        });
+                    }
+                    else{
+                        alert("No record to display");
+                    }
+                }
+            }
+        });
+    });
+
+
+    async function IIncCalculateFooter() {
+        var TotalIncAmount = 0;
+        $("tr.IInNewRow:visible").each(function () {
+            var IncAmount = $(this).find(".SOI_INC_IncomeValue").val();
+            TotalIncAmount += parseFloat(removeCommas(IncAmount));
+        });
+        $("#TotalIIncAmount").val(DecimalIndianRupees(TotalIncAmount.toFixed(2)));
+    }
+
+</script>
+<style>
+    .search-results {
+        position: absolute;
+        z-index: 1000;
+        overflow-y: auto;
+        width: 400px;
+        max-height: 300px;
+    }
+</style>

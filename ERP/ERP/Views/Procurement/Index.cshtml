@@ -1,0 +1,533 @@
+﻿@{
+    ViewData["Title"] = "Procurement";
+}
+
+<form asp-action="Index" class="h-100">
+    <div class="row align-items-center panel-header gx-2">
+        <div class="col h-100">
+            <div class="h6 fw-light text-white h-100 align-content-center bg-secondary px-2">
+                Procurement
+            </div>
+        </div>
+    </div>
+    <div class="row panel-body gx-2">
+        <div class="col-12 panel-card-fixed" id="BodyHeight">
+            <div class="w-100 h-100 rounded-0 border border-primary bg-transparent px-3" id="CardBody">
+                <div class="row">
+                    <div class="col-4 pt-3">
+                        <div class="card rounded-0 mb-3 bg-transparent">
+                            <div class="card-header bg-secondary rounded-0">
+                                <p class="mb-0">
+                                    Favourites
+                                </p>
+                            </div>
+                            <div class="card-body bg-transparent text-dark">
+                                <p class="card-text placeholder-glow">
+                                    <span class="placeholder col-7"></span>
+                                    <span class="placeholder col-4"></span>
+                                    <span class="placeholder col-4"></span>
+                                    <span class="placeholder col-6"></span>
+                                    <span class="placeholder col-8"></span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="card rounded-0 mb-3 bg-transparent">
+                            <div class="card-header bg-secondary rounded-0">
+                                <p class="mb-0">
+                                    Reports
+                                </p>
+                            </div>
+                            <div class="card-body bg-transparent text-dark">
+                                <ul class="list-unstyled mb-0">
+                                    <li class="mb-2">
+                                        <a asp-controller="PurchaseOrder" class="d-flex align-items-center" asp-action="PurchaseOrderRegisterSummary">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-chevron-double-right me-2" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                                <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                            </svg> Purchase Order Register
+                                        </a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <a asp-controller="PurchaseInvoice" class="d-flex align-items-center" asp-action="PurchaseInvoiceRegisterSummary">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-chevron-double-right me-2" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                                <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                            </svg> Purchase Invoice Register
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a asp-controller="PurchaseReturn" class="d-flex align-items-center" asp-action="PurchaseReturnRegisterSummary">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-chevron-double-right me-2" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                                <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                            </svg> Purchase Return Register
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card rounded-0 mb-3 bg-transparent">
+                            <div class="card-header bg-secondary rounded-0">
+                                <p class="mb-0">
+                                    Setup
+                                </p>
+                            </div>
+                            <div class="card-body bg-transparent text-dark">
+                                <ul class="list-unstyled mb-0">
+                                    <li class="mb-2">
+                                        <a asp-controller="PurchaseOrder" class="d-flex align-items-center" asp-action="PONumbering">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-chevron-double-right me-2" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                                <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                            </svg> Purchase Order Numbering
+                                        </a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <a asp-controller="PurchaseInvoice" class="d-flex align-items-center" asp-action="PINumbering">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-chevron-double-right me-2" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                                <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                            </svg> Purchase Invoice Numbering
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a asp-controller="PurchaseReturn" class="d-flex align-items-center" asp-action="PRNumbering">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-chevron-double-right me-2" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                                <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                            </svg> Purchase Return Numbering
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a asp-controller="Procurement" class="d-flex align-items-center" asp-action="TableIndex">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-chevron-double-right me-2" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                                <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                            </svg> Table
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4 pt-3">
+                        <div class="card rounded-0 mb-3 bg-transparent">
+                            <div class="card-header bg-secondary rounded-0">
+                                <p class="mb-0">
+                                    Transactions
+                                </p>
+                            </div>
+                            <div class="card-body bg-transparent text-dark">
+                                <ul class="list-unstyled mb-0">
+                                    <li class="mb-2">
+                                        <a asp-controller="PurchaseOrder" asp-action="PurchaseOrderCreate">
+                                            Purchase Order
+                                        </a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <a data-bs-toggle="collapse" href="#Invoice" role="button" aria-expanded="false" aria-controls="Invoice">
+                                            Purchase Invoice
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                        </a>
+                                        <ul class="collapse list-unstyled ms-3 my-1" id="Invoice">
+                                            <li class="mb-1">
+                                                <a asp-controller="PurchaseInvoice" asp-action="PurchaseInvoiceCreate" class="d-flex align-items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-chevron-double-right me-2" viewBox="0 0 16 16">
+                                                        <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                                        <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                                    </svg> Direct
+                                                </a>
+                                            </li>
+                                            <li class="mb-1">
+                                                <a asp-controller="PurchaseInvoice" asp-action="POToPurchaseInvoiceCreate" class="d-flex align-items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-chevron-double-right me-2" viewBox="0 0 16 16">
+                                                        <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                                        <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                                    </svg> PO To Item
+                                                </a>
+                                            </li>
+                                            <li class="mb-1">
+                                                <a asp-controller="PurchaseInvoice" asp-action="POItemToPurchaseInvoiceCreate" class="d-flex align-items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-chevron-double-right me-2" viewBox="0 0 16 16">
+                                                        <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                                        <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                                    </svg> Item To PO
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a data-bs-toggle="collapse" href="#Return" role="button" aria-expanded="false" aria-controls="Return">
+                                            Purchase Return
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                        </a>
+                                        <ul class="collapse list-unstyled ms-3 my-1" id="Return">
+                                            <li class="mb-1">
+                                                <a asp-controller="PurchaseReturn" asp-action="PurchaseReturnCreate" class="d-flex align-items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-chevron-double-right me-2" viewBox="0 0 16 16">
+                                                        <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                                        <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                                    </svg> Direct
+                                                </a>
+                                            </li>
+                                            <li class="mb-1">
+                                                <a asp-controller="PurchaseReturn" asp-action="GRNToPurchaseReturnCreate" class="d-flex align-items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-chevron-double-right me-2" viewBox="0 0 16 16">
+                                                        <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                                        <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                                    </svg> GRN To Item
+                                                </a>
+                                            </li>
+                                            <li class="mb-1">
+                                                <a asp-controller="PurchaseReturn" asp-action="GRNItemToPurchaseReturnCreate" class="d-flex align-items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-chevron-double-right me-2" viewBox="0 0 16 16">
+                                                        <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                                        <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                                    </svg> Item To GRN
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card rounded-0 mb-3 bg-transparent">
+                            <div class="card-header bg-secondary rounded-0">
+                                <p class="mb-0">
+                                    Periodic
+                                </p>
+                            </div>
+                            <div class="card-body bg-transparent text-dark">
+                                <p class="card-text placeholder-glow">
+                                    <span class="placeholder col-7"></span>
+                                    <span class="placeholder col-4"></span>
+                                    <span class="placeholder col-4"></span>
+                                    <span class="placeholder col-6"></span>
+                                    <span class="placeholder col-8"></span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="card rounded-0 mb-3 bg-transparent">
+                            <div class="card-header bg-secondary rounded-0">
+                                <p class="mb-0">
+                                    Others
+                                </p>
+                            </div>
+                            <div class="card-body bg-transparent text-dark">
+                                <p class="card-text placeholder-glow">
+                                    <span class="placeholder col-7"></span>
+                                    <span class="placeholder col-4"></span>
+                                    <span class="placeholder col-4"></span>
+                                    <span class="placeholder col-6"></span>
+                                    <span class="placeholder col-8"></span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4 pt-3">
+                        <div class="card rounded-0 mb-3 bg-transparent">
+                            <div class="card-header bg-secondary rounded-0">
+                                <p class="mb-0">
+                                    Master Data
+                                </p>
+                            </div>
+                            <div class="card-body bg-transparent text-dark">
+                                <ul class="list-unstyled mb-0">
+                                    <li class="mb-2">
+                                        <a asp-controller="ProcurementMaster" asp-action="Vendor">
+                                            Vendor
+                                        </a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <a asp-controller="ProcurementMaster" asp-action="VendorGroup">
+                                            Vendor Group
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a asp-controller="ProcurementMaster" asp-action="VendorCategory">
+                                            Vendor Category
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card rounded-0 mb-3 bg-transparent">
+                            <div class="card-header bg-secondary rounded-0">
+                                <p class="mb-0">
+                                    Inquiries
+                                </p>
+                            </div>
+                            <div class="card-body bg-transparent text-dark">
+                                <p class="card-text placeholder-glow">
+                                    <span class="placeholder col-7"></span>
+                                    <span class="placeholder col-4"></span>
+                                    <span class="placeholder col-4"></span>
+                                    <span class="placeholder col-6"></span>
+                                    <span class="placeholder col-8"></span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="card rounded-0 mb-3 bg-transparent">
+                            <div class="card-header bg-secondary rounded-0">
+                                <p class="mb-0">
+                                    Sub-Master Data
+                                </p>
+                            </div>
+                            <div class="card-body bg-transparent text-dark">
+                                <ul class="list-unstyled mb-0">
+                                    <li>
+                                        <a asp-controller="ProcurementSubmaster" asp-action="PaymentBase">
+                                            Payment Base
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    $('.navbar-nav > .nav-item.procurement > a').addClass("active");
+</script>
+
+@* <table id="myTable">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr data-id="1">
+            <td>1</td>
+            <td>Alice Smith</td>
+            <td>alice@example.com</td>
+            <td><button class="action-btn">View</button></td>
+        </tr>
+        <tr data-id="2">
+            <td>2</td>
+            <td>Bob Johnson</td>
+            <td>bob@example.com</td>
+            <td><button class="action-btn">View</button></td>
+        </tr>
+        <tr data-id="3">
+            <td>3</td>
+            <td>Carol Williams</td>
+            <td>carol@example.com</td>
+            <td><button class="action-btn">View</button></td>
+        </tr>
+        <tr data-id="4">
+            <td>4</td>
+            <td>David Brown</td>
+            <td>david@example.com</td>
+            <td><button class="action-btn">View</button></td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Custom Context Menu -->
+<div id="contextMenu" class="context-menu">
+    <ul>
+        <li data-action="view">View Details</li>
+        <li data-action="edit">Edit Row</li>
+        <li data-action="delete">Delete Row</li>
+        <hr>
+        <li data-action="copyCell">Copy Cell Text</li>
+        <li data-action="copyRow">Copy Row Data</li>
+    </ul>
+</div>
+<style>
+    body {
+        font-family: sans-serif;
+        margin: 20px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    tr:hover {
+        background-color: #f9f9f9;
+    }
+
+    .action-btn {
+        padding: 5px 10px;
+        cursor: pointer;
+    }
+
+    /* Context Menu Styling */
+    .context-menu {
+        display: none; /* Hidden by default */
+        position: absolute; /* Positioned relative to the viewport */
+        background-color: #fff;
+        border: 1px solid #ccc;
+        box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
+        min-width: 150px;
+        z-index: 1000; /* Ensure it's on top */
+        border-radius: 4px;
+    }
+
+        .context-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            .context-menu ul li {
+                padding: 8px 12px;
+                cursor: pointer;
+                font-size: 14px;
+            }
+
+                .context-menu ul li:hover {
+                    background-color: #f0f0f0;
+                }
+
+            .context-menu ul hr {
+                margin: 4px 0;
+                border: 0;
+                border-top: 1px solid #eee;
+            }
+</style>
+                    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const table = document.getElementById('myTable');
+        const contextMenu = document.getElementById('contextMenu');
+        let currentRow = null; // To store the row that was right-clicked
+        let currentCell = null; // To store the cell that was right-clicked
+
+        // --- Show Context Menu ---
+        table.addEventListener('contextmenu', (event) => {
+            event.preventDefault(); // Prevent default browser context menu
+
+            const target = event.target; // The element that was clicked (td, th, button, etc.)
+
+            // Find the closest <tr> and <td> if the click was on one
+            const tr = target.closest('tr');
+            const td = target.closest('td');
+
+            if (!tr) return; // If not clicked inside a row, do nothing
+
+            currentRow = tr;
+            currentCell = td;
+
+            // Position the menu
+            // Adjust if menu would go off-screen
+            const menuWidth = contextMenu.offsetWidth;
+            const menuHeight = contextMenu.offsetHeight;
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+
+            let x = event.clientX;
+            let y = event.clientY;
+
+            if (x + menuWidth > windowWidth) {
+                x = windowWidth - menuWidth - 5; // 5px buffer
+            }
+            if (y + menuHeight > windowHeight) {
+                y = windowHeight - menuHeight - 5; // 5px buffer
+            }
+
+            contextMenu.style.top = `${y}px`;
+            contextMenu.style.left = `${x}px`;
+            contextMenu.style.display = 'block';
+        });
+
+        // --- Hide Context Menu ---
+        // Hide when clicking anywhere else on the document
+        document.addEventListener('click', (event) => {
+            // Hide if the click is outside the context menu
+            if (contextMenu.style.display === 'block' && !contextMenu.contains(event.target)) {
+                contextMenu.style.display = 'none';
+                currentRow = null;
+                currentCell = null;
+            }
+        });
+
+        // Hide on 'Escape' key press
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && contextMenu.style.display === 'block') {
+                contextMenu.style.display = 'none';
+                currentRow = null;
+                currentCell = null;
+            }
+        });
+
+
+        // --- Handle Context Menu Item Clicks ---
+        contextMenu.addEventListener('click', (event) => {
+            const action = event.target.dataset.action;
+
+            if (action && currentRow) {
+                const rowId = currentRow.dataset.id;
+                const cells = Array.from(currentRow.cells).map(cell => cell.textContent.trim());
+
+                switch (action) {
+                    case 'view':
+                        alert(`Viewing details for Row ID: ${rowId}\nName: ${cells[1]}\nEmail: ${cells[2]}`);
+                        break;
+                    case 'edit':
+                        alert(`Editing Row ID: ${rowId}. Implement your edit logic here.`);
+                        // Example: You could make cells editable or open a modal
+                        break;
+                    case 'delete':
+                        if (confirm(`Are you sure you want to delete Row ID: ${rowId}?`)) {
+                            currentRow.remove(); // Remove the row from the DOM
+                            alert(`Row ID: ${rowId} deleted.`);
+                            // You might also want to make an API call here to delete from the server
+                        }
+                        break;
+                    case 'copyCell':
+                        if (currentCell) {
+                            navigator.clipboard.writeText(currentCell.textContent.trim())
+                                .then(() => alert(`Cell text copied: "${currentCell.textContent.trim()}"`))
+                                .catch(err => console.error('Failed to copy cell text: ', err));
+                        } else {
+                            alert("No specific cell was targeted for copy.");
+                        }
+                        break;
+                    case 'copyRow':
+                        const rowData = cells.join('\t'); // Tab-separated for easy pasting into spreadsheets
+                        navigator.clipboard.writeText(rowData)
+                            .then(() => alert(`Row data copied:\n${rowData}`))
+                            .catch(err => console.error('Failed to copy row data: ', err));
+                        break;
+                    default:
+                        console.warn('Unknown action:', action);
+                }
+                contextMenu.style.display = 'none'; // Hide menu after action
+                currentRow = null;
+                currentCell = null;
+            }
+        });
+
+        // Optional: Handle clicks on regular action buttons in the table
+        table.addEventListener('click', (event) => {
+            if (event.target.classList.contains('action-btn')) {
+                const tr = event.target.closest('tr');
+                if (tr) {
+                    const rowId = tr.dataset.id;
+                    alert(`Regular button clicked for Row ID: ${rowId}`);
+                }
+            }
+        });
+    });
+                    </script> *@

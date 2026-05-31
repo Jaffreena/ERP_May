@@ -1,0 +1,188 @@
+﻿@model List<ERP_DTO.SaleOrderIncome_DTO>
+
+<div class="w-100 table-responsive">
+    <table class="table table-bordered table-hover align-middle table-grid mb-0">
+        <thead>
+            <tr class="table-info">
+                <th>@Html.DisplayNameFor(M => M.First().SOH_INC_MIC_Number)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SOH_INC_MIC_Description)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SOH_INC_Remarks)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SOH_INC_OCRN_Number)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SOH_INC_CM_Number)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SOH_INC_IncomeBase)</th>
+                <th class="table-width-3xl text-end">@Html.DisplayNameFor(M => M.First().SOH_INC_IncomeValue)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SOH_INC_ALCT_Number)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SOH_INC_LA_Number)</th>
+            </tr>
+        </thead>
+        <tbody id="InTableBody">
+            @if (Model != null)
+            {
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr class="InNewRow" style="@(@Model[i].SOH_INC_IsDeleted == 1 ? "display: none;" : "")">
+                        <td>
+                            <select id="SOH_INC_MIC_Number" name="Income[@i].SOH_INC_MIC_Number" disabled class="form-select SOH_INC_MIC_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.IncomeCode)
+                                {
+                                    if (item.Value == Model[i].SOH_INC_MIC_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <input id="SOH_INC_MIC_Description" name="Income[@i].SOH_INC_MIC_Description" class="form-control SOH_INC_MIC_Description" readonly autocomplete="off" value="@Model[i].SOH_INC_MIC_Description" />
+                        </td>
+                        <td>
+                            <input id="SOH_INC_Remarks" name="Income[@i].SOH_INC_Remarks" class="form-control SOH_INC_Remarks" readonly autocomplete="off" value="@Model[i].SOH_INC_Remarks" />
+                        </td>
+                        <td>
+                            <select id="SOH_INC_OCRN_Number" name="Income[@i].SOH_INC_OCRN_Number" disabled class="form-select SOH_INC_OCRN_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Occurrence)
+                                {
+                                    if (item.Value == Model[i].SOH_INC_OCRN_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <select id="SOH_INC_CM_Number" name="Income[@i].SOH_INC_CM_Number" disabled class="form-select SOH_INC_CM_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.ChargeableMethod)
+                                {
+                                    if (item.Value == Model[i].SOH_INC_CM_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="SOH_INC_IncomeBase" name="Income[@i].SOH_INC_IncomeBase" class="form-control SOH_INC_IncomeBase decimal text-end" readonly autocomplete="off" value="@Model[i].SOH_INC_IncomeBase" />
+                        </td>
+                        <td class="table-width-3xl">
+                            <input id="SOH_INC_IncomeValue" name="Income[@i].SOH_INC_IncomeValue" class="form-control SOH_INC_IncomeValue decimal text-end" readonly autocomplete="off" value="@Model[i].SOH_INC_IncomeValue" />
+                        </td>
+                        <td>
+                            <select id="SOH_INC_ALCT_Number" name="Income[@i].SOH_INC_ALCT_Number" disabled class="form-select SOH_INC_ALCT_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Allocate)
+                                {
+                                    if (item.Value == Model[i].SOH_INC_ALCT_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <select id="SOH_INC_LA_Number" name="Income[@i].SOH_INC_LA_Number" disabled class="form-select SOH_INC_LA_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.LedgerAccount)
+                                {
+                                    if (item.Value == Model[i].SOH_INC_LA_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                            @if (@Model[i].SOH_INC_Number != 0)
+                            {
+                                <input name="Income[@i].SOH_INC_Number" type="hidden" class="SOH_INC_Number" value="@Model[i].SOH_INC_Number" />
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+        <tfoot>
+            <tr class="table-info">
+                <td colspan="6" class="text-end py-2">Total</td>
+                <td class="table-width-3xl text-end">
+                    <input id="TotalIncAmount" class="form-control text-end" readonly />
+                </td>
+                <td colspan="3">
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        document.getElementById('IncomeModal').addEventListener('click', AddNewRowClick);
+        function AddNewRowClick() {
+            var count = $("tr.InNewRow").filter(function () {
+                var input = parseInt($(this).find('input.SOH_INC_IsDeleted').val());
+                return input !== 1;
+            }).length;
+
+            if (count === 0) {
+                alert("No record to display");
+                InCloseButton();
+            }
+            else{
+                new bootstrap.Modal($("#Income")).show();
+                $('#Income').on('shown.bs.modal', function () {
+                    $(this).find('[autofocus]').focus();
+
+                    (async () => {
+                        IIncCalculateFooter();
+                    })();
+                });
+            }
+        }
+
+        $("#InCloseButton").click(function () {
+            InCloseButton();
+        });
+
+        $("#InOkayButton").click(function () {
+            InCloseButton();
+        });
+
+        function InCloseButton() {
+            $("#Income").modal('hide');
+        }
+
+        window.onload = IncCalculateFooter();
+    });
+
+    async function IncCalculateFooter() {
+        var TotalIncAmount = 0;
+        $("tr.InNewRow").each(function () {
+            var IncAmount = $(this).find(".SOH_INC_IncomeValue").val();
+            TotalIncAmount += parseFloat(removeCommas(IncAmount));
+        });
+        $("#TotalIncAmount").val(DecimalIndianRupees(TotalIncAmount.toFixed(2)));
+    }
+</script>
+<style>
+    .search-results {
+        position: absolute;
+        z-index: 1000;
+        overflow-y: auto;
+        width: 400px;
+        max-height: 300px;
+    }
+</style>

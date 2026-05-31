@@ -1,0 +1,323 @@
+﻿@model ERP_DTO.CustomerHead_DTO
+
+
+@if (Model.CUS_Number != 0)
+{
+    <input asp-for="CUS_Number" type="hidden" class="Number" />
+}
+
+<div class="modal modal-sm fade" id="AlertModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header draggable-modal-header">
+                <p class="modal-title" id="staticBackdropLabel">Warning</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body py-4 text-dark fs-6 text-center icon-link justify-content-center">
+                <img src="~/img/danger.png" class="img-fluid" />   <div>
+                <label id="AlertMessage"></label>
+            </div>
+        </div>
+        <div class="modal-footer justify-content-center">
+            <button type="button" class="btn btn-primary px-4" id="AlertOkay" autofocus ref="always_focus" data-bs-dismiss="modal">Ok</button>
+        </div>
+    </div>
+</div>
+</div>
+<div class="row mb-3">
+    <label asp-for="CUS_Name" class="col-md-4 col-lg-3 col-xl-2 col-xxl-1 control-label"></label>
+    <div class="col-md-5 col-lg-4 col-xl-4">
+        <input asp-for="CUS_Name" class="form-control Key KeyDup" autofocus="true" autocomplete="off" />
+    </div>
+</div>
+<div class="col-12">
+    <div class="row">
+        <div class="col-12">
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="Mailing-tab" data-bs-toggle="tab" data-bs-target="#Mailing-tab-pane" type="button" role="tab" aria-controls="Mailing-tab-pane" aria-selected="true">
+                        Address
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="Contact-tab" data-bs-toggle="tab" data-bs-target="#Contact-tab-pane" type="button" role="tab" aria-controls="Contact-tab-pane" aria-selected="false">
+                        Contact
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="Grouping-tab" data-bs-toggle="tab" data-bs-target="#Grouping-tab-pane" type="button" role="tab" aria-controls="Grouping-tab-pane" aria-selected="false">
+                        Group
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="Payment-tab" data-bs-toggle="tab" data-bs-target="#Payment-tab-pane" type="button" role="tab" aria-controls="Payment-tab-pane" aria-selected="false">
+                        Payment
+                    </button>
+                </li>
+                <li class="nav-item d-none" role="presentation">
+                    <button class="nav-link" id="Bank-tab" data-bs-toggle="tab" data-bs-target="#Bank-tab-pane" type="button" role="tab" aria-controls="Bank-tab-pane" aria-selected="false">
+                        Bank
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="Delivery-tab" data-bs-toggle="tab" data-bs-target="#Delivery-tab-pane" type="button" role="tab" aria-controls="Delivery-tab-pane" aria-selected="false">
+                        Delivery
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="Tax-tab" data-bs-toggle="tab" data-bs-target="#Tax-tab-pane" type="button" role="tab" aria-controls="Tax-tab-pane" aria-selected="false">
+                        GST
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="Statutory-tab" data-bs-toggle="tab" data-bs-target="#Statutory-tab-pane" type="button" role="tab" aria-controls="Statutory-tab-pane" aria-selected="false">
+                        Statutory
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content" style="height:200px">
+                <div class="tab-pane fade show active p-2 pb-0 border border-top-0 h-100" id="Mailing-tab-pane" role="tabpanel" aria-labelledby="Mailing-tab" tabindex="0">
+                    <partial name="CustomerAddView.cshtml" model="@Model.CUS_Add_List" />
+                </div>
+                <div class="tab-pane fade p-2 pb-0 border border-top-0 h-100" id="Contact-tab-pane" role="tabpanel" aria-labelledby="Contact-tab" tabindex="0">
+                    <partial name="CustomerContactView.cshtml" model="@Model.CUS_Contact_List" />
+                </div>
+                <div class="tab-pane fade p-3 pb-0 border border-top-0 d-none" id="Contact-tab-pane1" role="tabpanel" aria-labelledby="Contact-tab1" tabindex="0">
+                    <div class="row">
+                        <div class="col-12 col-md-4 col-xl-3 mb-3">
+                            <label asp-for="CUS_ContactPerson" class="control-label"></label>
+                            <input asp-for="CUS_ContactPerson" class="form-control Key" autofocus="true" autocomplete="off" />
+                        </div>
+                        <div class="col-12 col-md-8 col-xl-9">
+                            <div class="row">
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="CUS_ContactTelephone" class="control-label"></label>
+                                    <input asp-for="CUS_ContactTelephone" class="form-control Key" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="CUS_ContactMobile" class="control-label"></label>
+                                    <input asp-for="CUS_ContactMobile" class="form-control number" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="CUS_ContactEmail" class="control-label"></label>
+                                    <input asp-for="CUS_ContactEmail" class="form-control Key" type="email" autofocus="true" autocomplete="off" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 col-md-4 col-xl-3 mb-3">
+                            <label asp-for="CUS_AccountPerson" class="control-label"></label>
+                            <input asp-for="CUS_AccountPerson" class="form-control Key" autofocus="true" autocomplete="off" />
+                        </div>
+                        <div class="col-12 col-md-8 col-xl-9">
+                            <div class="row">
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="CUS_AccountTelephone" class="control-label"></label>
+                                    <input asp-for="CUS_AccountTelephone" class="form-control Key" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="CUS_AccountMobile" class="control-label"></label>
+                                    <input asp-for="CUS_AccountMobile" class="form-control number" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="CUS_AccountEmail" class="control-label"></label>
+                                    <input asp-for="CUS_AccountEmail" class="form-control Key" type="email" autofocus="true" autocomplete="off" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade p-3 pb-0 border border-top-0" id="Grouping-tab-pane" role="tabpanel" aria-labelledby="Grouping-tab" tabindex="0">
+                    <div class="row">
+                        <div class="col-12 col-md-3 col-xl-2 mb-3  d-none">
+                            <label asp-for="CUS_LOC_Number" class="control-label"></label>
+                            <div class="clearfix"></div>
+                            @if (ViewBag.Location != null)
+                            {
+                            
+                            
+                            @foreach (SelectListItem Option in (List<SelectListItem>)ViewBag.Location)
+                            {
+                                <div class="form-check-inline">
+                                    @if (Option.Value == Model.CUS_LOC_Number.ToString())
+                                    {
+                                        <input class="form-check-input CUS_LOC_Number" type="radio" name="CUS_LOC_Number" id="@Option.Value" value="@Option.Value" checked>
+                                    }
+                                    else
+                                    {
+                                        <input class="form-check-input CUS_LOC_Number" type="radio" name="CUS_LOC_Number" id="@Option.Value" value="@Option.Value">
+                                    }
+                                    <label class="form-check-label" for="@Option.Value">
+                                        @Option.Text
+                                    </label>
+                                </div>
+                            }
+                            }
+                        </div>
+                        <div class="col-12 col-md-4 col-xl-2 mb-3">
+                            <label asp-for="CUS_BYG_Number" class="control-label"></label>
+                            <select asp-for="CUS_BYG_Number" class="form-select" asp-items="@ViewBag.CustomerGroup"></select>
+                        </div>
+                        <div class="col-12 col-md-4 col-xl-2 mb-3">
+                            <label asp-for="CUS_BYC_Number" class="control-label"></label>
+                            <select asp-for="CUS_BYC_Number" class="form-select" asp-items="@ViewBag.CustomerCategory"></select>
+                        </div>
+                        <div class="col-12 col-md-4 col-xl-2 mb-3">
+                            <label asp-for="CUS_WareHouse_Number" class="control-label"></label>
+                            <select asp-for="CUS_WareHouse_Number" class="form-select" asp-items="@ViewBag.Warehouse"></select>
+                        </div>
+                       @*  <div class="col-12 col-md-4 col-xl-2 mb-3">
+                            <label asp-for="CUS_BYS_Number" class="control-label"></label>
+                            <select asp-for="CUS_BYS_Number" class="form-select" asp-items="@ViewBag.BuyerSegment"></select>
+                        </div>
+                        <div class="col-12 col-md-4 col-xl-2 mb-3">
+                            <label asp-for="CUS_BSS_Number" class="control-label"></label>
+                            <select asp-for="CUS_BSS_Number" class="form-select" asp-items="@ViewBag.BuyerSubsegment"></select>
+                        </div> *@
+                    </div>
+                </div>
+                <div class="tab-pane fade p-3 pb-0 border border-top-0" id="Tax-tab-pane" role="tabpanel" aria-labelledby="Tax-tab" tabindex="0">
+                    <div class="row">
+                        <div class="col-12 col-md-3 col-xl-2 mb-3">
+                            <label asp-for="CUS_RT_Number" class="control-label"></label>
+                            <select asp-for="CUS_RT_Number" class="form-select" asp-items="@ViewBag.Registration"></select>
+                        </div>
+                        <div class="col-12 col-md-3 col-xl-2 mb-3">
+                            <label asp-for="CUS_GSTIN" class="control-label"></label>
+                            <input asp-for="CUS_GSTIN" class="form-control Key" autofocus="true" autocomplete="off" />
+                        </div>
+                        <div class="col-12 col-md-3 col-xl-2 mb-3">
+                            <label asp-for="CUS_AT_Number" class="control-label"></label>
+                            <select id="CUS_AT_Name" asp-for="CUS_AT_Number" class="form-select CUS_AT_Name" asp-items="@ViewBag.AssesseeTerritory"></select>
+                        </div>
+                        <div class="col-12 col-md-3 col-xl-2 mb-3">
+                            <label class="control-label">&nbsp;</label>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#GSTModal">
+                                GST
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade p-3 pb-0 border border-top-0" id="Payment-tab-pane" role="tabpanel" aria-labelledby="Payment-tab" tabindex="0">
+                    <div class="row">
+                        <div class="col-12 col-md-4 col-xl-3 mb-3">
+                            <label asp-for="CUS_PaymentTerms" class="control-label"></label>
+                            <textarea asp-for="CUS_PaymentTerms" class="form-control Key" autocomplete="off"></textarea>
+                        </div>
+                        <div class="col-12 col-md-8 col-xl-9">
+                            <div class="row">
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="CUS_PaymentMode" class="control-label"></label>
+                                    <input asp-for="CUS_PaymentMode" class="form-control Key" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="CUS_CreditDays" class="control-label"></label>
+                                    <input asp-for="CUS_CreditDays" class="form-control number-only" placeholder="0" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="CUS_CreditLimit" class="control-label"></label>
+                                    <input asp-for="CUS_CreditLimit" class="form-control decimal" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="CUS_CUR_Number" class="control-label"></label>
+                                    <select asp-for="CUS_CUR_Number" class="form-select" asp-items="@ViewBag.Currency"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade p-3 pb-0 border border-top-0" id="Bank-tab-pane" role="tabpanel" aria-labelledby="Bank-tab" tabindex="0">
+                    <div class="row">
+                        <div class="col-12 col-md-9">
+                            <div class="row">
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="CUS_AccountName" class="control-label"></label>
+                                    <input asp-for="CUS_AccountName" class="form-control Key" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="CUS_AccountNumber" class="control-label"></label>
+                                    <input asp-for="CUS_AccountNumber" class="form-control Key" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="CUS_IFSC" class="control-label"></label>
+                                    <input asp-for="CUS_IFSC" class="form-control number" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="CUS_BankName" class="control-label"></label>
+                                    <input asp-for="CUS_BankName" class="form-control Key" autofocus="true" autocomplete="off" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade p-3 pb-0 border border-top-0" id="Delivery-tab-pane" role="tabpanel" aria-labelledby="Delivery-tab" tabindex="0">
+                    <div class="row">
+                        <div class="col-12 col-md-3 col-xl-2 mb-3">
+                            <label asp-for="CUS_DeliveryTerms" class="control-label"></label>
+                            <input asp-for="CUS_DeliveryTerms" class="form-control Key" autofocus="true" autocomplete="off" />
+                        </div>
+                        <div class="col-12 col-md-3 col-xl-2 mb-3">
+                            <label asp-for="CUS_DeliveryMode" class="control-label"></label>
+                            <input asp-for="CUS_DeliveryMode" class="form-control Key" autofocus="true" autocomplete="off" />
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade p-3 pb-0 border border-top-0" id="Statutory-tab-pane" role="tabpanel" aria-labelledby="Statutory-tab" tabindex="0">
+                    <div class="row">
+                        <div class="col-12 col-md-3 col-xl-2 mb-3">
+                            <label asp-for="CUS_PAN" class="control-label"></label>
+                            <input asp-for="CUS_PAN" class="form-control Key" autofocus="true" autocomplete="off" />
+                        </div>
+                        <div class="col-12 col-md-3 col-xl-2 mb-3">
+                            <label asp-for="CUS_AN_Number" class="control-label"></label>
+                            <select asp-for="CUS_AN_Number" class="form-select" asp-items="@ViewBag.NatureOfAssessee"></select>
+                        </div>
+                        <div class="col-12 col-md-3 col-xl-2 mb-3">
+                            <label asp-for="CUS_YN_Number" class="control-label"></label>
+                            <div class="clearfix"></div>
+                            @if (ViewBag.YesNo != null)
+                            {
+                                foreach (SelectListItem Option in (List<SelectListItem>)ViewBag.YesNo)
+                                {
+                                    bool isChecked =
+                                        (Model.CUS_YN_Number == null && Option.Value == "0") ||   
+                                        (Model.CUS_YN_Number != null && Option.Value == Model.CUS_YN_Number.ToString());
+
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input CUS_YN_Number"
+                                               type="radio"
+                                               name="CUS_YN_Number"
+                                               id="CUS_YN_@Option.Value"
+                                               value="@Option.Value"
+                                        @(isChecked ? "checked" : "") />
+
+                                        <label class="form-check-label" for="CUS_YN_@Option.Value">
+                                            @Option.Text
+                                        </label>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="w-100 pt-2">
+    @if (Model.CUS_Number != 0)
+    {
+        <input type="submit" name="Mode" value="Update" id="btnUpdate" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+    else
+    {
+        <input type="submit" name="Mode" value="Save" id="btnSave" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+</div>

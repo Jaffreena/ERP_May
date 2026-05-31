@@ -1,0 +1,208 @@
+﻿@model ERP_DTO.PurchaseInvoiceHead_DTO
+@{
+    ViewData["Title"] = "Purchase Invoice Create";
+}
+
+<!-- ============================ -->
+<!-- 1. COMMON HELPER FUNCTIONS -->
+<!-- ============================ -->
+<script>
+    // 1.1 Remove commas from number string
+    // EN: Converts formatted number to raw number
+    // TA: கமா (,) உள்ள எண்ணை remove பண்ணி pure number ஆ மாற்றும்
+    function removeCommas(value) {
+        return (value || '').toString().replace(/,/g, '');
+    }
+
+    // 1.2 Format decimal to Indian currency (2 decimals)
+    // EN: Converts number to Indian format with 2 decimal places
+    // TA: இந்திய ரூபாய் format (2 decimal) ஆக மாற்றும்
+    function DecimalIndianRupees(value) {
+        if (value === "" || isNaN(value)) {
+            return "0.00";
+        }
+
+        var formattedValue = parseFloat(value).toFixed(2);
+
+        var parts = formattedValue.split(".");
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+        return parts.join(".");
+    }
+
+    // 1.3 Format number with custom decimal places
+    // EN: Flexible decimal formatter
+    // TA: decimal places user control பண்ணும் function
+    function NumberToIndianRupees(value, decimalPlaces) {
+        if (value === "" || isNaN(value)) return "0";
+
+        var formattedValue = parseFloat(value).toFixed(decimalPlaces);
+        var parts = formattedValue.split(".");
+
+        if (parts.length > 1) {
+            parts[1] = parts[1].replace(/0+$/, "");
+            if (parts[1].length === 0) parts.pop();
+        }
+
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+
+        return parts.join(".");
+    }
+</script>
+
+<!-- ============================ -->
+<!-- 2. FORM START -->
+<!-- ============================ -->
+<form asp-action="PurchaseInvoiceCreate" class="h-100">
+
+    <!-- 2.1 Hidden Fields -->
+    <!-- EN: Used for storing temporary data -->
+    <!-- TA: temporary values store பண்ண use ஆகும் -->
+    <input id="PII_EXP_ItemNumber" type="hidden" />
+    <input id="PII_EXP_ItemIndex" type="hidden" />
+
+    <!-- ============================ -->
+    <!-- 3. MODAL SECTION -->
+    <!-- ============================ -->
+    <!-- 3.1 Expense Modal -->
+    <!-- EN: Header level expense popup -->
+    <!-- TA: Header expense add/edit popup -->
+    <div class="modal fade" id="Expense">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title">Header Misc Expense</p>
+                </div>
+
+                <!-- 3.1.1 Body -->
+                <div class="modal-body">
+                    <partial name="PurchaseInvoiceExpenseView.cshtml" model="@Model.Expenses" />
+                </div>
+
+                <!-- 3.1.2 Footer -->
+                <div class="modal-footer">
+                    <a id="ExAddRowButton">Add Row</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================ -->
+    <!-- 4. MAIN UI -->
+    <!-- ============================ -->
+    <!-- 4.1 Header -->
+    <!-- EN: Page title section -->
+    <!-- TA: Page header -->
+    <div class="row">
+        <div class="col">
+            <div>Purchase Invoice</div>
+        </div>
+    </div>
+
+    <!-- ============================ -->
+    <!-- 5. BODY -->
+    <!-- ============================ -->
+    <!-- 5.1 Head Data -->
+    <!-- EN: Invoice header info -->
+    <!-- TA: Invoice main details -->
+    <partial name="PurchaseInvoiceHeadView.cshtml" model="@Model" />
+
+    <!-- 5.2 Item Section -->
+    <!-- EN: Item grid -->
+    <!-- TA: Item list -->
+    <partial name="PurchaseInvoiceItemView.cshtml" model="@Model.InvoiceItems" />
+
+    <!-- ============================ -->
+    <!-- 6. FOOTER TOTALS -->
+    <!-- ============================ -->
+    <!-- 6.1 Material Cost -->
+    <!-- EN: Total item cost -->
+    <!-- TA: பொருட்களின் மொத்தம் -->
+    <input asp-for="PIH_MaterialCost" />
+
+    <!-- 6.2 GST -->
+    <!-- EN: Tax amount -->
+    <!-- TA: வரி தொகை -->
+    <input asp-for="PIH_GST_Amount" />
+
+    <!-- 6.3 Invoice Total -->
+    <!-- EN: Final bill -->
+    <!-- TA: இறுதி தொகை -->
+    <input asp-for="PIH_InvoiceAmount" />
+
+</form>
+
+<!-- ============================ -->
+<!-- 7. FORM SUBMIT LOGIC -->
+<!-- ============================ -->
+<script>
+
+    // 7.1 Before submit validation
+    // EN: Remove empty rows before submit
+    // TA: காலியான rows remove ஆகும்
+    $('form').submit(function () {
+
+        // 7.1.1 Expense validation
+        $("tr.ExNewRow").each(function () {
+            var ExpenseCode = $(this).find("select").val();
+
+            if (!ExpenseCode) {
+                $(this).hide();
+            }
+        });
+
+        // 7.1.2 Item validation
+        $("tr.NewRow").each(function () {
+            var Item = $(this).find("input").val();
+
+            if (!Item) {
+                $(this).hide();
+            }
+        });
+
+    });
+
+</script>
+
+<!-- ============================ -->
+<!-- 8. INPUT FORMAT HANDLING -->
+<!-- ============================ -->
+<script>
+
+    // 8.1 Decimal formatting on blur
+    // EN: Apply formatting after user input
+    // TA: user enter பண்ணிய பின் format ஆகும்
+    $(document).on("blur", ".decimal", function () {
+        var value = $(this).val();
+        $(this).val(DecimalIndianRupees(removeCommas(value)));
+    });
+
+    // 8.2 Remove formatting on focus
+    // EN: Show raw value for editing
+    // TA: edit செய்யும்போது raw value காட்டும்
+    $(document).on("focus", ".decimal", function () {
+        var value = $(this).val();
+        $(this).val(removeCommas(value));
+    });
+
+</script>
+
+<!-- ============================ -->
+<!-- 9. DATE LOGIC -->
+<!-- ============================ -->
+<script>
+
+    // 9.1 Add days to date
+    // EN: Calculate due date
+    // TA: due date கணக்கிடும்
+    function addDays(date, days) {
+        const d = new Date(date);
+        d.setDate(d.getDate() + parseInt(days));
+
+        return d;
+    }
+
+</script>
+
+<!-- ============================ -->
+<!-- END OF FILE -->
+<!-- ============================ -->

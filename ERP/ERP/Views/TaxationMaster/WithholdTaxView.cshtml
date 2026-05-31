@@ -1,0 +1,39 @@
+﻿@model ERP_DTO.WithholdTax_DTO
+
+
+@if (Model != null)
+{
+    <input asp-for="WH_Number" type="hidden" class="Number" />
+}
+<div class="mb-3">
+    <label asp-for="WH_TaxCode" class="control-label"></label>
+    <input asp-for="WH_TaxCode" class="form-control Key KeyDup" autofocus="true" autocomplete="off" />
+</div>
+<div class="mb-3">
+    <label asp-for="WH_TaxDescription" class="control-label"></label>
+    <textarea asp-for="WH_TaxDescription" class="form-control Key" autocomplete="off"></textarea>
+</div>
+<div class="mb-3">
+    <label asp-for="WH_TaxCategory" class="control-label"></label>
+    <select asp-for="WH_TaxCategory" class="form-select from-search" asp-items="@ViewBag.Category"></select>
+</div>
+<div class="mb-3">
+    <label asp-for="WH_TaxType" class="control-label"></label>
+    <select asp-for="WH_TaxType" class="form-select from-search" asp-items="@ViewBag.Type"></select>
+</div>
+<div class="mb-3">
+    <label asp-for="WH_TaxImpact" class="control-label"></label>
+    <select asp-for="WH_TaxImpact" class="form-select from-search" asp-items="@ViewBag.Impact"></select>
+</div>
+<div>
+    @if(Model != null)
+    {
+        <input type="submit" name="Mode" value="Update" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+    else
+    {
+        <input type="submit" name="Mode" value="Save" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+</div>

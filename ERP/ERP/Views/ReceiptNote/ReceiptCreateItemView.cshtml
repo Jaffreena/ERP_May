@@ -1,0 +1,792 @@
+﻿@model List<ERP_DTO.JobInwardTransaction.ReceiptNoteItem_DTO>
+
+<div class="col h-100">
+    <div class="w-12 table-responsive table-body table-body-f">
+        <table class="table table-one table-striped table-bordered table-hover align-middle w-100" id="ItemTable">
+            <thead>
+                <tr class="table-info text-center">
+                    <th class="px-2 del">
+                    </th>
+                    <th class="text-start">Item Code</th>
+                    <th class="text-start">Description</th>
+                    <th class="text-start">Item Group</th>
+                    <th class="text-start text-center">Warehouse</th>
+                    <th class="table-width-md text-center">UoM</th>
+                    <th class="table-width-xl text-center">Qty</th>
+                    <th class="table-width-xl text-end">Unit Price</th>
+                    <th class="table-width-3xl text-end">Amount</th>
+                   
+                    
+                </tr>
+            </thead>
+            <tbody id="TableBody">
+                <tr id="TempRow" style="display: none;">
+                    <td class="p-2 del">
+                        <input type="checkbox" class="CheckItem form-check-input" name="CheckItem">
+                    </td>
+                    <td>
+                        <input id="PII_Index" type="hidden" class="form-control PII_Index" autocomplete="off" />
+                        <input id="PII_MS_Number" class="PII_MS_Number" type="hidden" />
+                        <input id="PII_Item_Number" class="PII_Item_Number" type="hidden" />
+                        <input id="PII_ItemCode" class="form-control PII_ItemCode" autocomplete="off" oninput="OnInput(this)" onfocus="OnFocus(this)" />
+                        <div class="search-results card" style="display:none"></div>
+                    </td>
+                    <td>
+                        <input id="PII_Description" class="form-control PII_Description" autocomplete="off" readonly />
+                    </td>
+                    <td>
+                        <input id="PII_ItemGroup" class="form-control PII_ItemGroup" autocomplete="off" readonly />
+                    </td>
+                    <td>
+                        <select id="PII_Warehouse_Number" class="form-select PII_Warehouse_Number text-center" asp-items="@ViewBag.Warehouse"></select>
+                    </td>
+                    <td class="table-width-md">
+                        <select id="PII_UoM_Number" class="form-select PII_UoM_Number text-center" asp-items="@ViewBag.UoM"></select>
+                        <input type="hidden" id="PII_DecimalPlaces" class="form-control PII_DecimalPlaces" autocomplete="off" />
+                        <input type="hidden" id="PII_UoM" class="form-control PII_UoM" autocomplete="off" />
+                    </td>
+                    <td class="table-width-xl">
+                        <input id="PII_Qty" class="form-control PII_Qty number QtyNumbers Positivedecimal text-center" autocomplete="off" />
+                    </td>
+                    <td class="table-width-xl">
+                        <input id="PII_UnitPrice" class="form-control PII_UnitPrice number UnitDecimal text-end" autocomplete="off" />
+                    </td>
+                    <td class="table-width-3xl">
+                        <input id="PII_Amount" class="form-control PII_Amount text-end" autocomplete="off" readonly />
+                    </td>
+                    
+                </tr>
+                @if (Model != null)
+                {
+                    @for (int i = 0; i < Model.Count; i++)
+                    {
+                        <tr class="NewRow" style="@(@Model[i].IsDeleted == "true" ? "display: none;" : "")">
+                            <td class="p-2 del">
+                                <input type="checkbox" class="CheckItem form-check-input" name="CheckItem">
+                            </td>
+                            <td>
+                                <input id="PII_Index" name="InvoiceItems[@i].PII_Index" type="hidden" class="PII_Index" autocomplete="off" value="@Model[i].RNI_Index" />
+                                <input id="PII_MS_Number" name="InvoiceItems[@i].PII_MS_Number" class="PII_MS_Number" type="hidden" value="@Model[i].RNI_MS_Number" />
+                                <input id="PII_Item_Number" name="InvoiceItems[@i].PII_Item_Number" class="PII_Item_Number" type="hidden" value="@Model[i].RNI_Item_Number" />
+                                <input id="PII_ItemCode" name="InvoiceItems[@i].PII_ItemCode" class="form-control PII_ItemCode" autocomplete="off" value="@Model[i].RNI_ItemCode" oninput="OnInput(this)" onfocus="OnFocus(this)" />
+                                <div class="search-results card" style="display:none"></div>
+                            </td>
+                            <td>
+                                <input id="PII_Description" name="InvoiceItems[@i].PII_Description" class="form-control PII_Description" readonly value="@Model[i].RNI_Description" />
+                            </td>
+                            <td>
+                                <input id="PII_ItemGroup" name="InvoiceItems[@i].PII_ItemGroup" class="form-control PII_ItemGroup" readonly value="@Model[i].RNI_ItemGroup" />
+                            </td>
+                            <td>
+                                <select id="PII_Warehouse_Number" name="InvoiceItems[@i].PII_Warehouse_Number" class="form-select PII_Warehouse_Number text-center">
+                                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Warehouse)
+                                    {
+                                        if (item.Value == Model[i].RNI_Warehouse_Number)
+                                        {
+                                            <option value="@item.Value" selected>@item.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    }
+                                </select>
+                            </td>
+                            <td class="table-width-md">
+                                <select id="PII_UoM_Number" name="InvoiceItems[@i].PII_UoM_Number" class="form-select PII_UoM_Number text-center">
+                                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.UoM)
+                                    {
+                                        if (item.Value == Model[i].RNI_UoM_Number)
+                                        {
+                                            <option value="@item.Value" selected>@item.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    }
+                                </select>
+                                <input id="PII_UoM" name="InvoiceItems[@i].PII_UoM" class="form-control PII_UoM" type="hidden" value="@Model[i].RNI_UoM" />
+                                <input type="hidden" id="PII_DecimalPlaces" name="InvoiceItems[@i].PII_DecimalPlaces" class="form-control PII_DecimalPlaces" autocomplete="off" value="@Convert.ToDouble(@Model[i].RNI_DecimalPlaces)" />
+                            </td>
+                            <td class="table-width-xl">
+                                <input id="PII_Qty" name="InvoiceItems[@i].PII_Qty" class="form-control PII_Qty number QtyNumbers Positivedecimal text-center" autocomplete="off" value="@Convert.ToDouble(@Model[i].RNI_Qty)" />
+                            </td>
+                            <td class="table-width-xl">
+                                <input id="PII_UnitPrice" name="InvoiceItems[@i].PII_UnitPrice" class="form-control PII_UnitPrice number UnitDecimal text-end" autocomplete="off" value="@Convert.ToDouble(@Model[i].RNI_UnitPrice)" />
+                            </td>
+                            <td class="table-width-3xl">
+                                <input id="PII_Amount" name="InvoiceItems[@i].PII_Amount" class="form-control PII_Amount text-end" readonly autocomplete="off" value="@Convert.ToDouble(@Model[i].RNI_Amount)" />
+                                @if (@Model[i].JIRNI_Number != 0)
+                                {
+                                    <input name="InvoiceItems[@i].Number" type="hidden" class="Number" value="@Model[i].JIRNI_Number" />
+                                }
+                                <input type="hidden" id="IsDeleted" name="InvoiceItems[@i].IsDeleted" class="IsDeleted" value="@Model[i].IsDeleted" />
+                            </td>
+                            
+                           
+                        </tr>
+                    }
+                }
+            </tbody>
+            <tfoot>
+                <tr class="table-info fw-bold">
+                    <td colspan="6" class="text-end py-2"><span class="float-end  pe-3">Total</span></td>
+                    <td>
+                        <input id="TotalQty" class="form-control text-center" readonly />
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        <input id="TotalAmount" class="form-control text-end" readonly />
+                    </td>
+                 
+                    <td>
+                    </td>
+                    
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div class="row table-footer align-items-center">
+        <div class="col">
+            <a id="AddRowButton" class="btn btn-primary">Add Row</a>
+            <a class="RowRemove btn btn-primary">
+                Delete Row
+            </a>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        function initializeFlatpickrs() {
+            $(".PII_DeliveryDate").flatpickr({
+                dateFormat: "d-M-Y",
+                altInput: false,
+            });
+        }
+
+        var rowCount = @(Model != null ? Model.Count : 0);
+        var isAddingRow = false;
+
+        function addRow() {
+            var NewRow = $("#TempRow").clone().removeAttr("style").removeAttr("id").addClass("NewRow");
+            NewRow.find("input.PII_Index").attr("name", "InvoiceItems[" + rowCount + "].PII_Index").val(rowCount + 1);
+            NewRow.find("input.PII_MS_Number").attr("name", "InvoiceItems[" + rowCount + "].PII_MS_Number");
+            NewRow.find("input.PII_Item_Number").attr("name", "InvoiceItems[" + rowCount + "].PII_Item_Number");
+            NewRow.find("input.PII_ItemCode").attr("name", "InvoiceItems[" + rowCount + "].PII_ItemCode");
+            NewRow.find("input.PII_Description").attr("name", "InvoiceItems[" + rowCount + "].PII_Description");
+            NewRow.find("input.PII_DecimalPlaces").attr("name", "InvoiceItems[" + rowCount + "].PII_DecimalPlaces");
+            NewRow.find("input.PII_ItemGroup").attr("name", "InvoiceItems[" + rowCount + "].PII_ItemGroup");
+            NewRow.find("select.PII_Warehouse_Number").attr("name", "InvoiceItems[" + rowCount + "].PII_Warehouse_Number");
+            NewRow.find("select.PII_UoM_Number").attr("name", "InvoiceItems[" + rowCount + "].PII_UoM_Number");
+            NewRow.find("select.PII_UoM").attr("name", "InvoiceItems[" + rowCount + "].PII_UoM");
+            NewRow.find("input.PII_Qty").attr("name", "InvoiceItems[" + rowCount + "].PII_Qty");
+            NewRow.find("input.PII_UnitPrice").attr("name", "InvoiceItems[" + rowCount + "].PII_UnitPrice");
+            NewRow.find("input.PII_Amount").attr("name", "InvoiceItems[" + rowCount + "].PII_Amount");
+
+            NewRow.find("input.PII_ExpenseValue").attr("name", "InvoiceItems[" + rowCount + "].PII_ExpenseValue");
+            NewRow.find("select.PII_HSN_Number").attr("name", "InvoiceItems[" + rowCount + "].PII_HSN_Number");
+            NewRow.find("input.PII_GST_Amount").attr("name", "InvoiceItems[" + rowCount + "].PII_GST_Amount");
+            NewRow.find("input.PII_WHT_Percent").attr("name", "InvoiceItems[" + rowCount + "].PII_WHT_Percent");
+            NewRow.find("input.PII_WHT_Amount").attr("name", "InvoiceItems[" + rowCount + "].PII_WHT_Amount");
+            NewRow.find("input.IsDeleted").attr("name", "InvoiceItems[" + rowCount + "].IsDeleted").val("false");
+
+            $("#TableBody").append(NewRow);
+            rowCount++;
+            NewRow.data("isValid", false);
+            isAddingRow = false;
+
+            initializeFlatpickrs();
+        }
+
+        if ($("tr.NewRow").length == 0) {
+            addRow();
+
+            (async () => {
+                CalculateFooter();
+            })();
+        }
+
+        $(document).on('click', '.RowRemove', function () {
+            let CheckedCheckbox = document.querySelector('.CheckItem:checked');
+            if (CheckedCheckbox) {
+                $(CheckedCheckbox).closest('tr').find("input.CheckItem").prop('checked', false);
+                $(CheckedCheckbox).closest('tr').find("input.IsDeleted").val("true");
+                $(CheckedCheckbox).closest('tr').hide();
+            }
+
+            (async () => {
+                CalculateFooter();
+            })();
+        });
+
+        $(document).on('keydown', "tr.NewRow select, tr.NewRow input.PII_DeliveryDate,tr.NewRow input.PII_Item_Number,tr.NewRow input.PII_Qty,tr.NewRow input.PII_UnitPrice, tr.NewRow input[type='text']", function (event) {
+            if (event.keyCode === 9) {
+                if (!validateField($(this)))
+                    event.preventDefault();
+            }
+        });
+
+        $(document).on('change', "tr.NewRow select.PII_UoM_Number", function () {
+            var selectedValue = $(this).val();
+            var currentInput = $(this);
+            var currentRow = currentInput.closest('tr.NewRow');
+
+            var uom = currentRow.find('input.PII_UoM').val();
+
+            if (uom === selectedValue) { } else {
+                alert("Selected Uom differs from item master purchase unit");
+            }
+
+            $.ajax({
+                type: "get",
+                url: "uom",
+                data: { UoM: selectedValue },
+                datatype: "json",
+                traditional: true,
+                success: function (decimalPlaces) {
+                    if (decimalPlaces === "") {
+                        decimalPlaces = 2;
+                    }
+
+                    currentRow.find('input.PII_DecimalPlaces').val(decimalPlaces);
+                    var value = currentRow.find('input.PII_Qty').val();
+                    currentRow.find('input.PII_Qty').val(NumberToIndianRupees(value, decimalPlaces));
+                }
+            });
+        });
+
+        $(document).on('change', "tr.NewRow select.PII_HSN_Number", function () {
+            CalAmount();
+        });
+
+        $(document).on("change", "tr.NewRow select, input.PII_DeliveryDate,input.PII_Item_Number,input.PII_Qty,input.PII_UnitPrice, input[type='text']", function () {
+            if (isAddingRow)
+                return;
+            isAddingRow = true;
+
+            var currentInput = $(this);
+            var isValid = validateField(currentInput);
+            var currentRow = $(this).closest("tr.NewRow");
+            if (isValid) {
+                if (checkAllFieldsValid(currentRow)) {
+                    currentRow.data("isValid", true);
+                }
+                else {
+                    currentRow.data("isValid", false);
+                }
+            }
+            else {
+                currentRow.data("isValid", false);
+            }
+            if (currentRow.data("isValid")) {
+                var lastRow = $("tr.NewRow").last();
+                if (checkAllFieldsValid(lastRow))
+                    addRow();
+            }
+            else {
+                isAddingRow = false;
+            }
+        });
+
+        function checkAllFieldsValid(currentRow) {
+            var allFieldsValid = true;
+            $("tr.NewRow:visible").each(function () {
+                $(this).find("select, input.PII_DeliveryDate,input.PII_Item_Number,input.PII_Qty,input.PII_UnitPrice, input[type='text']").each(function () {
+                    if (!validateField($(this))) {
+                        allFieldsValid = false;
+                        return false;
+                    }
+                });
+                if (!allFieldsValid) return false;
+            });
+            return allFieldsValid;
+        }
+
+        function validateField(currentInput) {
+            var valid = 1;
+            var inputValue = currentInput.val();
+            if (inputValue === "") {
+                valid = 0;
+            }
+
+            if (valid == 0) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+        $("#AddRowButton").click(function () {
+            var lastRow = $("tr.NewRow").last();
+            if (checkAllFieldsValid(lastRow)) {
+                addRow();
+            }
+            else {
+                var firstInvalidField = null;
+                lastRow.find("select, input.PII_DeliveryDate,input.PII_Item_Number,input.PII_Qty,input.PII_UnitPrice, input[type='text']").each(function () {
+                    if (!validateField($(this))) {
+                        if (firstInvalidField == null)
+                            firstInvalidField = $(this);
+                        return false;
+                    }
+                });
+                if (firstInvalidField != null) {
+                    alert("Please complete all fields !");
+                    firstInvalidField.focus();
+                }
+            }
+        });
+
+        $(document).on('input', "input.PII_UnitPrice, input.PII_Qty", function (event) {
+            var currentInput = $(this);
+
+            var row = currentInput.closest("tr.NewRow");
+
+            var itemIndex = row.find(".PII_Index").val();
+            var itemNumber = row.find(".PII_Item_Number").val();
+            var HSNNumber = row.find(".PII_HSN_Number").val();
+
+            var qty = parseFloat(removeCommas(row.find("input.PII_Qty").val())) || 0;
+            var unitPrice = parseFloat(removeCommas(row.find("input.PII_UnitPrice").val())) || 0;
+            var amo = qty * unitPrice;
+            var amount = DecimalIndianRupees(amo);
+            row.find("input.PII_Amount").val(DecimalIndianRupees(amo));
+
+           
+            var GRNDate = $("#PIH_InvoiceDate").val();
+
+           
+
+            var BaseAmount = parseFloat(removeCommas(amount)) );
+          
+            (async () => {
+             
+
+                
+                    TotalAmount = parseFloat(BaseAmount);
+                
+
+             
+
+                await CalculateFooter();
+            })();
+            CalculateIBatch($(this));
+        });
+
+      
+    
+        $("#PIH_MS_Number").change(function () {
+            var PIH_MS_Number = $(this).val();
+            var PII_MS_Number = "";
+            var PIH_MS = $(this).val();
+            var AllMatch = true;
+
+            $("tr.NewRow").each(function () {
+                var irow = $(this);
+                var isDeleted = $(this).find("input.IsDeleted").val() === "true";
+                if (!isDeleted) {
+                    PII_MS_Number = irow.find("input.PII_MS_Number").val();
+                    if (PII_MS_Number !== PIH_MS_Number) {
+                        AllMatch = false;
+                        return false;
+                    }
+                }
+            });
+
+            if (!AllMatch) {
+                if (PII_MS_Number != "") {
+                    if (confirm("Do you want to change the Material Segregation? This action will clear all existing items.")) {
+                        $("tr.NewRow").each(function () {
+                            var irow = $(this);
+                            var isDeleted = $(this).find("input.IsDeleted").val() === "true";
+                            if (!isDeleted) {
+                                $(this).find("input.IsDeleted").val("true");
+                                $(this).hide();
+                            }
+                        });
+                        addRow();
+                        CalAmount();
+                    }
+                    else {
+                        $("#PIH_MS_Number").val(PII_MS_Number);
+                    }
+                }
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        const $tableBody = $('#ItemTable tbody');
+
+        $tableBody.on('click', 'tr', function (e) {
+            if ($(e.target).is('input[type="checkbox"], a, button')) {
+                return;
+            }
+            $(this).find('.CheckItem').prop('checked', function (i, currentValue) {
+                return !currentValue;
+            }).trigger('change');
+            UpdateItemButton();
+        });
+    });
+    function UpdateItemButton() {
+        const checkboxes = document.querySelectorAll(".CheckItem:checked");
+        const selectedValues = [];
+
+        checkboxes.forEach(checkbox => {
+            const row = checkbox.closest("tr");
+            const orderNumber = row.cells[1].textContent;
+            selectedValues.push(orderNumber);
+        });
+        if (selectedValues.length === 1) {
+            $(".OneItemMode").prop("disabled", false);
+        } else {
+            $(".OneItemMode").prop("disabled", true);
+        }
+    }
+
+    function CalAmount() {
+        $("tr.NewRow").each(function () {
+            var row = $(this);
+            var itemIndex = row.find(".PII_Index").val();
+            var itemNumber = row.find(".PII_Item_Number").val();
+            var HSNNumber = row.find(".PII_HSN_Number").val();
+
+            if (itemNumber) {
+
+                var qty = parseFloat(removeCommas(row.find("input.PII_Qty").val())) || 0;
+                var unitPrice = parseFloat(removeCommas(row.find("input.PII_UnitPrice").val())) || 0;
+
+                var amo = qty * unitPrice;
+
+                var amount = DecimalIndianRupees(amo);
+                row.find("input.PII_Amount").val(amount);
+
+                const ItemExpenseTotals = $("tr.IExNewRow").map(function () {
+                    const irow = $(this);
+                    if (irow.find("input.PII_EXP_IsDeleted").val() !== 'true' && irow.find("input.PII_EXP_Item_Number").val() === itemNumber && irow.find("input.PII_EXP_Item_Index").val() === itemIndex) {
+                        return {
+                            ExpenseBase: parseFloat(removeCommas(irow.find(".PII_EXP_ExpenseValue").val())) || 0,
+                        };
+                    }
+                    return null;
+                }).get().reduce((Value, Assign) => ({
+                    ExpenseTotal: Value.ExpenseTotal + Assign.ExpenseBase
+                }), {
+                    ExpenseTotal: 0
+                });
+                const ExpenseTotal = DecimalIndianRupees(ItemExpenseTotals.ExpenseTotal);
+
+                 
+                row.find("input.PII_ExpenseValue").val(ExpenseTotal);
+
+                var Cluster = $("#PIH_TaxCluster_Number").val();
+                if (Cluster === null) {
+                    Cluster = $("#PIH_TaxClusterNumber").val();
+                }
+                var GRNDate = $("#PIH_InvoiceDate").val();
+                var WHNumber = $("#PIH_WHT_Number").val();
+
+                var WHTax = 1;
+                var WHPercent = 0;
+
+                if (WHNumber) {
+                    var WHTax = $("#PIH_WHT_Tax").val();
+                    var WHPercent = $("#PIH_WHT_Percent").val();
+                }
+
+                var BaseAmount = parseFloat(removeCommas(amount)) + parseFloat(removeCommas(ExpenseTotal));
+
+                var GstAmount = 0;
+                var TotalAmount = 0;
+                var WHTAmount = 0;
+                (async () => {
+                    GstAmount = await GetClusterAmount(Cluster, GRNDate, HSNNumber, BaseAmount);
+                    row.find("input.PII_GST_Amount").val(DecimalIndianRupees(GstAmount));
+
+                    if (WHTax == "1") {
+                        TotalAmount = parseFloat(BaseAmount) + parseFloat(GstAmount);
+                        WHTAmount = parseFloat(TotalAmount) * parseFloat(WHPercent) / 100;
+                    }
+                    else {
+                        TotalAmount = parseFloat(BaseAmount);
+                        WHTAmount = parseFloat(TotalAmount) * parseFloat(WHPercent) / 100;
+                    }
+
+                    row.find("input.PII_WHT_Percent").val(DecimalIndianRupees(WHPercent));
+                    row.find("input.PII_WHT_Amount").val(DecimalIndianRupees(WHTAmount));
+
+                    await CalculateFooter();
+                })();
+            }
+
+            (async () => {
+                await CalculateIBatch($(this));
+            })();
+        });
+    }
+
+    function OnInput(inputElement) {
+        searchItem(inputElement);
+    }
+    function OnFocus(inputElement) {
+        var tax = inputElement.value;
+        if (!tax) {
+            searchItem(inputElement);
+        }
+        else {
+            $(this).select();
+        }
+    }
+    function searchItem(inputElement) {
+        var itemCode = inputElement.value;
+        var resultsDiv = $(inputElement).next('.search-results');
+        var Metrial = $("#PIH_MS_Number").val();
+
+        if (Metrial) {
+            $.ajax({
+                url: 'item',
+                data: { ItemCode: itemCode, MS: Metrial },
+                type: 'GET',
+                success: function (data) {
+                    resultsDiv.empty();
+                    if (data && data.length > 0) {
+                        resultsDiv.show();
+                        var table = $('<div class="card-body modal-content"><table class="table table-bordered table-hover mb-0"><thead><tr class="table-info"><th>Item Code</th><th>Description</th><th>Item Group</th></tr></thead><tbody></tbody></table></div>');
+                        data.forEach(function (item) {
+                            var row = $('<tr></tr>');
+                            row.append('<td>' + item.itemCode + '</td>');
+                            row.append('<td>' + item.itemDescription + '</td>');
+                            row.append('<td>' + item.itemGroup + '</td>');
+                            table.find('tbody').append(row);
+
+                            row.on('click', function () {
+                                $(inputElement).val(item.itemCode);
+                                $(inputElement).closest('tr').find('input.PII_Item_Number').val(item.itemNumber);
+                                $(inputElement).closest('tr').find('input.PII_ItemCode').val(item.itemCode);
+                                $(inputElement).closest('tr').find('input.PII_Description').val(item.itemDescription);
+                                $(inputElement).closest('tr').find('input.PII_ItemGroup').val(item.itemGroup);
+                                $(inputElement).closest('tr').find('input.PII_DecimalPlaces').val(item.decimalPlaces);
+                                $(inputElement).closest('tr').find('input.PII_MS_Number').val(item.materialSegregation);
+                                $(inputElement).closest('tr').find('select.PII_Warehouse_Number').val(item.purchaseWarehouse);
+                                $(inputElement).closest('tr').find('select.PII_UoM_Number').val(item.uoM);
+                                $(inputElement).closest('tr').find('input.PII_UoM').val(item.uoM);
+                                $(inputElement).closest('tr').find('select.PII_UoM_Number').focus();
+                                $(inputElement).closest('tr').find('select.PII_HSN_Number').val(item.hsN_Code);
+
+                                var decimalPlaces = item.decimalPlaces;
+                                if (decimalPlaces === "") {
+                                    decimalPlaces = 2;
+                                }
+                                var value = $(inputElement).closest('tr').find('input.PII_Qty').val();
+                                $(inputElement).closest('tr').find('input.PII_Qty').val(NumberToIndianRupees(value, decimalPlaces));
+
+                              
+                                CalAmount();
+
+                                resultsDiv.hide();
+                            });
+                        });
+
+                        var closeButton = $('<div class="card-header bg-primary py-1"><button type="button" class="p-0 float-end btn btn-sm btn-primary bg-opacity-10"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d = "M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"> </path></svg></button></div>');
+                        closeButton.on('click', function () {
+                            resultsDiv.hide();
+                        });
+
+                        resultsDiv.append(closeButton);
+                        resultsDiv.append(table);
+                    } else {
+                        resultsDiv.hide();
+                        resultsDiv.append('<p>No results found</p>');
+                    }
+                },
+                error: function () {
+                    resultsDiv.text('Error loading data.');
+                    resultsDiv.show();
+                }
+            });
+        }
+        else {
+        }
+    }
+
+
+ 
+    async function CalculateFooter() {
+        const ItemTotals = $("tr.NewRow").map(function () {
+            const irow = $(this);
+            if (irow.find("input.PII_IsDeleted").val() !== 'true') {
+                return {
+                    QtyField: parseFloat(removeCommas(irow.find(".PII_Qty").val())) || 0,
+                    AmountField: parseFloat(removeCommas(irow.find(".PII_Amount").val())) || 0,
+                    ExpenseField: parseFloat(removeCommas(irow.find(".PII_ExpenseValue").val())) || 0,
+                    GstField: parseFloat(removeCommas(irow.find(".PII_GST_Amount").val())) || 0,
+                    WHTtField: parseFloat(removeCommas(irow.find(".PII_WHT_Amount").val())) || 0
+                };
+            }
+            return null;
+        }).get().reduce((Value, Assign) => ({
+            totalQty: Value.totalQty + Assign.QtyField,
+            totalAmount: Value.totalAmount + Assign.AmountField
+           
+        }), {
+            totalQty: 0,
+            totalAmount: 0
+           
+        });
+ 
+
+        $("#TotalQty").val(FormatNumber(ItemTotals.totalQty.toFixed(2)));
+        $("#TotalAmount").val(ItemTotals.totalAmount.toFixed(2));
+        
+        await CalculateExpense();
+
+        // $("#TotalQty").val(FormatNumber(totalQty.toFixed(2)));
+        // $("#TotalAmount").val(totalAmount.toFixed(2));
+      
+
+        // CalculateExpense();
+
+        var MaterialCost = $("#PIH_MaterialCost");
+   
+        var RoundOff = $("#PIH_RoundOff");
+         
+  
+       
+
+        const MaterialAmo = parseFloat(ItemTotals.totalAmount);
+        const InvoiceAmo = parseFloat(ItemTotals.totalAmount) ;
+        const Total = parseFloat(InvoiceAmo)  ;
+        const RoundedValue = customRound(Total);
+        const Rounded = parseFloat(RoundedValue) - parseFloat(Total);
+
+        const TotalWHT = -ItemTotals.totalWHT;
+
+        MaterialCost.val(MaterialAmo.toFixed(2));
+         
+
+        RoundOff.val(Rounded.toFixed(2));
+      
+    }
+
+    function customRound(number) {
+        const num = parseFloat(number);
+        const decimal = num % 1;
+
+        if (decimal >= 0.5) {
+            return Math.ceil(num);
+        } else {
+            return Math.floor(num);
+        }
+    }
+
+    window.onload = CalculateFooter();
+
+    function FormatNumber(num) {
+        const numberValue = Number(num);
+        if (isNaN(numberValue)) {
+            return 0;
+        }
+        if (Number.isInteger(numberValue)) {
+            return numberValue.toString();
+        } else {
+            return numberValue.toString();
+        }
+    }
+
+     
+ 
+    flatpickr(".datepicker", {
+        dateFormat: "d-M-Y",
+        altInput: false,
+        onChange: function () {
+            GetVendor();
+        }
+    });
+
+  
+  
+    
+async function CalculateIBatch(currentInput) {
+        var currentRow = currentInput.closest('tr.NewRow');
+
+        var ItemNumber = currentRow.find('input.PII_Item_Number').val();
+        var Index = currentRow.find('input.PII_Index').val();
+        var Qty = parseFloat(removeCommas(currentRow.find('input.PII_Qty').val())) || 0;
+        var MatrialValue = parseFloat(removeCommas(currentRow.find('input.PII_Amount').val())) || 0;
+
+        var BTotalQty = parseFloat(removeCommas($("#TotalQty").val())) || 0;
+        var BTotalMatrial = parseFloat(removeCommas($("#TotalAmount").val())) || 0;
+        var BExpense = 0;
+        var BIExpense = 0;
+        var BUnitPrice = 0;
+
+        $("tr.ExNewRow").each(function () {
+            var row = $(this);
+            var isDeleted = $(this).find("input.PIH_EXP_IsDeleted").val() === "true";
+            if (!isDeleted) {
+                var Charge = row.find("select.PIH_EXP_CM_Number").val();
+                var Allocate = row.find("select.PIH_EXP_Allocate_Number").val();
+                var ExpenseValue = parseFloat(removeCommas(row.find("input.PIH_EXP_ExpenseValue").val())) || 0;
+                var ExpenseBase = parseFloat(removeCommas(row.find("input.PIH_EXP_ExpenseBase").val())) || 0;
+
+                if (Allocate == "1") {
+                    if (Charge === "1") {
+                        BExpense += parseFloat(parseFloat(ExpenseValue) / parseFloat(BTotalMatrial)) * parseFloat(MatrialValue);
+                    }
+                    else if (Charge === "2") {
+                        BExpense += Qty * ExpenseBase;
+                    }
+                    else if (Charge === "3") {
+                        BExpense += MatrialValue * ExpenseBase / 100;
+                    }
+                }
+            }
+        });
+
+        if (ItemNumber) {
+            $("tr.IExNewRow").each(function () {
+                var row = $(this);
+                var RowItemNumber = $(this).find("input.PII_EXP_Item_Number").val();
+                var RowItemIndex = $(this).find("input.PII_EXP_Item_Index").val();
+                var isDeleted = $(this).find("input.PII_EXP_IsDeleted").val();
+
+                if (RowItemNumber === ItemNumber && RowItemIndex === Index && isDeleted !== 'true') {
+                    var Allocate = row.find("select.PII_EXP_Allocate_Number").val();
+                    var ExpenseValue = parseFloat(removeCommas(row.find("input.PII_EXP_ExpenseValue").val())) || 0;
+                    var ExpenseBase = parseFloat(removeCommas(row.find("input.PII_EXP_ExpenseBase").val())) || 0;
+
+                    if (Allocate == "1") {
+                        BIExpense += ExpenseValue;
+                    }
+                }
+            });
+        }
+
+        BUnitPrice = (BExpense + BIExpense + MatrialValue) / Qty;
+
+        $("tr.IBatNewRow").each(function () {
+            var irow = $(this);
+            var RowItemNumber = irow.find("input.PII_BCH_Item_Number").val();
+            var RowItemIndex = irow.find("input.PII_BCH_Item_Index").val();
+            var isDeleted = irow.find("input.PII_BCH_IsDeleted").val();
+            if (RowItemNumber === ItemNumber && RowItemIndex === Index && isDeleted !== 'true') {
+                var BtQty = parseFloat(removeCommas(irow.find("input.PII_BCH_Qty").val())) || 0;
+                var BtBatchValue = BtQty * BUnitPrice;
+
+                irow.find("input.PII_BCH_UnitPrice").val(DecimalIndianRupees(BUnitPrice));
+                irow.find("input.PII_BCH_Value").val(DecimalIndianRupees(BtBatchValue));
+            }
+        });
+    }
+</script>
+
+<style>
+    .search-results {
+        width: 400px;
+    }
+</style>
+
+ 

@@ -1,0 +1,417 @@
+﻿@model List<ERP_DTO.SaleInvoiceBatch_DTO>
+
+<ul class="nav nav-tabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="Batch-tab" data-bs-toggle="tab" data-bs-target="#Batch-tab-pane" type="button" role="tab" aria-controls="Batch-tab-pane" aria-selected="true">
+            Batch WH
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="Other-tab" data-bs-toggle="tab" data-bs-target="#Other-tab-pane" type="button" role="tab" aria-controls="Other-tab-pane" aria-selected="false">
+            Other WH
+        </button>
+    </li>
+</ul>
+<div class="tab-content">
+    <div class="tab-pane fade show active p-2 border border-top-0" id="Batch-tab-pane" role="tabpanel" aria-labelledby="Batch-tab" tabindex="0">
+        <div id="BatchForm" class="w-100 table-responsive">
+            <table class="table table-bordered table-hover align-middle w-100 mb-0">
+                <thead>
+                    <tr class="table-info">
+                        <th>Warehouse</th>
+                        <th class="datetype text-center">Batch Date</th>
+                        <th>Batch Number</th>
+                        <th class="table-width-xl text-end">Batch Qty</th>
+                        <th class="table-width-xl text-end">Hold Qty</th>
+                        <th class="table-width-xl text-end">Invocie Qty</th>
+                        <th class="table-width-xl text-end">Unit Price</th>
+                        <th class="table-width-3xl text-end">Batch Value</th>
+                    </tr>
+                </thead>
+                <tbody id="IBatTableBody">
+                    <tr id="IBatTempRow" style="display: none;">
+                        <td>
+                            <input id="SII_BCH_WH_Name" class="form-control SII_BCH_WH_Name" readonly />
+                        </td>
+                        <td class="datetype">
+                            <input id="SII_BCH_WH_Number" class="SII_BCH_WH_Number" readonly type="hidden" />
+                            <input id="SII_BCH_Number" class="SII_BCH_Number" readonly type="hidden" />
+                            <input id="SII_BCH_BCH_Number" class="SII_BCH_BCH_Number" readonly type="hidden" />
+                            <input id="SII_BCH_ITM_Number" class="SII_BCH_ITM_Number" readonly type="hidden" />
+                            <input id="SII_BCH_ITM_Index" class="SII_BCH_ITM_Index" readonly  type="hidden" />
+                            <input id="SII_BCH_Date" class="form-control Key datepicker SII_BCH_Date text-center" readonly autocomplete="off" />
+                        </td>
+                        <td>
+                            <input id="SII_BCH_No" class="form-control SII_BCH_No" readonly autocomplete="off" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="SII_BCH_ITM_Qty" class="form-control SII_BCH_ITM_Qty text-end" readonly autocomplete="off" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="SII_BCH_HOLD_Qty" class="form-control SII_BCH_HOLD_Qty text-end" readonly autocomplete="off" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="SII_BCH_Qty" class="form-control SII_BCH_Qty BatchQtyNumbers text-end" autocomplete="off" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="SII_BCH_UnitPrice" class="form-control SII_BCH_UnitPrice decimal text-end" readonly autocomplete="off" />
+                        </td>
+                        <td class="table-width-3xl">
+                            <input id="SII_BCH_Value" class="form-control SII_BCH_Value decimal text-end" readonly autocomplete="off" />
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr class="table-info">
+                        <td></td>
+                        <td></td>
+                        <td class="text-end">Total Qty</td>
+                        <td class="table-width-xl"><input id="BatchItemQty" class="form-control text-end" readonly /></td>
+                        <td class="table-width-xl"><input id="BatchHoldQty" class="form-control text-end" readonly /></td>
+                        <td class="table-width-xl">
+                            <input id="BatchTotalQty" class="form-control text-end" readonly />
+                        </td>
+                        <td></td>
+                        <td class="table-width-3xl">
+                            <input id="BatchTotalValue" class="form-control text-end" readonly />
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    <div class="tab-pane fade p-2 border border-top-0" id="Other-tab-pane" role="tabpanel" aria-labelledby="Other-tab" tabindex="0">
+        <div class="w-100 table-responsive" id="BatchWarehouseTableView">
+        </div>
+    </div>
+</div>
+
+<script>
+    var browCount = @(Model != null ? Model.Count : 0);
+    function IBatNewRow(BI) {
+        var IBatNewRow = $("#IBatTempRow").clone().removeAttr("style").removeAttr("id").addClass("IBatNewRow");
+        IBatNewRow.find("input.SII_BCH_WH_Name").attr("name", "ItemBatch[" + browCount + "].SII_BCH_WH_Name").val(BI.siI_BCH_WH_Name);
+        IBatNewRow.find("input.SII_BCH_WH_Number").attr("name", "ItemBatch[" + browCount + "].SII_BCH_WH_Number").val($("#SII_TEMP_WH_Number").val());
+        IBatNewRow.find("input.SII_BCH_BCH_Number").attr("name", "ItemBatch[" + browCount + "].SII_BCH_BCH_Number").val(BI.siI_BCH_BCH_Number);
+        IBatNewRow.find("input.SII_BCH_Number").attr("name", "ItemBatch[" + browCount + "].SII_BCH_Number").val(BI.siI_BCH_Number);
+        IBatNewRow.find("input.SII_BCH_ITM_Number").attr("name", "ItemBatch[" + browCount + "].SII_BCH_ITM_Number").val($("#SII_TEMP_ITM_Number").val());
+        IBatNewRow.find("input.SII_BCH_ITM_Index").attr("name", "ItemBatch[" + browCount + "].SII_BCH_ITM_Index").val($("#SII_TEMP_Index").val());
+        IBatNewRow.find("input.SII_BCH_Date").attr("name", "ItemBatch[" + browCount + "].SII_BCH_Date").val(BI.siI_BCH_Date);
+        IBatNewRow.find("input.SII_BCH_No").attr("name", "ItemBatch[" + browCount + "].SII_BCH_No").val(BI.siI_BCH_No);
+        IBatNewRow.find("input.SII_BCH_ITM_Qty").attr("name", "ItemBatch[" + browCount + "].SII_BCH_ITM_Qty").val(BI.siI_BCH_ITM_Qty);
+        IBatNewRow.find("input.SII_BCH_HOLD_Qty").attr("name", "ItemBatch[" + browCount + "].SII_BCH_HOLD_Qty").val(BI.siI_BCH_HOLD_Qty);
+        IBatNewRow.find("input.SII_BCH_Qty").attr("name", "ItemBatch[" + browCount + "].SII_BCH_Qty").val(BI.siI_BCH_Qty);
+        IBatNewRow.find("input.SII_BCH_UnitPrice").attr("name", "ItemBatch[" + browCount + "].SII_BCH_UnitPrice").val(BI.siI_BCH_UnitPrice);
+        IBatNewRow.find("input.SII_BCH_Value").attr("name", "ItemBatch[" + browCount + "].SII_BCH_Value").val(BI.siI_BCH_Value);
+
+        $("#IBatTableBody").append(IBatNewRow);
+        browCount++;
+    }
+
+    $(document).on('click', '.ItemBatch', function () {
+        let CheckedCount = document.querySelectorAll('.CheckItem:checked').length;
+        let CheckedCheckbox = document.querySelector('.CheckItem:checked');
+        if(CheckedCount==0){
+            alert("Select any one row from the list");
+        } else if(CheckedCount>1){
+            alert("Select only one row from the list");
+        }
+        else if(CheckedCount==1){
+            var currentRow = $(CheckedCheckbox).closest('tr.NewRow');
+
+            var ItemNumber = currentRow.find('input.SII_ITM_Number').val();
+            var Warehouse = currentRow.find('select.SII_WH_Number').val();
+            var Index = currentRow.find('input.SII_Index').val();
+            var Decimal = currentRow.find('input.SII_UoM_DecimalPlaces').val();
+            var Qty = currentRow.find('input.SII_Qty').val();
+            var MatrialValue = currentRow.find('input.SII_Amount').val();
+            var resultsDiv = $("#BatchWarehouseTableView");
+
+            if (ItemNumber) {
+                $("#SII_TEMP_Qty").val(removeCommas(Qty));
+                $("#SII_HIDE_BCH_Qty").text(removeCommas(Qty));
+                $("#SII_TEMP_ITM_Number").val(ItemNumber);
+                $("#SII_TEMP_Index").val(Index);
+                $("#SII_TEMP_WH_Number").val(Warehouse);
+                $("#SII_TEMP_Decimal").val(Decimal);
+
+                $.ajax({
+                    type: "get",
+                    url: "batch/get",
+                    data: { Index: Index, ItemNumber: ItemNumber, Warehouse: Warehouse },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        var BatchItem = data.siBatch;
+                        var BatchView = data.siView;
+
+                        $('.IBatNewRow').remove();
+                        if(BatchItem && BatchItem.length > 0) {
+                            BatchItem.forEach(function (BI) {
+                                IBatNewRow(BI);
+                            });
+                        }
+
+                        resultsDiv.empty();
+                        if (BatchView && BatchView.length > 0) {
+                            var tableHTML = `<table class="table table-bordered mb-0 table-hover">
+                                                <thead>
+                                                    <tr class="table-info">
+                                                        <th>Warehouse</th>
+                                                        <th class="datetype text-center">Batch Date</th>
+                                                        <th>Batch No</th>
+                                                        <th class="table-width-xl text-end">Qty</th>
+                                                        <th class="table-width-xl text-end">Unit Price</th>
+                                                        <th class="table-width-3xl text-end">Value</th>
+                                                   </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                             </table>`;
+                            var table = $(tableHTML);
+
+                            BatchView.forEach(function (BI) {
+                                var row = $('<tr></tr>');
+                                row.append('<td>' + BI.siI_BCH_WH_Name + '</td>');
+                                row.append('<td class="datetype text-center">' + BI.siI_BCH_Date + '</td>');
+                                row.append('<td>' + BI.siI_BCH_No + '</td>');
+                                row.append('<td class="table-width-xl text-end">' + BI.siI_BCH_Qty + '</td>');
+                                row.append('<td class="table-width-xl text-end">' + BI.siI_BCH_UnitPrice + '</td>');
+                                row.append('<td class="table-width-3xl text-end">' + BI.siI_BCH_Value + '</td>');
+                                table.find('tbody').append(row);
+                            });
+                            resultsDiv.append(table);
+                        }
+                    }
+                });
+
+                new bootstrap.Modal($("#IBatch")).show();
+                $('#IBatch').on('shown.bs.modal', function () {
+                    $(this).find('[autofocus]').focus();
+
+                    (async () => {
+                        BatchCalculateFooter();
+                    })();
+                });
+            }
+        }
+    });
+
+    $(document).on('keydown', "tr.IBatNewRow select, tr.IBatNewRow input.SII_BCH_Qty, tr.IBatNewRow input[type='text']", function (event) {
+        if (event.keyCode === 9) {
+            if (!IBatValidateField($(this)))
+                event.preventDefault();
+        }
+    });
+
+    $(document).on('input', "tr.IBatNewRow input.SII_BCH_Qty", function (event) {
+        var row = $(this).closest("tr.IBatNewRow");
+
+        var QtyInput = row.find("input.SII_BCH_Qty");
+        var AvailQty = (parseFloat(removeCommas(row.find("input.SII_BCH_ITM_Qty").val())) || 0) - (parseFloat(removeCommas(row.find("input.SII_BCH_HOLD_QtySII_BCH_HOLD_Qty").val())) || 0);
+
+        var Qty = parseFloat(removeCommas(row.find("input.SII_BCH_Qty").val())) || 0;
+        var decimalPlaces = parseFloat($("#SII_TEMP_Decimal").val());
+
+        if (Qty > AvailQty) {
+            alert("Quantity (" + Qty + ") cannot be greater than Batch Quantity (" + AvailQty + ").\nIt will be reset to the maximum allowed: " + AvailQty);
+
+            QtyInput.val(QtyDecimalRupees(AvailQty, decimalPlaces));
+            Qty = AvailQty;
+        }
+        var UnitPrice = parseFloat(removeCommas(row.find("input.SII_BCH_UnitPrice").val())) || 0;
+        var BatchValue = Qty * UnitPrice;
+
+        row.find("input.SII_BCH_Value").val(DecimalIndianRupees(BatchValue));
+
+        (async () => {
+            BatchCalculateFooter();
+        })();
+    });
+
+    $(document).on("blur", ".BatchQtyNumbers", function () {
+         var value = $(this).val();
+         var decimalPlaces = parseFloat($("#SII_TEMP_Decimal").val());
+         if (isNaN(decimalPlaces)) decimalPlaces = 0;
+         if (value.trim() === "" || isNaN(value)) {
+             $(this).val("0");
+         } else {
+             $(this).val(QtyDecimalRupees(value, decimalPlaces));
+         }
+     });
+
+     $(document).on("input", ".BatchQtyNumbers", function () {
+         var $this = $(this);
+         var decimalPlaces = parseInt($("#SII_TEMP_Decimal").val(), 10);
+         if (isNaN(decimalPlaces)) decimalPlaces = 0;
+
+         let clean = $this.val()
+             .replace(/-/g, "")
+             .replace(/[^0-9.]/g, "");
+
+         const firstDot = clean.indexOf(".");
+         if (firstDot !== -1) {
+             clean =
+                 clean.substring(0, firstDot + 1) +
+                 clean.substring(firstDot + 1).replace(/\./g, "");
+         }
+
+         if (decimalPlaces === 0) {
+             clean = clean.replace(/\./g, "");
+         }
+         else if (decimalPlaces > 0 && firstDot !== -1) {
+             const parts = clean.split(".");
+             if (parts[1].length > decimalPlaces) {
+                 parts[1] = parts[1].slice(0, decimalPlaces);
+                 clean = parts.join(".");
+             }
+         }
+
+         $this.val(clean);
+     });
+
+     $(document).on("focus", ".BatchQtyNumbers", function () {
+         var value = $(this).val();
+         $(this).val(removeCommas(value));
+         $(this).select();
+     });
+
+    function IBatCheckAllFieldsValid(currentRow) {
+        var allFieldsValid = true;
+        $("tr.IBatNewRow:visible").each(function () {
+            $(this).find("select, input.SII_BCH_Qty,input.SII_BCH_No, input[type='text']").each(function () {
+                if (!IBatValidateField($(this))) {
+                    allFieldsValid = false;
+                    return false;
+                }
+            });
+            if (!allFieldsValid) return false;
+        });
+        return allFieldsValid;
+    }
+
+    function IBatValidateField(currentInput) {
+        var valid = 1;
+        var inputValue = currentInput.val();
+        if (inputValue === "") {
+            valid = 0;
+        }
+        if (currentInput.hasClass(".SII_BCH_Qty")) {
+            valid = ExValidateAmount(currentInput);
+        }
+        if (valid == 0) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    function ExValidateAmount(currentInput) {
+        var valid = 1;
+
+        var currentRow = currentInput.closest("tr.IBatNewRow");
+        var PercentInput = currentRow.find("input.SII_BCH_Qty");
+        var Percent = removeCommas(PercentInput.val());
+        if (Percent > 0) {
+        }
+        else {
+            valid = 0;
+        }
+        return valid;
+    }
+
+    $(document).on('click', '#IBatCloseButton', function () {
+        BatCloseButton();
+    });
+    $(document).on('click', '#IBatOkayButton', function () {
+        BatCloseButton();
+    });
+    function BatCloseButton() {
+        var ItemQty = parseFloat(removeCommas($("#SII_TEMP_Qty").val()));
+        console.log("ItemQty",ItemQty);
+        var ItemBatchList = [];
+
+        $("tr.IBatNewRow").each(function () {
+            var $row = $(this);
+
+            var BatchItem = {
+                SII_BCH_Number: $row.find("input.SII_BCH_Number").val(),
+                SII_BCH_BCH_Number: $row.find("input.SII_BCH_BCH_Number").val(),
+                SII_BCH_ITM_Number: $row.find("input.SII_BCH_ITM_Number").val(),
+                SII_BCH_WH_Number: $row.find("input.SII_BCH_WH_Number").val(),
+                SII_BCH_ITM_Index: $row.find("input.SII_BCH_ITM_Index").val(),
+                SII_BCH_Date: $row.find("input.SII_BCH_Date").val(),
+                SII_BCH_No: $row.find("input.SII_BCH_No").val(),
+                SII_BCH_ITM_Qty: parseFloat($row.find("input.SII_BCH_ITM_Qty").val()) || 0,
+                SII_BCH_HOLD_Qty: parseFloat($row.find("input.SII_BCH_HOLD_Qty").val()) || 0,
+                SII_BCH_Qty: parseFloat(removeCommas($row.find("input.SII_BCH_Qty").val())) || 0,
+                SII_BCH_UnitPrice: parseFloat(removeCommas($row.find("input.SII_BCH_UnitPrice").val())) || 0,
+                SII_BCH_Value: parseFloat(removeCommas($row.find("input.SII_BCH_Value").val())) || 0,
+            };
+
+            ItemBatchList.push(BatchItem);
+        });
+
+        var DataToSend = {
+            ItemBatch: ItemBatchList
+        };
+
+        $.ajax({
+            url: 'batch/post',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(DataToSend),
+            success: function (response) {
+            },
+            error: function (xhr, status, error) {
+            }
+        });
+
+        let BatchQty = $("tr.IBatNewRow").map(function () {
+            return parseFloat(removeCommas($(this).find("input.SII_BCH_Qty").val())) || 0;
+        }).get().reduce((sum, current) => sum + current, 0);
+
+        if (parseFloat(ItemQty) === parseFloat(BatchQty)) {
+        }
+        else {
+            alert("Qty Mismatch !");
+        }
+
+        $("#IBatch").modal('hide');
+    }
+
+    async function BatchCalculateFooter() {
+        var BtotalItemQty = 0;
+        var BtotalHoldQty = 0;
+        var BtotalQty = 0;
+        var BtotalValue = 0;
+        var DecimalPlace = parseFloat($("#SII_TEMP_Decimal").val());
+
+        $("tr.IBatNewRow:visible").each(function () {
+            var row = $(this);
+                var ItemQty = parseFloat(removeCommas(row.find("input.SII_BCH_ITM_Qty").val()));
+                var HoldQty = parseFloat(removeCommas(row.find("input.SII_BCH_HOLD_Qty").val()));
+                var Qty = parseFloat(removeCommas(row.find("input.SII_BCH_Qty").val()));
+                var Value = parseFloat(removeCommas(row.find("input.SII_BCH_Value").val()));
+
+                BtotalItemQty += parseFloat(ItemQty);
+                BtotalHoldQty += parseFloat(HoldQty);
+                BtotalQty += parseFloat(Qty);
+                BtotalValue += parseFloat(Value);
+        });
+
+        $("#BatchItemQty").val(QtyDecimalRupees(BtotalItemQty.toFixed(10),DecimalPlace));
+        $("#BatchHoldQty").val(QtyDecimalRupees(BtotalHoldQty.toFixed(10),DecimalPlace));
+        $("#BatchTotalQty").val(QtyDecimalRupees(BtotalQty.toFixed(10),DecimalPlace));
+        $("#BatchTotalValue").val(BtotalValue.toFixed(2));
+    }
+</script>
+<style>
+    .search-results {
+        position: absolute;
+        z-index: 1000;
+        overflow-y: auto;
+        width: 400px;
+        max-height: 300px;
+    }
+</style>

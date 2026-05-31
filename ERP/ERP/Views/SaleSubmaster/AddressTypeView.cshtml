@@ -1,0 +1,27 @@
+﻿@model ERP_DTO.AddressType_DTO
+
+
+@if (Model != null)
+{
+    <input asp-for="ADTP_Number" type="hidden" class="Number" />
+}
+<div class="mb-3">
+    <label asp-for="ADTP_Name" class="control-label"></label>
+    <input asp-for="ADTP_Name" class="form-control Key KeyDup" autofocus="true" autocomplete="off" />
+</div>
+<div class="mb-3">
+    <label asp-for="ADTP_Notes" class="control-label"></label>
+    <textarea asp-for="ADTP_Notes" class="form-control Key" autocomplete="off"></textarea>
+</div>
+<div>
+    @if (Model != null)
+    {
+        <input type="submit" name="Mode" value="Update" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+    else
+    {
+        <input type="submit" name="Mode" value="Save" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+</div>

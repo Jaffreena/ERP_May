@@ -1,0 +1,449 @@
+﻿@model List<ERP_DTO.PurchaseOrderExpense_DTO>
+
+<div class="w-100 table-responsive">
+    <table class="table table-bordered table-hover align-middle table-grid mb-0">
+        <thead>
+            <tr class="table-info">
+                <th>@Html.DisplayNameFor(M => M.First().POH_EXP_Expense_Number)</th>
+                <th>@Html.DisplayNameFor(M => M.First().POH_EXP_Description)</th>
+                <th>@Html.DisplayNameFor(M => M.First().POH_EXP_Remarks)</th>
+                <th>@Html.DisplayNameFor(M => M.First().POH_EXP_Occurrence_Number)</th>
+                <th>@Html.DisplayNameFor(M => M.First().POH_EXP_CM_Number)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().POH_EXP_ExpenseBase)</th>
+                <th class="table-width-3xl text-end">@Html.DisplayNameFor(M => M.First().POH_EXP_ExpenseValue)</th>
+                <th>@Html.DisplayNameFor(M => M.First().POH_EXP_Allocate_Number)</th>
+                <th>@Html.DisplayNameFor(M => M.First().POH_EXP_LA_Number)</th>
+                <th class="action text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody id="ExTableBody">
+            <tr id="ExTempRow" style="display: none;">
+                <td>
+                    <select id="POH_EXP_Expense_Number" class="form-select POH_EXP_Expense_Number" asp-items="@ViewBag.ExpenseCode"></select>
+                </td>
+                <td>
+                    <input id="POH_EXP_Description" class="form-control POH_EXP_Description" readonly autocomplete="off" />
+                </td>
+                <td>
+                    <input id="POH_EXP_Remarks" class="form-control POH_EXP_Remarks" autocomplete="off" />
+                </td>
+                <td>
+                    <select id="POH_EXP_Occurrence_Number" class="form-select POH_EXP_Occurrence_Number" asp-items="@ViewBag.Occurrence"></select>
+                </td>
+                <td>
+                    <select id="POH_EXP_CM_Number" class="form-select POH_EXP_CM_Number" asp-items="@ViewBag.ChargeableMethod"></select>
+                </td>
+                <td class="table-width-xl">
+                    <input id="POH_EXP_ExpenseBase" class="form-control POH_EXP_ExpenseBase decimal text-end" autocomplete="off" />
+                </td>
+                <td class="table-width-3xl">
+                    <input id="POH_EXP_ExpenseValue" class="form-control POH_EXP_ExpenseValue decimal text-end" readonly autocomplete="off" />
+                </td>
+                <td>
+                    <select id="POH_EXP_Allocate_Number" class="form-select POH_EXP_Allocate_Number" asp-items="@ViewBag.Allocate"></select>
+                </td>
+                <td>
+                    <select id="POH_EXP_LA_Number" class="form-select POH_EXP_LA_Number" asp-items="@ViewBag.LedgerAccount"></select>
+                </td>
+                <td class="action text-center">
+                    <input type="hidden" id="IsDeleted" class="IsDeleted" value="false" />
+                    <a class="ExRowRemove text-danger p-0 icon-link shadow-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                        </svg>
+                    </a>
+                </td>
+            </tr>
+
+            @if (Model != null)
+            {
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr class="ExNewRow" style="@(@Model[i].IsDeleted == "true" ? "display: none;" : "")">
+                        <td>
+                            <select id="POH_EXP_Expense_Number" name="Expenses[@i].POH_EXP_Expense_Number" class="form-select POH_EXP_Expense_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.ExpenseCode)
+                                {
+                                    if (item.Value == Model[i].POH_EXP_Expense_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <input id="POH_EXP_Description" name="Expenses[@i].POH_EXP_Description" class="form-control POH_EXP_Description" readonly autocomplete="off" value="@Model[i].POH_EXP_Description" />
+                        </td>
+                        <td>
+                            <input id="POH_EXP_Remarks" name="Expenses[@i].POH_EXP_Remarks" class="form-control POH_EXP_Remarks" autocomplete="off" value="@Model[i].POH_EXP_Remarks" />
+                        </td>
+                        <td>
+                            <select id="POH_EXP_Occurrence_Number" name="Expenses[@i].POH_EXP_Occurrence_Number" class="form-select POH_EXP_Occurrence_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Occurrence)
+                                {
+                                    if (item.Value == Model[i].POH_EXP_Occurrence_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <select id="POH_EXP_CM_Number" name="Expenses[@i].POH_EXP_CM_Number" class="form-select POH_EXP_CM_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.ChargeableMethod)
+                                {
+                                    if (item.Value == Model[i].POH_EXP_CM_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="POH_EXP_ExpenseBase" name="Expenses[@i].POH_EXP_ExpenseBase" class="form-control POH_EXP_ExpenseBase decimal text-end" autocomplete="off" value="@Model[i].POH_EXP_ExpenseBase" />
+                        </td>
+                        <td class="table-width-3xl">
+                            <input id="POH_EXP_ExpenseValue" name="Expenses[@i].POH_EXP_ExpenseValue" class="form-control POH_EXP_ExpenseValue decimal text-end" readonly autocomplete="off" value="@Model[i].POH_EXP_ExpenseValue" />
+                        </td>
+                        <td>
+                            <select id="POH_EXP_Allocate_Number" name="Expenses[@i].POH_EXP_Allocate_Number" class="form-select POH_EXP_Allocate_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Allocate)
+                                {
+                                    if (item.Value == Model[i].POH_EXP_Allocate_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <select id="POH_EXP_LA_Number" name="Expenses[@i].POH_EXP_LA_Number" class="form-select POH_EXP_LA_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.LedgerAccount)
+                                {
+                                    if (item.Value == Model[i].POH_EXP_LA_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td class="action text-center">
+                            @if (@Model[i].POH_EXP_Number != 0)
+                            {
+                                <input name="Expenses[@i].POH_EXP_Number" type="hidden" class="POH_EXP_Number" value="@Model[i].POH_EXP_Number" />
+                            }
+                            <input type="hidden" name="Expenses[@i].IsDeleted" id="IsDeleted" class="IsDeleted" value="@Model[i].IsDeleted" />
+                            <a class="ExRowRemovebtn text-danger p-0 icon-link shadow-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                    <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+        <tfoot>
+            <tr class="table-info">
+                <td colspan="6" class="text-end py-2">Total</td>
+                <td class="table-width-3xl text-end">
+                    <input id="TotalExpenseAmount" class="form-control text-end" readonly />
+                </td>
+                <td colspan="3">
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+@* <a id="ExAddRowButton" class="btn btn-primary ExAddRowButton">Add Row</a>  *@
+<script>
+    $(document).ready(function () {
+        var rowCount = @(Model != null ? Model.Count : 0);
+        var isAddingRow = false;
+
+        function ExAddRow() {
+            var ExNewRow = $("#ExTempRow").clone().removeAttr("style").removeAttr("id").addClass("ExNewRow");
+            ExNewRow.find("select.POH_EXP_Expense_Number").attr("name", "Expenses[" + rowCount + "].POH_EXP_Expense_Number");
+            ExNewRow.find("input.POH_EXP_Description").attr("name", "Expenses[" + rowCount + "].POH_EXP_Description");
+            ExNewRow.find("input.POH_POH_EXP_Remarks").attr("name", "Expenses[" + rowCount + "].POH_POH_EXP_Remarks");
+            ExNewRow.find("select.POH_EXP_Occurrence_Number").attr("name", "Expenses[" + rowCount + "].POH_EXP_Occurrence_Number");
+            ExNewRow.find("select.POH_EXP_CM_Number").attr("name", "Expenses[" + rowCount + "].POH_EXP_CM_Number");
+            ExNewRow.find("input.POH_EXP_ExpenseBase").attr("name", "Expenses[" + rowCount + "].POH_EXP_ExpenseBase");
+            ExNewRow.find("input.POH_EXP_ExpenseValue").attr("name", "Expenses[" + rowCount + "].POH_EXP_ExpenseValue");
+            ExNewRow.find("select.POH_EXP_Allocate_Number").attr("name", "Expenses[" + rowCount + "].POH_EXP_Allocate_Number");
+            ExNewRow.find("select.POH_EXP_LA_Number").attr("name", "Expenses[" + rowCount + "].POH_EXP_LA_Number");
+            ExNewRow.find("input.IsDeleted").attr("name", "Expenses[" + rowCount + "].IsDeleted").val("false");
+
+            $("#ExTableBody").append(ExNewRow);
+            rowCount++;
+            ExNewRow.data("isValid", false);
+            isAddingRow = false;
+        }
+
+        document.getElementById('MiscExpenseModal').addEventListener('click', AddNewRowClick);
+        function AddNewRowClick() {
+            var count = $("tr.ExNewRow").filter(function () {
+                return $(this).find("input.IsDeleted").val() !== "true";
+            }).length;
+
+            if (count == 0) {
+                ExAddRow();
+            }
+        }
+
+        if ($("tr.ExNewRow").length == 0) {
+            ExAddRow();
+        }
+
+        var count = $("tr.ExNewRow").filter(function () {
+            return $(this).find("input.IsDeleted").val() !== "true";
+        }).length;
+
+        if (count == 0) {
+            ExAddRow();
+        }
+
+        $(document).on('click', '.ExRowRemove', function () {
+            $(this).closest('tr').find("input.IsDeleted").val("true");
+            $(this).closest('tr').hide();
+        });
+
+        $(document).on('keydown', "tr.ExNewRow select, tr.ExNewRow input.POH_EXP_ExpenseBase, tr.ExNewRow input[type='text']", function (event) {
+            if (event.keyCode === 9) {
+                if (!ExValidateField($(this)))
+                    event.preventDefault();
+            }
+        });
+
+        $(document).on("change", "tr.ExNewRow select, tr.ExNewRow input.POH_EXP_ExpenseBase, input[type='text']", function () {
+            if (isAddingRow)
+                return;
+            isAddingRow = true;
+
+            var currentInput = $(this);
+            var isValid = ExValidateField(currentInput);
+            var currentRow = $(this).closest("tr.ExNewRow");
+            if (isValid) {
+                if (ExCheckAllFieldsValid(currentRow)) {
+                    currentRow.data("isValid", true);
+                }
+                else {
+                    currentRow.data("isValid", false);
+                }
+            }
+            else {
+                currentRow.data("isValid", false);
+            }
+            if (currentRow.data("isValid")) {
+                var lastRow = $("tr.ExNewRow").last();
+                if (ExCheckAllFieldsValid(lastRow))
+                    ExAddRow();
+            }
+            else {
+                isAddingRow = false;
+            }
+        });
+
+        function ExCheckAllFieldsValid(currentRow) {
+            var allFieldsValid = true;
+            $("tr.ExNewRow:visible").each(function () {
+                $(this).find("select, input.POH_EXP_ExpenseBase, input[type='text']").each(function () {
+                    if (!ExValidateField($(this))) {
+                        allFieldsValid = false;
+                        return false;
+                    }
+                });
+                if (!allFieldsValid) return false;
+            });
+            return allFieldsValid;
+        }
+
+        function ExValidateField(currentInput) {
+            var valid = 1;
+            var inputValue = currentInput.val();
+            if (inputValue === "") {
+                valid = 0;
+            }
+            if (currentInput.hasClass(".POH_EXP_ExpenseBase")) {
+                valid = ExValidateAmount(currentInput);
+            }
+            if (valid == 0) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+        function ExValidateAmount(currentInput) {
+            var valid = 1;
+
+            var currentRow = currentInput.closest("tr.ExNewRow");
+            var PercentInput = currentRow.find("input.POH_EXP_ExpenseBase");
+            var Percent = removeCommas(PercentInput.val());
+            if (Percent > 0) {
+            }
+            else {
+                valid = 0;
+            }
+            return valid;
+        }
+
+        $(document).on('change', "tr.ExNewRow select.POH_EXP_Expense_Number", function () {
+            var selectedValue = $(this).val();
+            var Description = $(this).closest("tr.ExNewRow").find(".POH_EXP_Description");
+            var Ledger = $(this).closest("tr.ExNewRow").find(".POH_EXP_LA_Number");
+            var Allocate = $(this).closest("tr.ExNewRow").find(".POH_EXP_Allocate_Number");
+
+            $.ajax({
+                type: "get",
+                url: "expense/des",
+                data: { Title: selectedValue },
+                datatype: "json",
+                traditional: true,
+                success: function (Expense) {
+                    Description.val(Expense.poH_EXP_Description);
+                    Ledger.val(Expense.poH_EXP_LA_Number);
+                    if (Allocate.val() === "") {
+                        Allocate.val(1);
+                    }
+                }
+            });
+        });
+
+        $("#ExOkayButton").click(function () {
+            CloseValid();
+        });
+
+        $("#ExCloseButton").click(function () {
+            CloseValid();
+        });
+
+        function CloseValid(){
+            $("tr.ExNewRow").each(function () {
+                    var ExpenseCode = $(this).find("select.POH_EXP_Expense_Number").val();
+                    var Occurrence = $(this).find("select.POH_EXP_Occurrence_Number").val();
+                    var ChargeableMethod = $(this).find("select.POH_EXP_CM_Number").val();
+                    var ExpenseBase = removeCommas($(this).find("input.POH_EXP_ExpenseBase").val());
+                    var Allocate = $(this).find("select.POH_EXP_Allocate_Number").val();
+                    var LedgerAccount = $(this).find("select.POH_EXP_LA_Number").val();
+
+                    if (!ExpenseCode && !Occurrence && !ChargeableMethod && !Allocate && !LedgerAccount && !(ExpenseBase > 0)) {
+                        $(this).closest('tr').find("input.IsDeleted").val("true");
+                        $(this).closest('tr').hide();
+                    }
+                });
+
+                var lastRow = $("tr.ExNewRow").last();
+                if (ExCheckAllFieldsValid(lastRow)) {
+                    $("#Expense").modal('hide');
+
+                    CalculateFooter();
+                }
+                else {
+                    alert("Please complete all fields !");
+                }
+        }
+
+
+
+        $(document).on('input', "input.POH_EXP_ExpenseBase", function (event) {
+            ExAssignValue($(this));
+            ExpenseCalculateFooter();
+        });
+
+        $(document).on('change', "tr.ExNewRow select.POH_EXP_CM_Number", function () {
+            ExAssignValue($(this));
+            ExpenseCalculateFooter();
+        });
+
+
+
+    $(document).on('click', '.ExAddRowButton', function () {
+            var lastRow = $("tr.ExNewRow").last();
+            if (ExCheckAllFieldsValid(lastRow)) {
+                ExAddRow();
+            }
+            else {
+                var firstInvalidField = null;
+                lastRow.find("select, input.POH_EXP_ExpenseBase, input[type='text']").each(function () {
+                    if (!ExValidateField($(this))) {
+                        if (firstInvalidField == null)
+                            firstInvalidField = $(this);
+                        return false;
+                    }
+                });
+                if (firstInvalidField != null) {
+                    alert("Please complete all fields !");
+                    firstInvalidField.focus();
+                }
+            }
+        });
+
+        window.onload = ExpenseCalculateFooter();
+
+    });
+
+    async function ExpenseCalculateFooter() {
+        var TotalExpAmount = 0;
+
+        $("tr.ExNewRow").each(function () {
+                var ExpenseAmount = $(this).find(".POH_EXP_ExpenseValue").val();
+                TotalExpAmount += parseFloat(removeCommas(ExpenseAmount));
+        });
+        $("#TotalExpenseAmount").val(DecimalIndianRupees(TotalExpAmount.toFixed(2)));
+
+    }
+
+    function ExAssignValue(currentInput) {
+        var row = currentInput.closest("tr.ExNewRow");
+
+        var Charge = row.find("select.POH_EXP_CM_Number").val();
+
+        if (Charge === "1") {
+            var ExpenseBase = parseFloat(removeCommas(row.find("input.POH_EXP_ExpenseBase").val())) || 0;
+            row.find("input.POH_EXP_ExpenseValue").val(DecimalIndianRupees(ExpenseBase));
+        }
+        else if (Charge === "2") {
+            var ItemQty = parseFloat(removeCommas($("#TotalQty").val())) || 0;
+            var ExpenseBase = parseFloat(removeCommas(row.find("input.POH_EXP_ExpenseBase").val())) || 0;
+            var ExpenseValue = ItemQty * ExpenseBase;
+            row.find("input.POH_EXP_ExpenseValue").val(DecimalIndianRupees(ExpenseValue));
+        }
+        else if (Charge === "3") {
+            var ItemAmount = parseFloat(removeCommas($("#TotalAmount").val())) || 0;
+            var ExpenseBase = parseFloat(removeCommas(row.find("input.POH_EXP_ExpenseBase").val())) || 0;
+            var ExpenseValue = ItemAmount * ExpenseBase / 100;
+            row.find("input.POH_EXP_ExpenseValue").val(DecimalIndianRupees(ExpenseValue));
+        }
+    }
+</script>
+<style>
+    .search-results {
+        position: absolute;
+        z-index: 1000;
+        overflow-y: auto;
+        width: 400px;
+        max-height: 300px;
+    }
+</style>

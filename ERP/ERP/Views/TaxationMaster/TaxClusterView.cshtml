@@ -1,0 +1,23 @@
+﻿@model ERP_DTO.TaxClusterHead_DTO
+
+
+@if (Model != null)
+{
+    <input asp-for="TaxClusterNumber" type="hidden" class="Number" />
+}
+<div class="mb-3">
+    <label asp-for="TaxCluster" class="control-label"></label>
+    <input asp-for="TaxCluster" class="form-control Key KeyDup" autofocus="true" autocomplete="off" />
+</div>
+<div class="mb-3">
+    <label asp-for="ClusterDescription" class="control-label"></label>
+    <textarea asp-for="ClusterDescription" class="form-control Key" autocomplete="off"></textarea>
+</div>
+<div class="mb-3">
+    <label asp-for="GST_Category" class="control-label"></label>
+    <select asp-for="GST_Category" class="form-select IncludeTax" asp-items="@ViewBag.Category" onchange="form.submit();"></select>
+</div>
+<div class="mb-3">
+    <label asp-for="GST_Type" class="control-label"></label>
+    <select asp-for="GST_Type" class="form-select IncludeTax" asp-items="@ViewBag.Type" onchange="form.submit();"></select>
+</div>

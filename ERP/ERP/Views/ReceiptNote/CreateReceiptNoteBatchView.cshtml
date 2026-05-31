@@ -1,0 +1,160 @@
+﻿@model List<ERP_DTO.JobInwardTransaction.ReceiptNoteBatch_DTO>
+
+<div class="w-100 table-responsive">
+    <table class="table table-bordered table-hover align-middle table-grid mb-0">
+        <thead>
+            <tr class="table-info">
+                <th class="datetype text-center">@Html.DisplayNameFor(M => M.First().RNI_BCH_Date)</th>
+                <th>@Html.DisplayNameFor(M => M.First().RNI_BCH_No)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().RNI_BCH_Qty)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().RNI_BCH_UnitPrice)</th>
+                <th class="table-width-3xl text-end">@Html.DisplayNameFor(M => M.First().RNI_BCH_Value)</th>
+                <th class="action text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody id="IBatTableBody">
+            <tr id="IBatTempRow" style="display: none;">
+                <td class="datetype">
+                    <input id="RNI_BCH_Item_Number" class="RNI_BCH_Item_Number" type="hidden" />
+                    <input id="RNI_BCH_Number" class="RNI_BCH_Number" type="hidden" />
+                    <input id="RNI_BCH_Item_Index" class="RNI_BCH_Item_Index" type="hidden" />
+                    <input id="RNI_BCH_Item_WH" class="RNI_BCH_Item_WH" type="hidden" />
+                    <input id="RNI_BCH_Date" class="form-control Key datepicker RNI_BCH_Date text-center" autocomplete="off" />
+                </td>
+                <td>
+                    <input id="RNI_BCH_No" class="form-control RNI_BCH_No" autocomplete="off" />
+                </td>
+                <td class="table-width-xl">
+                    <input id="RNI_BCH_Qty" class="form-control RNI_BCH_Qty  text-end decimal" autocomplete="off" />
+                </td>
+                <td class="table-width-xl">
+                    <input id="RNI_BCH_UnitPrice" class="form-control RNI_BCH_UnitPrice decimal text-end" readonly autocomplete="off" />
+                </td>
+                <td class="table-width-3xl">
+                    <input id="RNI_BCH_Value" class="form-control RNI_BCH_Value decimal text-end" readonly autocomplete="off" />
+                </td>
+                <td class="action text-center">
+                    <input id="RNI_BCH_IsDeleted" type="hidden" name="RNI_BCH_IsDeleted" class="RNI_BCH_IsDeleted" value="false" />
+                    <a class="IBatRowRemove text-danger p-0 icon-link shadow-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                        </svg>
+                    </a>
+                </td>
+            </tr>
+            @if (Model != null)
+            {
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr class="IBatNewRow" style="@(@Model[i].RNI_BCH_IsDeleted == "true" ? "display: none;" : "")">
+                        <td class="datetype">
+                            <input id="RNI_BCH_Item_Number" name="ItemBatch[@i].RNI_BCH_Item_Number" class="RNI_BCH_Item_Number" type="hidden" value="@Model[i].JIRNI_BCH_JIRNI_Number" />
+                         
+ 
+                            
+                            <input id="RNI_BCH_Item_WH" name="ItemBatch[@i].RNI_BCH_Item_WH" class="RNI_BCH_Item_WH" type="hidden" value="@Model[i].WH_Number" />  
+                            <input id="RNI_BCH_Date" name="ItemBatch[@i].RNI_BCH_Date" class="form-control Key datepicker RNI_BCH_Date text-center" autocomplete="off" value="@Model[i].RNI_BCH_Date" />
+                        </td>
+                        <td>
+                            <input id="RNI_BCH_No" name="ItemBatch[@i].RNI_BCH_No" class="form-control RNI_BCH_No" autocomplete="off" value="@Model[i].RNI_BCH_Num" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="RNI_BCH_Qty" name="ItemBatch[@i].RNI_BCH_Qty" class="form-control RNI_BCH_Qty text-end" autocomplete="off" value="@Model[i].RNI_BCH_Qty" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="RNI_BCH_UnitPrice" name="ItemBatch[@i].RNI_BCH_UnitPrice" readonly class="form-control RNI_BCH_UnitPrice decimal text-end" autocomplete="off" value="@Model[i].RNI_BCH_UnitPrice" />
+                        </td>
+                        <td class="table-width-3xl">
+                            <input id="RNI_BCH_Value" name="ItemBatch[@i].RNI_BCH_Value" readonly class="form-control RNI_BCH_Value decimal text-end" autocomplete="off" value="@Model[i].RNI_BCH_Value" />
+                        </td>
+                        <td class="action text-center">
+                            @if (@Model[i].RNI_BCH_No != 0)
+                            {
+                                <input name="ItemBatch[@i].RNI_BCH_No" type="hidden" class="Number" value="@Model[i].RNI_BCH_No" />
+                            }
+                            <input type="hidden" id="RNI_BCH_IsDeleted" name="ItemBatch[@i].RNI_BCH_IsDeleted" class="RNI_BCH_IsDeleted" value="@Model[i].RNI_BCH_IsDeleted" />
+                            <a class="IBatRowRemove text-danger p-0 icon-link shadow-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                    <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+        <tfoot>
+            <tr class="table-info">
+                <td class="text-end" colspan="2">Total</td>
+                <td class="table-width-xl">
+                    <input id="BatchTotalQty" class="form-control text-end" readonly />
+                </td>
+                <td></td>
+                <td class="table-width-3xl">
+                    <input id="BatchTotalValue" class="form-control text-end" readonly />
+                </td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+@* <a id="IBatNewRowButton" class="btn btn-primary">Add Row</a> *@
+
+<style>
+    .search-results {
+        position: absolute;
+        z-index: 1000;
+        overflow-y: auto;
+        width: 400px;
+        max-height: 300px;
+    }
+</style>
+<script>
+       // ===== REMOVE COMMAS =====
+    function removeCommas(v){
+        return (v || '').toString().replace(/,/g,'');
+    }
+
+    // ===== INDIAN NUMBER FORMAT =====
+    function DecimalIndianRupees(v){
+
+        if(v==="" || isNaN(v)) return "0.00";
+
+        let p=parseFloat(v).toFixed(2).split(".");
+
+        p[0]=p[0].replace(/(\d)(?=(\d\d)+\d$)/g,"$1,");
+
+        return p.join(".");
+    }
+
+    // ===== CALCULATE FOOTER =====
+    function BatchCalculateFooter(){
+
+        let qty=0,val=0;
+
+        $("tr.IBatNewRow:visible").each(function(){
+
+            let r=$(this);
+
+            // SKIP DELETED ROW
+            if(r.find(".RNI_BCH_IsDeleted").val()!=="true"){
+
+                qty+=parseFloat(removeCommas(r.find(".RNI_BCH_Qty").val()))||0;
+
+                val+=parseFloat(removeCommas(r.find(".RNI_BCH_Value").val()))||0;
+            }
+        });
+
+        // SET TOTALS
+        $("#BatchTotalQty").val(DecimalIndianRupees(qty));
+
+        $("#BatchTotalValue").val(DecimalIndianRupees(val));
+    }
+
+    // ===== CALL AFTER PAGE LOAD =====
+    $(document).ready(function(){
+
+        setTimeout(()=>BatchCalculateFooter(),500);
+
+    });
+</script>

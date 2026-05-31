@@ -1,0 +1,289 @@
+﻿@model ERP_DTO.BuyerHead_DTO
+
+
+@if (Model.BUY_Number != 0)
+{
+    <input asp-for="BUY_Number" type="hidden" class="Number" />
+}
+
+<div class="row mb-3">
+    <label asp-for="BUY_Name" class="col-md-4 col-lg-3 col-xl-2 col-xxl-1 control-label"></label>
+    <div class="col-md-5 col-lg-4 col-xl-4">
+        <input asp-for="BUY_Name" class="form-control Key KeyDup" autofocus="true" autocomplete="off" />
+    </div>
+</div>
+<div class="col-12">
+    <div class="row">
+        <div class="col-12">
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="Mailing-tab" data-bs-toggle="tab" data-bs-target="#Mailing-tab-pane" type="button" role="tab" aria-controls="Mailing-tab-pane" aria-selected="true">
+                        Mailing
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="Contact-tab" data-bs-toggle="tab" data-bs-target="#Contact-tab-pane" type="button" role="tab" aria-controls="Contact-tab-pane" aria-selected="false">
+                        Contact 
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="Grouping-tab" data-bs-toggle="tab" data-bs-target="#Grouping-tab-pane" type="button" role="tab" aria-controls="Grouping-tab-pane" aria-selected="false">
+                        Grouping
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="Payment-tab" data-bs-toggle="tab" data-bs-target="#Payment-tab-pane" type="button" role="tab" aria-controls="Payment-tab-pane" aria-selected="false">
+                        Payment
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="Bank-tab" data-bs-toggle="tab" data-bs-target="#Bank-tab-pane" type="button" role="tab" aria-controls="Bank-tab-pane" aria-selected="false">
+                        Bank
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="Delivery-tab" data-bs-toggle="tab" data-bs-target="#Delivery-tab-pane" type="button" role="tab" aria-controls="Delivery-tab-pane" aria-selected="false">
+                        Delivery
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="Tax-tab" data-bs-toggle="tab" data-bs-target="#Tax-tab-pane" type="button" role="tab" aria-controls="Tax-tab-pane" aria-selected="false">
+                        GST
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="Statutory-tab" data-bs-toggle="tab" data-bs-target="#Statutory-tab-pane" type="button" role="tab" aria-controls="Statutory-tab-pane" aria-selected="false">
+                        Statutory
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content" style="height:200px">
+                <div class="tab-pane fade show active p-2 pb-0 border border-top-0 h-100" id="Mailing-tab-pane" role="tabpanel" aria-labelledby="Mailing-tab" tabindex="0">
+                    <partial name="BuyerAddView.cshtml" model="@Model.BUY_Add_List" />
+                </div>
+                <div class="tab-pane fade p-3 pb-0 border border-top-0" id="Contact-tab-pane" role="tabpanel" aria-labelledby="Contact-tab" tabindex="0">
+                    <div class="row">
+                        <div class="col-12 col-md-4 col-xl-3 mb-3">
+                            <label asp-for="BUY_ContactPerson" class="control-label"></label>
+                            <input asp-for="BUY_ContactPerson" class="form-control Key" autofocus="true" autocomplete="off" />
+                        </div>
+                        <div class="col-12 col-md-8 col-xl-9">
+                            <div class="row">
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="BUY_ContactTelephone" class="control-label"></label>
+                                    <input asp-for="BUY_ContactTelephone" class="form-control Key" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="BUY_ContactMobile" class="control-label"></label>
+                                    <input asp-for="BUY_ContactMobile" class="form-control number" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="BUY_ContactEmail" class="control-label"></label>
+                                    <input asp-for="BUY_ContactEmail" class="form-control Key" type="email" autofocus="true" autocomplete="off" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 col-md-4 col-xl-3 mb-3">
+                            <label asp-for="BUY_AccountPerson" class="control-label"></label>
+                            <input asp-for="BUY_AccountPerson" class="form-control Key" autofocus="true" autocomplete="off" />
+                        </div>
+                        <div class="col-12 col-md-8 col-xl-9">
+                            <div class="row">
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="BUY_AccountTelephone" class="control-label"></label>
+                                    <input asp-for="BUY_AccountTelephone" class="form-control Key" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="BUY_AccountMobile" class="control-label"></label>
+                                    <input asp-for="BUY_AccountMobile" class="form-control number" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="BUY_AccountEmail" class="control-label"></label>
+                                    <input asp-for="BUY_AccountEmail" class="form-control Key" type="email" autofocus="true" autocomplete="off" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade p-3 pb-0 border border-top-0" id="Grouping-tab-pane" role="tabpanel" aria-labelledby="Grouping-tab" tabindex="0">
+                    <div class="row">
+                        <div class="col-12 col-md-3 col-xl-2 mb-3">
+                            <label asp-for="BUY_LOC_Number" class="control-label"></label>
+                            <div class="clearfix"></div>
+                            @foreach (SelectListItem Option in (List<SelectListItem>)ViewBag.Location)
+                            {
+                                <div class="form-check-inline">
+                                    @if (Option.Value == Model.BUY_LOC_Number.ToString())
+                                    {
+                                        <input class="form-check-input BUY_LOC_Number" type="radio" name="BUY_LOC_Number" id="@Option.Value" value="@Option.Value" checked>
+                                    }
+                                    else
+                                    {
+                                        <input class="form-check-input BUY_LOC_Number" type="radio" name="BUY_LOC_Number" id="@Option.Value" value="@Option.Value">
+                                    }
+                                    <label class="form-check-label" for="@Option.Value">
+                                        @Option.Text
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                        <div class="col-12 col-md-4 col-xl-2 mb-3">
+                            <label asp-for="BUY_BYG_Number" class="control-label"></label>
+                            <select asp-for="BUY_BYG_Number" class="form-select" asp-items="@ViewBag.BuyerGroup"></select>
+                        </div>
+                        <div class="col-12 col-md-4 col-xl-2 mb-3">
+                            <label asp-for="BUY_BYC_Number" class="control-label"></label>
+                            <select asp-for="BUY_BYC_Number" class="form-select" asp-items="@ViewBag.BuyerCategory"></select>
+                        </div>
+                        <div class="col-12 col-md-4 col-xl-2 mb-3">
+                            <label asp-for="BUY_BYS_Number" class="control-label"></label>
+                            <select asp-for="BUY_BYS_Number" class="form-select" asp-items="@ViewBag.BuyerSegment"></select>
+                        </div>
+                        <div class="col-12 col-md-4 col-xl-2 mb-3">
+                            <label asp-for="BUY_BSS_Number" class="control-label"></label>
+                            <select asp-for="BUY_BSS_Number" class="form-select" asp-items="@ViewBag.BuyerSubsegment"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade p-3 pb-0 border border-top-0" id="Tax-tab-pane" role="tabpanel" aria-labelledby="Tax-tab" tabindex="0">
+                    <div class="row">
+                        <div class="col-12 col-md-3 col-xl-2 mb-3">
+                            <label asp-for="BUY_RT_Number" class="control-label"></label>
+                            <select asp-for="BUY_RT_Number" class="form-select" asp-items="@ViewBag.Registration"></select>
+                        </div>
+                        <div class="col-12 col-md-3 col-xl-2 mb-3">
+                            <label asp-for="BUY_GSTIN" class="control-label"></label>
+                            <input asp-for="BUY_GSTIN" class="form-control Key" autofocus="true" autocomplete="off" />
+                        </div>
+                        <div class="col-12 col-md-3 col-xl-2 mb-3">
+                            <label asp-for="BUY_AT_Number" class="control-label"></label>
+                            <input asp-for="BUY_AT_Number" class="form-control" type="hidden" />
+                            <input asp-for="BUY_AT_Name" class="form-control" autocomplete="off" oninput="OnAssesseeInput(this)" onfocus="OnAssesseeFocus(this)" />
+                            <div class="assessee-results search-results p-0 rounded" style="display:none"></div>
+                        </div>
+                        <div class="col-12 col-md-3 col-xl-2 mb-3">
+                            <label class="control-label">&nbsp;</label>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#GSTModal">
+                                GST
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade p-3 pb-0 border border-top-0" id="Payment-tab-pane" role="tabpanel" aria-labelledby="Payment-tab" tabindex="0">
+                    <div class="row">
+                        <div class="col-12 col-md-4 col-xl-3 mb-3">
+                            <label asp-for="BUY_PaymentTerms" class="control-label"></label>
+                            <textarea asp-for="BUY_PaymentTerms" class="form-control Key" autocomplete="off"></textarea>
+                        </div>
+                        <div class="col-12 col-md-8 col-xl-9">
+                            <div class="row">
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="BUY_PaymentMode" class="control-label"></label>
+                                    <input asp-for="BUY_PaymentMode" class="form-control Key" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="BUY_CreditDays" class="control-label"></label>
+                                    <input asp-for="BUY_CreditDays" class="form-control number-only" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="BUY_CreditLimit" class="control-label"></label>
+                                    <input asp-for="BUY_CreditLimit" class="form-control decimal" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="BUY_CUR_Number" class="control-label"></label>
+                                    <select asp-for="BUY_CUR_Number" class="form-select" asp-items="@ViewBag.Currency"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade p-3 pb-0 border border-top-0" id="Bank-tab-pane" role="tabpanel" aria-labelledby="Bank-tab" tabindex="0">
+                    <div class="row">
+                        <div class="col-12 col-md-9">
+                            <div class="row">
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="BUY_AccountName" class="control-label"></label>
+                                    <input asp-for="BUY_AccountName" class="form-control Key" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="BUY_AccountNumber" class="control-label"></label>
+                                    <input asp-for="BUY_AccountNumber" class="form-control Key" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="BUY_IFSC" class="control-label"></label>
+                                    <input asp-for="BUY_IFSC" class="form-control number" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="BUY_BankName" class="control-label"></label>
+                                    <input asp-for="BUY_BankName" class="form-control Key" autofocus="true" autocomplete="off" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade p-3 pb-0 border border-top-0" id="Delivery-tab-pane" role="tabpanel" aria-labelledby="Delivery-tab" tabindex="0">
+                    <div class="row">
+                        <div class="col-12 col-md-3 col-xl-2 mb-3">
+                            <label asp-for="BUY_DeliveryTerms" class="control-label"></label>
+                            <input asp-for="BUY_DeliveryTerms" class="form-control Key" autofocus="true" autocomplete="off" />
+                        </div>
+                        <div class="col-12 col-md-3 col-xl-2 mb-3">
+                            <label asp-for="BUY_DeliveryMode" class="control-label"></label>
+                            <input asp-for="BUY_DeliveryMode" class="form-control Key" autofocus="true" autocomplete="off" />
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade p-3 pb-0 border border-top-0" id="Statutory-tab-pane" role="tabpanel" aria-labelledby="Statutory-tab" tabindex="0">
+                    <div class="row">
+                        <div class="col-12 col-md-3 col-xl-2 mb-3">
+                            <label asp-for="BUY_PAN" class="control-label"></label>
+                            <input asp-for="BUY_PAN" class="form-control Key" autofocus="true" autocomplete="off" />
+                        </div>
+                        <div class="col-12 col-md-3 col-xl-2 mb-3">
+                            <label asp-for="BUY_AN_Number" class="control-label"></label>
+                            <select asp-for="BUY_AN_Number" class="form-select" asp-items="@ViewBag.NatureOfAssessee"></select>
+                        </div>
+                        <div class="col-12 col-md-3 col-xl-2 mb-3">
+                            <label asp-for="BUY_YN_Number" class="control-label"></label>
+                            <div class="clearfix"></div>
+                            @foreach (SelectListItem Option in (List<SelectListItem>)ViewBag.YesNo)
+                            {
+                                <div class="form-check form-check-inline">
+                                    @if (Option.Value == Model.BUY_YN_Number.ToString())
+                                    {
+                                        <input class="form-check-input BUY_YN_Number" type="radio" name="BUY_YN_Number" id="@Option.Value" value="@Option.Value" checked>
+                                    }
+                                    else
+                                    {
+                                        <input class="form-check-input BUY_YN_Number" type="radio" name="BUY_YN_Number" id="@Option.Value" value="@Option.Value">
+                                    }
+                                    <label class="form-check-label" for="@Option.Value">
+                                        @Option.Text
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="w-100 pt-2">
+    @if (Model.BUY_Number != 0)
+    {
+        <input type="submit" name="Mode" value="Update" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+    else
+    {
+        <input type="submit" name="Mode" value="Save" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+</div>

@@ -1,0 +1,277 @@
+﻿@model List<ERP_DTO.SOToSaleInvoiceIIncome_DTO>
+
+<div class="w-100 table-responsive">
+    <table class="table table-bordered table-hover align-middle w-100 mb-0">
+        <thead>
+            <tr class="table-info">
+                <th>@Html.DisplayNameFor(M => M.First().SII_INC_MIC_Number)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SII_INC_MIC_Description)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SII_INC_Remarks)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SII_INC_OCRN_Number)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SII_INC_CM_Number)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SII_INC_IncomeBase)</th>
+                <th class="table-width-3xl text-end">@Html.DisplayNameFor(M => M.First().SII_INC_IncomeValue)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SII_INC_ALCT_Number)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SII_INC_LA_Number)</th>
+                <th class="action text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody id="IIncTableBody">
+            <tr id="IIncTempRow" style="display: none;">
+                <td>
+                    <input id="SII_INC_SOI_Number" class="SII_INC_SOI_Number" type="hidden" />
+                    <input id="SII_INC_SOH_Number" class="SII_INC_SOH_Number" type="hidden" />
+                    <input id="SII_INC_SOI_INC_Number" class="SII_INC_SOI_INC_Number" type="hidden" />
+                    <select id="SII_INC_MIC_Number" class="form-select SII_INC_MIC_Number" asp-items="@ViewBag.IncomeCode" disabled></select>
+                </td>
+                <td>
+                    <input id="SII_INC_MIC_Description" class="form-control SII_INC_MIC_Description" readonly autocomplete="off" />
+                </td>
+                <td>
+                    <input id="SII_SII_INC_Remarks" class="form-control SII_INC_Remarks" readonly autocomplete="off" />
+                </td>
+                <td>
+                    <select id="SII_INC_OCRN_Number" class="form-select SII_INC_OCRN_Number" asp-items="@ViewBag.Occurrence" disabled></select>
+                </td>
+                <td>
+                    <select id="SII_INC_CM_Number" class="form-select SII_INC_CM_Number" asp-items="@ViewBag.ChargeableMethod" disabled></select>
+                </td>
+                <td>
+                    <input id="SII_INC_IncomeBase" class="form-control SII_INC_IncomeBase decimal text-end" readonly autocomplete="off" />
+                </td>
+                <td>
+                    <input id="SII_INC_IncomeValue" class="form-control SII_INC_IncomeValue decimal text-end" readonly autocomplete="off" />
+                </td>
+                <td>
+                    <select id="SII_INC_ALCT_Number" class="form-select SII_INC_ALCT_Number" asp-items="@ViewBag.Allocate" disabled></select>
+                </td>
+                <td>
+                    <select id="SII_INC_LA_Number" class="form-select SII_INC_LA_Number" asp-items="@ViewBag.LedgerAccount" disabled></select>
+                </td>
+                <td class="action text-center">
+                    <input type="hidden" name="SII_INC_IsDeleted" class="SII_INC_IsDeleted" />
+                    <a class="IIncRowRemove icon-link text-danger">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                        </svg>
+                    </a>
+                </td>
+            </tr>
+            @if (Model != null)
+            {
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr class="IIncNewRow" style="@(@Model[i].SII_INC_IsDeleted == 1 ? "display: none;" : "")">
+                        <td>
+                            <input id="SII_INC_SOI_Number" name="ItemIncome[@i].SII_INC_SOI_Number" class="SII_INC_SOI_Number" type="hidden" value="@Model[i].SII_INC_SOI_Number" />
+                            <input id="SII_INC_SOH_Number" name="ItemIncome[@i].SII_INC_SOH_Number" class="SII_INC_SOH_Number" type="hidden" value="@Model[i].SII_INC_SOH_Number" />
+                            <input id="SII_INC_SOI_INC_Number" name="ItemIncome[@i].SII_INC_SOI_INC_Number" class="SII_INC_SOI_INC_Number" type="hidden" value="@Model[i].SII_INC_SOI_INC_Number" />
+                            <select id="SII_INC_MIC_Number" name="ItemIncome[@i].SII_INC_MIC_Number" class="form-select SII_INC_MIC_Number" disabled>
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.IncomeCode)
+                                {
+                                    if (item.Value == Model[i].SII_INC_MIC_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <input id="SII_INC_MIC_Description" name="ItemIncome[@i].SII_INC_MIC_Description" readonly class="form-control SII_INC_MIC_Description" autocomplete="off" value="@Model[i].SII_INC_MIC_Description" />
+                        </td>
+                        <td>
+                            <input id="SII_INC_Remarks" name="ItemIncome[@i].SII_INC_Remarks" readonly class="form-control SII_INC_Remarks" autocomplete="off" value="@Model[i].SII_INC_Remarks" />
+                        </td>
+                        <td>
+                            <select id="SII_INC_OCRN_Number" name="ItemIncome[@i].SII_INC_OCRN_Number" class="form-select SII_INC_OCRN_Number" disabled>
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Occurrence)
+                                {
+                                    if (item.Value == Model[i].SII_INC_OCRN_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <select id="SII_INC_CM_Number" name="ItemIncome[@i].SII_INC_CM_Number" class="form-select SII_INC_CM_Number" disabled>
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.ChargeableMethod)
+                                {
+                                    if (item.Value == Model[i].SII_INC_CM_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <input id="SII_INC_IncomeBase" name="ItemIncome[@i].SII_INC_IncomeBase" readonly class="form-control SII_INC_IncomeBase decimal text-end" autocomplete="off" value="@Model[i].SII_INC_IncomeBase" />
+                        </td>
+                        <td>
+                            <input id="SII_INC_IncomeValue" name="ItemIncome[@i].SII_INC_IncomeValue" readonly class="form-control SII_INC_IncomeValue decimal text-end" autocomplete="off" value="@Model[i].SII_INC_IncomeValue" />
+                        </td>
+                        <td>
+                            <select id="SII_INC_ALCT_Number" name="ItemIncome[@i].SII_INC_ALCT_Number" class="form-select SII_INC_ALCT_Number" disabled>
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Allocate)
+                                {
+                                    if (item.Value == Model[i].SII_INC_ALCT_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <input id="SII_INC_LA_Number" />
+                            <select id="SII_INC_LA_Number" name="ItemIncome[@i].SII_INC_LA_Number" class="form-select SII_INC_LA_Number" disabled>
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.LedgerAccount)
+                                {
+                                    if (item.Value == Model[i].SII_INC_LA_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td class="action text-center">
+                            <input type="hidden" name="ItemIncome[@i].SII_INC_IsDeleted" value="@Model[i].SII_INC_IsDeleted" class="SII_INC_IsDeleted" />
+                            <a class="IIncRowRemove icon-link text-danger">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                    <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+        <tfoot>
+            <tr class="table-info">
+                <td colspan="6" class="text-end py-2">Total</td>
+                <td class="table-width-3xl text-end">
+                    <input id="TotalIIncAmount" class="form-control text-end" readonly />
+                </td>
+                <td colspan="3">
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+<script>
+    var IIncrowCount = @(Model != null ? Model.Count : 0);
+    function IIncAddRow(SO) {
+        var IIncNewRow = $("#IIncTempRow").clone().removeAttr("style").removeAttr("id").addClass("IIncNewRow");
+        IIncNewRow.find("input.SII_INC_SOI_INC_Number").attr("name", "ItemIncome[" + IIncrowCount + "].SII_INC_SOI_INC_Number").val(SO.soI_INC_Number);
+        IIncNewRow.find("input.SII_INC_SOI_Number").attr("name", "ItemIncome[" + IIncrowCount + "].SII_INC_SOI_Number").val(SO.soI_INC_SOI_Number);
+        IIncNewRow.find("input.SII_INC_SOH_Number").attr("name", "ItemIncome[" + IIncrowCount + "].SII_INC_SOH_Number").val(SO.soI_INC_SOH_Number);
+        IIncNewRow.find("select.SII_INC_MIC_Number").attr("name", "ItemIncome[" + IIncrowCount + "].SII_INC_MIC_Number").val(SO.soI_INC_MIC_Number);
+        IIncNewRow.find("input.SII_INC_MIC_Description").attr("name", "ItemIncome[" + IIncrowCount + "].SII_INC_MIC_Description").val(SO.soI_INC_Description);
+        IIncNewRow.find("input.SII_SII_INC_Remarks").attr("name", "ItemIncome[" + IIncrowCount + "].SII_SII_INC_Remarks").val(SO.soI_SII_INC_Remarks);
+        IIncNewRow.find("select.SII_INC_OCRN_Number").attr("name", "ItemIncome[" + IIncrowCount + "].SII_INC_OCRN_Number").val(SO.soI_INC_OCRN_Number);
+        IIncNewRow.find("select.SII_INC_CM_Number").attr("name", "ItemIncome[" + IIncrowCount + "].SII_INC_CM_Number").val(SO.soI_INC_CM_Number);
+        IIncNewRow.find("input.SII_INC_IncomeBase").attr("name", "ItemIncome[" + IIncrowCount + "].SII_INC_IncomeBase").val(SO.soI_INC_IncomeBase);
+        IIncNewRow.find("input.SII_INC_IncomeValue").attr("name", "ItemIncome[" + IIncrowCount + "].SII_INC_IncomeValue").val(SO.soI_INC_IncomeValue);
+        IIncNewRow.find("select.SII_INC_ALCT_Number").attr("name", "ItemIncome[" + IIncrowCount + "].SII_INC_ALCT_Number").val(SO.soI_INC_ALCT_Number);
+        IIncNewRow.find("select.SII_INC_LA_Number").attr("name", "ItemIncome[" + IIncrowCount + "].SII_INC_LA_Number").val(SO.soI_INC_LA_Number);
+        IIncNewRow.find("input.SII_INC_IsDeleted").attr("name", "ItemIncome[" + IIncrowCount + "].SII_INC_IsDeleted").val(0);
+
+        $("#IIncTableBody").append(IIncNewRow);
+        IIncrowCount++;
+    }
+
+    $(document).on('click', '.ItemIncome', function () {
+        let CheckedCount = document.querySelectorAll('.CheckItem:checked').length;
+        let CheckedCheckbox = document.querySelector('.CheckItem:checked');
+        if(CheckedCount==0){
+            alert("Select any one row from the list");
+        } else if(CheckedCount>1){
+            alert("Select only one row from the list");
+        }
+        else if(CheckedCount==1){
+            var currentRow = $(CheckedCheckbox).closest('tr.NewRow');
+
+            var SOINumber = currentRow.find('input.SII_SOI_Number').val();
+            var SOHNumber = currentRow.find('input.SII_SOH_Number').val();
+            var Qty = currentRow.find('input.SII_Qty').val();
+            var MatrialValue = currentRow.find('input.SII_Amount').val();
+
+            if (SOINumber) {
+                $("#SII_INC_SOINumber").val(SOINumber);
+                $("#SII_INC_SOHNumber").val(SOHNumber);
+                $("#SII_INC_Qty").val(Qty);
+                $("#SII_INC_MatrialValue").val(MatrialValue);
+
+                var cout = 0;
+                $("tr.IIncNewRow").each(function () {
+                    var RowSOINumber = $(this).find("input.SII_INC_SOI_Number").val();
+                    var RowSOHNumber = $(this).find("input.SII_INC_SOH_Number").val();
+                    var isDeleted = parseInt($(this).find("input.SII_INC_IsDeleted").val());
+
+                    if (RowSOINumber === SOINumber && RowSOHNumber === SOHNumber && isDeleted !== 1) {
+                        $(this).show();
+                        cout++;
+                    } else {
+                        $(this).hide();
+                    }
+                });
+
+                new bootstrap.Modal($("#IIncome")).show();
+                $('#IIncome').on('shown.bs.modal', function () {
+                    $(this).find('[autofocus]').focus();
+
+                    (async () => {
+                        await IIncCalculateFooter();
+                    })();
+                });
+            }
+        }
+    });
+
+    $(document).on('click', '.IIncRowRemove', function () {
+        $(this).closest('tr').find("input.SII_INC_IsDeleted").val(1);
+        $(this).closest('tr').hide();
+        (async () => {
+            await IIncCalculateFooter();
+            await CalculateAllIncome();
+        })();
+    });
+
+
+    async function IIncCalculateFooter() {
+        var TotalIncAmount = 0;
+        $("tr.IIncNewRow:visible").each(function () {
+            var IncAmount = $(this).find(".SII_INC_IncomeValue").val();
+            TotalIncAmount += parseFloat(removeCommas(IncAmount));
+        });
+        $("#TotalIIncAmount").val(DecimalIndianRupees(TotalIncAmount.toFixed(2)));
+    }
+</script>
+<style>
+    .search-results {
+        position: absolute;
+        z-index: 1000;
+        overflow-y: auto;
+        width: 400px;
+        max-height: 300px;
+    }
+</style>

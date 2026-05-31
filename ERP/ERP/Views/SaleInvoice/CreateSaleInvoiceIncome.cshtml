@@ -1,0 +1,583 @@
+﻿@model List<ERP_DTO.SaleInvoiceIncome_DTO>
+
+<div class="w-100 table-responsive">
+    <table class="table table-bordered table-hover align-middle w-100 mb-0">
+        <thead>
+            <tr class="table-info">
+                <th>@Html.DisplayNameFor(M => M.First().SIH_INC_MIC_Number)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SIH_INC_MIC_Description)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SIH_INC_Remarks)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SIH_INC_OCRN_Number)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SIH_INC_CM_Number)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SIH_INC_IncomeBase)</th>
+                <th class="table-width-3xl text-end">@Html.DisplayNameFor(M => M.First().SIH_INC_IncomeValue)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SIH_INC_ALCT_Number)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SIH_INC_LA_Number)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SIH_INC_CalculateGST)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SIH_INC_GST_Amount)</th>
+                <th class="table-width-md text-end">@Html.DisplayNameFor(M => M.First().SIH_INC_WHT_Percent)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SIH_INC_WHT_Amount)</th>
+                <th></th>
+                <th class="action text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody id="InTableBody">
+            <tr id="InTempRow" style="display: none;">
+                <td>
+                    <select id="SIH_INC_MIC_Number" class="form-select SIH_INC_MIC_Number" asp-items="@ViewBag.IncomeCode"></select>
+                </td>
+                <td>
+                    <input id="SIH_INC_MIC_Description" class="form-control SIH_INC_MIC_Description" readonly autocomplete="off" />
+                </td>
+                <td>
+                    <input id="SIH_INC_Remarks" class="form-control SIH_INC_Remarks" autocomplete="off" />
+                </td>
+                <td>
+                    <select id="SIH_INC_OCRN_Number" class="form-select SIH_INC_OCRN_Number" asp-items="@ViewBag.Occurrence"></select>
+                </td>
+                <td>
+                    <select id="SIH_INC_CM_Number" class="form-select SIH_INC_CM_Number" asp-items="@ViewBag.ChargeableMethod"></select>
+                </td>
+                <td>
+                    <input id="SIH_INC_IncomeBase" class="form-control SIH_INC_IncomeBase decimal text-end" autocomplete="off" />
+                </td>
+                <td>
+                    <input id="SIH_INC_IncomeValue" class="form-control SIH_INC_IncomeValue decimal text-end" readonly autocomplete="off" />
+                </td>
+                <td>
+                    <select id="SIH_INC_ALCT_Number" class="form-select SIH_INC_ALCT_Number" asp-items="@ViewBag.Allocate"></select>
+                </td>
+                <td>
+                    <select id="SIH_INC_LA_Number" class="form-select SIH_INC_LA_Number" asp-items="@ViewBag.LedgerAccount"></select>
+                </td>
+                <td>
+                    <select id="SIH_INC_CalculateGST" class="form-select SIH_INC_CalculateGST" asp-items="@ViewBag.IsCalculate"></select>
+                </td>
+                <td class="table-width-xl">
+                    <input id="SIH_INC_GST_Amount" class="form-control SIH_INC_GST_Amount decimal text-end" readonly autocomplete="off" />
+                    <input id="SIH_INC_SAC_Number" class="form-control SIH_INC_SAC_Number" autocomplete="off" type="hidden" />
+                </td>
+                <td class="table-width-md">
+                    <input id="SIH_INC_WHT_Percent" class="form-control SIH_INC_WHT_Percent text-end" autocomplete="off" readonly />
+                </td>
+                <td class="table-width-xl">
+                    <input id="SIH_INC_WHT_Amount" class="form-control SIH_INC_WHT_Amount decimal text-end" autocomplete="off" readonly />
+                </td>
+                <td><a id="HeaderTaxView" class="btn btn-primary btn-sm TaxView">GST View</a></td>
+                <td class="action text-center">
+                    <input id="SIH_INC_IsDeleted" type="hidden" name="SIH_INC_IsDeleted" class="SIH_INC_IsDeleted" />
+                    <a class="InRowRemove icon-link text-danger">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                        </svg>
+                    </a>
+                </td>
+            </tr>
+
+            @if (Model != null)
+            {
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr class="InNewRow" style="@(@Model[i].SIH_INC_IsDeleted == 1 ? "display: none;" : "")">
+                        <td>
+                            <select id="SIH_INC_MIC_Number" name="Income[@i].SIH_INC_MIC_Number" class="form-select SIH_INC_MIC_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.IncomeCode)
+                                {
+                                    if (item.Value == Model[i].SIH_INC_MIC_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <input id="SIH_INC_MIC_Description" name="Income[@i].SIH_INC_MIC_Description" readonly class="form-control SIH_INC_MIC_Description" autocomplete="off" value="@Model[i].SIH_INC_MIC_Description" />
+                        </td>
+                        <td>
+                            <input id="SIH_INC_Remarks" name="Income[@i].SIH_INC_Remarks" class="form-control SIH_INC_Remarks" autocomplete="off" value="@Model[i].SIH_INC_Remarks" />
+                        </td>
+                        <td>
+                            <select id="SIH_INC_OCRN_Number" name="Income[@i].SIH_INC_OCRN_Number" class="form-select SIH_INC_OCRN_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Occurrence)
+                                {
+                                    if (item.Value == Model[i].SIH_INC_OCRN_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <select id="SIH_INC_CM_Number" name="Income[@i].SIH_INC_CM_Number" class="form-select SIH_INC_CM_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.ChargeableMethod)
+                                {
+                                    if (item.Value == Model[i].SIH_INC_CM_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <input id="SIH_INC_IncomeBase" name="Income[@i].SIH_INC_IncomeBase" class="form-control SIH_INC_IncomeBase decimal text-end" autocomplete="off" value="@Model[i].SIH_INC_IncomeBase" />
+                        </td>
+                        <td>
+                            <input id="SIH_INC_IncomeValue" name="Income[@i].SIH_INC_IncomeValue" class="form-control SIH_INC_IncomeValue decimal text-end" readonly autocomplete="off" value="@Model[i].SIH_INC_IncomeValue" />
+                        </td>
+                        <td>
+                            <select id="SIH_INC_ALCT_Number" name="Income[@i].SIH_INC_ALCT_Number" class="form-select SIH_INC_ALCT_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Allocate)
+                                {
+                                    if (item.Value == Model[i].SIH_INC_ALCT_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <select id="SIH_INC_LA_Number" name="Income[@i].SIH_INC_LA_Number" class="form-select SIH_INC_LA_Number">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.LedgerAccount)
+                                {
+                                    if (item.Value == Model[i].SIH_INC_LA_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <select id="SIH_INC_CalculateGST" name="Income[@i].SIH_INC_CalculateGST" class="form-select SIH_INC_CalculateGST">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.IsCalculate)
+                                {
+                                    if (item.Value == Model[i].SIH_INC_CalculateGST)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="SIH_INC_GST_Amount" name="Income[@i].SIH_INC_GST_Amount" class="form-control SIH_INC_GST_Amount decimal text-end" autocomplete="off" readonly value="@Model[i].SIH_INC_GST_Amount" />
+                            <input id="SIH_INC_SAC_Number" name="Income[@i].SIH_INC_SAC_Number" class="form-control SIH_INC_SAC_Number" type="hidden" autocomplete="off" readonly value="@Model[i].SIH_INC_SAC_Number" />
+                        </td>
+                        <td class="table-width-md">
+                            <input id="SIH_INC_WHT_Percent" name="Income[@i].SIH_INC_WHT_Percent" class="form-control SIH_INC_WHT_Percent text-end" autocomplete="off" readonly value="@Model[i].SIH_INC_WHT_Percent" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="SIH_INC_WHT_Amount" name="Income[@i].SIH_INC_WHT_Amount" class="form-control SIH_INC_WHT_Amount decimal text-end" autocomplete="off" readonly value="@Model[i].SIH_INC_WHT_Amount" />
+                        </td>
+                        <td><a id="HeaderTaxView" class="btn btn-primary btn-sm TaxView">Tax View</a></td>
+                        <td class="action text-center">
+                            <input type="hidden" id="SIH_INC_IsDeleted" name="Income[@i].SIH_INC_IsDeleted" class="SIH_INC_IsDeleted" value="@Model[i].SIH_INC_IsDeleted" />
+                            @if (@Model[i].SIH_INC_Number != 0)
+                            {
+                                <input name="Income[@i].SIH_INC_Number" type="hidden" class="Number" value="@Model[i].SIH_INC_Number" />
+                            }
+                            <a class="InRowRemove icon-link text-danger">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                    <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+        <tfoot>
+            <tr class="table-info">
+                <td colspan="6" class="text-end py-2">Total</td>
+                <td class="table-width-3xl text-end">
+                    <input id="TotalIncAmount" class="form-control text-end" readonly />
+                </td>
+                <td colspan="3">
+                </td>
+                <td class="table-width-xl text-end">
+                    <input id="TotalIncGST" class="form-control text-end" readonly />
+                </td>
+                <td>
+                </td>
+                <td>
+                    <input id="TotalIncWHT" class="form-control text-end" readonly />
+                </td>
+                <td colspan="2">
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+@* <a id="InAddRowButton" class="btn btn-primary InAddRowButton">Add Row</a> *@
+<script>
+    $(document).ready(function () {
+        var hrowCount = @(Model != null ? Model.Count : 0);
+        var ishAddingRow = false;
+
+        function InAddRow() {
+            var InNewRow = $("#InTempRow").clone().removeAttr("style").removeAttr("id").addClass("InNewRow");
+            InNewRow.find("select.SIH_INC_MIC_Number").attr("name", "Income[" + hrowCount + "].SIH_INC_MIC_Number");
+            InNewRow.find("input.SIH_INC_MIC_Description").attr("name", "Income[" + hrowCount + "].SIH_INC_MIC_Description");
+            InNewRow.find("input.SIH_SIH_INC_Remarks").attr("name", "Income[" + hrowCount + "].SIH_SIH_INC_Remarks");
+            InNewRow.find("select.SIH_INC_OCRN_Number").attr("name", "Income[" + hrowCount + "].SIH_INC_OCRN_Number");
+            InNewRow.find("select.SIH_INC_CM_Number").attr("name", "Income[" + hrowCount + "].SIH_INC_CM_Number");
+            InNewRow.find("input.SIH_INC_IncomeBase").attr("name", "Income[" + hrowCount + "].SIH_INC_IncomeBase");
+            InNewRow.find("input.SIH_INC_IncomeValue").attr("name", "Income[" + hrowCount + "].SIH_INC_IncomeValue");
+            InNewRow.find("select.SIH_INC_ALCT_Number").attr("name", "Income[" + hrowCount + "].SIH_INC_ALCT_Number");
+            InNewRow.find("select.SIH_INC_LA_Number").attr("name", "Income[" + hrowCount + "].SIH_INC_LA_Number");
+            InNewRow.find("select.SIH_INC_CalculateGST").attr("name", "Income[" + hrowCount + "].SIH_INC_CalculateGST").val("2");
+            InNewRow.find("input.SIH_INC_GST_Amount").attr("name", "Income[" + hrowCount + "].SIH_INC_GST_Amount");
+            InNewRow.find("input.SIH_INC_SAC_Number").attr("name", "Income[" + hrowCount + "].SIH_INC_SAC_Number");
+            InNewRow.find("input.SIH_INC_WHT_Percent").attr("name", "Income[" + hrowCount + "].SIH_INC_WHT_Percent");
+            InNewRow.find("input.SIH_INC_WHT_Amount").attr("name", "Income[" + hrowCount + "].SIH_INC_WHT_Amount");
+            InNewRow.find("input.SIH_INC_IsDeleted").attr("name", "Income[" + hrowCount + "].SIH_INC_IsDeleted").val(0);
+
+            $("#InTableBody").append(InNewRow);
+            hrowCount++;
+            InNewRow.data("isValid", false);
+            ishAddingRow = false;
+        }
+
+        document.getElementById('HeaderIncomeModal').addEventListener('click', AddNewRowClick);
+        function AddNewRowClick() {
+            var count = $("tr.InNewRow").filter(function () {
+                return parseInt(parseInt($(this).find("input.SIH_INC_IsDeleted").val())) !== 1;
+            }).length;
+
+            if (count == 0) {
+                InAddRow();
+            }
+            IncCalculateFooter();
+        }
+
+        if ($("tr.InNewRow").length == 0) {
+            InAddRow();
+        }
+
+        var count = $("tr.InNewRow").filter(function () {
+            return parseInt($(this).find("input.SIH_INC_IsDeleted").val()) !== 1;
+        }).length;
+
+        if (count == 0) {
+            InAddRow();
+        }
+
+        $(document).on('click', '.HeaderIncome', function () {
+            $("tr.InNewRow").each(function () {
+                var INC_IsDeleted = parseInt($(this).find("input.SIH_INC_IsDeleted").val()) === 1;
+                if (!INC_IsDeleted) {
+                }
+                else {
+                    $(this).closest('tr').find("input.SIH_INC_IsDeleted").val(1);
+                    $(this).closest('tr').hide();
+                }
+            });
+
+            new bootstrap.Modal($("#Income")).show();
+            $('#Income').on('shown.bs.modal', function () {
+                $(this).find('[autofocus]').focus();
+            });
+        });
+
+        $(document).on('click', '.InRowRemove', function () {
+            $(this).closest('tr').find("input.SIH_INC_IsDeleted").val(1);
+            $(this).closest('tr').hide();
+
+            (async () => {
+                await CalculateAllIncomes();
+                await IncCalculateFooter();
+            })();
+        });
+
+        $(document).on('keydown', "tr.InNewRow select, tr.InNewRow input.SIH_INC_IncomeBase, tr.InNewRow input[type='text']", function (event) {
+            if (event.keyCode === 9) {
+                if (!ExValidateField($(this)))
+                    event.preventDefault();
+            }
+        });
+
+        $(document).on("change", "tr.InNewRow select, tr.InNewRow input.SIH_INC_IncomeBase, input[type='text']", function () {
+            if (ishAddingRow)
+                return;
+            ishAddingRow = true;
+
+            var currentInput = $(this);
+            var isValid = ExValidateField(currentInput);
+            var currentRow = $(this).closest("tr.InNewRow");
+            if (isValid) {
+                if (ExCheckAllFieldsValid(currentRow)) {
+                    currentRow.data("isValid", true);
+                }
+                else {
+                    currentRow.data("isValid", false);
+                }
+            }
+            else {
+                currentRow.data("isValid", false);
+            }
+            if (currentRow.data("isValid")) {
+                var lastRow = $("tr.InNewRow").last();
+                if (ExCheckAllFieldsValid(lastRow))
+                    InAddRow();
+            }
+            else {
+                ishAddingRow = false;
+            }
+        });
+
+        function ExCheckAllFieldsValid(currentRow) {
+            var allFieldsValid = true;
+            $("tr.InNewRow:visible").each(function () {
+                $(this).find("select, input.SIH_INC_IncomeBase, input[type='text']").each(function () {
+                    if (!ExValidateField($(this))) {
+                        allFieldsValid = false;
+                        return false;
+                    }
+                });
+                if (!allFieldsValid) return false;
+            });
+            return allFieldsValid;
+        }
+
+        function ExValidateField(currentInput) {
+            var valid = 1;
+            var inputValue = currentInput.val();
+            if (inputValue === "") {
+                valid = 0;
+            }
+            if (currentInput.hasClass(".SIH_INC_IncomeBase")) {
+                valid = ExValidateAmount(currentInput);
+            }
+            if (valid == 0) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+        function ExValidateAmount(currentInput) {
+            var valid = 1;
+
+            var currentRow = currentInput.closest("tr.InNewRow");
+            var PercentInput = currentRow.find("input.SIH_INC_IncomeBase");
+            var Percent = removeCommas(PercentInput.val());
+            if (Percent > 0) {
+            }
+            else {
+                valid = 0;
+            }
+            return valid;
+        }
+
+        $(document).on('change', "tr.InNewRow select.SIH_INC_MIC_Number", function () {
+            var selectedValue = $(this).val();
+            var Description = $(this).closest("tr.InNewRow").find(".SIH_INC_MIC_Description");
+            var Ledger = $(this).closest("tr.InNewRow").find(".SIH_INC_LA_Number");
+            var Allocate = $(this).closest("tr.InNewRow").find(".SIH_INC_ALCT_Number");
+            var Occurrence = $(this).closest("tr.InNewRow").find(".SIH_INC_OCRN_Number");
+            var Chargeable = $(this).closest("tr.InNewRow").find(".SIH_INC_CM_Number");
+            var SAC = $(this).closest("tr.InNewRow").find(".SIH_INC_SAC_Number");
+            $.ajax({
+                type: "get",
+                url: "income/des",
+                data: { Title: selectedValue },
+                datatype: "json",
+                traditional: true,
+                success: function (Income) {
+                    Description.val(Income.miC_Description);
+                    Ledger.val(Income.miC_LA_Number);
+                    Occurrence.val(Income.miC_OCRN_Number);
+                    Chargeable.val(Income.miC_CM_Number);
+                    Allocate.val(Income.miC_ALCT_Number);
+                    SAC.val(Income.miC_SAC_Number);
+                }
+            });
+
+            var $row = $(this).closest("tr.InNewRow");
+
+            (async () => {
+                await CalculateAllIncomes();
+                await IncCalculateFooter();
+            })();
+        });
+
+        $(document).on('change', "tr.InNewRow select.SIH_INC_CalculateGST", function () {
+            var $row = $(this).closest("tr.InNewRow");
+            (async () => {
+                await CalculateAllIncomes();
+                await IncCalculateFooter();
+            })();
+        });
+
+        $("#InCloseButton").click(function () {
+            InCloseIncome();
+        });
+        $("#InOkayButton").click(function () {
+            InCloseIncome();
+        });
+        function InCloseIncome(){
+            $("tr.InNewRow").each(function () {
+                var IncomeCode = $(this).find("select.SIH_INC_MIC_Number").val();
+                var Occurrence = $(this).find("select.SIH_INC_OCRN_Number").val();
+                var ChargeableMethod = $(this).find("select.SIH_INC_CM_Number").val();
+                var IncomeBase = removeCommas($(this).find("input.SIH_INC_IncomeBase").val());
+                var Allocate = $(this).find("select.SIH_INC_ALCT_Number").val();
+                var LedgerAccount = $(this).find("select.SIH_INC_LA_Number").val();
+
+                if (!IncomeCode && !Occurrence && !ChargeableMethod && !Allocate && !LedgerAccount && !(IncomeBase > 0)) {
+                    $(this).closest('tr').find("input.SIH_INC_IsDeleted").val(1);
+                    $(this).closest('tr').hide();
+                }
+            });
+
+            var lastRow = $("tr.InNewRow").last();
+            if (ExCheckAllFieldsValid(lastRow)) {
+                $("#Income").modal('hide');
+
+                (async () => {
+                    await IncCalculateFooter();
+                    await CalculateAllIncomes();
+                })();
+            }
+            else {
+                alert("Please complete all fields !");
+            }
+
+        }
+
+        $(document).on('click', '.InAddRowButton', function () {
+            var lastRow = $("tr.InNewRow").last();
+            if (ExCheckAllFieldsValid(lastRow)) {
+                InAddRow();
+            }
+            else {
+                var firstInvalidField = null;
+                lastRow.find("select, input.SIH_INC_IncomeBase, input[type='text']").each(function () {
+                    if (!ExValidateField($(this))) {
+                        if (firstInvalidField == null)
+                            firstInvalidField = $(this);
+                        return false;
+                    }
+                });
+                if (firstInvalidField != null) {
+                    alert("Please complete all fields !");
+                    firstInvalidField.focus();
+                }
+            }
+        });
+
+        $(document).on('input', "input.SIH_INC_IncomeBase", function (event) {
+            var $row = $(this).closest("tr.InNewRow");
+            (async () => {
+                await CalculateAllIncomes();
+                await IncCalculateFooter();
+            })();
+        });
+
+        $(document).on('change', "tr.InNewRow select.SIH_INC_CM_Number", function () {
+            var $row = $(this).closest("tr.InNewRow");
+            (async () => {
+                await CalculateAllIncomes();
+                await IncCalculateFooter();
+            })();
+        });
+
+        $(document).on('click', '.TaxView', function () {
+            var Cluster = $("#SIH_TCT_Number").val();
+            var SIHDate = $("#SIH_InvoiceDate").val();
+
+            var currentRow = $(this).closest('tr.InNewRow');
+            var isGst = currentRow.find("select.SIH_INC_CalculateGST").val();
+            if (isGst === "2") {
+                var SACNumber = currentRow.find("input.SIH_INC_SAC_Number").val();
+                var IncomeValue = currentRow.find("input.SIH_INC_IncomeValue").val();
+
+                $.ajax({
+                    type: "get",
+                    url: "Income/gst/view",
+                    data: { Cluster: Cluster, SIHDate: SIHDate, SAC: SACNumber, BaseAmount: IncomeValue },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        const Table = document.getElementById('TaxTableView');
+                        Table.innerHTML = "";
+
+                        if (Table) {
+                            const TaxView = ClusterTaxView(data);
+                            Table.appendChild(TaxView);
+                        }
+
+                        new bootstrap.Modal($("#TaxView")).show();
+                        $('#TaxView').on('shown.bs.modal', function () {
+                            $(this).find('[autofocus]').focus();
+                        });
+                    }
+                });
+            }
+        });
+
+    });
+
+    async function IncCalculateFooter() {
+        var TotalIncAmount = 0;
+        var TotalIncGstAmount = 0;
+        var TotalIncWHTAmount = 0;
+        $("tr.InNewRow").each(function () {
+            var IsDeleted = parseInt($(this).find("input.SIH_INC_IsDeleted").val());
+            if(IsDeleted!=1){
+                var IncAmount = $(this).find(".SIH_INC_IncomeValue").val();
+                var GstAmount = $(this).find(".SIH_INC_GST_Amount").val();
+                var WHTAmount = $(this).find(".SIH_INC_WHT_Amount").val();
+
+                TotalIncAmount += parseFloat(removeCommas(IncAmount));
+                TotalIncGstAmount += parseFloat(removeCommas(GstAmount));
+                TotalIncWHTAmount += parseFloat(removeCommas(WHTAmount));
+            }
+        });
+        $("#TotalIncAmount").val(DecimalIndianRupees(TotalIncAmount.toFixed(2)));
+        $("#TotalIncGST").val(DecimalIndianRupees(TotalIncGstAmount.toFixed(2)));
+        $("#TotalIncWHT").val(DecimalIndianRupees(TotalIncWHTAmount.toFixed(2)));
+    }
+
+    async function GetClusterIncomeAmount(Cluster, SIHDate, SACNumber, BaseAmount) {
+        const Amount = await $.ajax({
+            url: 'income/gst',
+            data: { Cluster: Cluster, SIHDate: SIHDate, SAC: SACNumber, BaseAmount: BaseAmount },
+            type: 'GET'
+        });
+        return Amount;
+    }
+
+</script>
+<style>
+    .search-results {
+        position: absolute;
+        z-index: 1000;
+        overflow-y: auto;
+        width: 400px;
+        max-height:300px;
+    }
+</style>

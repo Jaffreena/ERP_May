@@ -1,0 +1,243 @@
+﻿@{
+    ViewData["Title"] = "Jobwork Inward"; // 🔴 CHANGED
+}
+
+<div class="row align-items-center panel-header h-auto">
+    <div class="col">
+        <div class="card rounded-0 mt-3">
+            <div class="card-body px-2 py-2">
+                <h1 class="h6 fw-light">
+                    Jobwork Inward <!-- 🔴 CHANGED -->
+                </h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row panel-body">
+    <div class="col-12 panel-card-fixed" id="BodyHeight">
+        <div class="w-100 rounded-0 border border-primary bg-transparent px-3" id="CardBody">
+            <div class="row">
+
+                <!-- LEFT -->
+                <div class="col-4 pt-3">
+
+                    <!-- FAVOURITES -->
+                    <div class="card rounded-0 mb-3 bg-transparent">
+                        <div class="card-header bg-secondary rounded-0">
+                            <p class="mb-0">Favourites</p>
+                        </div>
+                        <div class="card-body text-dark">
+                            <!-- 🔴 EMPTY PLACEHOLDER -->
+                            <p class="card-text placeholder-glow">
+                                <span class="placeholder col-7"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-6"></span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- REPORTS -->
+                    <div class="card rounded-0 mb-3 bg-transparent">
+                        <div class="card-header bg-secondary rounded-0">
+                            <p class="mb-0">Reports</p>
+                        </div>
+                        <div class="card-body text-dark">
+                             <ul class="list-unstyled mb-0">
+                                 
+                                    <li class="mb-2">
+                                    <a asp-controller="ReceiptNote" class="d-flex align-items-center" asp-action="ReciptNoteSummary">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-chevron-double-right me-2" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                                <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                            </svg> Receipt Note Register
+                                        </a>
+                                    </li>
+
+                                <li class="mb-2">
+                                    <a asp-controller="DeliveryNote" class="d-flex align-items-center" asp-action="DeliveryNoteSummary">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-chevron-double-right me-2" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                            <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                        </svg> Delivery Note Register
+                                    </a>
+                                </li>
+                                    </ul>
+                        </div>
+                    </div>
+
+                    <!-- SETUP -->
+                    <div class="card rounded-0 mb-3 bg-transparent">
+                        <div class="card-header bg-secondary rounded-0">
+                            <p class="mb-0">Setup</p>
+                        </div>
+                        <div class="card-body text-dark">
+                           <ul class="list-unstyled mb-0">
+                                   
+                                    <li class="mb-2">
+                                    <a asp-controller="ReceiptNote" class="d-flex align-items-center" asp-action="RNNumbering">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-chevron-double-right me-2" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                                <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                            </svg> Receipt Note Numbering
+                                        </a>
+                                    </li>
+                                    </ul>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- MIDDLE -->
+                <div class="col-4 pt-3">
+
+                    <!-- TRANSACTIONS -->
+                    <div class="card rounded-0 mb-3 bg-transparent">
+                        <div class="card-header bg-secondary rounded-0">
+                            <p class="mb-0">Transactions</p>
+                        </div>
+                        <div class="card-body text-dark">
+                            <ul class="list-unstyled mb-0">
+                                <li class="mb-2">
+                                    <a asp-controller="ReceiptNote" asp-action="CreateReceiptNote">
+                                        ReceiptNote
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a asp-controller="DeliveryNote" asp-action="Index">
+                                        Delivery Note
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- PERIODIC -->
+                    <div class="card rounded-0 mb-3 bg-transparent">
+                        <div class="card-header bg-secondary rounded-0">
+                            <p class="mb-0">Periodic</p>
+                        </div>
+                        <div class="card-body text-dark">
+                            <p class="card-text placeholder-glow">
+                                <span class="placeholder col-7"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-6"></span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- OTHERS -->
+                    <div class="card rounded-0 mb-3 bg-transparent">
+                        <div class="card-header bg-secondary rounded-0">
+                            <p class="mb-0">Others</p>
+                        </div>
+                        <div class="card-body text-dark">
+                             <ul class="list-unstyled mb-0">
+                                <li class="mb-2">
+                                    <a asp-controller="ReceiptNote" asp-action="ReceiptCreate">
+                                        ReceiptNote
+                                    </a>
+                                </li>
+                                </ul>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- RIGHT -->
+                <div class="col-4 pt-3">
+
+                    <!-- MASTER DATA -->
+                    <div class="card rounded-0 mb-3 bg-transparent">
+                        <div class="card-header bg-secondary rounded-0">
+                            <p class="mb-0">Master Data</p>
+                        </div>
+                        <div class="card-body text-dark">
+                            <ul class="list-unstyled mb-0">
+                                <li class="mb-2">
+                                    <a asp-controller="JobworkInwardMaster" asp-action="Customer">
+                                        JW Customer
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                   
+                                    <a asp-controller="JobworkInwardMaster" asp-action="CustomerGroup">
+                                        JW Customer Group
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a asp-controller="JobworkInwardMaster" asp-action="CustomerCategory">
+                                        JW Customer Category
+                                    </a>
+                                </li>
+
+                                <li class="mb-2">
+                                    <a asp-controller="JobworkInwardMaster" asp-action="Shift">
+                                      Shift
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a asp-controller="JobworkInwardMaster" asp-action="Process">
+                                       Process
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a asp-controller="JobworkInwardMaster" asp-action="WorkCentreGroup">
+                                        WorkCentre Group
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a asp-controller="JobworkInwardMaster" asp-action="WorkCentre">
+                                        WorkCentre 
+                                    </a>
+                                </li>
+                                </ul>
+                        </div>
+                    </div>
+
+                    <!-- INQUIRIES -->
+                    <div class="card rounded-0 mb-3 bg-transparent">
+                        <div class="card-header bg-secondary rounded-0">
+                            <p class="mb-0">Inquiries</p>
+                        </div>
+                        <div class="card-body text-dark">
+                            <p class="card-text placeholder-glow">
+                                <span class="placeholder col-7"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-6"></span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- SUB MASTER -->
+                    <div class="card rounded-0 mb-3 bg-transparent">
+                        <div class="card-header bg-secondary rounded-0">
+                            <p class="mb-0">Sub-Master Data</p>
+                        </div>
+                        <div class="card-body text-dark">
+                            <p class="card-text placeholder-glow">
+                                <span class="placeholder col-7"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-6"></span>
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('.navbar-nav > .nav-item.jobwork > a').addClass("active"); // 🔴 CHANGED
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const MainDiv = document.getElementById('BodyHeight');
+        const BodyDiv = document.getElementById('CardBody');
+
+        const MainHeight = MainDiv.offsetHeight;
+        BodyDiv.style.height = (MainHeight - 10) + 'px';
+    });
+</script>

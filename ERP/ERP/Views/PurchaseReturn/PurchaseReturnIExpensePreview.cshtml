@@ -1,0 +1,140 @@
+﻿@model List<ERP_DTO.PurchaseReturnIExpense_DTO>
+
+<table class="table table-bordered table-hover align-middle w-100">
+    <thead>
+        <tr class="table-info">
+            <th>Expense Code</th>
+            <th>Description</th>
+            <th>Remarks</th>
+            <th>Occurrence</th>
+            <th>Chargeable method</th>
+            <th>Expense Base</th>
+            <th>Expense Value</th>
+            <th>Allocate</th>
+            <th>Ledger account</th>
+        </tr>
+    </thead>
+    <tbody id="IExTableBody">
+        @if (Model != null)
+        {
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <tr class="IExNewRow">
+                    <td>
+                        <input id="PRI_EXP_PRI_Number" name="ItemExpenses[@i].PRI_EXP_PRI_Number" class="PRI_EXP_PRI_Number" type="hidden" value="@Model[i].PRI_EXP_PRI_Number" />
+                        <select id="PRI_EXP_Expense_Number" name="ItemExpenses[@i].PRI_EXP_Expense_Number" disabled class="form-select PRI_EXP_Expense_Number">
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.ExpenseCode)
+                            {
+                                if (item.Value == Model[i].PRI_EXP_Expense_Number)
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input id="PRI_EXP_Description" name="ItemExpenses[@i].PRI_EXP_Description" readonly class="form-control PRI_EXP_Description" autocomplete="off" value="@Model[i].PRI_EXP_Description" />
+                    </td>
+                    <td>
+                        <input id="PRI_EXP_Remarks" name="ItemExpenses[@i].PRI_EXP_Remarks" readonly class="form-control PRI_EXP_Remarks" autocomplete="off" value="@Model[i].PRI_EXP_Remarks" />
+                    </td>
+                    <td>
+                        <select id="PRI_EXP_Occurrence_Number" name="ItemExpenses[@i].PRI_EXP_Occurrence_Number" disabled class="form-select PRI_EXP_Occurrence_Number">
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Occurrence)
+                            {
+                                if (item.Value == Model[i].PRI_EXP_Occurrence_Number)
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <select id="PRI_EXP_CM_Number" name="ItemExpenses[@i].PRI_EXP_CM_Number" disabled class="form-select PRI_EXP_CM_Number">
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.ChargeableMethod)
+                            {
+                                if (item.Value == Model[i].PRI_EXP_CM_Number)
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input id="PRI_EXP_ExpenseBase" name="ItemExpenses[@i].PRI_EXP_ExpenseBase" readonly class="form-control PRI_EXP_ExpenseBase decimal text-end" autocomplete="off" value="@Model[i].PRI_EXP_ExpenseBase" />
+                    </td>
+                    <td>
+                        <input id="PRI_EXP_ExpenseValue" name="ItemExpenses[@i].PRI_EXP_ExpenseValue" class="form-control PRI_EXP_ExpenseValue decimal text-end" autocomplete="off" value="@Model[i].PRI_EXP_ExpenseValue" />
+                    </td>
+                    <td>
+                        <select id="PRI_EXP_Allocate_Number" name="ItemExpenses[@i].PRI_EXP_Allocate_Number" disabled class="form-select PRI_EXP_Allocate_Number">
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Allocate)
+                            {
+                                if (item.Value == Model[i].PRI_EXP_Allocate_Number)
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input id="PRI_EXP_LA_Number" name="ItemExpenses[@i].PRI_EXP_LA_Number" readonly class="form-control PRI_EXP_LA_Number" autocomplete="off" value="@Model[i].PRI_EXP_LA_Number" />
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+<script>
+    $(document).ready(function () {
+        $("#IExCloseButton").click(function () {
+            $("#IExpense").modal('hide');
+        });
+
+        $(document).on('click', '.ItemExpense', function () {
+            let CheckedCheckbox = document.querySelector('.CheckItem:checked');
+            if (CheckedCheckbox) {
+                var currentRow = $(CheckedCheckbox).closest('tr.NewRow');
+                var ItemNumber = currentRow.find('input.PRI_Number').val();
+
+                console.log(ItemNumber);
+
+                if (ItemNumber) {
+                    var cout = 0;
+                    $("tr.IExNewRow").each(function () {
+                        var RowItemNumber = $(this).find("input.PRI_EXP_PRI_Number").val();
+                        var PRI_EXP_IsDeleted = $(this).find("input.PRI_EXP_IsDeleted").val();
+
+                        if (RowItemNumber === ItemNumber && PRI_EXP_IsDeleted !== 'true') {
+                            $(this).show();
+                            cout++;
+                        } else {
+                            $(this).hide();
+                        }
+                    });
+
+                    new bootstrap.Modal($("#IExpense")).show();
+                    $('#IExpense').on('shown.bs.modal', function () {
+                        $(this).find('[autofocus]').focus();
+                    });
+                }
+            }
+        });
+    });
+</script>

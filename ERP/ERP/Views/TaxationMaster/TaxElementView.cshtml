@@ -1,0 +1,104 @@
+﻿@model ERP_DTO.TaxElementHead_DTO
+
+@if (Model != null)
+{
+    <input asp-for="TaxElementNumber" type="hidden" class="Number" />
+}
+<div class="col-12 col-md-3">
+    <div class="row">
+        <div class="col-12 mb-3">
+            <label asp-for="TaxElement" class="control-label"></label>
+            <input asp-for="TaxElement" class="form-control Key KeyDup" autofocus="true" autocomplete="off" />
+        </div>
+        <div class="col-12 mb-3">
+            <label asp-for="ElementDescription" class="control-label"></label>
+            <textarea asp-for="ElementDescription" class="form-control Key" autocomplete="off"></textarea>
+        </div>
+    </div>
+</div>
+
+<div class="col-12 col-md-3">
+    <div class="row">
+        <div class="col-12 mb-3">
+            <label asp-for="TaxCategory" class="control-label"></label>
+            <select asp-for="TaxCategory" class="form-select from-search" asp-items="@ViewBag.Category"></select>
+        </div>
+        <div class="col-12 mb-3">
+            <label asp-for="TaxType" class="control-label"></label>
+            <select asp-for="TaxType" class="form-select from-search" asp-items="@ViewBag.Type"></select>
+        </div>
+    </div>
+</div>
+
+<div class="col-12 col-md-3">
+    <div class="row">
+        <div class="col-12 mb-3">
+            <div class="row">
+                <div class="col-6">
+                    <label asp-for="LoadonInventory" class="control-label w-100 text-right"></label>
+                    <input class="form-check-input" type="checkbox" asp-for="LoadonInventory" />
+                </div>
+
+                <div class="col-4 mb-3 text-center">
+                    <label asp-for="LoadonInventoryPercent" class="control-label w-100"></label>
+                    <div class="w-100 d-flex align-items-center">
+                        <input asp-for="LoadonInventoryPercent" class="form-control decimal text-end ms-2" disabled autocomplete="off" />
+                        <span class="percent-symbol ms-2">%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 mb-3">
+            <label asp-for="COA_LedgerAccount" class="control-label"></label>
+            <select asp-for="COA_LedgerAccount" class="form-select from-search" asp-items="@ViewBag.Ledger"></select>
+        </div>
+    </div>
+</div>
+
+<div class="col-12 col-md-3">
+    <div class="row">
+        
+        <div class="col-12 mb-3">
+            <label asp-for="GST_Abatement" class="control-label"></label>
+            <div class="clearfix"></div>
+            @foreach (SelectListItem Option in (List<SelectListItem>)ViewBag.Abatement)
+            {
+                <div class="form-check-inline">
+                    @if (Option.Value == Model.GST_Abatement)
+                    {
+                        <input class="form-check-input GST_Abatement" type="radio" name="GST_Abatement" id="@Option.Value" value="@Option.Value" checked>
+                    }
+                    else
+                    {
+                        <input class="form-check-input GST_Abatement" type="radio" name="GST_Abatement" id="@Option.Value" value="@Option.Value">
+                    }
+                    <label class="form-check-label" for="@Option.Value">
+                        @Option.Text
+                    </label>
+                </div>
+            }
+            @* <select asp-for="GST_Abatement" class="form-select from-search" asp-items="@ViewBag.Abatement"></select> *@
+        </div>
+        <div class="col-12 mb-3">
+            <label asp-for="GST_TaxNature" class="control-label"></label>
+            <div class="clearfix"></div>
+            @foreach (SelectListItem Option in (List<SelectListItem>)ViewBag.Nature)
+            {
+                <div class="form-check-inline">
+                    @if (Option.Value == Model.GST_TaxNature)
+                    {
+                        <input class="form-check-input GST_TaxNature" type="radio" name="GST_TaxNature" id="@Option.Value" value="@Option.Value" checked>
+                    }
+                    else
+                    {
+                        <input class="form-check-input GST_TaxNature" type="radio" name="GST_TaxNature" id="@Option.Value" value="@Option.Value">
+                    }
+                    <label class="form-check-label" for="@Option.Value">
+                        @Option.Text
+                    </label>
+                </div>
+            }
+            @* <select asp-for="GST_TaxNature" class="form-select from-search" asp-items="@ViewBag.Nature"></select> *@
+        </div>
+    </div>
+</div>

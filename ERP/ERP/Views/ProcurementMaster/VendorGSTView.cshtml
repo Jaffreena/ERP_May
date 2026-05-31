@@ -1,0 +1,430 @@
+﻿@model List<ERP_DTO.VendorGST_DTO>
+
+
+<div class="w-100 table-responsive">
+    <table class="table table-bordered align-middle table-hover align-middle mb-0 table-grid">
+        <thead>
+            <tr class="table-info">
+                <th>GST Category</th>
+                <th>GST Type</th>
+                <th>Tax Cluster</th>
+                <th class="datetype text-center">From Date</th>
+                <th class="datetype text-center">To Date</th>
+                <th class="action text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody id="GSTTableBody">
+            <tr id="GSTTempRow" style="display: none;">
+                <td>
+                    <input id="Category" class="Category" type="hidden" />
+                    <input id="CategoryName" class="form-control CategoryName" autocomplete="off" oninput="OnCategoryInput(this)" onfocus="OnCategoryFocus(this)" />
+                    <div class="tax-results search-results p-0 rounded" style="display:none"></div>
+                </td>
+                <td>
+                    <select id="Type" class="form-select Type" asp-items="@ViewBag.GST_Type"></select>
+                </td>
+                <td>
+                    <input id="TaxNumber" class="TaxNumber" type="hidden" />
+                    <input id="Tax" class="form-control Tax" autocomplete="off" oninput="OnInput(this)" onfocus="OnFocus(this)" />
+                    <div class="cluster-results search-results p-0 rounded" style="display:none"></div>
+                    @* <select id="Tax" class="form-select Tax" asp-items="@ViewBag.GST_Tax"></select> *@
+                </td>
+                <td class="datetype">
+                    <input id="FromDate" class="form-control text-center FromDate datepicker" autocomplete="off" />
+                </td>
+                <td class="datetype">
+                    <input id="ToDate" class="form-control text-center ToDate datepicker" autocomplete="off" />
+                </td>
+                <td class="action text-center">
+                    <input type="hidden" name="IsDeleted" value="false" class="IsDeleted" />
+                    <a class="GSTRowRemove btn text-danger p-0 icon-link shadow-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                        </svg>
+                    </a>
+                </td>
+            </tr>
+            @if (Model != null)
+            {
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr class="GSTNewRow">
+                        <td>
+                            <input id="Category" name="GST_List[@i].Category" class="Category" type="hidden" value="@Model[i].Category" />
+                            <input id="CategoryName" name="GST_List[@i].CategoryName" class="form-control CategoryName" autocomplete="off" oninput="OnCategoryInput(this)" onfocus="OnCategoryFocus(this)" value="@Model[i].CategoryName" />
+                            <div class="tax-results search-results p-0 rounded" style="display:none"></div>
+                        </td>
+                        <td>
+                            <select id="Type" name="GST_List[@i].Type" class="form-select Type">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.GST_Type)
+                                {
+                                    if (item.Value == Model[i].Type)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <input id="TaxNumber" name="GST_List[@i].TaxNumber" class="TaxNumber" type="hidden" value="@Model[i].TaxNumber" />
+                            <input id="Tax" name="GST_List[@i].Tax" class="form-control Tax" autocomplete="off" oninput="OnInput(this)" value="@Model[i].Tax" onfocus="OnFocus(this)" />
+                            <div class="cluster-results search-results p-0 rounded" style="display:none"></div>
+                        </td>
+                        <td class="datetype">
+                            <input id="FromDate" name="GST_List[@i].FromDate" class="form-control text-center FromDate datepicker" autocomplete="off" value="@Model[i].FromDate" />
+                        </td>
+                        <td class="datetype">
+                            <input id="ToDate" name="GST_List[@i].ToDate" class="form-control text-center ToDate datepicker" autocomplete="off" value="@Model[i].ToDate" />
+                        </td>
+                        <td class="action text-center">
+                            @if (@Model[i].Number != 0)
+                            {
+                                <input name="GST_List[@i].Number" type="hidden" class="Number" value="@Model[i].Number" />
+                            }
+                            <input type="hidden" name="GST_List[@i].IsDeleted" value="false" />
+                            <a class="GSTRowRemove btn text-danger p-0 icon-link shadow-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                    <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        function InitializeFlatpickrs() {
+            $(".datepicker").flatpickr({
+                dateFormat: "d-M-Y",
+                altInput: false,
+            });
+        }
+
+        var rowCount = @(Model != null ? Model.Count : 0);
+        var isAddingRow = false;
+
+        function addRow() {
+            var NewRow = $("#GSTTempRow").clone().removeAttr("style").removeAttr("id").addClass("GSTNewRow");
+            NewRow.find("input.Category").attr("name", "GST_List[" + rowCount + "].Category");
+            NewRow.find("input.CategoryName").attr("name", "GST_List[" + rowCount + "].CategoryName");
+            NewRow.find("select.Type").attr("name", "GST_List[" + rowCount + "].Type");
+            NewRow.find("input.TaxNumber").attr("name", "GST_List[" + rowCount + "].TaxNumber");
+            NewRow.find("input.Tax").attr("name", "GST_List[" + rowCount + "].Tax");
+            NewRow.find("input.FromDate").attr("name", "GST_List[" + rowCount + "].FromDate");
+            NewRow.find("input.ToDate").attr("name", "GST_List[" + rowCount + "].ToDate");
+
+            NewRow.find("input[name='GST_List[" + rowCount + "].IsDeleted']").val(false);
+
+            $("#GSTTableBody").append(NewRow);
+            rowCount++;
+            NewRow.data("isValid", false);
+            isAddingRow = false;
+
+            InitializeFlatpickrs();
+        }
+
+        if ($("tr.GSTNewRow").length == 0) {
+            addRow();
+        }
+
+        $(document).on('click', '.GSTRowRemove', function () {
+            $(this).closest('tr').find("input[name*='IsDeleted']").val(true);
+            $(this).closest('tr').hide();
+        });
+
+        $(document).on('keydown', "tr.GSTNewRow select, tr.GSTNewRow input.FromDate, tr.GSTNewRow input.TaxNumber, tr.GSTNewRow input.ToDate, tr.GSTNewRow input[type='text']", function (event) {
+            if (event.keyCode === 9) {
+                if (!validateField($(this)))
+                    event.preventDefault();
+            }
+        });
+
+        $(document).on('change', "tr.GSTNewRow select.Category, tr.GSTNewRow select.Type", function () {
+            var currentRow = $(this).closest('tr');
+            var TaxNumber = currentRow.find('input.TaxNumber');
+            var Tax = currentRow.find('input.Tax');
+            var resultsDiv = $(currentRow).find(".cluster-results");
+
+            TaxNumber.val('');
+            Tax.val('');
+            resultsDiv.empty();
+            resultsDiv.hide();
+            resultsDiv.append('<p>No results found</p>');
+        });
+
+        $(document).on("change", "tr.GSTNewRow select, tr.GSTNewRow input.FromDate, tr.GSTNewRow input.TaxNumber, tr.GSTNewRow input.ToDate, input[type='text']", function () {
+            if (isAddingRow)
+                return;
+            isAddingRow = true;
+
+            var currentInput = $(this);
+            var isValid = validateField(currentInput);
+            var currentRow = $(this).closest("tr.GSTNewRow");
+            if (isValid) {
+                if (checkAllFieldsValid(currentRow)) {
+                    currentRow.data("isValid", true);
+                }
+                else {
+                    currentRow.data("isValid", false);
+                }
+            }
+            else {
+                currentRow.data("isValid", false);
+            }
+            if (currentRow.data("isValid")) {
+                var lastRow = $("tr.GSTNewRow").last();
+                if (checkAllFieldsValid(lastRow))
+                    addRow();
+            }
+            else {
+                isAddingRow = false;
+            }
+        });
+
+        function checkAllFieldsValid(currentRow) {
+            var allFieldsValid = true;
+            $("tr.GSTNewRow:visible").each(function () {
+                $(this).find("select, input.FromDate, input.TaxNumber, input.ToDate, input[type='text']").each(function () {
+                    if (!validateField($(this))) {
+                        allFieldsValid = false;
+                        return false;
+                    }
+                });
+                if (!allFieldsValid) return false;
+            });
+            return allFieldsValid;
+        }
+
+        function validateField(currentInput) {
+            var valid = 1;
+            var inputValue = currentInput.val();
+            if (currentInput.hasClass("FromDate") || currentInput.hasClass("ToDate")) {
+                valid = validateDateRange(currentInput);
+            }
+            if (inputValue === "") {
+                valid = 0;
+            }
+
+            if (valid == 0) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+        function validateDateRange(currentInput) {
+            var valid = 1;
+            var currentRow = currentInput.closest("tr.GSTNewRow");
+            var fromDateInput = currentRow.find("input.FromDate");
+            var toDateInput = currentRow.find("input.ToDate");
+            var fromDate = fromDateInput.val();
+            var toDate = toDateInput.val();
+            if (fromDate === "" || toDate === "") {
+                valid = 0;
+            }
+            var from = new Date(fromDate);
+            var to = new Date(toDate);
+            if (to < from) {
+                alert("'To Date' must be greater than or equal to 'From Date'");
+                currentInput.val("");
+                valid = 0;
+            }
+            return valid;
+        }
+
+        $("#GSTOkayButton").click(function () {
+            GridValidation();
+        });
+        $("#GSTCloseButton").click(function () {
+            GridValidation();
+        });
+        function GridValidation() {
+            $("tr.GSTNewRow").each(function () {
+                var FromDate = $(this).find("input.FromDate").val();
+                var ToDate = $(this).find("input.ToDate").val();
+                var Category = $(this).find("select.Category").val();
+                var Type = $(this).find("select.Type").val();
+                var Tax = $(this).find("select.TaxNumber").val();
+
+                if (!FromDate && !ToDate && !Category && !Type && !Tax) {
+                    $(this).remove();
+                }
+            });
+
+            var lastRow = $("tr.GSTNewRow").last();
+            if (checkAllFieldsValid(lastRow)) {
+                $("#GSTModal").modal('hide');
+            }
+            else {
+                alert("Please complete all fields !");
+                firstInvalidField.focus();
+            }
+        }
+
+        $("#GSTAddRowButton").click(function () {
+            var lastRow = $("tr.GSTNewRow").last();
+            if (checkAllFieldsValid(lastRow)) {
+                addRow();
+            }
+            else {
+                var firstInvalidField = null;
+                lastRow.find("select, input.FromDate, input.TaxNumber, input.ToDate, input[type='text']").each(function () {
+                    if (!validateField($(this))) {
+                        if (firstInvalidField == null)
+                            firstInvalidField = $(this);
+                        return false;
+                    }
+                });
+                if (firstInvalidField != null) {
+                    alert("Please complete all fields !");
+                    firstInvalidField.focus();
+                }
+            }
+        });
+    });
+
+    function OnInput(inputElement) {
+        searchItem(inputElement);
+    }
+    function OnFocus(inputElement) {
+        var tax = inputElement.value;
+        if (!tax) {
+            searchItem(inputElement);
+        }
+        else {
+            $(this).select();
+        }
+    }
+    function searchItem(inputElement) {
+        var tax = inputElement.value;
+        var resultsDiv = $(inputElement).next('.cluster-results');
+
+        var currentRow = $(inputElement).closest('tr');
+        var category = currentRow.find('input.Category').val();
+        var type = currentRow.find('select.Type').val();
+        $.ajax({
+            url: 'vendor/cluster',
+            data: { Tax: tax, Category: category, Type: type },
+            type: 'GET',
+            success: function (data) {
+                resultsDiv.empty();
+                if (data && data.length > 0) {
+                    resultsDiv.show();
+                    var list = $('<ul class="list-unstyled ulmode m-0"></ul>');
+                    data.forEach(function (cluster) {
+                        var listItem = $('<li></li>').text(cluster.tax);
+                        list.append(listItem);
+
+                        listItem.on('click', function () {
+                            $(inputElement).val(cluster.tax);
+                            $(inputElement).closest('tr').find('input.TaxNumber').val(cluster.number);
+                            resultsDiv.hide();
+                        });
+                    });
+                    resultsDiv.append(list); // Corrected this line
+                } else {
+                    resultsDiv.hide();
+                    resultsDiv.append('<p>No results found</p>');
+                }
+            },
+            error: function () {
+                resultsDiv.text('Error loading data.');
+                resultsDiv.show();
+            }
+        });
+
+        var currentRow = $(inputElement).closest('tr');
+        var TaxNumber = currentRow.find('input.TaxNumber');
+        var Tax = currentRow.find('input.Tax');
+        var resultsDiv = $(currentRow).find(".cluster-results");
+
+        TaxNumber.val('');
+        Tax.val('');
+        resultsDiv.empty();
+        resultsDiv.hide();
+        resultsDiv.append('<p>No results found</p>');
+    }
+
+
+    function OnCategoryInput(inputElement) {
+        SearchCategory(inputElement);
+    }
+    function OnCategoryFocus(inputElement) {
+        var tax = inputElement.value;
+        if (!tax) {
+            SearchCategory(inputElement);
+        }
+        else {
+            $(this).select();
+        }
+    }
+    function SearchCategory(inputElement) {
+        var Category = inputElement.value;
+        var Location = $("input[name='VendorLocation']:checked").val();
+        var resultsDiv = $(inputElement).next('.tax-results');
+        var currentRow = $(this).closest('tr.GSTNewRow');
+
+        $.ajax({
+            url: 'vendor/assessee',
+            data: { Assessee: Category, Location: Location },
+            type: 'GET',
+            success: function (data) {
+                resultsDiv.empty();
+                if (data && data.length > 0) {
+                    resultsDiv.show();
+                    var list = $('<ul class="list-unstyled ulmode m-0"></ul>');
+                    data.forEach(function (Category) {
+                        var listItem = $('<li></li>').text(Category.category);
+                        list.append(listItem);
+
+                        listItem.on('click', function () {
+                            $(inputElement).val(Category.category);
+                            $(inputElement).closest('tr').find('input.Category').val(Category.number);
+                            // currentRow.find("input.PRH_EXP_SAC_Number").val().("#Category").val(Category.number);
+                            resultsDiv.hide();
+                        });
+                    });
+                    resultsDiv.append(list);
+                } else {
+                    resultsDiv.hide();
+                    resultsDiv.append('<p>No results found</p>');
+                }
+            },
+            error: function () {
+                resultsDiv.text('Error loading data.');
+                resultsDiv.show();
+            }
+        });
+    }
+</script>
+<style>
+    .search-results {
+        width: 200px;
+    }
+
+    .ulmode {
+        background-color: var(--bs-body-bg);
+    }
+
+        .ulmode li {
+            padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+            font-size: 0.7rem;
+            color: var(--bs-body-color);
+            background-color: var(--bs-body-bg);
+            text-align: left;
+        }
+
+            .ulmode li:hover {
+                background-color: #f1f1f1;
+                color: #333;
+            }
+</style>

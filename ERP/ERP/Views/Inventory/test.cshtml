@@ -1,0 +1,142 @@
+﻿<div class="table-container">
+    <table>
+      <thead>
+        <tr>
+            <th>Field</th>
+            <th>Date</th>
+            <th>Action</th>
+        </tr>
+      </thead>
+        <tbody id="tableBody">
+            <tr id="templateRow" style="display: none;">
+                <td>
+                    <select class="field-dropdown">
+                        <option value="">--Select--</option>
+                        <option value="Option 1">Option 1</option>
+                        <option value="Option 2">Option 2</option>
+                        <option value="Option 3">Option 3</option>
+                    </select>
+                    <span class="error-message"></span>
+                </td>
+                <td><input type="date" class="date-picker" /><span class="error-message"></span></td>
+                <td><input type="text" class="text-box" /><span class="error-message"></span></td>
+                <td>
+                    <a class="remove-row-button btn btn-sm btn-danger p-1 icon-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                        </svg>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+    <button id="addRowButton" class="btn btn-primary">Add Row</button>
+<script>
+    $(document).ready(function () {
+        var rowCount = 0;
+        var isAddingRow = false;
+        function addRow() {
+            var newRow = $("#templateRow").clone().removeAttr("style").removeAttr("id").addClass("dynamic-row");
+            newRow.find("select").attr("name", "fields[" + rowCount + "].fieldValue");
+            newRow.find("input[type='date']").attr("name", "fields[" + rowCount + "].dateValue");
+            newRow.find("input[type='text']").attr("name", "fields[" + rowCount + "].textBoxValue");
+            $("#tableBody").append(newRow);
+            rowCount++;
+            newRow.data("isValid", false);
+            isAddingRow = false;
+        }
+
+        if ($("tr.dynamic-row").length == 0)
+            addRow();
+        $(document).on('click', '.remove-row-button', function () {
+            $(this).closest('tr').remove();
+        });
+        $(document).on('keydown', "tr.dynamic-row select, tr.dynamic-row input[type='date'], tr.dynamic-row input[type='text']", function (event) {
+            if (event.keyCode === 9) {
+                if (!validateField($(this)))
+                    event.preventDefault();
+            }
+
+        });
+
+
+        $(document).on("change", "tr.dynamic-row select, tr.dynamic-row input[type='date'], tr.dynamic-row input[type='text']", function () {
+            if (isAddingRow)
+                return;
+            isAddingRow = true;
+
+            var currentInput = $(this);
+            var isValid = validateField(currentInput);
+            var currentRow = $(this).closest("tr.dynamic-row");
+            if (isValid) {
+                if (checkAllFieldsValid(currentRow)) {
+                    currentRow.data("isValid", true);
+                }
+                else {
+                    currentRow.data("isValid", false);
+                }
+            }
+            else {
+                currentRow.data("isValid", false);
+            }
+            if (currentRow.data("isValid")) {
+                var lastRow = $("tr.dynamic-row").last();
+                if (checkAllFieldsValid(lastRow))
+                    addRow();
+
+            }
+            else {
+                isAddingRow = false;
+            }
+
+        });
+
+        function checkAllFieldsValid(currentRow) {
+            var allFieldsValid = true;
+            currentRow.find("select, input[type='date'], input[type='text']").each(function () {
+                if (!validateField($(this))) {
+                    allFieldsValid = false;
+                    return false;
+                }
+            });
+            return allFieldsValid;
+        }
+
+        function validateField(currentInput) {
+            var inputValue = currentInput.val();
+            var errorSpan = currentInput.next(".error-message");
+            if (inputValue === "") {
+                errorSpan.text("This field is required");
+                currentInput.addClass("error-field");
+                return false;
+            }
+            else {
+                errorSpan.text("");
+                currentInput.removeClass("error-field");
+                return true;
+            }
+        }
+
+        $("#addRowButton").click(function () {
+            var lastRow = $("tr.dynamic-row").last();
+            if (checkAllFieldsValid(lastRow))
+                addRow();
+            else {
+                var firstInvalidField = null;
+                lastRow.find("select, input[type='date'], input[type='text']").each(function () {
+                    if (!validateField($(this))) {
+                        if (firstInvalidField == null)
+                            firstInvalidField = $(this);
+                        return false;
+                    }
+                });
+                if (firstInvalidField != null) {
+                    alert("Please complete all fields before adding a new row");
+                    firstInvalidField.focus();
+                }
+
+            }
+        });
+    });
+</script>

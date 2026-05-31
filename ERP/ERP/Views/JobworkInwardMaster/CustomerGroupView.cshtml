@@ -1,0 +1,31 @@
+﻿@model ERP_DTO.CustomerGroup_DTO
+
+
+@if (Model != null)
+{
+    <input asp-for="JCG_Number" type="hidden" class="Number" />
+}
+<div class="mb-3">
+    <label asp-for="JCG_JW_CustomerGroup" class="control-label"></label>
+    <input asp-for="JCG_JW_CustomerGroup" class="form-control Key KeyDup" autofocus="true" autocomplete="off" />
+</div>
+<div class="mb-3">
+    <label asp-for="JCG_Description" class="control-label"></label>
+    <textarea asp-for="JCG_Description" class="form-control Key" autocomplete="off"></textarea>
+</div>
+<div class="mb-3">
+    <label asp-for="JCG_Under_JCG_Number" class="control-label"></label>
+    <select asp-for="JCG_Under_JCG_Number" class="form-select" asp-items="@ViewBag.Under" data-live-search="true"></select>
+</div>
+<div>
+    @if (Model != null)
+    {
+        <input type="submit" name="Mode" value="Update" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+    else
+    {
+        <input type="submit" name="Mode" value="Save" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+</div>

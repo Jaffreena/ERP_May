@@ -1,0 +1,498 @@
+﻿@model ERP_DTO.PaginatedList_DTO<ERP_DTO.SalesOrderRegister_DTO>
+@using System.Globalization;
+@{
+    CultureInfo India = new CultureInfo("hi-IN");
+}
+@{
+    ViewData["Title"] = "Sale Order Detailed";
+}
+
+<form asp-action="SaleOrderRegisterDetailed" class="h-100">
+    <div class="row align-items-center panel-header gx-2">
+        <div class="col h-100">
+            <div class="h6 fw-light text-white h-100 align-content-center bg-secondary px-2">
+                Sale Order Register
+                <a asp-controller="Sale" asp-action="Index" class="float-end btn  p-0 shadow-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="row panel-body gx-2">
+        <div class="col-12 panel-card-fixed h-100">
+            <div class="w-100 rounded-0 border border-primary bg-transparent h-100" id="BodyHeight">
+                <div class="w-100 h-100" id="BodyCardHeader">
+                    <div class="card rounded-0 bg-transparent shadow-none h-100">
+                        <div class="card-body text-black h-100 nav-tab-fix h-100">
+                            <ul class="nav nav-tabs tab-header">
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="SaleOrder" asp-action="SaleOrderRegisterSummary">Summary</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link active"  aria-current="page">Detailed</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content tab-body">
+                                <div class="tab-pane fade show active p-2 pb-0 border border-top-0 h-100 table-fixed" tabindex="0">
+                                    <div class="row table-header">
+                                        <div class="col">
+                                            <input type="hidden" name="sortOrder" value="@ViewData["CurrentSort"]" />
+                                            <input type="hidden" name="PageNumber" value="@ViewData["PageNumber"]" />
+                                            <input type="hidden" name="PageFilter" value="PageFilter" />
+                                            <div class="w-100 h-100 table-fixed">
+                                                <div class="w-100 table-header">
+                                                    <div class="row">
+                                                        <div class="col-5">
+                                                            <div class="row">
+                                                                <div class="col-auto me-1">
+                                                                    <select name="PSize" class="form-select w-auto py-1 pe-4" asp-route-PageFilter="PageFilter" asp-items="@ViewBag.Page" onchange="form.submit();"></select>
+                                                                </div>
+                                                                <div class="col-auto p-0">
+                                                                    <input id="Search" name="Search" class="form-control p-1 search-control" autocomplete="off" value="@ViewData["CurrentFilter"]" />
+                                                                </div>
+                                                                <div class="col-auto p-0">
+                                                                    <input type="submit" name="Mode" value="Search" class="btn btn-primary btn-sm" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-7">
+                                                            <div class="row justify-content-end gx-0">
+                                                                <div class="col-auto me-1">
+                                                                    <input type="submit" name="Mode" id="View" disabled value="View" class="btn btn-primary" />
+                                                                </div>
+                                                                <div class="col-auto me-1">
+                                                                    <input type="submit" name="Mode" id="Edit" value="Edit" disabled class="btn btn-primary" />
+                                                                </div>
+                                                                <div class="col-auto me-1">
+                                                                    <div class="dropdown">
+                                                                        <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                            Download
+                                                                        </button>
+                                                                        <ul class="dropdown-menu">
+                                                                            <li><input type="submit" name="Mode" value="Ascii" class="dropdown-item" /></li>
+                                                                            <li><input type="submit" name="Mode" value="Excel" class="dropdown-item" /></li>
+                                                                            <li><input type="submit" name="Mode" value="PDF" class="dropdown-item" /></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-auto">
+                                                                    <a value="Print" class="btn btn-primary" onclick="PrintCheckedRows()">Print</a>
+                                                                    <input type="hidden" id="SO_No" name="SO_No" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="table-body-h-c w-100 border p-2">
+                                        <div class="col-12 table-body table-responsive h-100">
+                                            <table class="table table-bordered table-hover align-middle mb-0 table-grid" id="MyTable">
+                                                <thead class="thead table-first-header">
+                                                    <tr class="table-info table-first-header-top">
+                                                        <th class="px-2 del"></th>
+                                                        <th colspan="2" class="text-center">Register</th>
+                                                        <th colspan="2" class="text-center">Sale Order</th>
+                                                        <th colspan="4" class="text-center">Buyer Details</th>
+                                                        <th colspan="11" class="text-center">Item Details</th>
+                                                        <th colspan="6" class="text-center">Transaction</th>
+                                                        <th class="text-end table-width-lg" rowspan="2">Exchange Rate</th>
+                                                        <th colspan="6" class="text-center">Reporting</th>
+                                                       </tr>
+                                                    <tr class="table-info">
+                                                        <th class="px-2 del">
+                                                            <input type="checkbox" class="selectAllCheckbox form-check-input border-white" id="selectAllCheckbox" name="selectAllCheckbox">
+                                                        </th>
+                                                        <th>
+                                                            <a asp-action="SaleOrderRegisterDetailed" asp-route-sortOrder="@ViewData["KeySort"]" asp-route-Search="@ViewData["CurrentFilter"]" asp-route-PSize="@ViewData["PageSize"]" asp-route-PageNumber="@ViewData["PageNumber"]">Number</a>
+                                                        </th>
+                                                        <th class="datetype text-center">
+                                                            Date
+                                                        </th>
+                                                        <th>
+                                                            Number
+                                                        </th>
+                                                        <th class="datetype text-center">
+                                                            Date
+                                                        </th>
+                                                        <th class="table-width-md text-center">
+                                                            Export Order
+                                                        </th>
+                                                        <th>
+                                                           Category
+                                                        </th>
+                                                        <th>
+                                                            Group
+                                                        </th>
+                                                        <th class="table-col-xxl">
+                                                            Name
+                                                        </th>
+                                                        <th>
+                                                            Material Segregation
+                                                        </th>
+                                                        <th>
+                                                            Group
+                                                        </th>
+                                                        <th>
+                                                            Item code
+                                                        </th>
+                                                        <th class="table-col-xxl">
+                                                            Description
+                                                        </th>
+                                                        <th class="table-width-xl text-end">
+                                                            OD
+                                                        </th>
+                                                        <th class="table-width-xl text-end">
+                                                            Thickness
+                                                        </th>
+                                                        <th class="table-width-xl text-end">
+                                                            Lenth
+                                                        </th>
+                                                        <th>
+                                                            Material grade
+                                                        </th>
+                                                        <th class="table-width-xl text-end">
+                                                            Qty
+                                                        </th>
+                                                        <th class="table-width-md text-center">
+                                                            UoM
+                                                        </th>
+                                                        <th class="datetype text-center">
+                                                            Delivery Date
+                                                        </th>
+                                                        <th class="table-width-lg text-center">
+                                                            Currency
+                                                        </th>
+                                                        <th class="table-width-lg text-end">
+                                                            Unit Price
+                                                        </th>
+                                                        <th class="table-width-3xl text-end">
+                                                            Material Value
+                                                        </th>
+                                                        <th class="table-width-3xl text-end">
+                                                            Item Misc.Income Value
+                                                        </th>
+                                                        <th class="table-width-3xl text-end">
+                                                            Header Misc.Income Value
+                                                        </th>
+                                                        <th class=" table-width-3xl text-end">
+                                                            Total value
+                                                        </th>
+                                                        <th class="table-width-lg text-center">
+                                                            Currency
+                                                        </th>
+                                                        <th class="table-width-lg text-end">
+                                                            Unit Price
+                                                        </th>
+                                                        <th class="table-width-3xl text-end">
+                                                            Material Value
+                                                        </th>
+                                                        <th class="table-width-3xl text-end">
+                                                            Item Misc.Income Value
+                                                        </th>
+                                                        <th class="table-width-3xl text-end">
+                                                            Header Misc.Income Value
+                                                        </th>
+                                                        <th class="text-end table-width-3xl">
+                                                            Total value
+                                                        </th>
+                                                        
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model)
+                                                    {
+                                                        <tr>
+                                                            <td class="p-2 del">
+                                                                <input type="checkbox" class="DeleteNumber form-check-input" name="DeleteNumber" value="@item.SO_Number">
+                                                            </td>
+                                                            <td>
+                                                                <a asp-controller="SaleOrder" asp-action="PreviewSaleOrder" class="icon-link-hover" asp-all-route-data="@(new Dictionary<String,String> { { "SO_No", @item.SO_Number.ToString() } })">
+                                                                    @item.SO_RegNo
+                                                                </a>
+                                                            </td>
+                                                            <td class="datetype text-center">@Convert.ToDateTime(item.SO_RegDate).ToString("dd-MMM-yyyy")</td>
+                                                            <td>
+                                                                <a asp-controller="SaleOrder" asp-action="PreviewSaleOrder" class="icon-link-hover" asp-all-route-data="@(new Dictionary<String,String> { { "SO_No", @item.SO_Number.ToString() } })">
+                                                                    @item.SO_OrderNo
+                                                                </a>
+                                                            </td>
+                                                            <td class="datetype text-center">@Convert.ToDateTime(item.SO_OrderDate).ToString("dd-MMM-yyyy")</td>
+                                                            <td class="text-center table-width-md">
+                                                                @item.SO_ExportOrder
+                                                            </td>
+                                                            <td>@item.SO_BYC_Category</td>
+                                                            <td>@item.SO_BYG_Group</td>
+                                                            <td class="table-col-xxl">@item.SO_BUY_Name</td>
+                                                            <td>@item.SO_MS_Name</td>
+                                                            <td>@item.SO_ITM_Group</td>
+                                                            <td>@item.SO_ITM_Code</td>
+                                                            <td class="table-col-xxl">@item.SO_ITM_Description</td>
+                                                            <td class="table-width-xl text-end">@item.SO_ITM_OuterDia</td>
+                                                            <td class="table-width-xl text-end">@item.SO_ITM_Thickness</td>
+                                                            <td class="table-width-xl text-end">@item.SO_ITM_Length</td>
+                                                            <td>@item.SO_ITM_MaterialGrade</td>
+                                                            <td class="table-width-xl text-end">@item.SO_Qty</td>
+                                                            <td class="text-center table-width-md">@item.SO_UOM_Name</td>
+                                                            <td class="datetype text-center">@Convert.ToDateTime(item.SO_DeliveryDate).ToString("dd-MMM-yyyy")</td>
+                                                            <td class="text-center table-width-lg">@item.SO_CUR_Name</td>
+                                                            <td class="text-end table-width-lg">@String.Format(India, "{0:N2}", Convert.ToDouble(item.SO_UnitPrice))</td>
+                                                            <td class="table-width-3xl text-end">@String.Format(India, "{0:N2}", Convert.ToDouble(item.SO_TotalAmount))</td>
+                                                            <td class="text-end table-width-3xl">@String.Format(India, "{0:N2}", Convert.ToDouble(item.SO_TotalItemIncome))</td>
+                                                            <td class="text-end table-width-3xl">@String.Format(India, "{0:N2}", Convert.ToDouble(item.SO_TotalHeadIncome))</td>
+                                                            <td class="text-end table-width-3xl">@String.Format(India, "{0:N2}", Convert.ToDouble(item.SO_OrderValue))</td>
+                                                            <td class="table-width-lg text-end">@String.Format(India, "{0:N2}", Convert.ToDouble(item.SO_ExchangeRate))</td>
+                                                            <td class="text-center table-width-lg"></td>
+                                                            <td class="text-end table-width-lg"></td>
+                                                            <td class="table-width-3xl text-end"></td>
+                                                            <td class="text-end table-width-3xl"></td>
+                                                            <td class="text-end table-width-3xl"></td>
+                                                            <td class="text-end table-width-3xl"></td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr class="table-info">
+                                                        <td colspan="17" class="text-end py-2">Total</td>
+                                                        <td class="table-width-xl text-end">
+                                                            @String.Format(India, "{0:#,0.##}", @ViewBag.SumOfQty)
+                                                        </td>
+                                                        <td colspan="4"></td>
+                                                        <td class="table-width-3xl text-end">
+                                                            @String.Format(India, "{0:N2}", Convert.ToDouble(@ViewBag.SumOfAmount))
+                                                        </td>
+                                                        <td class="table-width-3xl text-end">
+                                                            @String.Format(India, "{0:N2}", Convert.ToDouble(@ViewBag.SumOfItemIncome))
+                                                        </td>
+                                                        <td class="table-width-3xl text-end">
+                                                            @String.Format(India, "{0:N2}", Convert.ToDouble(@ViewBag.SumOfHeadIncome))
+                                                        </td>
+                                                        <td class="table-width-3xl text-end">@String.Format(India, "{0:N2}", Convert.ToDouble(@ViewBag.SumOfOrderValue))</td>
+                                                        <td colspan="3"></td>
+                                                        <td class="text-end table-width-3xl"></td>
+                                                        <td class="text-end table-width-3xl"></td>
+                                                        <td class="text-end table-width-3xl"></td>
+                                                        <td class ="text-end table-width-3xl"></td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    @{
+                                        var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+                                        var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+                                    }
+                                    <div class="row table-cal align-items-center">
+                                        <div class="col align-items-center">
+                                            <form asp-action="SaleOrderRegisterDetailed" method="get">
+                                                <div class="row align-items-center">
+                                                    <div class="col py-1">
+                                                        @{
+                                                            Int32 TotalSize = Convert.ToInt32(ViewData["TotalSize"]);
+                                                            Int32 PageNumber = Convert.ToInt32(ViewData["PageNumber"]);
+                                                            Int32 PageSize = Convert.ToInt32(ViewData["PageSize"]);
+                                                            Int32 StartNumber = 1;
+                                                            Int32 EndNumber = 0;
+
+                                                            if (PageNumber > 1)
+                                                            {
+                                                                StartNumber = StartNumber + ((PageNumber - 1) * PageSize);
+                                                            }
+                                                            EndNumber = (EndNumber + PageSize) + ((PageNumber - 1) * PageSize);
+                                                            if (EndNumber > TotalSize)
+                                                            {
+                                                                EndNumber = TotalSize;
+                                                            }
+
+                                                            if (StartNumber > EndNumber)
+                                                            {
+                                                                StartNumber = EndNumber;
+                                                            }
+                                                        }
+                                                        Showing @StartNumber to @EndNumber
+                                                    </div>
+                                                    <div class="col text-center py-1">
+                                                        Total records @TotalSize
+                                                    </div>
+                                                    <div class="col">
+                                                        <nav>
+                                                            <ul class="pagination float-end mb-0">
+                                                                <li class="page-item">
+                                                                    <a asp-action="SaleOrderRegisterDetailed" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-Search="@ViewData["CurrentFilter"]" asp-route-PSize="@ViewData["PageSize"]" asp-route-pageNumber="1" class="page-link @prevDisabled">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-left" viewBox="0 0 16 16">
+                                                                            <path fill-rule="evenodd" d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0" />
+                                                                            <path fill-rule="evenodd" d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0" />
+                                                                        </svg>
+                                                                    </a>
+                                                                </li>
+                                                                <li class="page-item">
+                                                                    <a asp-action="SaleOrderRegisterDetailed" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-Search="@ViewData["CurrentFilter"]" asp-route-PSize="@ViewData["PageSize"]" asp-route-pageNumber="@(Model.PageIndex - 1)" class="page-link @prevDisabled">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                                                                            <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0" />
+                                                                        </svg>
+                                                                    </a>
+                                                                </li>
+                                                                <li>
+                                                                    <a class="page-link">
+                                                                        @ViewData["PageNumber"]
+                                                                    </a>
+                                                                </li>
+                                                                <li class="page-item">
+                                                                    <a asp-action="SaleOrderRegisterDetailed" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-Search="@ViewData["CurrentFilter"]" asp-route-PSize="@ViewData["PageSize"]" asp-route-pageNumber="@(Model.PageIndex + 1)" class="page-link @nextDisabled">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                                                                            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708" />
+                                                                        </svg>
+                                                                    </a>
+                                                                </li>
+                                                                <li class="page-item">
+                                                                    <a asp-action="SaleOrderRegisterDetailed" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-Search="@ViewData["CurrentFilter"]" asp-route-PSize="@ViewData["PageSize"]" asp-route-pageNumber="@ViewData["PageCount"]" class="page-link @nextDisabled">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-right" viewBox="0 0 16 16">
+                                                                            <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                                                            <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                                                        </svg>
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </nav>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+
+</form>
+
+
+<script>
+    $(document).ready(function () {
+        const $tableBody = $('#MyTable tbody');
+
+        $tableBody.on('click', 'tr', function (e) {
+            if ($(e.target).is('input[type="checkbox"], a, button')) {
+                return;
+            }
+            $(this).find('.DeleteNumber').prop('checked', function (i, currentValue) {
+                return !currentValue;
+            }).trigger('change');
+            UpdateButtonWithData();
+        });
+    });
+
+    function PrintCheckedRows() {
+        var AllItem = $('#selectAllCheckbox').is(':checked');
+
+        var array = $.map($('input[name="DeleteNumber"]:checked'), function (c) {
+            return c.value;
+        });
+        let PrintContent = "";
+        var Search = $("#Search").val();
+        $.ajax({
+            url: 'Sale-order-register-detailed/print',
+            data: { Search: Search, SelectedItem: array.join(','), AllItem: AllItem },
+            type: 'GET',
+            success: function (data) {
+                PrintContent = data;
+                console.log(data);
+
+                const iframe = document.createElement('iframe');
+                document.body.appendChild(iframe);
+                const iframeDoc = iframe.contentWindow.document;
+                iframeDoc.open();
+                iframeDoc.write(data);
+                iframeDoc.close();
+
+                setTimeout(() => {
+                    try {
+                        iframe.contentWindow.focus();
+                        iframe.contentWindow.print();
+                    } catch (error) { console.error("Printing from iframe failed:", error); }
+                    finally { setTimeout(() => { document.body.removeChild(iframe); }, 1000); }
+                }, 250);
+            },
+            error: function () {
+            }
+        });
+
+        return false;
+    }
+
+    function UpdateButtonWithData() {
+        const checkboxes = document.querySelectorAll(".DeleteNumber:checked");
+        const selectedValues = [];
+
+        checkboxes.forEach(checkbox => {
+            const row = checkbox.closest("tr");
+            const orderNumber = row.cells[1].textContent;
+            selectedValues.push(orderNumber);
+        });
+
+        const Viewbutton = document.getElementById("View");
+        const Editbutton = document.getElementById("Edit");
+        // const Deletebutton = document.getElementById("Delete");
+        if (selectedValues.length == 1) {
+            Viewbutton.removeAttribute("disabled");
+            Editbutton.removeAttribute("disabled");
+            // Deletebutton.removeAttribute("disabled");
+        } else {
+            Viewbutton.setAttribute("disabled", "true");
+            Editbutton.setAttribute("disabled", "true");
+            // Deletebutton.setAttribute("disabled", "true");
+        }
+    }
+
+    document.querySelectorAll(".DeleteNumber").forEach(checkbox => {
+        checkbox.addEventListener("change", UpdateButtonWithData); // Update button on checkbox toggle
+    });
+
+
+    $(function () {
+        $("#View").on('click', function () {
+            var array = $.map($('input[name="DeleteNumber"]:checked'), function (c) {
+                return c.value;
+            });
+            $("#SO_No").val(array.join(","));
+            return true;
+        });
+
+        $("#Edit").on('click', function () {
+            var array = $.map($('input[name="DeleteNumber"]:checked'), function (c) { return c.value; })
+            $("#SO_No").val(array.join(","));
+            return true;
+        });
+    });
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+        selectAllCheckbox.addEventListener('change', function () {
+            UpdateButtonWithData();
+        });
+    });
+
+     
+    document.addEventListener("DOMContentLoaded", function () {
+        const MainDiv = document.getElementById('BodyHeight');
+        const HeadDiv = document.getElementById('BodyCardHeader');
+        const BodyDiv = document.getElementById('BodyCardBody');
+
+        if (HeadDiv && BodyDiv) {
+            const MainDivHeight = MainDiv.offsetHeight;
+            const HeadDivHeight = HeadDiv.offsetHeight;
+            BodyDiv.style.height = (MainDivHeight - HeadDivHeight) + 'px';
+        }
+        
+    });
+     $('.navbar-nav >.nav-item.sale > a').addClass("active");
+</script>

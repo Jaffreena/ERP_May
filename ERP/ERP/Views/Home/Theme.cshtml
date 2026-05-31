@@ -1,0 +1,33 @@
+﻿@model ERP_DTO.UserLog_DTO
+
+<div class="row">
+    <div class="col pb-3 pt-4">
+        <h1 class="h4">Theme 
+            <a asp-controller="Home" asp-action="Dashboard" class="float-end btn btn-sm btn-light">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                </svg>
+            </a>
+        </h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-md-4 pt-3">
+        <div class="card overflow-hidden">
+            <div class="card-body">
+                <form asp-action="Theme">
+                    <div class="mb-3">
+                        <select class="form-select" asp-for="Theme">
+                            <option value="1">Blue</option>
+                            <option value="2">Dark</option>
+                            <option value="3">Light</option>
+                        </select>
+                    </div>
+                    <div>
+                        <input type="submit" name="Mode" value="Update" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,47 @@
+﻿@model ERP_DTO.WH_TaxAssignHead_DTO
+
+
+@if (Model != null)
+{
+    <input asp-for="WH_TaxNumber" type="hidden" class="Number" />
+}
+    <div class="row">
+    <div class="col-12 col-md-10 col-xl-8">
+            <div class="row">
+                <div class="col-12 col-md-4 mb-3">
+                    <label asp-for="WH_TaxCode" class="control-label"></label>
+                    <select asp-for="WH_TaxCode" class=" form-control form-select" asp-items="@ViewBag.WHTax" onchange="form.submit();"></select>
+                </div>
+            <div class="col-12 col-md-6 mb-3">
+                    <label asp-for="WH_TaxDescription" class="control-label"></label>
+                    @if (@ViewBag.TaxDes != null)
+                    {
+
+                        <input asp-for="WH_TaxDescription" class="form-control disable" value="@ViewBag.TaxDes" disabled autocomplete="off" />
+                    }
+                    else
+                    {
+                        <input asp-for="WH_TaxDescription" class="form-control disable" disabled autocomplete="off" />
+
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+@* 
+
+<div>
+    @if(Model != null)
+    {
+        <input type="submit" name="Mode" value="Update" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+    else
+    {
+        <input type="submit" name="Mode" value="Save" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+</div> *@
+
+

@@ -1,0 +1,65 @@
+﻿@model ERP_DTO.Currency_DTO
+
+
+@if (Model != null)
+{
+    <input asp-for="CurrencyNumber" type="hidden" class="Number" />
+}
+<div class="row mb-3">
+    <label asp-for="CurrencyCode" class="col-md-6 col-lg-5 control-label"></label>
+    <div class="col-md-6 col-lg-7">
+        <input asp-for="CurrencyCode" class="form-control Key KeyDup" autofocus="true" autocomplete="off" />
+    </div>
+</div>
+<div class="row mb-3">
+    <label asp-for="FormalName" class="col-md-6 col-lg-5 control-label"></label>
+    <div class="col-md-6 col-lg-7">
+        <input asp-for="FormalName" class="form-control Key KeyDup" autofocus="true" autocomplete="off" />
+    </div>
+</div>
+<div class="row mb-3">
+    <label asp-for="Symbol" class="col-md-6 col-lg-5 control-label"></label>
+    <div class="col-md-6 col-lg-7">
+        <input asp-for="Symbol" class="form-control Key KeyDup" autofocus="true" autocomplete="off" />
+    </div>
+</div>
+<div class="row mb-3">
+    <label asp-for="DecimalPlaces" class="col-md-6 col-lg-5 control-label"></label>
+    <div class="col-md-6 col-lg-7">
+        <input asp-for="DecimalPlaces" class="form-control Key KeyDup" autofocus="true" autocomplete="off" />
+    </div>
+</div>
+<div class="row mb-3">
+    <label asp-for="DecimalPortionName" class="col-md-6 col-lg-5 control-label"></label>
+    <div class="col-md-6 col-lg-7">
+        <input asp-for="DecimalPortionName" class="form-control Key KeyDup" autofocus="true" autocomplete="off" />
+    </div>
+</div>
+<div class="row mb-3">
+    <label asp-for="CurrencyLocation" class="col-md-6 col-lg-5 control-label"></label>
+    <div class="col-md-6 col-lg-7">
+        @foreach (var item in ViewBag.Currency)
+        {
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="CurrencyLocation" value="@item.Number" checked="@item.Checked">
+                <label class="form-check-label" for="CurrencyLocation">
+                    @item.Location
+                </label>
+            </div>
+        }
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="col-md-12 text-end">
+        @if(Model != null)
+        {
+            <input type="submit" name="Mode" value="Update" class="btn btn-primary me-3" />
+            <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+        }
+        else
+        {
+            <input type="submit" name="Mode" value="Save" class="btn btn-primary me-3" />
+            <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+        }
+    </div>
+</div>

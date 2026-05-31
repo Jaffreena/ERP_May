@@ -1,0 +1,331 @@
+﻿@model List<ERP_DTO.POToPurchaseInvoiceExpense_DTO>
+
+<table class="table table-bordered table-hover align-middle w-100">
+    <thead>
+        <tr class="table-info">
+            <th>Purchase Order Number</th>
+            <th>Expense Code</th>
+            <th>Description</th>
+            <th>Remarks</th>
+            <th>Occurrence</th>
+            <th>Chargeable method</th>
+            <th>Expense Base</th>
+            <th>Expense Value</th>
+            <th>Allocate</th>
+            <th>Ledger account</th>
+            <th>Tax calculating</th>
+            <th>Tax Value</th>
+            <th></th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody id="ExTableBody">
+        <tr id="ExTempRow" style="display: none;">
+            <td>
+                <input id="PIH_EXP_POH_OrderNo" class="form-control PIH_EXP_POH_OrderNo" readonly />
+            </td>
+            <td>
+                <select id="PIH_EXP_Expense_Number" class="form-select PIH_EXP_Expense_Number" asp-items="@ViewBag.ExpenseCode" disabled></select>
+            </td>
+            <td>
+                <input id="PIH_EXP_Description" class="form-control PIH_EXP_Description" readonly />
+            </td>
+            <td>
+                <input id="PIH_EXP_Remarks" class="form-control PIH_EXP_Remarks" readonly />
+            </td>
+            <td>
+                <select id="PIH_EXP_Occurrence_Number" class="form-select PIH_EXP_Occurrence_Number" asp-items="@ViewBag.Occurrence" disabled></select>
+            </td>
+            <td>
+                <select id="PIH_EXP_CM_Number" class="form-select PIH_EXP_CM_Number" asp-items="@ViewBag.ChargeableMethod" disabled></select>
+            </td>
+            <td>
+                <input id="PIH_EXP_ExpenseBase" class="form-control PIH_EXP_ExpenseBase decimal text-end" readonly />
+            </td>
+            <td>
+                <input id="PIH_EXP_ExpenseValue" class="form-control PIH_EXP_ExpenseValue decimal text-end" readonly />
+            </td>
+            <td>
+                <select id="PIH_EXP_Allocate_Number" class="form-select PIH_EXP_Allocate_Number" asp-items="@ViewBag.Allocate" disabled></select>
+            </td>
+            <td>
+                <input id="PIH_EXP_LA_Number" class="form-control PIH_EXP_LA_Number" readonly />
+            </td>
+            <td>
+                <select id="PIH_EXP_TaxCalculate" class="form-select PIH_EXP_TaxCalculate" asp-items="@ViewBag.IsCalculate"></select>
+            </td>
+            <td>
+                <input id="PIH_EXP_TaxValue" class="form-control PIH_EXP_TaxValue decimal text-end" readonly autocomplete="off" />
+                <input id="PIH_EXP_SAC_Number" class="form-control PIH_EXP_SAC_Number" autocomplete="off" type="hidden" />
+            </td>
+            <td><a id="HeaderTaxView" class="btn btn-primary btn-sm TaxView">Tax View</a></td>
+            <td>
+                <input id="PIH_EXP_POH_Number" class="form-control PIH_EXP_POH_Number" type="hidden" />
+                <input id="PIH_EXP_Number" class="form-control PIH_EXP_Number" type="hidden" />
+                <input type="hidden" name="PIH_EXP_IsDeleted" class="PIH_EXP_IsDeleted" value="false" />
+
+                <a class="ExRowRemove btn btn-sm btn-danger p-1 icon-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                    </svg>
+                </a>
+            </td>
+        </tr>
+
+        @if (Model != null)
+        {
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <tr class="ExNewRow" style="@(@Model[i].PIH_EXP_IsDeleted == "true" ? "display: none;":"")">
+                    <td>
+                        <input id="PIH_EXP_POH_OrderNo" name="Expenses[@i].PIH_EXP_POH_OrderNo" readonly class="form-select PIH_EXP_POH_OrderNo" value="@Model[i].PIH_EXP_POH_OrderNo" />
+                    </td>
+                    <td>
+                        <select id="PIH_EXP_Expense_Number" name="Expenses[@i].PIH_EXP_Expense_Number" readonly class="form-select PIH_EXP_Expense_Number" disabled>
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.ExpenseCode)
+                                {
+                                if (item.Value == Model[i].PIH_EXP_Expense_Number)
+                                    {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                    <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                        </select>
+                    </td>
+                    <td>
+                        <input id="PIH_EXP_Description" name="Expenses[@i].PIH_EXP_Description" readonly class="form-control PIH_EXP_Description" value="@Model[i].PIH_EXP_Description" />
+                    </td>
+                    <td>
+                        <input id="PIH_EXP_Remarks" name="Expenses[@i].PIH_EXP_Remarks" readonly class="form-control PIH_EXP_Remarks" value="@Model[i].PIH_EXP_Remarks" />
+                    </td>
+                    <td>
+                        <select id="PIH_EXP_Occurrence_Number" name="Expenses[@i].PIH_EXP_Occurrence_Number" class="form-select PIH_EXP_Occurrence_Number" disabled>
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Occurrence)
+                            {
+                                if (item.Value == Model[i].PIH_EXP_Occurrence_Number)
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <select id="PIH_EXP_CM_Number" name="Expenses[@i].PIH_EXP_CM_Number" class="form-select PIH_EXP_CM_Number" disabled>
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.ChargeableMethod)
+                            {
+                                if (item.Value == Model[i].PIH_EXP_CM_Number)
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input id="PIH_EXP_ExpenseBase" name="Expenses[@i].PIH_EXP_ExpenseBase" class="form-control PIH_EXP_ExpenseBase decimal text-end" readonly value="@Model[i].PIH_EXP_ExpenseBase" />
+                    </td>
+                    <td>
+                        <input id="PIH_EXP_ExpenseValue" name="Expenses[@i].PIH_EXP_ExpenseValue" class="form-control PIH_EXP_ExpenseValue decimal text-end" readonly value="@Model[i].PIH_EXP_ExpenseValue" />
+                    </td>
+                    <td>
+                        <select id="PIH_EXP_Allocate_Number" name="Expenses[@i].PIH_EXP_Allocate_Number" class="form-select PIH_EXP_Allocate_Number" disabled>
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Allocate)
+                            {
+                                if (item.Value == Model[i].PIH_EXP_Allocate_Number)
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input id="PIH_EXP_LA_Number" name="Expenses[@i].PIH_EXP_LA_Number" readonly class="form-control PIH_EXP_LA_Number" value="@Model[i].PIH_EXP_LA_Number" />
+                    </td>
+                    <td>
+                        <select id="PIH_EXP_TaxCalculate" name="Expenses[@i].PIH_EXP_TaxCalculate" class="form-select PIH_EXP_TaxCalculate">
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.IsCalculate)
+                            {
+                                if (item.Value == Model[i].PIH_EXP_TaxCalculate)
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input id="PIH_EXP_TaxValue" name="Expenses[@i].PIH_EXP_TaxValue" class="form-control PIH_EXP_TaxValue decimal text-end" autocomplete="off" readonly value="@Model[i].PIH_EXP_TaxValue" />
+                        <input id="PIH_EXP_SAC_Number" name="Expenses[@i].PIH_EXP_SAC_Number" class="form-control PIH_EXP_SAC_Number" type="hidden" autocomplete="off" readonly value="@Model[i].PIH_EXP_SAC_Number" />
+                    </td>
+                    <td><a id="HeaderTaxView" class="btn btn-primary btn-sm TaxView">Tax View</a></td>
+                    <td>
+                        <input name="Expenses[@i].PIH_EXP_Number" type="hidden" class="PIH_EXP_Number" value="@Model[i].PIH_EXP_Number" />
+                        <input name="Expenses[@i].PIH_EXP_POH_Number" type="hidden" class="PIH_EXP_POH_Number" value="@Model[i].PIH_EXP_POH_Number" />
+                        <input type="hidden" name="Expenses[@i].PIH_EXP_IsDeleted" class="PIH_EXP_IsDeleted" value="@Model[i].PIH_EXP_IsDeleted" />
+
+                        <a class="ExRowRemove btn btn-sm btn-danger p-1 icon-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                            </svg>
+                        </a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+<script>
+    var ExrowCount = @(Model != null ? Model.Count : 0);
+    function ExAddRow(PO) {
+        var ExNewRow = $("#ExTempRow").clone().removeAttr("style").removeAttr("id").addClass("ExNewRow");
+        ExNewRow.find("input.PIH_EXP_POH_OrderNo").attr("name", "Expenses[" + ExrowCount + "].PIH_EXP_POH_OrderNo").val(PO.poH_EXP_POH_OrderNo);
+        ExNewRow.find("input.PIH_EXP_Number").attr("name", "Expenses[" + ExrowCount + "].PIH_EXP_Number").val(PO.poH_EXP_Number);
+        ExNewRow.find("input.PIH_EXP_POH_Number").attr("name", "Expenses[" + ExrowCount + "].PIH_EXP_POH_Number").val(PO.poH_EXP_POH_Number);
+        ExNewRow.find("select.PIH_EXP_Expense_Number").attr("name", "Expenses[" + ExrowCount + "].PIH_EXP_Expense_Number").val(PO.poH_EXP_Expense_Number);
+        ExNewRow.find("input.PIH_EXP_Description").attr("name", "Expenses[" + ExrowCount + "].PIH_EXP_Description").val(PO.poH_EXP_Description);
+        ExNewRow.find("input.PIH_EXP_Remarks").attr("name", "Expenses[" + ExrowCount + "].PIH_EXP_Remarks").val(PO.poH_EXP_Remarks);
+        ExNewRow.find("select.PIH_EXP_Occurrence_Number").attr("name", "Expenses[" + ExrowCount + "].PIH_EXP_Occurrence_Number").val(PO.poH_EXP_Occurrence_Number);
+        ExNewRow.find("select.PIH_EXP_CM_Number").attr("name", "Expenses[" + ExrowCount + "].PIH_EXP_CM_Number").val(PO.poH_EXP_CM_Number);
+        ExNewRow.find("input.PIH_EXP_ExpenseBase").attr("name", "Expenses[" + ExrowCount + "].PIH_EXP_ExpenseBase").val(PO.poH_EXP_ExpenseBase);
+        ExNewRow.find("input.PIH_EXP_ExpenseValue").attr("name", "Expenses[" + ExrowCount + "].PIH_EXP_ExpenseValue").val(PO.poH_EXP_ExpenseValue);
+        ExNewRow.find("select.PIH_EXP_Allocate_Number").attr("name", "Expenses[" + ExrowCount + "].PIH_EXP_Allocate_Number").val(PO.poH_EXP_Allocate_Number);
+        ExNewRow.find("input.PIH_EXP_LA_Number").attr("name", "Expenses[" + ExrowCount + "].PIH_EXP_LA_Number").val(PO.poH_EXP_LA_Number);
+        ExNewRow.find("select.PIH_EXP_TaxCalculate").attr("name", "Expenses[" + ExrowCount + "].PIH_EXP_TaxCalculate").val("2");
+        ExNewRow.find("input.PIH_EXP_TaxValue").attr("name", "Expenses[" + ExrowCount + "].PIH_EXP_TaxValue");
+        ExNewRow.find("input.PIH_EXP_SAC_Number").attr("name", "Expenses[" + ExrowCount + "].PIH_EXP_SAC_Number").val(PO.poH_EXP_SAC_Number);
+        ExNewRow.find("input.PIH_EXP_IsDeleted").attr("name", "Expenses[" + ExrowCount + "].PIH_EXP_IsDeleted").val("false");
+
+        $("#ExTableBody").append(ExNewRow);
+        ExrowCount++;
+    }
+
+    $(document).on('click', '.ExRowRemove', function () {
+        $(this).closest('tr').find("input.PIH_EXP_IsDeleted").val("true");
+        $(this).closest('tr').hide();
+        (async () => {
+            await CalculateAllExpenses();
+        })();
+    });
+
+    async function ExAssignValue($row) {
+        let ExpenseValue = 0;
+
+        const Charge = $row.find("select.PIH_EXP_CM_Number").val();
+        const POHNumber = $row.find("input.PIH_EXP_POH_Number").val();
+        const IsGst = $row.find("select.PIH_EXP_TaxCalculate").val();
+        const ExpenseBase = parseFloat(removeCommas($row.find("input.PIH_EXP_ExpenseBase").val())) || 0;
+
+        // Calculate item totals
+        let TotalQty = 0;
+        let TotalAmount = 0;
+
+        $("tr.NewRow").each(function () {
+            const Irow = $(this);
+            if (Irow.find(".PII_POH_Number").val() === POHNumber && Irow.find("input.PII_IsDeleted").val() !== 'true') {
+                TotalQty += parseFloat(removeCommas(Irow.find(".PII_Qty").val())) || 0;
+                TotalAmount += parseFloat(removeCommas(Irow.find(".PII_Amount").val())) || 0;
+            }
+        });
+
+        // Calculate expense value
+        if (Charge === "1") {
+            ExpenseValue = ExpenseBase;
+        }
+        else if (Charge === "2") {
+            ExpenseValue = TotalQty * ExpenseBase;
+        }
+        else if (Charge === "3") {
+            ExpenseValue = TotalAmount * ExpenseBase / 100;
+        }
+
+        $row.find("input.PIH_EXP_ExpenseValue").val(DecimalIndianRupees(ExpenseValue));
+
+        // Calculate GST
+        const Cluster = $("#PIH_TaxCluster_Number").val() || $("#PIH_TaxClusterNumber").val();
+        const GRNDate = $("#PIH_InvoiceDate").val();
+        const SACNumber = $row.find("input.PIH_EXP_SAC_Number").val();
+
+        if (IsGst === "2") {
+            const GstAmount = await GetClusterExpenseAmount(Cluster, GRNDate, SACNumber, ExpenseValue);
+            $row.find("input.PIH_EXP_TaxValue").val(DecimalIndianRupees(GstAmount));
+        } else {
+            $row.find("input.PIH_EXP_TaxValue").val(DecimalIndianRupees(0));
+        }
+    }
+
+    $(document).on('change', "tr.ExNewRow select.PIH_EXP_TaxCalculate", function () {
+        var $row = $(this).closest("tr.ExNewRow");
+        (async () => {
+            await ExAssignValue($row);
+        })();
+    });
+    
+    $(document).on('click', '.TaxView', function () {
+        var Cluster = $("#PIH_TaxCluster_Number").val();
+        var GRNDate = $("#PIH_InvoiceDate").val();
+
+        var currentRow = $(this).closest('tr.ExNewRow');
+        var isGst = currentRow.find("select.PIH_EXP_TaxCalculate").val();
+        if (isGst === "2") {
+            var SACNumber = currentRow.find("input.PIH_EXP_SAC_Number").val();
+            var ExpenseValue = currentRow.find("input.PIH_EXP_ExpenseValue").val();
+
+            $.ajax({
+                type: "get",
+                url: "expense/gst/view",
+                data: { Cluster: Cluster, GRNDate: GRNDate, SAC: SACNumber, BaseAmount: ExpenseValue },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    const Table = document.getElementById('TaxTableView');
+                    Table.innerHTML = "";
+
+                    if (Table) {
+                        const TaxView = ClusterTaxView(data);
+                        Table.appendChild(TaxView);
+                    }
+
+                    new bootstrap.Modal($("#TaxView")).show();
+                    $('#TaxView').on('shown.bs.modal', function () {
+                        $(this).find('[autofocus]').focus();
+                    });
+                }
+            });
+        }
+    });
+
+    async function GetClusterExpenseAmount(Cluster, GRNDate, SACNumber, BaseAmount) {
+        const Amount = await $.ajax({
+            url: 'expense/gst',
+            data: { Cluster: Cluster, GRNDate: GRNDate, SAC: SACNumber, BaseAmount: BaseAmount },
+            type: 'GET'
+        });
+        return Amount;
+    }
+</script>
+<style>
+    .search-results {
+        position: absolute;
+        z-index: 1000;
+        overflow-y: auto;
+        width: 400px;
+        max-height:300px;
+    }
+</style>

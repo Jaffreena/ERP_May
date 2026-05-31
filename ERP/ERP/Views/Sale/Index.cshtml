@@ -1,0 +1,312 @@
+﻿@{
+    ViewData["Title"] = "Sale";
+}
+
+<form asp-action="Index" class="h-100">
+    <div class="row align-items-center panel-header gx-2">
+        <div class="col h-100">
+            <div class="h6 fw-light text-white h-100 align-content-center bg-secondary px-2">
+                Sale
+            </div>
+        </div>
+    </div>
+    <div class="row panel-body gx-2">
+        <div class="col-12 panel-card-fixed" id="BodyHeight">
+            <div class="w-100 h-100 rounded-0 border border-primary bg-transparent px-3" id="CardBody">
+                <div class="row">
+                    <div class="col-4 pt-3">
+                        <div class="card rounded-0 mb-3 bg-transparent">
+                            <div class="card-header bg-secondary rounded-0">
+                                <p class="mb-0">
+                                    Favourites
+                                </p>
+                            </div>
+                            <div class="card-body bg-transparent text-dark">
+                                <p class="card-text placeholder-glow">
+                                    <span class="placeholder col-7"></span>
+                                    <span class="placeholder col-4"></span>
+                                    <span class="placeholder col-4"></span>
+                                    <span class="placeholder col-6"></span>
+                                    <span class="placeholder col-8"></span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="card rounded-0 mb-3 bg-transparent">
+                            <div class="card-header bg-secondary rounded-0">
+                                <p class="mb-0">
+                                    Reports
+                                </p>
+                            </div>
+                            <div class="card-body bg-transparent text-dark">
+                                <ul class="list-unstyled mb-0">
+                                    <li class="mb-2">
+                                        <a asp-controller="SaleOrder" class="d-flex align-items-center" asp-action="SaleOrderRegisterSummary">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-chevron-double-right me-2" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                                <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                            </svg> Sale Order Register
+                                        </a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <a asp-controller="SaleInvoice" class="d-flex align-items-center" asp-action="SaleInvoiceRegisterSummary">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-chevron-double-right me-2" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                                <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                            </svg> Sale Invoice Register
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a asp-controller="SaleRejection" class="d-flex align-items-center" asp-action="SaleRejectionRegisterSummary">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-chevron-double-right me-2" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                                <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                            </svg> Sale Rejection Register
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card rounded-0 mb-3 bg-transparent">
+                            <div class="card-header bg-secondary rounded-0">
+                                <p class="mb-0">
+                                    Setup
+                                </p>
+                            </div>
+                            <div class="card-body bg-transparent text-dark">
+                                <ul class="list-unstyled mb-0">
+                                    <li class="mb-2">
+                                        <a asp-controller="SaleOrder" class="d-flex align-items-center" asp-action="SONumbering">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-chevron-double-right me-2" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                                <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                            </svg> Sale Order Numbering
+                                        </a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <a asp-controller="SaleInvoice" class="d-flex align-items-center" asp-action="SINumbering">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-chevron-double-right me-2" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                                <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                            </svg> Sale Invoice Numbering
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a asp-controller="SaleRejection" class="d-flex align-items-center" asp-action="SRNumbering">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-chevron-double-right me-2" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                                <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                            </svg> Sale Rejection Numbering
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4 pt-3">
+                        <div class="card rounded-0 mb-3 bg-transparent">
+                            <div class="card-header bg-secondary rounded-0">
+                                <p class="mb-0">
+                                    Transactions
+                                </p>
+                            </div>
+                            <div class="card-body bg-transparent text-dark">
+                                <ul class="list-unstyled mb-0">
+                                    <li class="mb-2">
+                                        <a asp-controller="SaleOrder" asp-action="CreateSaleOrder">
+                                            Sale Order
+                                        </a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <a data-bs-toggle="collapse" href="#Invoice" role="button" aria-expanded="false" aria-controls="Invoice">
+                                            Sale Invoice
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                        </a>
+                                        <ul class="collapse list-unstyled ms-3 my-1" id="Invoice">
+                                            <li class="mb-1">
+                                                <a asp-controller="SaleInvoice" asp-action="CreateSaleInvoice" class="d-flex align-items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-chevron-double-right me-2" viewBox="0 0 16 16">
+                                                        <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                                        <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                                    </svg> Direct
+                                                </a>
+                                            </li>
+                                            <li class="mb-1">
+                                                <a asp-controller="SaleInvoice" asp-action="SOToCreateSaleInvoice" class="d-flex align-items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-chevron-double-right me-2" viewBox="0 0 16 16">
+                                                        <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                                        <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                                    </svg> SO To Item
+                                                </a>
+                                            </li>
+                                            <li class="mb-1">
+                                                <a asp-controller="SaleInvoice" asp-action="SOItemToCreateSaleInvoice" class="d-flex align-items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-chevron-double-right me-2" viewBox="0 0 16 16">
+                                                        <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                                        <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                                    </svg> Item To SO
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    
+                                    <li>
+                                        <a data-bs-toggle="collapse" href="#Return" role="button" aria-expanded="false" aria-controls="Return">
+                                            Sale Return
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                        </a>
+                                        <ul class="collapse list-unstyled ms-3 my-1" id="Return">
+                                            <li class="mb-1">
+                                                <a asp-controller="SaleRejection" asp-action="CreateSaleRejection" class="d-flex align-items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-chevron-double-right me-2" viewBox="0 0 16 16">
+                                                        <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                                        <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                                    </svg> Direct
+                                                </a>
+                                            </li>
+                                            <li class="mb-1">
+                                                <a asp-controller="SaleRejection" asp-action="SIToCreateSaleRejection" class="d-flex align-items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-chevron-double-right me-2" viewBox="0 0 16 16">
+                                                        <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                                        <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                                    </svg> SI To Item
+                                                </a>
+                                            </li>
+                                            <li class="mb-1">
+                                                <a asp-controller="SaleRejection" asp-action="SIItemToCreateSaleRejection" class="d-flex align-items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-chevron-double-right me-2" viewBox="0 0 16 16">
+                                                        <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                                        <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                                    </svg> Item To SI
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card rounded-0 mb-3 bg-transparent">
+                            <div class="card-header bg-secondary rounded-0">
+                                <p class="mb-0">
+                                    Periodic
+                                </p>
+                            </div>
+                            <div class="card-body bg-transparent text-dark">
+                                <p class="card-text placeholder-glow">
+                                    <span class="placeholder col-7"></span>
+                                    <span class="placeholder col-4"></span>
+                                    <span class="placeholder col-4"></span>
+                                    <span class="placeholder col-6"></span>
+                                    <span class="placeholder col-8"></span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="card rounded-0 mb-3 bg-transparent">
+                            <div class="card-header bg-secondary rounded-0">
+                                <p class="mb-0">
+                                    Others
+                                </p>
+                            </div>
+                            <div class="card-body bg-transparent text-dark">
+                                <p class="card-text placeholder-glow">
+                                    <span class="placeholder col-7"></span>
+                                    <span class="placeholder col-4"></span>
+                                    <span class="placeholder col-4"></span>
+                                    <span class="placeholder col-6"></span>
+                                    <span class="placeholder col-8"></span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4 pt-3">
+                        <div class="card rounded-0 mb-3 bg-transparent">
+                            <div class="card-header bg-secondary rounded-0">
+                                <p class="mb-0">
+                                    Master Data
+                                </p>
+                            </div>
+                            <div class="card-body bg-transparent text-dark">
+                                <ul class="list-unstyled mb-0">
+                                    <li class="mb-2">
+                                        <a asp-controller="SaleMaster" asp-action="Buyer">
+                                            Buyer
+                                        </a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <a asp-controller="SaleMaster" asp-action="BuyerGroup">
+                                            Buyer Group
+                                        </a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <a asp-controller="SaleMaster" asp-action="BuyerCategory">
+                                            Buyer Category
+                                        </a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <a asp-controller="SaleMaster" asp-action="BuyerSegment">
+                                            Buyer Segment
+                                        </a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <a asp-controller="SaleMaster" asp-action="BuyerSubsegment">
+                                            Buyer Subsegment
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a asp-controller="SaleMaster" asp-action="IncomeCode">
+                                            Income Code
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card rounded-0 mb-3 bg-transparent">
+                            <div class="card-header bg-secondary rounded-0">
+                                <p class="mb-0">
+                                    Inquiries
+                                </p>
+                            </div>
+                            <div class="card-body bg-transparent text-dark">
+                                <p class="card-text placeholder-glow">
+                                    <span class="placeholder col-7"></span>
+                                    <span class="placeholder col-4"></span>
+                                    <span class="placeholder col-4"></span>
+                                    <span class="placeholder col-6"></span>
+                                    <span class="placeholder col-8"></span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="card rounded-0 mb-3 bg-transparent">
+                            <div class="card-header bg-secondary rounded-0">
+                                <p class="mb-0">
+                                    Sub-Master Data
+                                </p>
+                            </div>
+                            <div class="card-body bg-transparent text-dark">
+                                <ul class="list-unstyled mb-0">
+                                    <li>
+                                        <a asp-controller="SaleSubmaster" asp-action="AddressType">
+                                            Address Type
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    $('.navbar-nav > .nav-item.sale > a').addClass("active");
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const MainDiv = document.getElementById('BodyHeight');
+        const BodyDiv = document.getElementById('CardBody');
+
+        const MainHeight = MainDiv.offsetHeight;
+        BodyDiv.style.height = (MainHeight - 10) + 'px';
+    });
+</script>

@@ -1,0 +1,937 @@
+﻿@using System.Security.Claims
+
+@{
+    String Theme = "1";
+    if (User.Identity.IsAuthenticated)
+    {
+        Theme = Convert.ToString(@User.FindFirst("ERP_THEME").Value);        
+    }
+
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+    <link href="~/css/bootstrap.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/ERP.styles.css" asp-append-version="true" />
+    <link href="~/css/select2.min.css" rel="stylesheet" />
+    <link href="~/css/flatpickr.min.css" rel="stylesheet" />
+</head>
+<body data-bs-theme="@(Theme == "1" ? "blue" : "")@(Theme == "2" ? "dark" : "")@(Theme == "3" ? "light" : "")" class="overflow-hidden">
+    @{
+        ViewBag.Web = "https://localhost:7237";
+    }
+    <script src="~/js/jquery.min.js"></script>
+    <script src="~/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="~/js/receipt/receiptnote.js"></script>
+
+    <script>
+        flatpickr(".datepicker", {
+            dateFormat: "d-M-Y",
+            altInput: false,
+        });
+    </script>
+    <!-- Modal -->
+    <div class="modal modal-sm fade" id="DuplicateAlert" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title" id="staticBackdropLabel">Warning</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body py-4 text-dark fs-6 text-center icon-link justify-content-center">
+                    <img src="~/img/danger.png" class="img-fluid" /> Duplicate Entry
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-primary px-4" id="DupOkay" ref="always_focus" data-bs-dismiss="modal" autofocus>Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (User.Identity.IsAuthenticated && User.HasClaim(ClaimTypes.Authentication, "Admin"))
+    {
+        <div class="w-100 Layout">
+            <div class="navbar-vertical-top container-fluid fixed-top shadow bg-primary border-bottom">
+                <div class="row h-100 align-items-center">
+                    <div class="col-12 col-sm-3 col-lg-3 h-100 align-items-center">
+                        <a class="navbar-brand w-100 h-100 d-flex" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/img/logo.png" alt="logo" class="logo img-fluid"></a>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-6 h-100 bg-light bg-opacity-25 text-center align-content-center h6 border-start border-end">
+                        ABC Private Limited
+                    </div>
+                    <div class="col-12 col-sm-3 col-lg-3 h-100 align-content-center">
+                        <div class="dropdown float-end pe-3">
+                            <div class="dropdown-toggle icon-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                    <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                </svg>@User.Identity.Name !
+                            </div>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="Home" asp-action="Theme">Theme</a></li>
+                                <li><a class="dropdown-item">Reset Password</a></li>
+                                <li><a class="dropdown-item" asp-controller="Home" asp-action="LogOut">Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <header class="navbar-vertical fixed-top navbar-nav navbar-expand-sm navbar-light bg-secondary">
+                <nav class="border-end align-items-start shadow w-100 h-100 py-2 navbar-collapse collapse @(ViewBag.Collapse == true ? "show":"")">
+                    <div class="container-fluid flex-column gx-3">
+                        <ul class="navbar-nav w-100">
+                            <li class="nav-item">
+                                <a class="nav-link icon-link bg-set shadow float-end w-100 d-block p-2" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="true" aria-label="Toggle navigation">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="svg bi bi-chevron-double-left float-end" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"></path>
+                                        <path fill-rule="evenodd" d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"></path>
+                                    </svg>
+                                    &nbsp;
+                                </a>
+                            </li>
+                            <li class="nav-item procurement">
+                                <a class="nav-link icon-link" asp-controller="Procurement" asp-action="Index">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+                                        <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z" />
+                                    </svg>
+                                    <span>Procurement</span>
+                                </a>
+                            </li>
+                            <li class="nav-item sale">
+                                <a class="nav-link icon-link" asp-controller="Sale" asp-action="Index">
+                                    <svg xmlns="http://www.w3.org/2000/svg"fill="currentColor" class="bi bi-receipt" viewBox="0 0 16 16">
+                                        <path d="M1.92.506a.5.5 0 0 1 .434.14L3 1.293l.646-.647a.5.5 0 0 1 .708 0L5 1.293l.646-.647a.5.5 0 0 1 .708 0L7 1.293l.646-.647a.5.5 0 0 1 .708 0L9 1.293l.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .801.13l.5 1A.5.5 0 0 1 15 2v12a.5.5 0 0 1-.053.224l-.5 1a.5.5 0 0 1-.8.13L13 14.707l-.646.647a.5.5 0 0 1-.708 0L11 14.707l-.646.647a.5.5 0 0 1-.708 0L9 14.707l-.646.647a.5.5 0 0 1-.708 0L7 14.707l-.646.647a.5.5 0 0 1-.708 0L5 14.707l-.646.647a.5.5 0 0 1-.708 0L3 14.707l-.646.647a.5.5 0 0 1-.801-.13l-.5-1A.5.5 0 0 1 1 14V2a.5.5 0 0 1 .053-.224l.5-1a.5.5 0 0 1 .367-.27m.217 1.338L2 2.118v11.764l.137.274.51-.51a.5.5 0 0 1 .707 0l.646.647.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.509.509.137-.274V2.118l-.137-.274-.51.51a.5.5 0 0 1-.707 0L12 1.707l-.646.647a.5.5 0 0 1-.708 0L10 1.707l-.646.647a.5.5 0 0 1-.708 0L8 1.707l-.646.647a.5.5 0 0 1-.708 0L6 1.707l-.646.647a.5.5 0 0 1-.708 0L4 1.707l-.646.647a.5.5 0 0 1-.708 0z" />
+                                        <path d="M3 4.5a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5m8-6a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5" />
+                                    </svg>
+                                    <span>Sale</span>
+                                </a>
+                            </li>
+                            <li class="nav-item inventory">
+                                <a class="nav-link icon-link" asp-controller="Inventory" asp-action="Index">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-archive" viewBox="0 0 16 16">
+                                        <path d="M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5zm13-3H1v2h14zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5" />
+                                    </svg>
+                                    <span>Inventory</span>
+                                </a>
+                            </li>
+                            @* <li class="nav-item port">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#port">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-box" viewBox="0 0 16 16">
+                        <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5 8 5.961 14.154 3.5zM15 4.239l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464z" />
+                        </svg>
+                        Portfolio
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </a>
+                        <ul class="collapse list-unstyled ms-5" id="port">
+                        <li class="nav-item port">
+                        <a class="nav-link" asp-controller="Portfolio" asp-action="PortList">Portfolio</a>
+                        </li>
+                        <li class="nav-item cat">
+                        <a class="nav-link" asp-controller="Portfolio" asp-action="CatList">Category</a>
+                        </li>
+                        </ul>
+                        </li>
+                        <li class="nav-item blog">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#blog">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-journal-richtext" viewBox="0 0 16 16">
+                        <path d="M7.5 3.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0m-.861 1.542 1.33.886 1.854-1.855a.25.25 0 0 1 .289-.047L11 4.75V7a.5.5 0 0 1-.5.5h-5A.5.5 0 0 1 5 7v-.5s1.54-1.274 1.639-1.208M5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5" />
+                        <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2" />
+                        <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1z" />
+                        </svg> Blog
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </a>
+                        <ul class="collapse list-unstyled ms-5" id="blog">
+                        <li class="nav-item blog">
+                        <a class="nav-link" asp-controller="blogs" asp-action="Index">Blog</a>
+                        </li>
+                        <li class="nav-item cat">
+                        <a class="nav-link" asp-controller="blogs" asp-action="CatIndex">Category</a>
+                        </li>
+                        </ul>
+                        </li> *@
+                            <li class="nav-item general">
+                                <a class="nav-link icon-link" asp-controller="GeneralLedger" asp-action="Index">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-journal" viewBox="0 0 16 16">
+                                        <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2" />
+                                        <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1z" />
+                                    </svg>
+                                    <span>General Ledger</span>
+                                </a>
+                            </li>
+                            <li class="nav-item taxation">
+                                <a class="nav-link icon-link" asp-controller="Taxation" asp-action="Index">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-tag" viewBox="0 0 16 16">
+                                        <path d="M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0" />
+                                        <path d="M2 1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 1 6.586V2a1 1 0 0 1 1-1m0 5.586 7 7L13.586 9l-7-7H2z" />
+                                    </svg>
+                                    <span>Taxation</span>
+                                </a>
+                            </li>
+                            <li class="nav-item jobwork">
+                                <a class="nav-link icon-link" asp-controller="JobworkInward" asp-action="Index">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-tag" viewBox="0 0 16 16">
+                                        <path d="M6 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-1 0a.5.5 0 1 0-1 0 .5.5 0 0 0 1 0" />
+                                        <path d="M2 1h4.586a1 1 0 0 1 .707.293l7 7a1 1 0 0 1 0 1.414l-4.586 4.586a1 1 0 0 1-1.414 0l-7-7A1 1 0 0 1 1 6.586V2a1 1 0 0 1 1-1m0 5.586 7 7L13.586 9l-7-7H2z" />
+                                    </svg>
+                                    <span>Jobwork Inward</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </header>
+            <div class="content">
+                <div class="container-fluid h-100 gx-2">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="container-fluid gx-5">
+            @RenderBody()
+        </div>
+    }
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <!-- Modal -->
+    <div class="modal modal-sm fade" id="ModelAlert" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header draggable-modal-header">
+                    <p class="modal-title" id="staticBackdropLabel">Warning</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body py-4 text-dark fs-6 text-center icon-link justify-content-center">
+                    <img src="~/img/danger.png" class="img-fluid" /> @Html.Raw(ViewBag.ErrorMessage)
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-primary px-4" id="AlertOkay" autofocus ref="always_focus" data-bs-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @{
+        if (ViewBag.ErrorCode != null)
+        {
+            <script>
+                $(function () {
+                    new bootstrap.Modal($("#ModelAlert")).show();
+                    $('#ModelAlert').on('shown.bs.modal', function () {
+                        $(this).find('[autofocus]').focus();
+                    });
+                });
+            </script>
+        }
+    }
+    <!-- jQuery UI -->
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <script>
+        const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+        const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+        const popover = new bootstrap.Popover('.popover-dismiss', {trigger: 'focus'})
+    </script>
+
+    <!-- Modal -->
+    <div class="modal modal-sm fade draggable-modal" id="DeleteAllAlert" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                @using (Html.BeginForm(null, null, FormMethod.Post))
+                {
+                    <input type="hidden" name="PSize" value="@ViewData["PageSize"]" />
+                    <input type="hidden" name="PageNumber" value="@ViewData["PageNumber"]" />
+                    <input type="hidden" name="Search" value="@ViewData["CurrentFilter"]" />
+                    <input name="DeleteNumbers" id="DeleteNumbers" class="DeleteNumbers" type="hidden" />
+                    <div class="modal-header draggable-modal-header">
+                        <p class="modal-title" id="staticBackdropLabel">&nbsp;</p>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body py-4 text-dark fs-6 text-center w-100 icon-link justify-content-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="var(--bs-primary)" class="bi-lg bi-question-octagon-fill" viewBox="0 0 16 16">
+                            <path d="M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353zM5.496 6.033a.237.237 0 0 1-.24-.247C5.35 4.091 6.737 3.5 8.005 3.5c1.396 0 2.672.73 2.672 2.24 0 1.08-.635 1.594-1.244 2.057-.737.559-1.01.768-1.01 1.486v.105a.25.25 0 0 1-.25.25h-.81a.25.25 0 0 1-.25-.246l-.004-.217c-.038-.927.495-1.498 1.168-1.987.59-.444.965-.736.965-1.371 0-.825-.628-1.168-1.314-1.168-.803 0-1.253.478-1.342 1.134-.018.137-.128.25-.266.25h-.825zm2.325 6.443c-.584 0-1.009-.394-1.009-.927 0-.552.425-.94 1.01-.94.609 0 1.028.388 1.028.94 0 .533-.42.927-1.029.927" />
+                        </svg> Do you want to delete it ?
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="submit" name="Mode" class="btn btn-sm btn-primary px-4" id="DeleteAllOkay" autofocus ref="always_focus" value="DeleteAll">Yes</button>
+                        <button type="button" class="btn btn-sm btn-primary px-4" data-bs-dismiss="modal">No</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal modal-sm fade draggable-modal" id="DeleteAlert" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                @using (Html.BeginForm(null, null, FormMethod.Post))
+                {
+                    <input type="hidden" name="PSize" value="@ViewData["PageSize"]" />
+                    <input type="hidden" name="PageNumber" value="@ViewData["PageNumber"]" />
+                    <input type="hidden" name="Search" value="@ViewData["CurrentFilter"]" />
+                    <input name="Number" id="Number" class="Number" type="hidden" />
+                    <div class="modal-header draggable-modal-header">
+                        <p class="modal-title" id="staticBackdropLabel">&nbsp;</p>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body py-4 text-dark fs-6 text-center w-100 icon-link justify-content-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="var(--bs-primary)" class="bi-lg bi-question-octagon-fill" viewBox="0 0 16 16">
+                            <path d="M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353zM5.496 6.033a.237.237 0 0 1-.24-.247C5.35 4.091 6.737 3.5 8.005 3.5c1.396 0 2.672.73 2.672 2.24 0 1.08-.635 1.594-1.244 2.057-.737.559-1.01.768-1.01 1.486v.105a.25.25 0 0 1-.25.25h-.81a.25.25 0 0 1-.25-.246l-.004-.217c-.038-.927.495-1.498 1.168-1.987.59-.444.965-.736.965-1.371 0-.825-.628-1.168-1.314-1.168-.803 0-1.253.478-1.342 1.134-.018.137-.128.25-.266.25h-.825zm2.325 6.443c-.584 0-1.009-.394-1.009-.927 0-.552.425-.94 1.01-.94.609 0 1.028.388 1.028.94 0 .533-.42.927-1.029.927" />
+                        </svg> Do you want to delete it ?
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="submit" name="Mode" class="btn btn-sm btn-primary px-4" id="DeleteOkay" autofocus ref="always_focus" value="Delete">Yes</button>
+                        <button type="button" class="btn btn-sm btn-primary px-4" data-bs-dismiss="modal">No</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(function () {
+            $(".DeleteAllButton").on('click', function () {
+                var array = $.map($('input[name="DeleteNumber"]:checked'), function (c) { return c.value; })
+                $(".DeleteNumbers").val(array);
+                new bootstrap.Modal($("#DeleteAllAlert")).show();
+                $('#DeleteAllAlert').on('shown.bs.modal', function () {
+                    $(this).find('[autofocus]').focus();
+                });
+            });
+
+            $(".DeleteButton").on('click', function () {
+                var number = $(this).attr("value");
+                $(".Number").val(number);
+                new bootstrap.Modal($("#DeleteAlert")).show();
+                $('#DeleteAlert').on('shown.bs.modal', function () {
+                    $(this).find('[autofocus]').focus();
+                });
+            });
+        });
+
+
+        const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+        const rowCheckboxes = document.querySelectorAll('.DeleteNumber');
+
+        selectAllCheckbox.addEventListener('change', function() {
+            rowCheckboxes.forEach(function(checkbox) {
+                checkbox.checked = selectAllCheckbox.checked; //sync all row boxes with header
+            });
+
+            var array = $.map($('input[name="DeleteNumber"]:checked'), function (c) { return c.value; })
+            if (array == "") {
+                $('.MenuAction').addClass("d-none");
+            } else {
+                $('.MenuAction').removeClass("d-none");
+            }
+        });
+
+        rowCheckboxes.forEach(function (checkbox) {
+            checkbox.addEventListener('change', function () {
+                let allChecked = true;
+                rowCheckboxes.forEach(function (checkBox) {
+                    if (!checkBox.checked)
+                        allChecked = false;
+                });
+                selectAllCheckbox.checked = allChecked;
+            })
+        })
+
+
+        $(document).ready(function () {
+            $('.DeleteNumber').change(function () {
+                var array = $.map($('input[name="DeleteNumber"]:checked'), function (c) { return c.value; })
+                if (array == "") {
+                    $('.MenuAction').addClass("d-none");
+                } else {
+                    $('.MenuAction').removeClass("d-none");
+                }
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.form-search').select2();
+        });
+
+        $(document).ready(function () {
+            $(".modal").on("shown.bs.modal", function () {
+                $(".modal-dialog").draggable({
+                    handle: ".modal-header"
+                });
+            });
+        });
+
+        $(document).on('keydown', function (event) {
+            if (event.key === 'Enter' || event.which === 13) {
+                event.preventDefault();
+            }
+        });
+    </script>
+    <style>
+        .modal-header {
+            cursor: move;
+        }
+
+    </style>
+    <style>
+        /* Context Menu Styling (mostly same as before) */
+        /* Context Menu Styles */
+        #ActionMenu {
+            display: none;
+            position: fixed;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            list-style: none;
+            margin: 0;
+            padding: 5px 0;
+            border-radius: 5px;
+        }
+
+            #ActionMenu li {
+                padding: 10px 20px;
+                cursor: pointer;
+                white-space: nowrap;
+            }
+
+                #ActionMenu li:hover {
+                    background-color: #f0f0f0;
+                }
+
+            #ActionMenu hr {
+                border: none;
+                border-top: 1px solid #eee;
+                margin: 5px 0;
+            }
+
+        /* Column Config Modal Styles */
+        #ConfigModal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1001; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .ConfigModal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 30px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        #ConfigModalClose {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+            #ConfigModalClose:hover,
+            #ConfigModalClose:focus {
+                color: black;
+                text-decoration: none;
+            }
+
+        #ConfigCheckboxes {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+            #ConfigCheckboxes div {
+                margin-bottom: 10px;
+                display: flex;
+                align-items: center;
+            }
+
+            #ConfigCheckboxes input[type="checkbox"] {
+                margin-right: 10px;
+                transform: scale(1.2);
+            }
+
+            #ConfigCheckboxes label {
+                cursor: pointer;
+                flex-grow: 1;
+            }
+
+        .ConfigModal-actions {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+            .ConfigModal-actions button {
+                background-color: #007bff;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 16px;
+                margin-left: 10px;
+            }
+
+                .ConfigModal-actions button:hover {
+                    background-color: #0056b3;
+                }
+
+        /* Utility class for hiding columns */
+        .column-hidden {
+            display: none;
+        }
+
+        /* Class for draggable columns */
+        .draggable {
+            cursor: grab;
+        }
+
+        .dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+
+        th {
+            position: relative;
+        }
+
+        .th-resizer {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 5px;
+            height: 100%;
+            cursor: col-resize;
+            user-select: none;
+        }
+    </style>
+    @* <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const table = document.querySelector('.TableConfig');
+            const ActionMenu = document.getElementById('ActionMenu');
+            const ActionMenuHideColumnOption = document.getElementById('ActionMenuHideColumn');
+
+            const ConfigModal = document.getElementById('ConfigModal');
+            const ConfigModalCloseButton = document.getElementById('ConfigModalClose');
+            const ConfigCheckboxesContainer = document.getElementById('ConfigCheckboxes');
+            const ResetColumnsButton = document.getElementById('ResetColumnsButton');
+
+            let currentRow = null;
+            let currentCell = null;
+            let currentClickedColumnIndex = -1;
+
+            let columnStates = [];
+
+            function initializeColumnStates() {
+                columnStates = [];
+                const headers = table.querySelectorAll('thead th');
+                headers.forEach((th, index) => {
+                    columnStates.push({
+                        index: index,
+                        name: th.textContent.trim(),
+                        visible: !th.classList.contains('column-hidden')
+                    });
+                });
+            }
+
+            function toggleColumnVisibility(columnIndex, show) {
+                if (columnIndex < 0 || columnIndex >= columnStates.length) return;
+
+                columnStates[columnIndex].visible = show;
+                const cellsToToggle = table.querySelectorAll(`th:nth-child(${columnIndex + 1}), td:nth-child(${columnIndex + 1})`);
+
+                cellsToToggle.forEach(cell => {
+                    if (show) {
+                        cell.classList.remove('column-hidden');
+                    } else {
+                        cell.classList.add('column-hidden');
+                    }
+                });
+                // If the config modal is open, update its checkboxes
+                if (ConfigModal.style.display === 'flex') {
+                    populateConfigModal();
+                }
+            }
+
+            function populateConfigModal() {
+                ConfigCheckboxesContainer.innerHTML = ''; // Clear existing checkboxes
+                columnStates.forEach(colState => {
+                    const div = document.createElement('div');
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = `col-toggle-${colState.index}`;
+                    checkbox.checked = colState.visible;
+                    checkbox.dataset.columnIndex = colState.index;
+
+                    const label = document.createElement('label');
+                    label.htmlFor = `col-toggle-${colState.index}`;
+                    label.textContent = colState.name;
+
+                    checkbox.addEventListener('change', (event) => {
+                        const index = parseInt(event.target.dataset.columnIndex);
+                        toggleColumnVisibility(index, event.target.checked);
+                    });
+
+                    div.appendChild(checkbox);
+                    div.appendChild(label);
+                    ConfigCheckboxesContainer.appendChild(div);
+                });
+            }
+
+            // --- Show Context Menu ---
+            table.addEventListener('contextmenu', (event) => {
+                event.preventDefault();
+
+                const target = event.target;
+                const tr = target.closest('tr');
+                currentCell = target.closest('td');
+                const th = target.closest('th');
+
+                if (!tr && !th) return; // Click was not on a row or header
+
+                currentRow = tr; // Can be null if click is on a TH in THEAD
+
+                // Determine current column for "Hide Column" option
+                currentClickedColumnIndex = -1;
+                let currentClickedColumnName = '';
+
+                if (th) { // Clicked on a header cell
+                    currentClickedColumnIndex = th.cellIndex;
+                    currentClickedColumnName = th.textContent.trim();
+                } else if (currentCell) { // Clicked on a data cell
+                    currentClickedColumnIndex = currentCell.cellIndex;
+                    if (columnStates[currentClickedColumnIndex]) { // Ensure columnStates is initialized
+                        currentClickedColumnName = columnStates[currentClickedColumnIndex].name;
+                    }
+                }
+
+                // Configure the "Hide Column" option
+                if (currentClickedColumnIndex !== -1 && columnStates[currentClickedColumnIndex] && columnStates[currentClickedColumnIndex].visible) {
+                    ActionMenuHideColumnOption.textContent = `Hide "${currentClickedColumnName}"`;
+                    ActionMenuHideColumnOption.dataset.columnIndex = currentClickedColumnIndex;
+                    ActionMenuHideColumnOption.style.display = 'list-item';
+                } else {
+                    ActionMenuHideColumnOption.style.display = 'none';
+                }
+
+
+                const menuWidth = ActionMenu.offsetWidth;
+                const menuHeight = ActionMenu.offsetHeight;
+                const windowWidth = window.innerWidth;
+                const windowHeight = window.innerHeight;
+                let x = event.clientX;
+                let y = event.clientY;
+
+                if (x + menuWidth > windowWidth) x = windowWidth - menuWidth - 5;
+                if (y + menuHeight > windowHeight) y = windowHeight - menuHeight - 5;
+
+                ActionMenu.style.top = `${y}px`;
+                ActionMenu.style.left = `${x}px`;
+                ActionMenu.style.display = 'block';
+            });
+
+            // --- Hide Context Menu ---
+            document.addEventListener('click', (event) => {
+                if (ActionMenu.style.display === 'block' && !ActionMenu.contains(event.target)) {
+                    ActionMenu.style.display = 'none';
+                    ActionMenuHideColumnOption.style.display = 'none'; // Reset dynamic option
+                    resetContextState();
+                }
+                // Hide modal if click is outside modal content
+                if (ConfigModal.style.display === 'flex' && event.target === ConfigModal) {
+                    ConfigModal.style.display = 'none';
+                }
+            });
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') {
+                    if (ActionMenu.style.display === 'block') {
+                        ActionMenu.style.display = 'none';
+                        ActionMenuHideColumnOption.style.display = 'none';
+                        resetContextState();
+                    }
+                    if (ConfigModal.style.display === 'flex') {
+                        ConfigModal.style.display = 'none';
+                    }
+                }
+            });
+
+            function resetContextState() {
+                currentRow = null;
+                currentCell = null;
+                currentClickedColumnIndex = -1;
+            }
+
+            // --- Handle Context Menu Item Clicks ---
+            ActionMenu.addEventListener('click', (event) => {
+                const targetLi = event.target.closest('li');
+                if (!targetLi) return;
+
+                const action = targetLi.dataset.action;
+
+                if (action) {
+                    const rowId = currentRow ? currentRow.dataset.id : null;
+                    const cells = currentRow ? Array.from(currentRow.cells).map(cell => cell.textContent.trim()) : [];
+
+                    switch (action) {
+                        case 'view':
+                            if (rowId) alert(`Viewing details for Row ID: ${rowId}\nName: ${cells[columnStates.findIndex(c => c.name === 'Name' && c.visible)] || 'N/A'}`);
+                            else alert("Right-click a data row to view details.");
+                            break;
+                        case 'edit':
+                            if (rowId) alert(`Editing Row ID: ${rowId}. Implement your edit logic here.`);
+                            else alert("Right-click a data row to edit.");
+                            break;
+                        case 'delete':
+                            if (rowId && confirm(`Are you sure you want to delete Row ID: ${rowId}?`)) {
+                                currentRow.remove();
+                                alert(`Row ID: ${rowId} deleted.`);
+                            } else if (!rowId) {
+                                alert("Right-click a data row to delete.");
+                            }
+                            break;
+                        case 'copyCell':
+                            if (currentCell) {
+                                navigator.clipboard.writeText(currentCell.textContent.trim())
+                                    .then(() => alert(`Cell text copied: "${currentCell.textContent.trim()}"`))
+                                    .catch(err => console.error('Failed to copy cell text: ', err));
+                            } else {
+                                alert("No specific cell was targeted for copy.");
+                            }
+                            break;
+                        case 'copyRow':
+                            if (currentRow) {
+                                const visibleCells = Array.from(currentRow.cells)
+                                    .filter(cell => !cell.classList.contains('column-hidden'))
+                                    .map(cell => cell.textContent.trim());
+                                const rowData = visibleCells.join('\t');
+                                navigator.clipboard.writeText(rowData)
+                                    .then(() => alert(`Visible row data copied:\n${rowData}`))
+                                    .catch(err => console.error('Failed to copy row data: ', err));
+                            } else {
+                                alert("Right-click a data row to copy.");
+                            }
+                            break;
+                        case 'hideColumn':
+                            const colIdxToHide = parseInt(targetLi.dataset.columnIndex);
+                            if (!isNaN(colIdxToHide) && columnStates[colIdxToHide] && columnStates[colIdxToHide].visible) {
+                                toggleColumnVisibility(colIdxToHide, false);
+                            }
+                            break;
+                        case 'configureColumns':
+                            populateConfigModal();
+                            ConfigModal.style.display = 'flex';
+                            break;
+                        default:
+                            console.warn('Unknown action:', action);
+                    }
+                }
+                ActionMenu.style.display = 'none'; // Hide menu after action
+                ActionMenuHideColumnOption.style.display = 'none'; // Reset dynamic option
+                resetContextState();
+            });
+
+            // --- Column Configuration Modal Logic ---
+            ConfigModalCloseButton.addEventListener('click', () => {
+                ConfigModal.style.display = 'none';
+            });
+
+            ResetColumnsButton.addEventListener('click', () => {
+                columnStates.forEach(colState => {
+                    if (!colState.visible) {
+                        toggleColumnVisibility(colState.index, true);
+                    }
+                });
+                // The populateConfigModal will be called by toggleColumnVisibility if modal is open
+                // If not, we still need to update checkboxes if it's about to be shown
+                if (ConfigModal.style.display === 'flex') {
+                    populateConfigModal();
+                }
+            });
+
+            // Optional: Handle clicks on regular action buttons in the table
+            table.addEventListener('click', (event) => {
+                if (event.target.classList.contains('action-btn')) {
+                    const tr = event.target.closest('tr');
+                    if (tr) {
+                        const rowId = tr.dataset.id;
+                        alert(`Regular button clicked for Row ID: ${rowId}`);
+                    }
+                }
+            });
+
+            // Initialize column states on load
+            initializeColumnStates();
+            // Apply initial visibility based on any 'column-hidden' classes already present in HTML
+            columnStates.forEach(cs => {
+                if (!cs.visible) {
+                    toggleColumnVisibility(cs.index, false); // This will add the class if not already there
+                }
+            });
+        });
+
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const table = document.querySelector('.TableConfig');
+            const headers = table.querySelectorAll('thead th');
+
+            headers.forEach((th) => {
+                // Create the handle
+                const resizer = document.createElement('div');
+                resizer.classList.add('th-resizer');
+                th.appendChild(resizer);
+
+                let startX, startWidth;
+
+                resizer.addEventListener('mousedown', (e) => {
+                    startX = e.pageX;
+                    startWidth = th.offsetWidth;
+                    document.addEventListener('mousemove', onMouseMove);
+                    document.addEventListener('mouseup', onMouseUp);
+                    e.preventDefault(); // Prevent text selection
+                });
+
+                function onMouseMove(e) {
+                    const newWidth = startWidth + (e.pageX - startX);
+                    th.style.width = newWidth + 'px';
+                    // Also apply to all cells in this column
+                    const colIndex = Array.from(th.parentNode.children).indexOf(th) + 1;
+                    table.querySelectorAll('td:nth-child(' + colIndex + ')').forEach(td => {
+                        td.style.width = newWidth + 'px';
+                    });
+                }
+
+                function onMouseUp() {
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.removeEventListener('mouseup', onMouseUp);
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const filters = document.querySelectorAll('.column-filter');
+            const table = document.querySelector('.TableConfig');
+            const tbody = table.querySelector('tbody');
+
+            filters.forEach(filter => {
+                filter.addEventListener('keyup', () => {
+                    const values = Array.from(filters).map(f => f.value.toLowerCase());
+                    Array.from(tbody.rows).forEach(row => {
+                        let visible = true;
+                        values.forEach((val, idx) => {
+                            if (val && !row.cells[idx].textContent.toLowerCase().includes(val)) {
+                                visible = false;
+                            }
+                        });
+                        row.style.display = visible ? '' : 'none';
+                    });
+                });
+            });
+        });
+    </script> *@
+
+    @* <script>
+        function autoExpandInput(input) {
+            const tempSpan = document.createElement('span');
+            tempSpan.style.visibility = 'hidden';
+            tempSpan.style.whiteSpace = 'pre';
+            tempSpan.style.font = window.getComputedStyle(input).font;
+            tempSpan.textContent = input.value || input.placeholder;
+
+            document.body.appendChild(tempSpan);
+            const textWidth = tempSpan.offsetWidth;
+            document.body.removeChild(tempSpan);
+
+            const newWidth = Math.max(50, Math.min(400, textWidth + 20));
+            input.style.width = newWidth + 'px';
+        }
+        function autoExpandSelect(select) {
+            const tempSpan = document.createElement('span');
+            tempSpan.style.visibility = 'hidden';
+            tempSpan.style.whiteSpace = 'pre';
+            tempSpan.style.font = window.getComputedStyle(select).font;
+
+            // Get selected option text
+            const selectedOption = select.options[select.selectedIndex];
+            tempSpan.textContent = selectedOption.text || select.placeholder;
+
+            document.body.appendChild(tempSpan);
+            const textWidth = tempSpan.offsetWidth;
+            document.body.removeChild(tempSpan);
+
+            const newWidth = Math.max(120, Math.min(400, textWidth + 40));
+            select.style.width = newWidth + 'px';
+        }
+
+        document.querySelectorAll('input').forEach(input => {
+            autoExpandInput(input);
+
+            input.addEventListener('input', function() {
+                autoExpandInput(this);
+            });
+
+        });
+        document.querySelectorAll('td input').forEach(input => {
+            autoExpandInput(input);
+
+            input.addEventListener('input', function() {
+                autoExpandInput(this);
+            });
+
+        });
+        document.querySelectorAll('td select').forEach(select => {
+            autoExpandSelect(select);
+
+            select.addEventListener('change', function() {
+                autoExpandSelect(this);
+            });
+        });
+    </script> *@
+
+
+    @* <!-- 2. Load the colResizable jQuery plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/colresizable@1.6.0/colResizable-1.6.min.js"></script>
+
+    <!-- 3. Initialize the plugin on your table -->
+    <script>
+        $(document).ready(function () {
+            $(".resizable-table").colResizable({
+                liveDrag: true,
+                gripInnerHtml: "<div class='grip-handle'></div>",
+                minWidth: 50
+            });
+        });
+    </script> *@
+
+</body>
+</html>
+

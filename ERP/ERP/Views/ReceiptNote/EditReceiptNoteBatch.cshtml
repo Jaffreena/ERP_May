@@ -1,0 +1,661 @@
+﻿@model List<ERP_DTO.JobInwardTransaction.ReceiptNoteBatchEdit_DTO>
+
+<div class="w-100 table-responsive">
+    <table class="table table-bordered table-hover align-middle table-grid mb-0">
+        <thead>
+            <tr class="table-info">
+                <th class="datetype text-center">@Html.DisplayNameFor(M => M.First().RNI_BCH_Date)</th>
+                <th>@Html.DisplayNameFor(M => M.First().RNI_BCH_No)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().RNI_BCH_OriginalQty)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().RNI_BCH_UsedQty)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().RNI_BCH_AmendedQty)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().RNI_BCH_UnitPrice)</th>
+                <th class="table-width-3xl text-end">@Html.DisplayNameFor(M => M.First().RNI_BCH_Value)</th>
+                <th class="action text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody id="IBatTableBody">
+            <tr id="IBatTempRow" style="display: none;">
+                <td class="datetype">
+                    <input id="RNI_BCH_Item_Number" class="RNI_BCH_Item_Number" type="hidden" />
+                    <input id="RNI_BCH_Number" class="RNI_BCH_Number" type="hidden" />
+                    <input id="RNI_BCH_Item_Index" class="RNI_BCH_Item_Index" type="hidden" />
+                    <input id="RNI_BCH_Item_WH" class="RNI_BCH_Item_WH" type="hidden" />
+                    <input id="RNI_BCH_Date" class="form-control Key datepicker RNI_BCH_Date text-center" autocomplete="off" />
+                </td>
+                <td>
+                    <input id="RNI_BCH_No" class="form-control RNI_BCH_No" autocomplete="off" />
+                </td>
+                <td class="table-width-xl">
+                    <input id="RNI_BCH_OriginalQty" class="form-control RNI_BCH_OriginalQty  text-end decimal" autocomplete="off" />
+                </td>
+                   <td class="table-width-xl">
+                    <input id="RNI_BCH_UsedQty" class="form-control RNI_BCH_UsedQty  text-end decimal" autocomplete="off" />
+                </td>
+                <td class="table-width-xl">
+                    <input id="RNI_BCH_AmendedQty" class="form-control RNI_BCH_AmendedQty  text-end decimal" autocomplete="off" />
+                </td>
+                <td class="table-width-xl">
+                    <input id="RNI_BCH_UnitPrice" class="form-control RNI_BCH_UnitPrice decimal text-end" readonly autocomplete="off" />
+                </td>
+                <td class="table-width-3xl">
+                    <input id="RNI_BCH_Value" class="form-control RNI_BCH_Value decimal text-end" readonly autocomplete="off" />
+                </td>
+                <td class="action text-center">
+                    <input id="RNI_BCH_IsDeleted" type="hidden" name="RNI_BCH_IsDeleted" class="RNI_BCH_IsDeleted" value="false" />
+                    <a class="IBatRowRemove text-danger p-0 icon-link shadow-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                        </svg>
+                    </a>
+                </td>
+            </tr>
+            @if (Model != null)
+            {
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr class="IBatNewRow" style="@(@Model[i].RNI_BCH_IsDeleted == "true" ? "display: none;" : "")">
+                        <td class="datetype">
+                            <input id="RNI_BCH_Item_Number" name="ItemBatch[@i].RNI_BCH_Item_Number" class="RNI_BCH_Item_Number" type="hidden" value="@Model[i].JIRNI_BCH_JIRNI_Number" />
+
+                         
+ 
+                            <input id="RNI_BCH_Item_WH" name="ItemBatch[@i].RNI_BCH_Item_WH" class="RNI_BCH_Item_WH" type="hidden" value="@Model[i].WH_Number" />
+                            <input id="RNI_BCH_Date" name="ItemBatch[@i].RNI_BCH_Date" class="form-control Key datepicker RNI_BCH_Date text-center" autocomplete="off" value="@Model[i].RNI_BCH_Date" />
+                        </td>
+                        <td>
+                            <input id="RNI_BCH_No" name="ItemBatch[@i].RNI_BCH_No" class="form-control RNI_BCH_No" autocomplete="off" value="@Model[i].RNI_BCH_Num" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="RNI_BCH_OriginalQty" name="ItemBatch[@i].RNI_BCH_OriginalQty" class="form-control RNI_BCH_OriginalQty text-end" autocomplete="off" value="@Model[i].RNI_BCH_OriginalQty" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="RNI_BCH_UsedQty" name="ItemBatch[@i].RNI_BCH_UsedQty" class="form-control RNI_BCH_UsedQty text-end" autocomplete="off" value="@Model[i].RNI_BCH_UsedQty" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="RNI_BCH_AmendedQty" name="ItemBatch[@i].RNI_BCH_AmendedQty" class="form-control RNI_BCH_AmendedQty text-end" autocomplete="off" value="@Model[i].RNI_BCH_AmendedQty" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="RNI_BCH_UnitPrice" name="ItemBatch[@i].RNI_BCH_UnitPrice" readonly class="form-control RNI_BCH_UnitPrice decimal text-end" autocomplete="off" value="@Model[i].RNI_BCH_UnitPrice" />
+                        </td>
+                        <td class="table-width-3xl">
+                            <input id="RNI_BCH_Value" name="ItemBatch[@i].RNI_BCH_Value" readonly class="form-control RNI_BCH_Value decimal text-end" autocomplete="off" value="@Model[i].RNI_BCH_Value" />
+                        </td>
+                        <td class="action text-center">
+                            @if (@Model[i].RNI_BCH_No != 0)
+                            {
+                                <input name="ItemBatch[@i].RNI_BCH_No" type="hidden" class="Number" value="@Model[i].RNI_BCH_No" />
+                            }
+                            <input type="hidden" id="RNI_BCH_IsDeleted" name="ItemBatch[@i].RNI_BCH_IsDeleted" class="RNI_BCH_IsDeleted" value="@Model[i].RNI_BCH_IsDeleted" />
+                            <a class="IBatRowRemove text-danger p-0 icon-link shadow-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                    <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+        <tfoot>
+            <tr class="table-info">
+                <td class="text-end" colspan="4">Total</td>
+                <td class="table-width-xl">
+                    <input id="BatchTotalQty" class="form-control text-end" readonly />
+                </td>
+                <td></td>
+                <td class="table-width-3xl">
+                    <input id="BatchTotalValue" class="form-control text-end" readonly />
+                </td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+@* <a id="IBatNewRowButton" class="btn btn-primary">Add Row</a> *@
+
+<style>
+    .search-results {
+        position: absolute;
+        z-index: 1000;
+        overflow-y: auto;
+        width: 400px;
+        max-height: 300px;
+    }
+</style>
+<script>
+       // ===== REMOVE COMMAS =====
+    function removeCommas(v){
+        return (v || '').toString().replace(/,/g,'');
+    }
+
+    // ===== INDIAN NUMBER FORMAT =====
+    function DecimalIndianRupees(v){
+
+        if(v==="" || isNaN(v)) return "0.00";
+
+        let p=parseFloat(v).toFixed(2).split(".");
+
+        p[0]=p[0].replace(/(\d)(?=(\d\d)+\d$)/g,"$1,");
+
+        return p.join(".");
+    }
+
+    // ===== CALCULATE FOOTER =====
+    function BatchCalculateFooter(){
+
+        let qty=0,val=0;
+
+        $("tr.IBatNewRow:visible").each(function(){
+
+            let r=$(this);
+
+            // SKIP DELETED ROW
+            if(r.find(".RNI_BCH_IsDeleted").val()!=="true"){
+
+                qty+=parseFloat(removeCommas(r.find(".RNI_BCH_AmendedQty").val()))||0;
+
+                val+=parseFloat(removeCommas(r.find(".RNI_BCH_Value").val()))||0;
+            }
+        });
+
+        // SET TOTALS
+        $("#BatchTotalQty").val(DecimalIndianRupees(qty));
+
+        $("#BatchTotalValue").val(DecimalIndianRupees(val));
+    }
+
+    // ===== CALL AFTER PAGE LOAD =====
+    $(document).ready(function(){
+
+        setTimeout(()=>BatchCalculateFooter(),500);
+
+    });
+</script>
+
+<script>
+                    var TempBatch = {};
+                        function ValidateBatch() {
+
+            let MissingItems = [];
+            let MismatchItems = [];
+
+            $('#ItemTable tbody tr.NewRow').each(function () {
+
+                let row = $(this);
+
+                // Skip deleted rows
+                if (row.find('.IsDeleted').val() == "1") return;
+
+                let ItemNumber = row.find('.Item_Number').val();
+                let ItemCode = row.find('.Item_Code').val();
+
+                if (!ItemNumber) return;
+
+                let itemQty = parseFloat(row.find('.Qty').val()) || 0;
+                let itemAmount = parseFloat(row.find('.Amount').val()) || 0;
+
+                // 🔥 ALWAYS SAFE ARRAY
+                let batches = TempBatch[ItemNumber] || [];
+
+                // ❌ No batches
+                if (batches.length === 0) {
+                    MissingItems.push(ItemCode);
+                    return;
+                }
+
+                let totalBatchQty = 0;
+                let totalBatchAmount = 0;
+
+                // 🔥 SUM BATCHES
+                $.each(batches, function (i, b) {
+
+                    if (b.RNI_BCH_IsDeleted == "1") return;
+
+                    totalBatchQty += parseFloat(b.RNI_BCH_AmendedQty) || 0;
+                    totalBatchAmount += parseFloat(b.RNI_BCH_Value) || 0;
+                });
+
+                const EPS = 0.0001;
+
+                // 🔥 VALIDATION
+                if (Math.abs(itemQty - totalBatchQty) > EPS ||
+                    Math.abs(itemAmount - totalBatchAmount) > EPS) {
+
+                    MismatchItems.push(
+                        ItemCode +
+                        " | Item Qty: " + itemQty +
+                        ", Batch Qty: " + totalBatchQty +
+                        " | Item Amt: " + itemAmount +
+                        ", Batch Amt: " + totalBatchAmount
+                    );
+                }
+
+            });
+
+            return {
+                MissingItems,
+                MismatchItems
+            };
+        }
+   
+    
+        function BatchJSON() {
+
+
+
+            $("#IBatTableBody tr.IBatNewRow:visible").each(function () {
+
+                var row = $(this);
+
+                var ItemNumber = row.find(".RNI_BCH_Item_Number").val();
+
+                // Create array for item if not exists
+                if (!TempBatch[ItemNumber]) {
+                    TempBatch[ItemNumber] = [];
+                }
+               // alert(row.find(".RNI_BCH_UnitPrice").val()+"row.find('.RNI_BCH_UnitPrice').val()")
+                // Add object into item array
+                TempBatch[ItemNumber].push({
+
+                    RNI_BCH_Item_Number: ItemNumber,
+
+                    RNI_BCH_Date: row.find(".RNI_BCH_Date").val(),
+
+                    RNI_BCH_Number: row.find(".RNI_BCH_No").val(),
+
+                    RNI_BCH_Qty: row.find(".RNI_BCH_AmendedQty").val(),
+
+                    RNI_BCH_UnitPrice: row.find(".RNI_BCH_UnitPrice").val(),
+
+                    RNI_BCH_Value: row.find(".RNI_BCH_Value").val(),
+
+                    RNI_BCH_IsDeleted: row.find(".RNI_BCH_IsDeleted").val()
+
+                });
+
+            });
+
+            console.log(TempBatch);
+        }
+
+
+    $(document).ready(function () {
+
+        var browCount = @(Model != null ? Model.Count : 0);
+        var isbAddingRow = false;
+
+          function IBatNewRow(MatrialValue = 0) {
+
+        var row = $("#IBatTempRow").clone()
+            .removeAttr("style")
+            .removeAttr("id")
+            .addClass("IBatNewRow");
+
+        row.find("input.RNI_BCH_Item_Number")
+            .attr("name", "ItemBatch[" + browCount + "].RNI_BCH_Item_Number");
+
+        row.find("input.RNI_BCH_Item_Index")
+            .attr("name", "ItemBatch[" + browCount + "].RNI_BCH_Item_Index");
+
+        row.find("input.RNI_BCH_Date")
+            .attr("name", "ItemBatch[" + browCount + "].RNI_BCH_Date");
+
+        var today = new Date();
+
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0');
+        var yyyy = today.getFullYear();
+
+        var currentDate = dd + '/' + mm + '/' + yyyy;
+
+        row.find("input.RNI_BCH_Date").val(currentDate);
+
+        row.find("input.RNI_BCH_No")
+            .attr("name", "ItemBatch[" + browCount + "].RNI_BCH_Number");
+
+        row.find("input.RNI_BCH_OriginalQty")
+            .attr("name", "ItemBatch[" + browCount + "].RNI_BCH_OriginalQty");
+
+        row.find("input.RNI_BCH_UsedQty")
+            .attr("name", "ItemBatch[" + browCount + "].RNI_BCH_UsedQty");
+
+        row.find("input.RNI_BCH_AmendedQty")
+            .attr("name", "ItemBatch[" + browCount + "].RNI_BCH_AmendedQty");
+
+        row.find("input.RNI_BCH_UnitPrice")
+            .attr("name", "ItemBatch[" + browCount + "].RNI_BCH_UnitPrice")
+            .val(MatrialValue)
+            .prop("readonly", true);
+
+        row.find("input.RNI_BCH_Value")
+            .attr("name", "ItemBatch[" + browCount + "].RNI_BCH_Value");
+
+        row.find("input.RNI_BCH_IsDeleted")
+            .attr("name", "ItemBatch[" + browCount + "].RNI_BCH_IsDeleted")
+            .val("false");
+
+        $("#IBatTableBody").append(row);
+
+        browCount++;
+
+        row.data("isValid", false);
+
+        isbAddingRow = false;
+    }
+
+          $(document).on('click', '.ItemBatch', function () {
+
+            let checkedBoxes = $('.CheckItem:checked');
+
+            // ❌ Validation: No selection
+            if (checkedBoxes.length === 0) {
+                alert("Please select an item");
+                return;
+            }
+
+            // ❌ Validation: Multiple selection
+            if (checkedBoxes.length > 1) {
+                alert("Please select only one item");
+                return;
+            }
+
+            // ✅ Only one checkbox
+            let CheckedCheckbox = checkedBoxes[0];
+
+            var currentRow = $(CheckedCheckbox).closest('tr.NewRow');
+        //    alert(currentRow.toString())
+
+            var ItemNumber = currentRow.find('input.Item_Number').val();
+            var Index = currentRow.find('input.Item_Index').val();
+            var Qty = currentRow.find('input.Qty').val();
+            var MatrialValue = currentRow.find('input.UnitPrice').val();
+            
+                 var ItemWareHouse = currentRow.find('select.WH_Number').val();
+           console.log("itemmm---"+ItemNumber)
+            if (!ItemNumber) {
+                alert("Item not found");
+                return;
+            }
+  
+            // ✅ Set values
+            $("#RNI_BCH_Item_Number").val(ItemNumber);
+            $("#RNI_BCH_Item_Index").val(Index);
+            $("#RNI_BCH_OriginalQty").val(Qty);
+            $("#RNI_BCH_UsedQty").val(Qty);
+            $("#RNI_BCH_AmendedQty").val(Qty);
+            $("#RNI_BATCHQty").text(removeCommas(Qty));
+            $(".RNI_BCH_UnitPrice").val(MatrialValue);
+                console.log(ItemWareHouse)
+                               $("#RNI_BCH_Item_WH").val(ItemWareHouse);
+
+            // ✅ Call function
+            BaseUnitPrice("RNI", ItemNumber, Index, Qty, MatrialValue);
+   
+
+            // ✅ Show only non-deleted rows
+            $("tr.IBatNewRow").each(function () {
+                var isDeleted = $(this).find(".RNI_BCH_IsDeleted").val() === "true";
+                $(this).toggle(!isDeleted);
+            });
+
+            // ✅ Filter matching rows
+            var count = 0;
+
+            $("tr.IBatNewRow").each(function () {
+
+                var RowItemNumber = $(this).find(".RNI_BCH_Item_Number").val();
+                var RowItemIndex = $(this).find(".RNI_BCH_Item_Index").val();
+                var isDeleted = $(this).find(".RNI_BCH_IsDeleted").val();
+
+                if (RowItemNumber === ItemNumber &&
+                    RowItemIndex === Index &&
+                    isDeleted !== 'true') {
+
+                    $(this).show();
+                    count++;
+
+                } else {
+                    $(this).hide();
+                }
+            });
+
+            // ✅ If no rows → create new
+            if (count === 0) {
+                IBatNewRow();
+            }
+
+            // ✅ Open modal
+           var modal = new bootstrap.Modal(document.getElementById("IBatch"));
+            modal.show();
+
+            $('#IBatch').on('shown.bs.modal', function () {
+                $(this).find('[autofocus]').focus();
+
+                
+                            $('input.RNI_BCH_No').focus();
+                BatchCalculateFooter();
+            });
+
+        });
+        // ✅ Remove Row
+        $(document).on('click', '.IBatRowRemove', function () {
+            $(this).closest('tr')
+                .find("input.RNI_BCH_IsDeleted")
+                .val("true");
+
+            $(this).closest('tr').hide();
+
+            BatchCalculateFooter();
+        });
+
+        // ✅ Qty → Value calculation
+        $(document).on('input', "tr.IBatNewRow input.RNI_BCH_AmendedQty", function () {
+
+            var row = $(this).closest("tr");
+
+            var qty = parseFloat(removeCommas(row.find(".RNI_BCH_AmendedQty").val())) || 0;
+            var price = parseFloat(removeCommas(row.find(".RNI_BCH_UnitPrice").val())) || 0;
+
+            var value = qty * price;
+
+            row.find(".RNI_BCH_Value").val(DecimalIndianRupees(value));
+
+            BatchCalculateFooter();
+              var lastRow = $("tr.IBatNewRow").last();
+           if (CheckAllValid(lastRow)) {
+                IBatNewRow();
+            }
+        });
+
+        // ✅ Add Row Button
+        $("#IBatNewRowButton").click(function () {
+
+            var lastRow = $("tr.IBatNewRow").last();
+
+            if (CheckAllValid(lastRow)) {
+                IBatNewRow();
+            } else {
+                alert("Please complete all fields !");
+            }
+
+            BatchCalculateFooter();
+        });
+       
+                     function IBatValidateField(currentInput) {
+                    var valid = 1;
+                    var inputValue = currentInput.val();
+                    if (inputValue === "") {
+                        valid = 0;
+                    }
+                        if (currentInput.hasClass("RNI_BCH_AmendedQty")) {
+                        valid = ExValidateAmount(currentInput);
+                    }
+                    if (valid == 0) {
+                        return false;
+                    }
+                    else {
+                        return true;
+                    }
+                }
+
+                function ExValidateAmount(currentInput) {
+                    var valid = 1;
+
+                    var currentRow = currentInput.closest("tr.IBatNewRow");
+                        var PercentInput = currentRow.find("input.RNI_BCH_AmendedQty");
+                    var Percent = removeCommas(PercentInput.val());
+                    if (Percent > 0) {
+                    }
+                    else {
+                        valid = 0;
+                    }
+                    return valid;
+                }
+
+    
+        function IBatCheckAllFieldsValid(currentRow) {
+
+            var prefix = "RNI";
+
+            var allFieldsValid = true;
+
+            $("tr.IBatNewRow:visible").each(function () {
+
+                var row = $(this);
+
+                row.find(
+                    "select, " +
+                    "input." + prefix + "_BCH_AmendedQty, " +
+                    "input." + prefix + "_BCH_No, " +
+                    "input." + prefix + "_BCH_Date"
+                ).each(function () {
+
+                    if (!IBatValidateField($(this))) {
+                        allFieldsValid = false;
+                        return false; // break inner loop
+                    }
+                });
+
+                if (!allFieldsValid) return false; // break outer loop
+            });
+
+            return allFieldsValid;
+        }
+    
+        $("#IBatCloseButton").click(function () {
+                BatchJSON();
+
+            var prefix = "RNI"; //
+
+                        var ItemQty = $("#" + prefix + "_BATCHQty").text();
+                      //  var ItemQty = $('.CheckItem:checked').closest('tr.NewRow').find('input.Qty').val();
+            var BatchQty = 0;
+               
+            $("tr.IBatNewRow:visible").each(function () {
+
+                var row = $(this);
+
+                var isDeleted = row.find("input." + prefix + "_BCH_IsDeleted").val() === "true";
+
+                if (!isDeleted) {
+
+                    var Date = row.find("input." + prefix + "_BCH_Date").val();
+                    var No = row.find("input." + prefix + "_BCH_No").val();
+                    var Qty = row.find("input." + prefix + "_BCH_AmendedQty").val();
+                        
+              //  alert(No+":no")
+                    // ✅ Remove empty rows
+                    if (!No && !(Qty > 0)) {
+
+                        row.find("input." + prefix + "_BCH_IsDeleted").val("true");
+                        row.hide();
+
+                    } else {
+                           
+                        BatchQty += parseFloat(Qty) || 0;
+                           
+                    }
+                }
+            });
+
+            var lastRow = $("tr.IBatNewRow").last();
+
+          
+            if (parseFloat(ItemQty) === parseFloat(BatchQty)) {
+
+                if (IBatCheckAllFieldsValid(lastRow)) {
+
+                    $("#IBatch").modal('hide');
+
+                } else {
+                    alert("Please complete all fields !");
+                    return;
+                }
+
+                // ✅ Show all valid rows again
+
+       
+            
+                $("tr.IBatNewRow").each(function () {
+
+                    var isDeleted = $(this).find("input." + prefix + "_BCH_IsDeleted").val() === "true";
+
+                    if (!isDeleted) {
+                        $(this).show();
+                    }
+                });
+
+            } else {
+          
+                // if (IBatCheckAllFieldsValid(lastRow)) {
+                 
+
+                //     alert("Qty Mismatch !");
+                //          BatchJSON();
+                //     $("#IBatch").modal('hide');
+
+                // } else {
+                    alert("Please complete all fields !");
+              //  }
+            }
+        });
+
+        // ✅ Validation
+        function CheckAllValid(row) {
+
+            var valid = true;
+
+            row.find("input.RNI_BCH_AmendedQty, input.RNI_BCH_No").each(function () {
+                if ($(this).val() === "") {
+                    valid = false;
+                    return false;
+                }
+            });
+
+            return valid;
+        }
+
+    });
+
+  
+            function BaseUnitPrice(prefix, ItemNumber, Index, Qty, MatrialValue) {
+
+            Qty = parseFloat(removeCommas(Qty)) || 0;
+            MatrialValue = parseFloat(removeCommas(MatrialValue)) || 0;
+          //  alert(MatrialValue+":MatrialValue")
+
+          
+            // ✅ FINAL UNIT PRICE
+            var BUnitPrice = 0;
+
+            if (Qty !== 0) {
+                BUnitPrice = ( MatrialValue) / Qty;
+            }
+
+            // ✅ Set value dynamically
+                    $("#" + prefix + "_BCH_UnitPrice").val(MatrialValue.toFixed(2));
+                //     $("#" + prefix + "_BCH_UnitPrice").val(BUnitPrice.toFixed(2));
+        }
+</script>
+

@@ -1,0 +1,200 @@
+﻿@model List<ERP_DTO.SONumberReset_DTO>
+
+<div class="col table-fixed h-100">
+    <div class="w-100 table-resSOnsive table-body table-body-f">
+        <table class="table table-one table-striped table-bordered table-hover align-middle w-100">
+            <thead>
+                <tr class="table-info text-center">
+                    <th class="datetype">Date</th>
+                    <th>Starting Number</th>
+                    <th>Number Of Digits</th>
+                    <th>Prefil Zero</th>
+                    <th>Frequency</th>
+                    <th class="table-width-sm"></th>
+                </tr>
+            </thead>
+            <tbody id="ResetTableBody">
+                <tr id="ResetTempRow" style="display: none;">
+                    <td>
+                        <input id="SOR_Date" class="form-control SOR_Date datepicker text-center" autocomplete="off" />
+                    </td>
+                    <td>
+                        <input id="SOR_StartingNumber" class="form-control SOR_StartingNumber text-center" autocomplete="off" />
+                    </td>
+                    <td>
+                        <input id="SOR_NumberofDigits" class="form-control SOR_NumberofDigits text-center" autocomplete="off" />
+                    </td>
+                    <td>
+                        <select id="SOR_PrefilZero" class="form-select SOR_PrefilZero text-center" asp-items="@ViewBag.Prefil"></select>
+                    </td>
+                    <td>
+                        <select id="SOR_Frequency" class="form-select SOR_Frequency text-center" asp-items="@ViewBag.Frequency"></select>
+                    </td>
+                    <td class="text-center">
+                        <input type="hidden" name="SOR_IsDeleted" class="SOR_IsDeleted" value="false" />
+                        <a class="ResetRowRemove btn btn-sm btn-danger p-1 icon-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                            </svg>
+                        </a>
+                    </td>
+                </tr>
+                @if (Model != null)
+                {
+                    @for (int i = 0; i < Model.Count; i++)
+                    {
+                        <tr class="ResetNewRow">
+                            <td>
+                                <input id="SOR_Date" name="SONumberReset[@i].SOR_Date" class="form-control SOR_Date datepicker text-center" autocomplete="off" value="@Model[i].SOR_Date" />
+                            </td>
+                            <td>
+                                <input id="SOR_StartingNumber" name="SONumberReset[@i].SOR_StartingNumber" class="form-control SOR_StartingNumber text-center" autocomplete="off" value="@Model[i].SOR_StartingNumber" />
+                            </td>
+                            <td>
+                                <input id="SOR_NumberofDigits" name="SONumberReset[@i].SOR_NumberofDigits" class="form-control SOR_NumberofDigits text-center" autocomplete="off" value="@Model[i].SOR_NumberofDigits" />
+                            </td>
+                            <td>
+                                <select id="SOR_PrefilZero" name="SONumberReset[@i].SOR_PrefilZero" class="form-select SOR_PrefilZero text-center">
+                                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Prefil)
+                                    {
+                                        if (item.Value == Model[i].SOR_PrefilZero)
+                                        {
+                                            <option value="@item.Value" selected>@item.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    }
+                                </select>
+                            </td>
+                            <td>
+                                <select id="SOR_Frequency" name="SONumberReset[@i].SOR_Frequency" class="form-select SOR_Frequency text-center">
+                                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Frequency)
+                                    {
+                                        if (item.Value == Model[i].SOR_Frequency)
+                                        {
+                                            <option value="@item.Value" selected>@item.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Value">@item.Text</option>
+                                        }
+                                    }
+                                </select>
+                            </td>
+                            <td class="text-center">
+                                @if (@Model[i].SOR_Number != 0)
+                                {
+                                    <input name="SONumberReset[@i].SOR_Number" type="hidden" class="SOR_Number" value="@Model[i].SOR_Number" />
+                                }
+                                <input type="hidden" name="SONumberReset[@i].SOR_IsDeleted" value="false" class="SOR_IsDeleted" />
+                                <a class="ResetRowRemove btn btn-sm btn-danger p-1 icon-link">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                                    </svg>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="row table-footer align-items-center">
+    <div class="col">
+        <a id="ResetNewRowButton" class="btn btn-primary">Add Row</a>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        function ResetInitializeFlatpickrs() {
+            $(".datepicker").flatpickr({
+                dateFormat: "d-M-Y",
+                altInput: false,
+            });
+        }
+
+        var rowCount = @(Model != null ? Model.Count : 0);
+        var isAddingRow = false;
+
+        function ResetaddRow() {
+            var NewRow = $("#ResetTempRow").clone().removeAttr("style").removeAttr("id").addClass("ResetNewRow");
+            NewRow.find("input.SOR_Date").attr("name", "SONumberReset[" + rowCount + "].SOR_Date").val();
+            NewRow.find("input.SOR_StartingNumber").attr("name", "SONumberReset[" + rowCount + "].SOR_StartingNumber");
+            NewRow.find("input.SOR_NumberofDigits").attr("name", "SONumberReset[" + rowCount + "].SOR_NumberofDigits");
+            NewRow.find("select.SOR_PrefilZero").attr("name", "SONumberReset[" + rowCount + "].SOR_PrefilZero");
+            NewRow.find("select.SOR_Frequency").attr("name", "SONumberReset[" + rowCount + "].SOR_Frequency");
+            NewRow.find("input.SOR_IsDeleted").attr("name", "SONumberReset[" + rowCount + "].SOR_IsDeleted");
+
+            NewRow.find("input[name='SONumberReset[" + rowCount + "].SOR_IsDeleted']").val(false);
+
+            $("#ResetTableBody").append(NewRow);
+            rowCount++;
+            NewRow.data("isValid", false);
+            isAddingRow = false;
+
+            ResetInitializeFlatpickrs();
+        }
+
+        if ($("tr.ResetNewRow").length == 0) {
+            ResetaddRow();
+        }
+
+        $(document).on('click', '.ResetRowRemove', function () {
+            $(this).closest('tr').find("input[name*='SOR_IsDeleted']").val(true);
+            $(this).closest('tr').hide();
+        });
+
+
+
+        $("#ResetNewRowButton").click(function () {
+            var lastRow = $("tr.ResetNewRow").last();
+            if (ResetCheckAllFieldsValid(lastRow)) {
+                ResetaddRow();
+            }
+            else {
+                var firstInvalidField = null;
+                lastRow.find("select, input, input[type='text']").each(function () {
+                    if (!ResetValidateField($(this))) {
+                        if (firstInvalidField == null)
+                            firstInvalidField = $(this);
+                        return false;
+                    }
+                });
+                if (firstInvalidField != null) {
+                    alert("Please complete all fields !");
+                    firstInvalidField.focus();
+                }
+            }
+        });
+        function ResetCheckAllFieldsValid(currentRow) {
+            var allFieldsValid = true;
+            $("tr.ResetNewRow:visible").each(function () {
+                $(this).find("select, input, input[type='text']").each(function () {
+                    if (!ResetValidateField($(this))) {
+                        allFieldsValid = false;
+                        return false;
+                    }
+                });
+                if (!allFieldsValid) return false;
+            });
+            return allFieldsValid;
+        }
+        function ResetValidateField(currentInput) {
+            var valid = 1;
+            var inputValue = currentInput.val();
+            if (inputValue === "") {
+                valid = 0;
+            }
+            if (valid == 0) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+        ResetInitializeFlatpickrs();
+    });
+</script>

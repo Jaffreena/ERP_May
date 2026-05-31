@@ -1,0 +1,525 @@
+﻿@model ERP_DTO.JobInwardTransaction.ReceiptNoteHead_DTO;
+
+<script>
+        $('#ModelAlert').on('hidden.bs.modal', function () {
+
+        $('.modal-backdrop').remove();
+        $('body').removeClass('modal-open');
+        $('body').css('padding-right', '');
+
+    });
+    function removeCommas(value) {
+        return (value || '').toString().replace(/,/g, '');
+    }
+
+    function DecimalIndianRupees(value) {
+        if (value === "" || isNaN(value)) {
+            return "0.00";
+        }
+
+        var formattedValue = parseFloat(value).toFixed(2);
+
+        var parts = formattedValue.split(".");
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+        return parts.join(".");
+    }
+    function QtyDecimalRupees(value, decimalPlaces) {
+        if (value === "" || isNaN(value)) return "0";
+
+        var formattedValue = parseFloat(value).toFixed(decimalPlaces);
+        var parts = formattedValue.split(".");
+        if (parts.length > 1) {
+            parts[1] = parts[1].replace(/0+$/, "");
+            if (parts[1].length === 0) parts.pop();
+        }
+
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+
+        return parts.join(".");
+    }
+    function UnitDecimalRupees(value, UnitDecimalPlaces) {
+        if (value === "" || isNaN(value)) return "0";
+
+        var num = parseFloat(value);
+
+        var formattedValue = num.toFixed(UnitDecimalPlaces);
+        var parts = formattedValue.split(".");
+
+        if (parts.length > 1) {
+            parts[1] = parts[1].replace(/0+$/, "");
+
+            if (parts[1].length < 2) {
+                parts[1] = parts[1].padEnd(2, "0");
+            }
+        } else {
+            parts.push("00");
+        }
+
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+        return parts.join(".");
+    }
+</script>
+
+
+@if (Model.JIRNH_Number != 0)
+{
+    <input asp-for="JIRNH_Number" type="hidden" class="Number" />
+}
+<div class="modal modal-sm fade" id="ModelAlert" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header draggable-modal-header">
+                <p class="modal-title mb-0">Warning</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body py-4 text-dark fs-6 text-center">
+                <img src="~/img/danger.png" class="img-fluid mb-2" />
+                <div id="AlertMessage">@Html.Raw(ViewBag.ErrorMessage)</div>
+            </div>
+
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-primary px-4" id="AlertOkay" data-bs-dismiss="modal">Ok</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="col-auto left-menu text-black">
+    <div class="row">
+        <div class="col-12 col-md-3">
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="RN_No" class="col-md-6 col-lg-5 col-form-label ps-0"></label>
+                <div class="col-md-6 col-lg-7">
+                    <input asp-for="RN_No" class="form-control Key KeyDup" autocomplete="off"   />
+                </div>
+            </div>
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="RN_Date" class="col-md-6 col-lg-5 col-form-label ps-0"></label>
+                <div class="col-md-6 col-lg-7">
+                    <input asp-for="RN_Date" class="form-control Key datepicker" autocomplete="off" />
+                </div>
+            </div>
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="JW_CustomerDC_No" class="col-md-6 col-lg-5 col-form-label ps-0"></label>
+                <div class="col-md-6 col-lg-7">
+                    <input asp-for="JW_CustomerDC_No" class="form-control Key KeyDup" autocomplete="off"   />
+                </div>
+            </div>
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="JW_CustomerDC_Date" class="col-md-6 col-lg-5 col-form-label ps-0"></label>
+                <div class="col-md-6 col-lg-7">
+                    <input asp-for="JW_CustomerDC_Date" class="form-control Key datepicker" autocomplete="off" />
+                </div>
+            </div>
+          
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="MS_Number" class="col-md-6 col-lg-5 col-form-label ps-0"></label>
+                <div class="col-md-6 col-lg-7">
+                    <select asp-for="MS_Number" class="form-select MS_Number" asp-items="@ViewBag.MaterialSegregation"></select>
+                </div>
+            </div>
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="JWC_Number" class="col-sm-5 col-form-label ps-0"></label>
+                <div class="col-sm-7">
+                    <input asp-for="JWC_Number" class="form-control" type="hidden" />
+                  
+                    <input asp-for="JWC_Name" class="form-control" autocomplete="off" oninput="OnBuyerInput(this)" onfocus="OnBuyerFocus(this)" />
+                    <div class="buyer-search-results bg-primary card" style="display:none"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="Currency_Number" class="col-md-6 col-lg-5 col-form-label ps-0"></label>
+                <input asp-for="Currency_Number" class="form-control" type="hidden" />
+                <div class="col-md-6 col-lg-7">
+                    <input asp-for="Currency_Name" class="form-control Key KeyDup" autocomplete="off" readonly />
+                </div>
+            </div>
+      
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="WH_Number" class="col-sm-5 col-form-label ps-0"></label>
+                <div class="col-sm-7">
+                    <select asp-for="WH_Number" class="form-select" onchange="SearchGST()" asp-items="@ViewBag.Warehouse"></select>
+                    @{
+                        if (Model != null)
+                        {
+                            // <input asp-for="SIH_HIDE_TCT_Number" class="form-control" type="hidden" value="@Model.Currency_Number" />
+                        }
+                    }
+                    <div class="cluster-results dropdown-results search-results bg-primary p-2" style="display:none"></div>
+                </div>
+            </div>
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="Remarks" class="col-md-6 col-lg-5 col-form-label ps-0"></label>
+                <div class="col-md-6 col-lg-7">
+                    <input asp-for="Remarks" class="form-control Key KeyDup" autocomplete="off"  />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* <div class="col-auto right-menu text-center border-start">
+    @if (Model.JIRNH_Number != 0)
+    {
+        <input type="submit" name="Mode" value="Update" class="btn btn-primary btn-sm px-2 w-100 mb-1" />
+        <input type="submit" name="Mode" value="Clear All" class="btn btn-primary btn-sm px-2 w-100 mb-1" />
+    }
+    else
+    {
+        <input type="submit" name="Mode" value="Save" class="btn btn-primary btn-sm px-2 w-100 mb-1" />
+        <input type="submit" name="Mode" value="Clear All" class="btn btn-primary btn-sm px-2 w-100 mb-1" />
+    }
+  
+</div> *@
+
+<script>
+    $(document).ready(function () {
+        InitializeGstFlatpickrs();
+
+        function InitializeGstFlatpickrs() {
+            $(".datepicker").flatpickr({
+                dateFormat: "d-M-Y",   // 30-Apr-2026
+                altInput: true,        // shows formatted date
+                altFormat: "d-M-Y",   // display format
+                allowInput: true,     // user can type manually
+                defaultDate: new Date() // optional: today default
+            });
+        }
+    });
+</script>
+<script>
+     function OnBuyerInput(inputElement) {
+        SearchBuyer(inputElement);
+    }
+    function OnBuyerFocus(inputElement) {
+        var tax = inputElement.value;
+        if (!tax) {
+            SearchBuyer(inputElement);
+        }
+        else {
+          $(inputElement).select();
+        }
+    }
+    async function SearchBuyer(inputElement) {
+        var Buyer = inputElement.value;
+        var SIHDate = $("#RN_Date").val();
+        var resultsDiv = $(inputElement).next('.buyer-search-results');
+        // var isChecked = $("#SIH_ExportOrder").prop("checked");
+        var Export;
+
+        // if (isChecked) {
+        //     Export = true;
+        // } else {
+            Export = false;
+        // }
+
+        $.ajax({
+            url: '/jobinward/transactions/receipt-note/cutomer',
+            data: { Buyer: Buyer, SIHDate: SIHDate, Export: Export },
+            type: 'GET',
+            success: function (data) {
+                console.log(data)
+                resultsDiv.empty();
+                if (data && data.length > 0) {
+                    resultsDiv.show();
+                    var table = $('<div class="card-body modal-content p-0"><table class="table table-bordered table-hover table-fixed table-grid mb-0"><thead><tr class="table-info"><th class="table-col-xxl">JW Customer Name</th><th class="table-width-lg text-center">Currency</th></tr></thead><tbody></tbody></table></div>');
+                    data.forEach(function (Buy) {
+                        var row = $('<tr></tr>');
+                        row.append('<td class="table-col-xxl">' + Buy.cuS_Name + '</td>');
+                        row.append('<td class="table-width-lg text-center">' + Buy.cuS_CUR_Name + '</td>');
+                        table.find('tbody').append(row);
+
+                        row.on('click', function () {
+                            $(inputElement).val(Buy.cuS_Name);
+                             // $("#JWC_Number").val(Buy.cuS_Number)
+                            $("#JWC_Number").val(Buy.cuS_Number)
+                           $("#JWC_Name").val(Buy.cuS_Name);
+                                $("#Currency_Name").val(Buy.cuS_CUR_Name)
+                            $("#Currency_Number").val(Buy.cuS_CUR_Number)
+                            $("#SIH_CUR_Number").val(Buy.cuS_CUR_Number)
+                            $("#SIH_BUY_LOC_Number").val(Buy.cuS_LOC_Number)
+                            $("#SIH_CUR_DecimalPlaces").val(Buy.cuS_CUR_DecimalPlaces)
+                            $("#SIH_WHT_Number").val(Buy.cuS_WHT_Number)
+                            
+                               $("#WH_Number").val(Buy.cuS_WH_Number)
+                            resultsDiv.hide();
+
+                            // SearchClustor(Buy.buY_Number, Buy.buY_TCT_Number);
+                            // GetWHT(Buy.buY_Number, Buy.buY_WHT_Number, SIHDate);
+
+                            // CalculateAllIncomes();
+                        });
+                    });
+
+                    var closeButton = $('<div class="card-header bg-primary py-1 px-1"><button type="button" class="p-0 float-end btn btn-sm btn-primary bg-opacity-10 d-flex"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d = "M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"> </path></svg></button></div>');
+                    closeButton.on('click', function () {
+                        resultsDiv.hide();
+                    });
+
+                    resultsDiv.append(closeButton);
+                    resultsDiv.append(table);
+                } else {
+                    resultsDiv.hide();
+                    resultsDiv.append('<p>No results found</p>');
+                }
+            },
+            error: function () {
+                resultsDiv.text('Error loading data.');
+                resultsDiv.show();
+            }
+        });
+    }
+</script>
+<script>
+    function showAlert(message, focusSelector = null) {
+        $('#AlertMessage').html(message);
+
+        const modal = new bootstrap.Modal(document.getElementById('ModelAlert'));
+        modal.show();
+
+        $('#ModelAlert').off('hidden.bs.modal').on('hidden.bs.modal', function () {
+            if (focusSelector) {
+                setTimeout(() => $(focusSelector).focus(), 100);
+            }
+        });
+    } 
+
+
+       $("#MS_Number").change(function () {
+
+        // Check whether any visible row contains item
+        let hasItem = $("tr.NewRow").filter(function () {
+
+            let row = $(this);
+
+            let isDeleted = row.find(".IsDeleted").val() === "true";
+
+            let itemNumber = row.find(".Item_Number").val();
+
+            return !isDeleted &&
+                   itemNumber &&
+                   itemNumber.trim() !== "";
+
+        }).length > 0;
+
+
+        // No items → allow directly
+        if (!hasItem)
+            return;
+
+
+        // Confirmation
+        if (confirm("Changing this will clear all grid values. Continue?")) {
+
+            $("tr.NewRow").each(function () {
+
+                let row = $(this);
+
+                // Clear all inputs except delete flag
+                row.find("input")
+                   .not(".IsDeleted")
+                   .val("");
+
+                // Reset dropdowns
+                row.find("select")
+                   .prop("selectedIndex", 0);
+
+                // Reset delete flag
+                row.find(".IsDeleted")
+                   .val("false");
+
+            });
+
+        }
+        else {
+
+            // Restore previous value
+            $(this).val($(this).data("old"));
+
+        }
+
+    });
+
+
+       $('form').submit(function (e) {
+
+        // ================= HEADER VALIDATION =================
+        let validations = [
+            { field: '#RN_No', message: 'Receipt No required' },
+            { field: '#RN_Date', message: 'Receipt Date required' },
+            { field: '#JW_CustomerDC_No', message: 'Customer DC No required' },
+            { field: '#MS_Number', message: 'Select Material Segregation' },
+            { field: '#JWC_Name', message: 'Select JW Customer' },
+            { field: '#WH_Number', message: 'Select Warehouse' }
+        ];
+
+        for (let i = 0; i < validations.length; i++) {
+
+            let item = validations[i];
+
+            if (!$(item.field).val()) {
+                showAlert(item.message, item.field);
+                e.preventDefault();
+                return false;
+            }
+        }
+
+        // ================= GRID VALIDATION =================
+        let hasRow = false;
+
+        $('#ItemTable tbody tr.NewRow').each(function () {
+
+            let row = $(this);
+
+            // Skip deleted rows
+            if (row.find('.IsDeleted').val() == "1") {
+                return;
+            }
+
+            let item = row.find('.Item_Number').val();
+            let wh = row.find('.WH_Number').val();
+            let uom = row.find('.UoM_Number').val();
+            let process = row.find('.PRS_Number').val();
+
+            let qty = parseFloat(removeCommas(row.find('.Qty').val())) || 0;
+            let price = parseFloat(removeCommas(row.find('.UnitPrice').val())) || 0;
+
+            // ===== Skip validation for empty row =====
+            let isEmptyRow =
+                !item &&
+                !wh &&
+                !uom &&
+                !process &&
+                qty <= 0 &&
+                price <= 0;
+
+            // Skip only if table has more than 1 row
+            if (isEmptyRow && $('#ItemTable tbody tr.NewRow').length > 1) {
+                return;
+            }
+
+            hasRow = true;
+
+            if (!process) {
+                showAlert("Select Process", row.find('.PRS_Number'));
+                e.preventDefault();
+                return false;
+            }
+
+            if (!item) {
+                showAlert("Select Item", row.find('.Item_Code'));
+                e.preventDefault();
+                return false;
+            }
+
+            if (!wh) {
+                showAlert("Select Warehouse in row", row.find('.WH_Number'));
+                e.preventDefault();
+                return false;
+            }
+
+            if (!uom) {
+                showAlert("Select UoM in row", row.find('.UoM_Number'));
+                e.preventDefault();
+                return false;
+            }
+
+            if (qty <= 0) {
+                showAlert("Enter valid Qty", row.find('.Qty'));
+                e.preventDefault();
+                return false;
+            }
+
+            if (price <= 0) {
+                showAlert("Enter valid Unit Price", row.find('.UnitPrice'));
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // ================= ATLEAST ONE ROW =================
+        if (!hasRow) {
+            showAlert("Add at least one item");
+            e.preventDefault();
+            return false;
+        }
+
+        // ================= BATCH VALIDATION =================
+        BatchJSON();
+             var result = ValidateBatch();
+
+    let missing = result.MissingItems;
+ //   let mismatch = result.MismatchItems;
+
+    // =========================
+    // ❌ Missing batches
+    // =========================
+    if (missing.length > 0) {
+
+        showAlert(
+            "Batch missing for Item: " + missing.join(", ")
+        );
+
+        e.preventDefault();
+        return false;
+    }
+
+    // =========================
+    // ❌ Batch qty mismatch
+    // =========================
+    // if (mismatch.length > 0) {
+
+    //     showAlert(
+    //         "Batch Qty mismatch:\n" + mismatch.join("\n")
+    //     );
+
+    //     e.preventDefault();
+    //     return false;
+    // }
+
+      
+    });
+</script>
+<script>
+       $(document).on('change', "#RN_Date", function () {
+               var PIHDate = $("#RN_Date").val();
+
+    if (!PIHDate) return;
+
+    const date = new Date(PIHDate);
+
+    const Year = date.getFullYear();
+    const Month = String(date.getMonth() + 1).padStart(2, '0');
+    const Day = String(date.getDate()).padStart(2, '0');
+
+    const ForDate = `${Year}${Month}${Day}`;
+
+    console.log(ForDate);
+
+        let rnDate = $(this).val();
+
+        if (!rnDate) return;
+
+        $.ajax({
+            url: '/jobinward/transactions/receipt-note/numbering',
+            type: 'GET',
+            data: { RNHDate: ForDate },
+            success: function (data) {
+
+                if (data !== "") {
+                    $('#RN_No').val(data);
+                } else {
+                    $('#RN_No').val("");
+                }
+            }
+        });
+    });
+</script>

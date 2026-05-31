@@ -1,0 +1,733 @@
+﻿@model ERP_DTO.SaleOrderHead_DTO
+
+@using System.Globalization;
+@{
+    CultureInfo India = new CultureInfo("hi-IN");
+}
+
+@{
+    ViewData["Title"] = "Sale Order Preview";
+}
+<script>
+    function removeCommas(value) {
+        return (value || '').toString().replace(/,/g, '');
+    }
+
+    function DecimalIndianRupees(value) {
+        if (value === "" || isNaN(value)) {
+            return "0.00";
+        }
+
+        var formattedValue = parseFloat(value).toFixed(2);
+
+        var parts = formattedValue.split(".");
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+        return parts.join(".");
+    }
+    function QtyDecimalRupees(value, decimalPlaces) {
+        if (value === "" || isNaN(value)) return "0";
+
+        var formattedValue = parseFloat(value).toFixed(decimalPlaces);
+        var parts = formattedValue.split(".");
+        if (parts.length > 1) {
+            parts[1] = parts[1].replace(/0+$/, "");
+            if (parts[1].length === 0) parts.pop();
+        }
+
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+
+        return parts.join(".");
+    }
+    function UnitDecimalRupees(value, UnitDecimalPlaces) {
+        if (value === "" || isNaN(value)) return "0";
+
+        var num = parseFloat(value);
+
+        var formattedValue = num.toFixed(UnitDecimalPlaces);
+        var parts = formattedValue.split(".");
+
+        if (parts.length > 1) {
+            parts[1] = parts[1].replace(/0+$/, "");
+
+            if (parts[1].length < 2) {
+                parts[1] = parts[1].padEnd(2, "0");
+            }
+        } else {
+            parts.push("00");
+        }
+
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+        return parts.join(".");
+    }
+</script>
+<form asp-action="PreviewSaleOrder" class="h-100">
+    <input id="SOI_TEMP_ITM_Number" type="hidden" />
+    <input id="SOI_TEMP_Index" type="hidden" />
+    <input id="SOI_TEMP_Qty" type="hidden" />
+    <input id="SOI_TEMP_Amount" type="hidden" />
+    <input id="SOI_TEMP_Number" type="hidden" />
+
+    <div class="modal modal-lg modal-xl fade" id="BuyerAddress" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title">Address</p>
+                    <button type="button" class="btn-close" id="AddCloseButton" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs tab-header" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-tab-pane" type="button" role="tab" aria-controls="overview-tab-pane" aria-selected="true">Overview</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content tab-body">
+                        <div class="tab-pane fade show active p-2 border border-top-0 h-100" id="overview-tab-pane" role="tabpanel" aria-labelledby="overview-tab" tabindex="0">
+                            <partial name="PreviewSaleOrderAddress.cshtml" model="@Model.BuyerAddress" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-end">
+                    <button type="button" id="AddOkayButton" class="btn btn-primary px-4" ref="always_focus" autofocus>Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-lg modal-xl fade" id="Income" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title">Header Misc.Income</p>
+                    <button type="button" class="btn-close" id="InCloseButton" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs tab-header" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-tab-pane" type="button" role="tab" aria-controls="overview-tab-pane" aria-selected="true">Overview</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content tab-body">
+                        <div class="tab-pane fade show active p-2 border border-top-0 h-100" id="overview-tab-pane" role="tabpanel" aria-labelledby="overview-tab" tabindex="0">
+                            <partial name="PreviewSaleOrderIncome.cshtml" model="@Model.Income" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-end">
+                    <button type="button" id="InOkayButton" class="btn btn-primary px-4" ref="always_focus" autofocus>Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-lg modal-xl fade" id="IIncome" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title">Item Misc.Income</p>
+                    <button type="button" class="btn-close" id="IInCloseButton" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs tab-header" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-tab-pane" type="button" role="tab" aria-controls="overview-tab-pane" aria-selected="true">Overview</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content tab-body">
+                        <div class="tab-pane fade show active p-2 border border-top-0 h-100" id="overview-tab-pane" role="tabpanel" aria-labelledby="overview-tab" tabindex="0">
+                            <partial name="PreviewSaleOrderIIncome.cshtml" model="@Model.ItemIncome" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-end">
+                    <button type="button" id="IInOkayButton" class="btn btn-primary" ref="always_focus" autofocus>Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-lg modal-xl fade" id="PrintPreview" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title">Print Preview</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body py-4 fs-6 text-center icon-link justify-content-center">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col pb-1 pt-4">
+                                <div class="SO-container" name="PrintPage" id="PrintPage" style="background-color: #fff;color:#000">
+                                    <style>
+                                        .SO-container {
+                                            max-width: 800px;
+                                            margin: auto;
+                                            background-color: #fff;
+                                            padding: 20px;
+                                            height: 100%;
+                                            font-size: 10px;
+                                            font-family: "Noto Sans", sans-serif;
+                                        }
+
+                                        .SO-table {
+                                            width: 100%;
+                                            border-collapse: collapse;
+                                            border: 0.1px solid #ccc;
+                                            font-family: "Noto Sans", sans-serif;
+                                        }
+
+                                            .SO-table th, .SO-table td {
+                                                border: 0.1px solid #ccc;
+                                                padding: 5px 8px;
+                                                vertical-align: top;
+                                                line-height: 1.4;
+                                            }
+
+                                            .SO-table th {
+                                                font-weight: bold;
+                                            }
+
+                                            .SO-table tr td {
+                                                height: 29px;
+                                            }
+
+                                        .header-main {
+                                            background-color: #1E8449;
+                                            color: white;
+                                            font-weight: bold;
+                                            text-align: center;
+                                        }
+
+                                        .header-section {
+                                            background-color: #2ECC71;
+                                            color: white;
+                                            font-weight: bold;
+                                            text-align: center;
+                                        }
+
+                                        .header-sub {
+                                            background-color: #ABEBC6;
+                                            color: #333;
+                                            font-weight: bold;
+                                        }
+
+                                        .align-right {
+                                            text-align: right;
+                                        }
+
+                                        .align-center {
+                                            text-align: center;
+                                        }
+
+                                        .company-title {
+                                            font-size: 1.4em;
+                                            font-weight: bold;
+                                            text-align: center;
+                                            vertical-align: middle;
+                                        }
+
+                                        .SO-title {
+                                            font-size: 1.2em;
+                                            font-weight: bold;
+                                            text-align: center;
+                                            vertical-align: middle;
+                                        }
+
+                                        .placeholder {
+                                            color: #777;
+                                            font-style: italic;
+                                        }
+
+                                        .total-row td {
+                                            background-color: #2ECC71;
+                                            color: white;
+                                            font-weight: bold;
+                                        }
+
+                                        .no-border {
+                                            border: none !imSOrtant;
+                                        }
+
+                                        .signature-area td {
+                                            border: none;
+                                            padding-top: 15px;
+                                            padding-bottom: 5px;
+                                        }
+
+                                        a.details-link {
+                                            color: #0000EE;
+                                            text-decoration: underline;
+                                        }
+                                    </style>
+                                    <table class="SO-table" style="background-color: #fff;color:#000">
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="2" style="vertical-align: middle; text-align: center;">[LOGO]</td>
+                                                <td colspan="10" class="company-title">ABC PRIVATE LIMITED</td>
+                                            </tr>
+                                            <tr class="header-main">
+                                                <td colspan="4" class="SO-title">Sale ORDER</td>
+                                                <td class="align-right" style="vertical-align: middle;">SO #</td>
+                                                <td colspan="3" style="vertical-align: middle;">@ViewBag.HeadPreview.SOH_OrderNo</td>
+                                                <td></td>
+                                                <td class="align-right" style="vertical-align: middle;">Date</td>
+                                                <td colspan="2" style="vertical-align: middle;">@ViewBag.HeadPreview.SOH_OrderDate</td>
+                                            </tr>
+                                            <tr class="header-section">
+                                                <td colspan="6">Buyer</td>
+                                                <td colspan="6">SHIP TO</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="6">@ViewBag.BuyerPreview.BUY_Name</td>
+                                                <td colspan="6">@ViewBag.BuyerPreview.BUY_Name</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="6"></td>
+                                                <td colspan="6"></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="6"></td>
+                                                <td colspan="6"></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="6"></td>
+                                                <td colspan="6"></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="6"></td>
+                                                <td colspan="6"></td>
+                                            </tr>
+                                            <tr class="header-section">
+                                                <th>Currency</th>
+                                                <th colspan="3">Payment Terms</th>
+                                                <th colspan="2">Method of payment</th>
+                                                <th colspan="4">Delivery terms</th>
+                                                <th colspan="2">Mode of delivery</th>
+                                            </tr>
+                                            <tr>
+                                                <td>@ViewBag.HeadPreview.SOH_PaymentTerms</td>
+                                                <td colspan="3">@ViewBag.HeadPreview.SOH_PaymentTerms</td>
+                                                <td colspan="2">@ViewBag.HeadPreview.SOH_PaymentMethod</td>
+                                                <td colspan="4">@ViewBag.HeadPreview.SOH_DeliveryTerms</td>
+                                                <td colspan="2">@ViewBag.HeadPreview.SOH_DeliveryMethod</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="6"><a href="#" class="details-link">Inspection Details</a></td>
+                                                <td colspan="6"><a href="#" class="details-link">Technical delivery conditions</a></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="6"></td>
+                                                <td colspan="6"></td>
+                                            </tr>
+                                            <tr class="header-section">
+                                                <th colspan="2">Item Code</th>
+                                                <th colspan="3">Description</th>
+                                                <th class="align-center">Uom</th>
+                                                <th colspan="2" class="align-center">Qty</th>
+                                                <th colspan="2" class="align-right">Unit Price</th>
+                                                <th colspan="2" class="align-right">Value</th>
+                                            </tr>
+                                            @if (ViewBag.ItemPreview != null)
+                                            {
+                                                for (Int32 i = 0; i < ViewBag.ItemPreview.Count; i++)
+                                                {
+                                                    <tr>
+                                                        <td colspan="2">@ViewBag.ItemPreview[i].SOI_ITM_Code</td>
+                                                        <td colspan="3">@ViewBag.ItemPreview[i].SOI_ITM_Description</td>
+                                                        <td class="align-center">@ViewBag.ItemPreview[i].SOI_UoM_Name</td>
+                                                        <td colspan="2" class="align-center">@ViewBag.ItemPreview[i].SOI_Qty</td>
+                                                        <td colspan="2" class="align-right">@String.Format(India, "{0:N2}", Convert.ToDouble(ViewBag.ItemPreview[i].SOI_UnitPrice))</td>
+                                                        <td colspan="2" class="align-right">@String.Format(India, "{0:N2}", Convert.ToDouble(ViewBag.ItemPreview[i].SOI_Amount))</td>
+                                                    </tr>
+                                                }
+
+                                                Int32 Count = 10 - Convert.ToInt32(ViewBag.ItemPreview.Count);
+                                                if (Count > 0)
+                                                {
+                                                    for (Int32 i = 0; i < Count; i++)
+                                                    {
+                                                        <tr>
+                                                            <td colspan="2"></td>
+                                                            <td colspan="3"></td>
+                                                            <td></td>
+                                                            <td colspan="2"></td>
+                                                            <td colspan="2"></td>
+                                                            <td colspan="2"></td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            }
+
+                                            <tr class="total-row">
+                                                <td colspan="6" class="align-right">Total</td>
+                                                <td colspan="2" class="align-center">@ViewBag.HeadPreview.SOH_TotalAmount</td>
+                                                <td colspan="2"></td>
+                                                <td colspan="2" class="align-right">@String.Format(India, "{0:N2}", Convert.ToDouble(ViewBag.HeadPreview.SOH_TotalAmount))</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="no-border" style="font-weight: bold;">Tax</td>
+                                                <td colspan="5" class="no-border"></td>
+                                                <td colspan="6" class="no-border"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="no-border" style="font-weight: bold;">Remarks</td>
+                                                <td colspan="11" class="no-border"></td>
+                                            </tr>
+                                            <tr class="signature-area"> <td colspan="12"> </td> </tr>
+                                            <tr class="signature-area"> <td colspan="12"> </td> </tr>
+                                            <tr class="signature-area">
+                                                <td colspan="8"></td>
+                                                <td colspan="4" class="align-center">for ABC Private Limited</td>
+                                            </tr>
+                                            <tr class="signature-area"> <td colspan="12"> </td> </tr>
+                                            <tr class="signature-area">
+                                                <td colspan="8"></td>
+                                                <td colspan="4" class="align-center" style="border-top: 1px solid #000; padding-top: 5px;">Authorized Signatory</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <a onclick="Print()" class="btn btn-primary me-5">Print</a>
+                    <button type="button" id="PreviewButton" class="btn btn-primary px-4" ref="always_focus" data-bs-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row align-items-center panel-header gx-2">
+        <div class="col h-100 align-items-center">
+            <div class="h6 fw-light text-white h-100 align-content-center bg-secondary px-2">
+                Sale Order
+                <a asp-controller="Sale" asp-action="Index" class="float-end btn p-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row panel-body gx-2">
+        <div class="col-12 panel-card-fixed h-100">
+            <div class="w-100 rounded-0 h-100 border border-primary bg-transparent" id="BodyHeight">
+                <div class="card rounded-0 bg-transparent shadow-none" id="CardHeader">
+                    <div class="card-body pb-0">
+                        <div class="row">
+                            <div class="col-auto left-menu text-black">
+                                <div class="row">
+                                    <div class="col-12 pb-3">
+                                        <a onclick="Print()" class="float-end btn btn-primary">Print</a>
+                                        <button type="button" class="float-end btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#PrintPreview">
+                                            Print View
+                                        </button>
+
+                                        <button class="float-end btn me-2 btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Download
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><input type="submit" name="Mode" value="Ascii" class="dropdown-item" /></li>
+                                            <li><input type="submit" name="Mode" value="Excel" class="dropdown-item" /></li>
+                                            <li><input type="submit" name="Mode" value="PDF" class="dropdown-item" /></li>
+                                        </ul>
+
+                                        <input type="submit" name="Mode" value="Delete" class="float-end btn btn-danger me-2" />
+
+                                        <a asp-controller="SaleOrder" asp-action="EditSaleOrder" class="float-end btn btn-primary me-2" asp-all-route-data="@(new Dictionary<String, String> { { "SO_No", ViewBag.SO_No.ToString() } })">
+                                            Edit
+                                        </a>
+                                    </div>
+                                </div>
+                                <partial name="PreviewSaleOrderHead.cshtml" model="@Model" />
+                            </div>
+
+                            <div class="col-auto right-menu text-center border-start">
+                                <button type="button" class="btn btn-primary btn-sm px-1 w-100 mb-1" id="IncomeModal">
+                                    Header Misc.Income
+                                </button>
+                                <button type="button" class="btn btn-primary btn-sm px-1 w-100 mb-1" data-bs-toggle="modal" data-bs-target="#BuyerAddress">
+                                    Address
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card rounded-0 bg-transparent shadow-none" id="CardBody">
+                    <div class="card-body h-100">
+                        <div class="row h-100">
+                            <div class="col-auto left-menu h-100 nav-tab-fix">
+                                <ul class="nav nav-tabs tab-header">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" aria-current="page">Item</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark">Other</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content tab-body tab-body-h-o">
+                                    <div class="tab-pane fade show active p-2 pb-0 border border-top-0 h-100 table-fixed" tabindex="0">
+                                        <partial name="PreviewSaleOrderItem.cshtml" model="@Model.SaleItems" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto right-menu text-center border-start">
+                                <input type="button" class="ItemIncomeView btn btn-sm btn-primary px-2 w-100" value="Item Misc.Income" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card rounded-0 bg-transparent shadow-none pt-0" id="CardFooter">
+                    <div class="card-body text-black pt-0">
+                        <div class="row">
+                            <div class="col-auto left-menu">
+                                <div class="row ps-2">
+                                    <div class="col-12 col-md-3">
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="SOH_TotalAmount" class="col-sm-7 ps-0"></label>
+                                            <div class="col-sm-5">
+                                                <input asp-for="SOH_TotalAmount" class="form-control text-black decimal text-end" readonly autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="SOH_TotalItemIncome" class="col-sm-7 ps-0"></label>
+                                            <div class="col-sm-5">
+                                                <input asp-for="SOH_TotalItemIncome" class="form-control text-black decimal text-end" readonly autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="SOH_TotalHeadIncome" class="col-sm-7 ps-0"></label>
+                                            <div class="col-sm-5">
+                                                <input asp-for="SOH_TotalHeadIncome" class="form-control text-black decimal text-end" readonly autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="SOH_OrderValue" class="col-sm-7 ps-0"></label>
+                                            <div class="col-sm-5">
+                                                <input asp-for="SOH_OrderValue" class="form-control text-black decimal text-end" readonly autocomplete="off" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto right-menu text-centert">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script src="~/js/site.js"></script>
+
+<script>
+    $('.navbar-nav > .nav-item.sale > a').addClass("active");
+</script>
+
+
+<script>
+    $(".QtyNumbers").each(function () {
+        var value = $(this).val();
+        var decimalPlaces = $(this).closest("tr").find("input.SOI_UoM_DecimalPlaces").val();
+        if (decimalPlaces === "" || isNaN(decimalPlaces)) decimalPlaces = 2;
+        $(this).val(QtyDecimalRupees(value, decimalPlaces));
+    });
+    $(document).on("blur", ".QtyNumbers", function () {
+        var value = $(this).val();
+        var decimalPlaces = $(this).closest("tr").find("input.SOI_UoM_DecimalPlaces").val();
+        if (value.trim() === "" || isNaN(value)) {
+            $(this).val("0");
+        } else {
+            $(this).val(QtyDecimalRupees(value, decimalPlaces));
+        }
+    });
+    $(document).on("input", ".QtyNumbers", function () {
+        var $this = $(this);
+        var decimalPlaces = parseInt($this.closest("tr").find("input.SOI_UoM_DecimalPlaces").val(), 10);
+        if (isNaN(decimalPlaces)) decimalPlaces = 0;
+
+        let clean = $this.val()
+            .replace(/-/g, "")
+            .replace(/[^0-9.]/g, "");
+
+        const firstDot = clean.indexOf(".");
+        if (firstDot !== -1) {
+            clean =
+                clean.substring(0, firstDot + 1) +
+                clean.substring(firstDot + 1).replace(/\./g, "");
+        }
+
+        if (decimalPlaces === 0) {
+            clean = clean.replace(/\./g, "");
+        }
+        else if (decimalPlaces > 0 && firstDot !== -1) {
+            const parts = clean.split(".");
+            if (parts[1].length > decimalPlaces) {
+                parts[1] = parts[1].slice(0, decimalPlaces);
+                clean = parts.join(".");
+            }
+        }
+
+        $this.val(clean);
+    });
+    $(document).on("focus", ".QtyNumbers", function () {
+        var value = $(this).val();
+        $(this).val(removeCommas(value));
+        $(this).select();
+    });
+
+
+    $(".UnitDecimal").each(function () {
+        var ValueResult = "0";
+        var value = $(this).val();
+        var decimalPlaces = $("#SOH_CUR_DecimalPlaces").val();
+        if (decimalPlaces === "" || isNaN(value)) {
+            decimalPlaces = 2;
+        }
+        ValueResult = UnitDecimalRupees(removeCommas(value), decimalPlaces);
+        $(this).val(ValueResult);
+    });
+    $(document).on("blur", ".UnitDecimal", function () {
+        var ValueResult = "0";
+        var value = $(this).val();
+
+        var decimalPlaces = $("#SOH_CUR_DecimalPlaces").val();
+
+        if (decimalPlaces === "" || isNaN(value)) {
+            decimalPlaces = 2;
+        }
+
+        if (value.trim() === "" || isNaN(value)) {
+        } else {
+            ValueResult = UnitDecimalRupees(value, decimalPlaces);
+            $(this).val(ValueResult);
+        }
+    });
+    $(document).on("focus", ".UnitDecimal", function () {
+        var value = $(this).val();
+        $(this).val(removeCommas(value));
+        $(this).select();
+    });
+    $(document).on("input", ".UnitDecimal", function () {
+        var Value = $(this).val();
+        var decimalPlaces = parseInt($("#SOH_CUR_DecimalPlaces").val());
+        if (isNaN(decimalPlaces)) decimalPlaces = 0;
+
+        var UnitValue = Value.replace(/[^\d.]/g, '');
+        var parts = UnitValue.split('.');
+
+        if (parts.length > 2) {
+            UnitValue = parts[0] + '.' + parts.slice(1).join('');
+            parts = UnitValue.split('.');
+        }
+
+        if (decimalPlaces === 0) {
+            UnitValue = parts[0];
+        }
+        else if (parts.length === 2 && parts[1].length > decimalPlaces) {
+            UnitValue = parts[0] + '.' + parts[1].substring(0, decimalPlaces);
+        }
+
+        $(this).val(UnitValue);
+    });
+
+    $(".decimal").each(function () {
+        var value = $(this).val();
+        $(this).val(DecimalIndianRupees(removeCommas(value)));
+    });
+    $(document).on("blur", ".decimal", function () {
+        var value = $(this).val();
+        if (value.trim() === "" || isNaN(value)) {
+            $(this).val("0.00");
+        } else {
+            $(this).val(DecimalIndianRupees(removeCommas(value)));
+        }
+    });
+    $(document).on("focus", ".decimal", function () {
+        var value = $(this).val();
+        $(this).val(removeCommas(value));
+        $(this).select();
+    });
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const MainDiv = document.getElementById('BodyHeight');
+        const HeadDiv = document.getElementById('CardHeader');
+        const BodyDiv = document.getElementById('CardBody');
+        const FooterDiv = document.getElementById('CardFooter');
+
+        if (HeadDiv && BodyDiv) {
+            const MainHeight = MainDiv.offsetHeight;
+            const HeadHeight = HeadDiv.offsetHeight;
+            const FooterHeight = FooterDiv.offsetHeight;
+            BodyDiv.style.height = (MainHeight - HeadHeight - FooterHeight - 1) + 'px';
+        } else {
+        }
+    });
+
+    window.onload = CalculateFooter();
+
+    function Print() {
+        $("#PreviewButton").click();
+
+        setTimeout(() => {
+            var printContents = document.getElementById("PrintPage").innerHTML;
+            var originalContents = document.body.innerHTML;
+
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+        }, 1000);
+    }
+</script>
+
+<script>
+    function GetAddress(){
+        $("tr.AddNewRow").each(function () {
+            var $currentRow = $(this);
+
+            var ADTPNumber = $currentRow.find('select.SOH_ADD_ADTP_Number').val();
+            var IsDeleted = parseInt($currentRow.find("input.SOH_ADD_IsDeleted").val());
+            var Buyer = $('#SOH_BUY_Number').val();
+
+            if(IsDeleted!==1){
+                $.ajax({
+                    type: "get",
+                    url: "../buyer/address",
+                    data: { Buyer: Buyer, ADTPNumber: ADTPNumber },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        var AddressID = data.buyerAddressId;
+                        var $AddressDropdown = $currentRow.find('select.SOH_ADD_AddressID');
+                        var $AddressId = $currentRow.find('input.SOH_ADD_HIDE_AddressID').val();
+
+                        console.log("$AddressId",$AddressId);
+
+                        $AddressDropdown.empty();
+                        $AddressDropdown.append($('<option>', {
+                            value: '',
+                            text: ''
+                        }));
+
+                        AddressID.forEach(function (item) {
+                            $AddressDropdown.append($('<option>', {
+                                value: item.buY_ADD_AddressID,
+                                text: item.buY_ADD_AddressID
+                            }));
+                        });
+                        $AddressDropdown.val($AddressId);
+                    }
+                });
+            }
+        });
+    }
+    GetAddress();
+</script>

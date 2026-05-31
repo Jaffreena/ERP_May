@@ -1,0 +1,137 @@
+﻿@model ERP_DTO.PaginatedList_DTO<ERP_DTO.TaxCluster_DTO>
+
+<div class="table-body-h-c w-100 border p-2">
+    <div class="table-body table-responsive h-100">
+        <table class="table table-bordered table-hover align-middle  mb-0 table-grid">
+            <thead>
+                <tr class="table-info">
+                    <th class="px-2 del">
+                        <input type="checkbox" class="selectAllCheckbox form-check-input border-white" id="selectAllCheckbox">
+                    </th>
+                    <th class="table-col-lg">
+                        <a asp-action="TaxCluster" asp-route-sortOrder="@ViewData["KeySort"]" asp-route-Search="@ViewData["CurrentFilter"]" asp-route-PSize="@ViewData["PageSize"]" asp-route-PageNumber="@ViewData["PageNumber"]">Tax Cluster</a>
+                    </th>
+                    <th>Tax Description</th>
+                    <th>GST Tax Category</th>
+                    <th>GST Tax Type</th>
+                    <th class="action text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="p-2 del">
+                            <input type="checkbox" class="DeleteNumber form-check-input" name="DeleteNumber" value="@item.TaxClusterNumber">
+                        </td>
+                        <td class="table-col-lg">@Html.DisplayFor(modelItem => item.TaxCluster)</td>
+                        <td>@Html.DisplayFor(modelItem => item.ClusterDescription)</td>
+                        <td>@Html.DisplayFor(modelItem => item.GST_Category)</td>
+                        <td>@Html.DisplayFor(modelItem => item.GST_Type)</td>
+                        <td class="action text-center">
+
+                            <form asp-action="TaxCluster">
+                                <input type="hidden" name="PSize" value="@ViewData["PageSize"]" />
+                                <input type="hidden" name="PageNumber" value="@ViewData["PageNumber"]" />
+                                <input type="hidden" name="Search" value="@ViewData["CurrentFilter"]" />
+                                <input name="TaxClusterNumber" id="TaxClusterNumber" value="@item.TaxClusterNumber" type="hidden" />
+                                <button type="submit" name="Mode" value="Edit" class="btn text-primary p-0 me-1 shadow-none icon-link">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                                        <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z" />
+                                    </svg>
+                                </button>
+
+                                <a value="@item.TaxClusterNumber" class="DeleteButton btn text-danger p-0 icon-link shadow-none" data-value="@item.TaxClusterNumber">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                        <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                    </svg>
+                                </a>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+<div class="row table-cal align-items-center">
+    <div class="col align-items-center">
+        <form asp-action="TaxCluster" method="get">
+            <div class="row align-items-center">
+                <div class="col text-dark py-1">
+                    @{
+                        Int32 TotalSize = Convert.ToInt32(ViewData["TotalSize"]);
+                        Int32 PageNumber = Convert.ToInt32(ViewData["PageNumber"]);
+                        Int32 PageSize = Convert.ToInt32(ViewData["PageSize"]);
+                        Int32 StartNumber = 1;
+                        Int32 EndNumber = 0;
+
+                        if (PageNumber > 1)
+                        {
+                            StartNumber = StartNumber + ((PageNumber - 1) * PageSize);
+                        }
+                        EndNumber = (EndNumber + PageSize) + ((PageNumber - 1) * PageSize);
+                        if (EndNumber > TotalSize)
+                        {
+                            EndNumber = TotalSize;
+                        }
+
+                        if (StartNumber > EndNumber)
+                        {
+                            StartNumber = EndNumber;
+                        }
+                    }
+                    Showing @StartNumber to @EndNumber
+                </div>
+                <div class="col text-center">
+                    Total records @TotalSize
+                </div>
+                <div class="col">
+                    <nav>
+                        <ul class="pagination mb-0 float-end">
+                            <li class="page-item">
+                                <a asp-action="TaxCluster" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-Search="@ViewData["CurrentFilter"]" asp-route-PSize="@ViewData["PageSize"]" asp-route-pageNumber="1" class="page-link @prevDisabled">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-left" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0" />
+                                        <path fill-rule="evenodd" d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0" />
+                                    </svg>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a asp-action="TaxCluster" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-Search="@ViewData["CurrentFilter"]" asp-route-PSize="@ViewData["PageSize"]" asp-route-pageNumber="@(Model.PageIndex - 1)" class="page-link @prevDisabled">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0" />
+                                    </svg>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="page-link">
+                                    @ViewData["PageNumber"]
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a asp-action="TaxCluster" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-Search="@ViewData["CurrentFilter"]" asp-route-PSize="@ViewData["PageSize"]" asp-route-pageNumber="@(Model.PageIndex + 1)" class="page-link @nextDisabled">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708" />
+                                    </svg>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a asp-action="TaxCluster" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-Search="@ViewData["CurrentFilter"]" asp-route-PSize="@ViewData["PageSize"]" asp-route-pageNumber="@ViewData["PageCount"]" class="page-link @nextDisabled">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-right" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                                        <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                                    </svg>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

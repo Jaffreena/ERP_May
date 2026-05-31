@@ -1,0 +1,302 @@
+﻿@model ERP_DTO.VendorHead_DTO
+
+
+@if (Model.VendorNumber != 0)
+{
+    <input asp-for="VendorNumber" type="hidden" class="Number" />
+}
+<div class="col-12">
+    <div class="row">
+        <div class="col-12 col-sm-3 col-xl-2 mb-3">
+            <label asp-for="VendorCode" class="control-label"></label>
+            <input asp-for="VendorCode" class="form-control Key KeyDup" autofocus="true" autocomplete="off" />
+        </div>
+        <div class="col-12 col-sm-5 col-xl-3 mb-3">
+            <label asp-for="VendorName" class="control-label"></label>
+            <input asp-for="VendorName" class="form-control Key" autocomplete="off" />
+        </div>
+    </div>
+</div>
+<div class="col-12">
+    <div class="row">
+        <div class="col-12">
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="Mailing-tab" data-bs-toggle="tab" data-bs-target="#Mailing-tab-pane" type="button" role="tab" aria-controls="Mailing-tab-pane" aria-selected="true">
+                        Mailing
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="Contact-tab" data-bs-toggle="tab" data-bs-target="#Contact-tab-pane" type="button" role="tab" aria-controls="Contact-tab-pane" aria-selected="false">
+                        Contact Information
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="Grouping-tab" data-bs-toggle="tab" data-bs-target="#Grouping-tab-pane" type="button" role="tab" aria-controls="Grouping-tab-pane" aria-selected="false">
+                        Grouping
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="Tax-tab" data-bs-toggle="tab" data-bs-target="#Tax-tab-pane" type="button" role="tab" aria-controls="Tax-tab-pane" aria-selected="false">
+                        Tax Registration
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="Payment-tab" data-bs-toggle="tab" data-bs-target="#Payment-tab-pane" type="button" role="tab" aria-controls="Payment-tab-pane" aria-selected="false">
+                        Payment Terms
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="Bank-tab" data-bs-toggle="tab" data-bs-target="#Bank-tab-pane" type="button" role="tab" aria-controls="Bank-tab-pane" aria-selected="false">
+                        Bank
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="Statutory-tab" data-bs-toggle="tab" data-bs-target="#Statutory-tab-pane" type="button" role="tab" aria-controls="Statutory-tab-pane" aria-selected="false">
+                        Statutory
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane fade show active p-3 pb-0 border border-top-0" id="Mailing-tab-pane" role="tabpanel" aria-labelledby="Mailing-tab" tabindex="0">
+                    <div class="row">
+                        <div class="col-12 col-md-4 col-xl-3 mb-3">
+                            <label asp-for="Address" class="control-label"></label>
+                            <textarea asp-for="Address" class="form-control Key" autofocus="true" autocomplete="off"></textarea>
+                        </div>
+                        <div class="col-12 col-md-8 col-xl-9">
+                            <div class="row">
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="City" class="control-label"></label>
+                                    <input asp-for="City" class="form-control Key" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="State" class="control-label"></label>
+                                    <input asp-for="State" class="form-control Key" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="Country" class="control-label"></label>
+                                    <input asp-for="Country" class="form-control Key" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="Pincode" class="control-label"></label>
+                                    <input asp-for="Pincode" class="form-control Key" autofocus="true" autocomplete="off" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade p-3 pb-0 border border-top-0" id="Contact-tab-pane" role="tabpanel" aria-labelledby="Contact-tab" tabindex="0">
+                    <div class="row">
+                        <div class="col-12 col-md-4 col-xl-3 mb-3">
+                            <label asp-for="ContactPerson" class="control-label"></label>
+                            <input asp-for="ContactPerson" class="form-control Key" autofocus="true" autocomplete="off" />
+                        </div>
+                        <div class="col-12 col-md-8 col-xl-9">
+                            <div class="row">
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="CP_Telephone" class="control-label"></label>
+                                    <input asp-for="CP_Telephone" class="form-control Key" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="CP_Mobile" class="control-label"></label>
+                                    <input asp-for="CP_Mobile" class="form-control number" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="CP_Email" class="control-label"></label>
+                                    <input asp-for="CP_Email" class="form-control Key" type="email" autofocus="true" autocomplete="off" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 col-md-4 col-xl-3 mb-3">
+                            <label asp-for="AccountsPerson" class="control-label"></label>
+                            <input asp-for="AccountsPerson" class="form-control Key" autofocus="true" autocomplete="off" />
+                        </div>
+                        <div class="col-12 col-md-8 col-xl-9">
+                            <div class="row">
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="AP_Telephone" class="control-label"></label>
+                                    <input asp-for="AP_Telephone" class="form-control Key" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="AP_Mobile" class="control-label"></label>
+                                    <input asp-for="AP_Mobile" class="form-control number" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="AP_Email" class="control-label"></label>
+                                    <input asp-for="AP_Email" class="form-control Key" type="email" autofocus="true" autocomplete="off" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade p-3 pb-0 border border-top-0" id="Grouping-tab-pane" role="tabpanel" aria-labelledby="Grouping-tab" tabindex="0">
+                    <div class="row">
+                        <div class="col-12 col-md-3 col-xl-2 mb-3">
+                            <label asp-for="VendorLocation" class="control-label"></label>
+                            <div class="clearfix"></div>
+                            @foreach (SelectListItem Option in (List<SelectListItem>)ViewBag.Location)
+                            {
+                                <div class="form-check-inline">
+                                    @if (Option.Value == Model.VendorLocation)
+                                    {
+                                        <input class="form-check-input VendorLocation" type="radio" name="VendorLocation" id="@Option.Value" value="@Option.Value" checked>
+                                    }
+                                    else
+                                    {
+                                        <input class="form-check-input VendorLocation" type="radio" name="VendorLocation" id="@Option.Value" value="@Option.Value">
+                                    }
+                                    <label class="form-check-label" for="@Option.Value">
+                                        @Option.Text
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                        <div class="col-12 col-md-4 col-xl-3 mb-3">
+                            <label asp-for="VendorGroup" class="control-label"></label>
+                            <select asp-for="VendorGroup" class="form-select" asp-items="@ViewBag.VendorGroup"></select>
+                        </div>
+                        <div class="col-12 col-md-4 col-xl-3 mb-3">
+                            <label asp-for="VendorCategory" class="control-label"></label>
+                            <select asp-for="VendorCategory" class="form-select" asp-items="@ViewBag.VendorCategory"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade p-3 pb-0 border border-top-0" id="Tax-tab-pane" role="tabpanel" aria-labelledby="Tax-tab" tabindex="0">
+                        <div class="row">
+                            <div class="col-12 col-md-3 col-xl-2 mb-3">
+                                <label asp-for="RegistrationType" class="control-label"></label>
+                                <select asp-for="RegistrationType" class="form-select" asp-items="@ViewBag.Registration"></select>
+                            </div>
+                            <div class="col-12 col-md-3 col-xl-2 mb-3">
+                                <label asp-for="GSTIN" class="control-label"></label>
+                                <input asp-for="GSTIN" class="form-control Key" autofocus="true" autocomplete="off" />
+                            </div>
+                            <div class="col-12 col-md-3 col-xl-2 mb-3">
+                                <label asp-for="AssesseeTerritory" class="control-label"></label>
+                                <input asp-for="AssesseeTerritory" class="form-control" type="hidden" />
+                                <input asp-for="AssesseeTerritoryName" class="form-control" autocomplete="off" oninput="OnAssesseeInput(this)" onfocus="OnAssesseeFocus(this)" />
+                                <div class="assessee-results search-results p-0 rounded" style="display:none"></div>
+                            </div>
+                            <div class="col-12 col-md-3 col-xl-2 mb-3">
+                                <label asp-for="TransportAgency" class="control-label"></label>
+                                <select asp-for="TransportAgency" class="form-select" asp-items="@ViewBag.Transporter"></select>
+                            </div>
+                            <div class="col-12 col-md-3 col-xl-2 mb-3">
+                                <label asp-for="TransporterID" class="control-label"></label>
+                                <input asp-for="TransporterID" class="form-control Key" autofocus="true" autocomplete="off" />
+                            </div>
+                            <div class="col-12 col-md-3 col-xl-2 mb-3">
+                                    <label class="control-label">&nbsp;</label>
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#GSTModal">
+                                        GST
+                                    </button>
+                            </div>
+                        </div>
+                </div>
+                <div class="tab-pane fade p-3 pb-0 border border-top-0" id="Payment-tab-pane" role="tabpanel" aria-labelledby="Payment-tab" tabindex="0">
+                    <div class="row">
+                        <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                <label asp-for="PaymentTerms" class="control-label"></label>
+                                <textarea asp-for="PaymentTerms" class="form-control Key" autocomplete="off"></textarea>
+                        </div>
+                        <div class="col-12 col-md-8 col-xl-9">
+                            <div class="row">
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="PaymentMode" class="control-label"></label>
+                                    <input asp-for="PaymentMode" class="form-control Key" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="CreditDays" class="control-label"></label>
+                                    <input asp-for="CreditDays" class="form-control number-only" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="PaymentBase" class="control-label"></label>
+                                    <select asp-for="PaymentBase" class="form-select" asp-items="@ViewBag.PaymentBase"></select>
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="Currency" class="control-label"></label>
+                                    <select asp-for="Currency" class="form-select" asp-items="@ViewBag.Currency"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade p-3 pb-0 border border-top-0" id="Bank-tab-pane" role="tabpanel" aria-labelledby="Bank-tab" tabindex="0">
+                    <div class="row">
+                        <div class="col-12 col-md-9">
+                            <div class="row">
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="AccountName" class="control-label"></label>
+                                    <input asp-for="AccountName" class="form-control Key" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="AccountNumber" class="control-label"></label>
+                                    <input asp-for="AccountNumber" class="form-control Key" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="IFSC" class="control-label"></label>
+                                    <input asp-for="IFSC" class="form-control number" autofocus="true" autocomplete="off" />
+                                </div>
+                                <div class="col-12 col-md-4 col-xl-3 mb-3">
+                                    <label asp-for="BankName" class="control-label"></label>
+                                    <input asp-for="BankName" class="form-control Key" autofocus="true" autocomplete="off" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade p-3 pb-0 border border-top-0" id="Statutory-tab-pane" role="tabpanel" aria-labelledby="Statutory-tab" tabindex="0">
+                    <div class="row">
+                        <div class="col-12 col-md-3 col-xl-2 mb-3">
+                            <label asp-for="PAN" class="control-label"></label>
+                            <input asp-for="PAN" class="form-control Key" autofocus="true" autocomplete="off" />
+                        </div>
+                        <div class="col-12 col-md-3 col-xl-2 mb-3">
+                            <label asp-for="AssesseeNature" class="control-label"></label>
+                            <select asp-for="AssesseeNature" class="form-select" asp-items="@ViewBag.NatureOfAssessee"></select>
+                        </div>
+                        <div class="col-12 col-md-3 col-xl-2 mb-3">
+                            <label asp-for="WithholdTax" class="control-label"></label>
+                            <div class="clearfix"></div>
+                            @foreach (SelectListItem Option in (List<SelectListItem>)ViewBag.WithHoldTax)
+                            {
+                                <div class="form-check form-check-inline">
+                                    @if (Option.Value == Model.WithholdTax)
+                                    {
+                                        <input class="form-check-input WithholdTax" type="radio" name="WithholdTax" id="@Option.Value" value="@Option.Value" checked>
+                                    }
+                                    else
+                                    {
+                                        <input class="form-check-input WithholdTax" type="radio" name="WithholdTax" id="@Option.Value" value="@Option.Value">
+                                    }
+                                    <label class="form-check-label" for="@Option.Value">
+                                        @Option.Text
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="w-100 pt-2">
+    @if (Model.VendorNumber != 0)
+    {
+        <input type="submit" name="Mode" value="Update" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+    else
+    {
+        <input type="submit" name="Mode" value="Save" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+</div>

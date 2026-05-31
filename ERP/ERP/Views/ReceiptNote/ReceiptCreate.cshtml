@@ -1,0 +1,403 @@
+﻿@model ERP_DTO.JobInwardTransaction.ReceiptNoteHead_DTO
+@{
+    ViewData["Title"] = "Purchase Invoice Create";
+}
+<script>
+     function removeCommas(value) {
+        return (value || '').toString().replace(/,/g, '');
+    }
+
+    function DecimalIndianRupees(value) {
+        if (value === "" || isNaN(value)) {
+            return "0.00";
+        }
+
+        var formattedValue = parseFloat(value).toFixed(2);
+
+        var parts = formattedValue.split(".");
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+        return parts.join(".");
+    }
+    function NumberToIndianRupees(value, decimalPlaces) {
+        if (value === "" || isNaN(value)) return "0";
+
+        var formattedValue = parseFloat(value).toFixed(decimalPlaces);
+        var parts = formattedValue.split(".");
+        if (parts.length > 1) {
+            parts[1] = parts[1].replace(/0+$/, "");
+            if (parts[1].length === 0) parts.pop();
+        }
+
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+
+        return parts.join(".");
+    }
+</script>
+
+<form asp-action="ReceiptCreate" class="h-100">
+
+ 
+
+    <input id="PII_BATCH_ItemNumber" type="hidden" />
+    <input id="PII_BATCH_ItemIndex" type="hidden" />
+    <input id="PII_BATCH_Qty" type="hidden" />
+    <input id="PII_BATCH_Unit_Price" type="hidden" />
+
+   
+
+    <div class="modal modal-lg fade" id="IBatch" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border">
+                <div class="modal-header">
+                    <p class="modal-title w-100">
+                        Batch <span class="float-end">
+                        Item Qty : <span id="PII_BATCHQty"></span>
+                        <button type="button" id="ExCloseButton" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </span>
+                </p>
+            </div>
+            <div class="modal-body p-0">
+                <div class="p-2 text-black h-100">
+                    <ul class="nav nav-tabs tab-header" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-tab-pane" type="button" role="tab" aria-controls="overview-tab-pane" aria-selected="true">Overview</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content tab-body">
+                        <div class="tab-pane fade show active border border-top-0 h-100 p-2" id="overview-tab-pane" role="tabpanel" aria-labelledby="overview-tab" tabindex="0">
+                            <partial name="ReceiptCreateBatchView.cshtml" model="@Model.ItemBatch" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <a id="IBatNewRowButton" class="btn btn-primary">Add Row</a>
+                <button type="button" id="IBatCloseButton" class="btn btn-primary px-4" ref="always_focus" autofocus>Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row align-items-center panel-header gx-2">
+    <div class="col h-100">
+        <div class="h6 fw-light text-white h-100 align-content-center bg-secondary px-2">
+            Purchase Invoice
+            <a asp-controller="Procurement" asp-action="Index" class="float-end btn  p-0 shadow-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                </svg>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row panel-body gx-2">
+    <div class="col-12 panel-card-fixed">
+        <div class="w-100 rounded-0 h-100 border border-primary bg-transparent" id="BodyHeight">
+            <div class="card rounded-0 bg-transparent shadow-none" id="BodyCardHeader">
+                <div class="card-body pt-2 pb-0">
+                    <div class="row ps-2">
+                        <partial name="ReceiptCreateHeadView.cshtml" model="@Model" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="card rounded-0 bg-transparent shadow-none" id="BodyCardBody">
+                <div class="card-body h-100">
+                    <div class="row h-100">
+                        <div class="col-auto left-menu h-100 nav-tab-fix">
+                            <ul class="nav nav-tabs tab-header">
+                                <li class="nav-item">
+                                    <a class="nav-link active" aria-current="page">Item</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark">Other</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content tab-body tab-body-h-o">
+                                <div class="tab-pane fade show active p-2 pb-0 border border-top-0 h-100" tabindex="0">
+                                    <div class="row h-100">
+                                        <partial name="ReceiptCreateItemView.cshtml" model="@Model.Items" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto right-menu text-center border-start">
+                           
+                            <a class="ItemBatch btn btn-sm btn-primary px-2 mb-2 w-100 OneItemMode" disabled>
+                                Batch
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+          
+                
+        </div>
+    </div>
+</div>
+
+</form>
+<script src="~/js/site.js"></script>
+
+<script>
+    $('.navbar-nav > .nav-item.procurement > a').addClass("active");
+</script>
+
+<script>
+
+    $('form').submit(function (event) {
+      
+
+       
+            
+
+         $("#IBatNewRowButton").click(function () {
+            var lastRow = $("tr.IBatNewRow").last();
+            if (IBatCheckAllFieldsValid(lastRow)) {
+                IBatNewRow();
+            }
+            else {
+                var firstInvalidField = null;
+                lastRow.find("select, input.PII_BCH_Qty, input[type='text']").each(function () {
+                    if (!IBatValidateField($(this))) {
+                        if (firstInvalidField == null)
+                            firstInvalidField = $(this);
+                        return false;
+                    }
+                });
+                if (firstInvalidField != null) {
+                    alert("Please complete all fields !");
+                    firstInvalidField.focus();
+                }
+            }
+            BatchCalculateFooter();
+        });
+
+
+
+
+
+
+
+        $("tr.NewRow").each(function () {
+            var ItemNumber = $(this).find("input.PII_Item_Number").val();
+            var Qty = removeCommas($(this).find("input.PII_Qty").val());
+            var UnitPrice = removeCommas($(this).find("input.PII_UnitPrice").val());
+            var UoMNumber = $(this).find("select.PII_UoM_Number").val();
+
+            if (!ItemNumber && !UoMNumber && !(Qty > 0) && !(UnitPrice > 0)) {
+                $(this).find("input.IsDeleted").val("true");
+                $(this).hide();
+            }
+        });
+      
+    });
+
+    function NumberToIndianRupees(value, decimalPlaces) {
+        if (value === "" || isNaN(value)) {
+            return "0";
+        }
+
+        var formattedValue = parseFloat(value).toFixed(decimalPlaces);
+
+        var parts = formattedValue.split(".");
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+
+        if (parseFloat(value) % 1 === 0) {
+            return parts[0];
+        }
+        return parts.join(".");
+    }
+    $(".QtyNumbers").each(function () {
+        var value = $(this).val();
+        var decimalPlaces = $(this).closest('tr').find("input.PII_DecimalPlaces").val();
+        if (decimalPlaces === "" || isNaN(value)) {
+            decimalPlaces = 2;
+        }
+        $(this).val(NumberToIndianRupees(value, decimalPlaces));
+    });
+    $(document).on("blur", ".QtyNumbers", function () {
+        var value = $(this).val();
+        var decimalPlaces = $(this).closest('tr').find("input.PII_DecimalPlaces").val();
+
+        if (value.trim() === "" || isNaN(value)) {
+            $(this).val("0");
+        } else {
+            $(this).val(NumberToIndianRupees(value, decimalPlaces));
+        }
+    });
+    $(document).on("focus", ".QtyNumbers", function () {
+        var value = $(this).val();
+        $(this).val(removeCommas(value));
+        $(this).select();
+    });
+
+    $(".UnitDecimal").each(function () {
+        var ValueResult = "0";
+        var value = $(this).val();
+        var decimalPlaces = $("#PIH_DecimalPlaces").val();
+        if (decimalPlaces === "" || isNaN(value)) {
+            decimalPlaces = 2;
+        }
+        ValueResult = formatToIndianRupees(removeCommas(value), decimalPlaces);
+        $(this).val(ValueResult);
+    });
+    $(document).on("blur", ".UnitDecimal", function () {
+        var ValueResult = "0";
+        var value = $(this).val();
+
+        var decimalPlaces = $("#PIH_DecimalPlaces").val();
+
+        if (decimalPlaces === "" || isNaN(value)) {
+            decimalPlaces = 2;
+        }
+
+        if (value.trim() === "" || isNaN(value)) {
+        } else {
+            ValueResult = formatToIndianRupees(value, decimalPlaces);
+            $(this).val(ValueResult);
+        }
+    });
+    $(document).on("focus", ".UnitDecimal", function () {
+        var value = $(this).val();
+        $(this).val(removeCommas(value));
+        $(this).select();
+    });
+    function formatToIndianRupees(value, UnitDecimalPlaces) {
+        var ValueResult = "0";
+        if (value === "" || isNaN(value)) {
+        }
+        else {
+            ValueResult = value;
+        }
+
+        var fromat = parseFloat(ValueResult).toFixed(UnitDecimalPlaces);
+
+        var parts = fromat.split(".");
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+        return parts.join(".");
+    }
+
+    
+    
+
+    $(".decimal").each(function () {
+        var value = $(this).val();
+        $(this).val(DecimalIndianRupees(removeCommas(value)));
+    });
+    $(document).on("blur", ".decimal", function () {
+        var value = $(this).val();
+        if (value.trim() === "" || isNaN(value)) {
+            $(this).val("0.00");
+        } else {
+            $(this).val(DecimalIndianRupees(removeCommas(value)));
+        }
+    });
+    $(document).on("focus", ".decimal", function () {
+        var value = $(this).val();
+        $(this).val(removeCommas(value));
+        $(this).select();
+    });
+
+    $(document).on('change', "#PIH_InvoiceDate", function () {
+        var paymentBase = $("#PIH_PaymentBase").val();
+
+        if (paymentBase === "2") {
+            var InDate = $("#PIH_InvoiceDate").val();
+            var Credit = $("#PIH_CreditDays").val();
+
+            if (InDate == '') { } else {
+                var CurentDate = addDays(InDate, Credit);
+                $("#PIH_DueDate").val(CurentDate);
+            }
+        }
+        else if (paymentBase === "3") {
+            var InDate = $("#PIH_SupplierInvoiceDate").val();
+            var Credit = $("#PIH_CreditDays").val();
+
+            if (InDate == '') { } else {
+                var CurentDate = addDays(InDate, Credit);
+                $("#PIH_DueDate").val(CurentDate);
+            }
+        }
+        else {
+            $("#PIH_DueDate").val("");
+        }
+
+        var PIHDate = $("#PIH_InvoiceDate").val();
+        const date = new Date(PIHDate);
+
+        const Year = date.getFullYear();
+        const Month = date.getMonth() + 1;
+        const Day = date.getDate();
+
+        const ForMonth = String(Month).padStart(2, '0');
+        const ForDay = String(Day).padStart(2, '0');
+
+        const ForDate = `${Year}${ForMonth}${ForDay}`;
+
+        $.ajax({
+            url: 'numbering',
+            data: { PIDate: ForDate },
+            type: 'GET',
+            success: function (data) {
+                if (data === "") {
+
+                }
+                else {
+                    $('#PIH_InvoiceNo').val(data);
+                }
+            },
+            error: function () {
+            }
+        });
+
+       
+        GetVendor();
+    });
+ 
+
+    
+    function addDays(date, days) {
+        const dateAfterAddingDays = new Date(date);
+        dateAfterAddingDays.setDate(dateAfterAddingDays.getDate() + parseInt(days));
+
+        const day = dateAfterAddingDays.getDate().toString().padStart(2, '0');
+        const year = dateAfterAddingDays.getFullYear();
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const monthAbbr = monthNames[dateAfterAddingDays.getMonth()];
+
+        const result = `${day}-${monthAbbr}-${year}`;
+        return result;
+    }
+
+   
+
+    flatpickr(".datepicker", {
+        dateFormat: "d-M-Y",
+        altInput: false,
+    });
+
+
+
+     document.addEventListener("DOMContentLoaded", function () {
+        const MainDiv = document.getElementById('BodyHeight');
+        const HeadDiv = document.getElementById('BodyCardHeader');
+        const BodyDiv = document.getElementById('BodyCardBody');
+        const FooterDiv = document.getElementById('BodyCardFooter');
+
+        if (HeadDiv && BodyDiv) {
+            const MainHeight = MainDiv.offsetHeight;
+            const HeadHeight = HeadDiv.offsetHeight;
+            const FooterHeight = FooterDiv.offsetHeight;
+            BodyDiv.style.height = (MainHeight - HeadHeight - FooterHeight) + 'px';
+        } else {
+        }
+    });
+
+ 
+</script>

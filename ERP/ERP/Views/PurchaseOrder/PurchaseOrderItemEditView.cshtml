@@ -1,0 +1,886 @@
+﻿@model List<ERP_DTO.PurchaseOrderItem_DTO>
+
+<div class="w-100 table-responsive table-body table-body-f">
+    <table class="table table-one table-striped table-bordered table-hover align-middle table-grid mb-0" id="ItemTable">
+        <thead>
+            <tr class="table-info">
+                <th class="px-2 del text-center">
+                    <input type="checkbox" class="IndexAllCheckItem form-check-input border-white" name="IndexAllCheckItem" id="IndexAllCheckItem">
+                </th>
+                <th>@Html.DisplayNameFor(M => M.First().POI_ItemCode)</th>
+                <th>@Html.DisplayNameFor(M => M.First().POI_Description)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().POI_ITM_Thickness)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().POI_ITM_Width)</th>
+                <th>@Html.DisplayNameFor(M => M.First().POI_ITM_MaterialGrade)</th>
+                <th>@Html.DisplayNameFor(M => M.First().POI_ItemGroup)</th>
+                <th class="table-width-md text-center">@Html.DisplayNameFor(M => M.First().POI_UoM_Number)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().POI_OLD_Qty)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().POI_PII_Qty)</th>
+                <th class="table-width-xl text-end">PO Amend Qty</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().POI_UnitPrice)</th>
+                <th class="table-width-3xl text-end">@Html.DisplayNameFor(M => M.First().POI_Amount)</th>
+                <th class="table-width-3xl text-end">@Html.DisplayNameFor(M => M.First().POI_ExpenseValue)</th>
+                <th class="datetype text-center">@Html.DisplayNameFor(M => M.First().POI_DeliveryDate)</th>
+            </tr>
+        </thead>
+        <tbody id="TableBody">
+            <tr id="TempRow" style="display: none;">
+                <td class="p-2 del">
+                    <input type="checkbox" class="CheckItem form-check-input" name="CheckItem">
+                </td>
+                <td>
+                    <input id="POI_Index" type="hidden" class="form-control POI_Index" autocomplete="off" />
+                    <input id="POI_MS_Number" class="POI_MS_Number" type="hidden" />
+                    <input id="POI_Item_Number" class="POI_Item_Number" type="hidden" />
+                    <input id="POI_ItemCode" class="form-control POI_ItemCode" autocomplete="off" oninput="OnInput(this)" onfocus="OnFocus(this)" />
+                    <div class="search-results bg-primary card" style="display:none"></div>
+                </td>
+                <td>
+                    <input id="POI_Description" class="form-control POI_Description" autocomplete="off" readonly />
+                </td>
+                <td class="table-width-xl">
+                    <input id="POI_ITM_Thickness" class="form-control POI_ITM_Thickness text-end" autocomplete="off" readonly />
+                </td>
+                <td class="table-width-xl">
+                    <input id="POI_ITM_Width" class="form-control POI_ITM_Width text-end" autocomplete="off" readonly />
+                </td>
+                <td>
+                    <input id="POI_ITM_MaterialGrade" class="form-control POI_ITM_MaterialGrade" autocomplete="off" readonly />
+                </td>
+                <td>
+                    <input id="POI_ItemGroup" class="form-control POI_ItemGroup" autocomplete="off" readonly />
+                </td>
+                <td class="table-width-md">
+                    <select id="POI_UoM_Number" class="form-select POI_UoM_Number text-center" asp-items="@ViewBag.UoM"></select>
+                    <input type="hidden" id="POI_DecimalPlaces" class="form-control POI_DecimalPlaces" autocomplete="off" />
+                    <input type="hidden" id="POI_UoM" class="form-control POI_UoM" autocomplete="off" />
+                </td>
+                <td class="table-width-xl">
+                    <input id="POI_OLD_Qty" class="form-control POI_OLD_Qty number QtyNumbers text-end" readonly autocomplete="off" />
+                </td>
+                <td class="table-width-xl">
+                    <input id="POI_PII_Qty" class="form-control POI_PII_Qty number QtyNumbers text-end" readonly autocomplete="off" />
+                </td>
+                <td class="table-width-xl">
+                    <input id="POI_Qty" class="form-control POI_Qty number QtyNumbers text-end" autocomplete="off" />
+                </td>
+                <td class="table-width-xl">
+                    <input id="POI_UnitPrice" class="form-control POI_UnitPrice number UnitDecimal text-end" autocomplete="off" />
+                </td>
+                <td class="table-width-3xl">
+                    <input id="POI_Amount" class="form-control POI_Amount decimal text-end" autocomplete="off" readonly />
+                </td>
+                <td class="table-width-3xl">
+                    <input id="POI_ExpenseValue" class="form-control decimal POI_ExpenseValue text-end" autocomplete="off" readonly />
+                </td>
+                <td class="datetype">
+                    <input id="POI_DeliveryDate" class="form-control POI_DeliveryDate datepicker text-center" autocomplete="off" />
+                    <input type="hidden" name="IsDeleted" class="IsDeleted" value="false" />
+                </td>
+            </tr>
+            @if (Model != null)
+            {
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr class="NewRow">
+                        <td class="p-2 del">
+                            <input type="checkbox" class="CheckItem form-check-input" name="CheckItem">
+                        </td>
+                        <td>
+                            <input id="POI_Index" name="PurchaseItems[@i].POI_Index" class="POI_Index" autocomplete="off" type="hidden" value="@Model[i].POI_Index" />
+                            <input id="POI_MS_Number" name="PurchaseItems[@i].POI_MS_Number" class="POI_MS_Number" type="hidden" value="@Model[i].POI_MS_Number" />
+                            <input id="POI_Item_Number" name="PurchaseItems[@i].POI_Item_Number" class="POI_Item_Number" type="hidden" value="@Model[i].POI_Item_Number" />
+                            <input id="POI_ItemCode" name="PurchaseItems[@i].POI_ItemCode" class="form-control POI_ItemCode" autocomplete="off" value="@Model[i].POI_ItemCode" oninput="OnInput(this)" onfocus="OnFocus(this)" />
+                            <div class="search-results bg-primary card" style="display:none"></div>
+                        </td>
+                        <td>
+                            <input id="POI_Description" name="PurchaseItems[@i].POI_Description" class="form-control POI_Description" readonly value="@Model[i].POI_Description" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="POI_ITM_Thickness" name="PurchaseItems[@i].POI_ITM_Thickness" class="form-control POI_ITM_Thickness text-end" readonly value="@Model[i].POI_ITM_Thickness" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="POI_ITM_Width" name="PurchaseItems[@i].POI_ITM_Width" class="form-control POI_ITM_Width text-end" readonly value="@Model[i].POI_ITM_Width" />
+                        </td>
+                        <td>
+                            <input id="POI_ITM_MaterialGrade" name="PurchaseItems[@i].POI_ITM_MaterialGrade" class="form-control POI_ITM_MaterialGrade" readonly value="@Model[i].POI_ITM_MaterialGrade" />
+                        </td>
+                        <td>
+                            <input id="POI_ItemGroup" name="PurchaseItems[@i].POI_ItemGroup" class="form-control POI_ItemGroup" readonly value="@Model[i].POI_ItemGroup" />
+                        </td>
+                        <td class="table-width-md">
+                            <select id="POI_UoM_Number" name="PurchaseItems[@i].POI_UoM_Number" class="form-select POI_UoM_Number text-center">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.UoM)
+                                {
+                                    if (item.Value == Model[i].POI_UoM_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                            <input id="POI_UoM" name="PurchaseItems[@i].POI_UoM" class="form-control POI_UoM" type="hidden" value="@Model[i].POI_UoM" />
+                            <input type="hidden" id="POI_DecimalPlaces" name="PurchaseItems[@i].POI_DecimalPlaces" class="form-control POI_DecimalPlaces" autocomplete="off" value="@Convert.ToDouble(@Model[i].POI_DecimalPlaces)" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="POI_OLD_Qty" name="PurchaseItems[@i].POI_OLD_Qty" readonly class="form-control POI_OLD_Qty number QtyNumbers text-end" autocomplete="off" value="@Convert.ToDouble(@Model[i].POI_Qty)" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="POI_PII_Qty" name="PurchaseItems[@i].POI_PII_Qty" readonly class="form-control POI_PII_Qty number QtyNumbers text-end" autocomplete="off" value="@Convert.ToDouble(@Model[i].POI_PII_Qty)" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="POI_Qty" name="PurchaseItems[@i].POI_Qty" class="form-control POI_Qty number QtyNumbers text-end" autocomplete="off" value="@Convert.ToDouble(@Model[i].POI_Qty)" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="POI_UnitPrice" name="PurchaseItems[@i].POI_UnitPrice" class="form-control POI_UnitPrice number UnitDecimal text-end" autocomplete="off" value="@Convert.ToDouble(@Model[i].POI_UnitPrice)" />
+                        </td>
+                        <td class="table-width-3xl">
+                            <input id="POI_Amount" name="PurchaseItems[@i].POI_Amount" class="form-control POI_Amount text-end decimal" readonly autocomplete="off" value="@Convert.ToDouble(@Model[i].POI_Amount)" />
+                        </td>
+                        <td class="table-width-3xl">
+                            <input id="POI_ExpenseValue" name="PurchaseItems[@i].POI_ExpenseValue" class="form-control POI_ExpenseValue  text-end decimal" readonly autocomplete="off" value="@Convert.ToDouble(@Model[i].POI_ExpenseValue)" />
+                        </td>
+                        <td class="datetype">
+                            <input id="POI_DeliveryDate" name="PurchaseItems[@i].POI_DeliveryDate" class="form-control POI_DeliveryDate  datepicker text-center" autocomplete="off" value="@Model[i].POI_DeliveryDate" />
+                            @if (@Model[i].POI_Number != 0)
+                            {
+                                <input name="PurchaseItems[@i].POI_Number" class="POI_Number" id="POI_Number" type="hidden" readonly value="@Model[i].POI_Number" />
+                            }
+                            <input type="hidden" name="PurchaseItems[@i].IsDeleted" class="IsDeleted" value="false" />
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+        <tfoot>
+            <tr class="table-info">
+                <td colspan="10" class="text-end py-2">Total</td>
+                <td class="table-width-xl">
+                    <input id="TotalQty" class="form-control text-end" readonly />
+                </td>
+                <td>
+                </td>
+                <td class="table-width-3xl">
+                    <input id="TotalAmount" class="form-control text-end" readonly />
+                </td>
+                <td class="table-width-3xl">
+                    <input id="TotalExpense" class="form-control text-end" readonly />
+                </td>
+                <td>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+<div class="w-100 table-footer align-items-center">
+    <a id="AddRowButton" class="btn btn-primary">Add Row</a>
+    <a class="RowRemove btn btn-primary">
+        Delete Row
+    </a>
+</div>
+<script>
+    $(document).ready(function () {
+        function initializeFlatpickrs() {
+            $(".POI_DeliveryDate").flatpickr({
+                dateFormat: "d-M-Y",
+                altInput: false,
+                minDate: $("#POH_Date").val()
+            });
+        }
+
+        var rowCount = @(Model != null ? Model.Count : 0);
+        var isAddingRow = false;
+
+        function addRow() {
+            var NewRow = $("#TempRow").clone().removeAttr("style").removeAttr("id").addClass("NewRow");
+            NewRow.find("input.POI_Index").attr("name", "PurchaseItems[" + rowCount + "].POI_Index").val(rowCount + 1);
+            NewRow.find("input.POI_MS_Number").attr("name", "PurchaseItems[" + rowCount + "].POI_MS_Number");
+            NewRow.find("input.POI_Item_Number").attr("name", "PurchaseItems[" + rowCount + "].POI_Item_Number");
+            NewRow.find("input.POI_ItemCode").attr("name", "PurchaseItems[" + rowCount + "].POI_ItemCode");
+            NewRow.find("input.POI_Description").attr("name", "PurchaseItems[" + rowCount + "].POI_Description");
+            NewRow.find("input.POI_DecimalPlaces").attr("name", "PurchaseItems[" + rowCount + "].POI_DecimalPlaces");
+            NewRow.find("input.POI_ItemGroup").attr("name", "PurchaseItems[" + rowCount + "].POI_ItemGroup");
+            NewRow.find("select.POI_UoM_Number").attr("name", "PurchaseItems[" + rowCount + "].POI_UoM_Number");
+            NewRow.find("select.POI_UoM").attr("name", "PurchaseItems[" + rowCount + "].POI_UoM");
+            NewRow.find("input.POI_OLD_Qty").attr("name", "PurchaseItems[" + rowCount + "].POI_OLD_Qty").val(0);
+            NewRow.find("input.POI_PII_Qty").attr("name", "PurchaseItems[" + rowCount + "].POI_PII_Qty").val(0);
+            NewRow.find("input.POI_Qty").attr("name", "PurchaseItems[" + rowCount + "].POI_Qty");
+            NewRow.find("input.POI_UnitPrice").attr("name", "PurchaseItems[" + rowCount + "].POI_UnitPrice");
+            NewRow.find("input.POI_Amount").attr("name", "PurchaseItems[" + rowCount + "].POI_Amount");
+            NewRow.find("input.POI_ExpenseValue").attr("name", "PurchaseItems[" + rowCount + "].POI_ExpenseValue");
+            NewRow.find("input.POI_DeliveryDate").attr("name", "PurchaseItems[" + rowCount + "].POI_DeliveryDate").val($("#POH_Date").val());
+            NewRow.find("input.IsDeleted").attr("name", "PurchaseItems[" + rowCount + "].IsDeleted").val("false");
+
+            $("#TableBody").append(NewRow);
+            rowCount++;
+            NewRow.data("isValid", false);
+            isAddingRow = false;
+
+            initializeFlatpickrs();
+        }
+
+        if ($("tr.NewRow").length == 0) {
+            addRow();
+        }
+
+        $(document).on('click', '.RowRemove', function () {
+            let CheckedCheckbox = document.querySelector('.CheckItem:checked');
+            if (CheckedCheckbox) {
+                $(CheckedCheckbox).closest('tr').find("input.IsDeleted").val(true);
+                $(CheckedCheckbox).closest('tr').hide();
+            }
+
+
+            (async () => {
+                CalculateFooter();
+            })();
+        });
+
+        $(document).on('keydown', "tr.NewRow select, tr.NewRow input.POI_DeliveryDate,tr.NewRow input.POI_Item_Number,tr.NewRow input.POI_Qty,tr.NewRow input.POI_UnitPrice, tr.NewRow input[type='text']", function (event) {
+            if (event.keyCode === 9) {
+                if (!validateField($(this)))
+                    event.preventDefault();
+            }
+        });
+
+        $(document).on('input', "input.POI_UnitPrice, input.POI_Qty", function (event) {
+            var currentInput = $(this);
+            var row = currentInput.closest("tr.NewRow");
+
+            var itemNumber = row.find('input.POI_Item_Number').val();
+            var itemIndex = row.find('input.POI_Index').val();
+            var POINumber = row.find('input.POI_Number').val();
+
+            var qty = parseFloat(removeCommas(row.find("input.POI_Qty").val())) || 0;
+
+            var unitPrice = parseFloat(removeCommas(row.find("input.POI_UnitPrice").val())) || 0;
+            var amo = qty * unitPrice;
+            var amount = DecimalIndianRupees(amo);
+            row.find("input.POI_Amount").val(DecimalIndianRupees(amo));
+
+            CalculateFooter();
+            CalculateExpense();
+            CalculateIExpense($(this));
+
+            var ExpenseTotal = 0;
+            $("tr.IExNewRow").each(function () {
+                var irow = $(this);
+                var isDeleted = $(this).find("input.IsDeleted").val() === "true";
+                if (!isDeleted) {
+                    var rowPOINumber = irow.find('input.POI_EXP_POI_Number').val();
+                    var rowItemNumber = irow.find('input.POI_EXP_Item_Number').val();
+                    var rowItemIndex = irow.find('input.POI_EXP_Item_Index').val();
+
+                    if (rowPOINumber) {
+                        if (rowPOINumber === POINumber) {
+                            var expenseBase = parseFloat(removeCommas(irow.find(".POI_EXP_ExpenseValue").val())) || 0;
+                            ExpenseTotal += expenseBase;
+                        }
+                    } else if (rowItemNumber) {
+                        if (rowItemNumber === itemNumber && rowItemIndex === itemIndex) {
+                            var expenseBase = parseFloat(removeCommas(irow.find(".POI_EXP_ExpenseValue").val())) || 0;
+                            ExpenseTotal += expenseBase;
+                        }
+                    }
+                }
+            });
+            ExpenseTotal = DecimalIndianRupees(ExpenseTotal);
+            row.find("input.POI_ExpenseValue").val(ExpenseTotal);
+        });
+
+        $(document).on('blur', "input.POI_Qty", function (event) {
+            var currentInput = $(this);
+            var row = currentInput.closest("tr.NewRow");
+
+            var itemNumber = row.find('input.POI_Item_Number').val();
+            var itemIndex = row.find('input.POI_Index').val();
+            var POINumber = row.find('input.POI_Number').val();
+
+            var QtyInput = row.find("input.POI_Qty");
+            var Oldqty = parseFloat(removeCommas(row.find("input.POI_OLD_Qty").val())) || 0;
+            var qty = parseFloat(removeCommas(row.find("input.POI_Qty").val())) || 0;
+            var PIQty = parseFloat(removeCommas(row.find("input.POI_PII_Qty").val())) || 0;
+
+            if (qty < PIQty) {
+                alert("Quantity (" + PIQty + ") cannot be Less than Invoice Quantity (" + PIQty + ").\nIt will be reset to the PO Qty: " + Oldqty);
+                QtyInput.val(FormatNumber(Oldqty));
+                qty = Oldqty;
+            }
+
+            var unitPrice = parseFloat(removeCommas(row.find("input.POI_UnitPrice").val())) || 0;
+            var amo = qty * unitPrice;
+            var amount = DecimalIndianRupees(amo);
+            row.find("input.POI_Amount").val(DecimalIndianRupees(amo));
+
+            CalculateFooter();
+            CalculateExpense();
+            CalculateIExpense($(this));
+
+            var ExpenseTotal = 0;
+            $("tr.IExNewRow").each(function () {
+                var irow = $(this);
+                var isDeleted = $(this).find("input.IsDeleted").val() === "true";
+                if (!isDeleted) {
+                    var rowPOINumber = irow.find('input.POI_EXP_POI_Number').val();
+                    var rowItemNumber = irow.find('input.POI_EXP_Item_Number').val();
+                    var rowItemIndex = irow.find('input.POI_EXP_Item_Index').val();
+
+                    if (rowPOINumber) {
+                        if (rowPOINumber === POINumber) {
+                            var expenseBase = parseFloat(removeCommas(irow.find(".POI_EXP_ExpenseValue").val())) || 0;
+                            ExpenseTotal += expenseBase;
+                        }
+                    } else if (rowItemNumber) {
+                        if (rowItemNumber === itemNumber && rowItemIndex === itemIndex) {
+                            var expenseBase = parseFloat(removeCommas(irow.find(".POI_EXP_ExpenseValue").val())) || 0;
+                            ExpenseTotal += expenseBase;
+                        }
+                    }
+                }
+            });
+            ExpenseTotal = DecimalIndianRupees(ExpenseTotal);
+            row.find("input.POI_ExpenseValue").val(ExpenseTotal);
+        });
+
+        $(document).on('change', "tr.NewRow select.POI_UoM_Number", function () {
+            var selectedValue = $(this).val();
+            var currentInput = $(this);
+            var currentRow = currentInput.closest('tr.NewRow');
+
+            var uom = currentRow.find('input.POI_UoM').val();
+
+            if (uom === selectedValue) { } else {
+                alert("Selected Uom differs from item master purchase unit");
+            }
+
+            $.ajax({
+                type: "get",
+                url: "../uom",
+                data: { UoM: selectedValue },
+                datatype: "json",
+                traditional: true,
+                success: function (decimalPlaces) {
+                    if (decimalPlaces === "") {
+                        decimalPlaces = 2;
+                    }
+
+                    currentRow.find('input.POI_DecimalPlaces').val(decimalPlaces);
+                    var value = removeCommas(currentRow.find('input.POI_Qty').val());
+                    currentRow.find('input.POI_Qty').val(QtyDecimalRupees(value, decimalPlaces));
+
+                    var qty = parseFloat(removeCommas(currentRow.find("input.POI_Qty").val())) || 0;
+                    var unitPrice = parseFloat(removeCommas(currentRow.find("input.POI_UnitPrice").val())) || 0;
+                    var amo = qty * unitPrice;
+                    currentRow.find("input.POI_Amount").val(DecimalIndianRupees(amo));
+
+                    (async () => {
+                        CalculateFooter();
+                    })();
+                }
+            });
+        });
+
+        $(document).on("change", "tr.NewRow select, input.POI_DeliveryDate,input.POI_Item_Number,input.POI_Qty,input.POI_UnitPrice, input[type='text']", function () {
+            if (isAddingRow)
+                return;
+            isAddingRow = true;
+
+            var currentInput = $(this);
+            var isValid = validateField(currentInput);
+            var currentRow = $(this).closest("tr.NewRow");
+            if (isValid) {
+                if (checkAllFieldsValid(currentRow)) {
+                    currentRow.data("isValid", true);
+                }
+                else {
+                    currentRow.data("isValid", false);
+                }
+            }
+            else {
+                currentRow.data("isValid", false);
+            }
+            if (currentRow.data("isValid")) {
+                var lastRow = $("tr.NewRow").last();
+                if (checkAllFieldsValid(lastRow))
+                    addRow();
+            }
+            else {
+                isAddingRow = false;
+            }
+        });
+
+        function checkAllFieldsValid(currentRow) {
+            var allFieldsValid = true;
+            $("tr.NewRow:visible").each(function () {
+                $(this).find("select, input.POI_DeliveryDate,input.POI_Item_Number,input.POI_Qty,input.POI_UnitPrice, input[type='text']").each(function () {
+                    if (!validateField($(this))) {
+                        allFieldsValid = false;
+                        return false;
+                    }
+                });
+                if (!allFieldsValid) return false;
+            });
+            return allFieldsValid;
+        }
+
+        function validateField(currentInput) {
+            var valid = 1;
+            var inputValue = currentInput.val();
+            if (inputValue === "") {
+                valid = 0;
+            }
+
+            if (valid == 0) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+        $("#AddRowButton").click(function () {
+            var lastRow = $("tr.NewRow").last();
+            if (checkAllFieldsValid(lastRow)) {
+                addRow();
+            }
+            else {
+                var firstInvalidField = null;
+                lastRow.find("select, input.POI_DeliveryDate,input.POI_Item_Number,input.POI_Qty,input.POI_UnitPrice, input[type='text']").each(function () {
+                    if (!validateField($(this))) {
+                        if (firstInvalidField == null)
+                            firstInvalidField = $(this);
+                        return false;
+                    }
+                });
+                if (firstInvalidField != null) {
+                    alert("Please complete all fields !");
+                    firstInvalidField.focus();
+                }
+            }
+        });
+
+        $(document).on('focus', 'tr.NewRow input:not(.CheckItem), tr.NewRow select, tr.NewRow .datepicker', function () {
+            $(this).closest('tr').find('.CheckItem').prop('checked', true);
+            $('.CheckItem').not($(this).closest('tr').find('.CheckItem')).prop('checked', false);
+            $('.IndexAllCheckItem').prop('checked', false);
+        });
+
+        $("#POH_MS_Number").change(function () {
+            var POH_MS_Number = $(this).val();
+            var POI_MS_Number = "";
+            var POH_MS = $(this).val();
+            var AllMatch = true;
+
+            $("tr.NewRow").each(function () {
+                var irow = $(this);
+                var isDeleted = $(this).find("input.IsDeleted").val() === "true";
+                if (!isDeleted) {
+                    POI_MS_NumberPOI_MS_Number = irow.find("input.POI_MS_Number").val();
+                    if (POI_MS_Number !== POH_MS_Number) {
+                        AllMatch = false;
+                        return false;
+                    }
+                }
+            });
+
+            if (!AllMatch) {
+                if (PII_MS_Number != "") {
+                    if (confirm("Do you want to change the Material Segregation? This action will clear all existing items.")) {
+                        $("tr.NewRow").each(function () {
+                            var irow = $(this);
+                            var isDeleted = $(this).find("input.IsDeleted").val() === "true";
+                            if (!isDeleted) {
+                                $(this).find("input.IsDeleted").val(true);
+                                $(this).hide();
+                            }
+                        });
+                        addRow();
+                    }
+                    else {
+                        $("#POH_MS_Number").val(POI_MS_Number);
+                    }
+                }
+            }
+        });
+
+        function customRound(number) {
+            const num = parseFloat(number);
+            const decimal = num % 1;
+
+            if (decimal >= 0.5) {
+                return Math.ceil(num);
+            } else {
+                return Math.floor(num);
+            }
+        }
+        window.onload = CalculateFooter();
+    });
+
+
+
+    $(document).ready(function () {
+        const IndexAllCheck = $('#IndexAllCheckItem');
+
+        $(document).on('change', '.CheckItem', function () {
+            const checkedCount = $('tr.NewRow input.CheckItem:checked').length;
+            const totalCount = $('tr.NewRow input.CheckItem').length;
+
+            const adjustment = this.checked ? 0 : -1;
+            const allChecked = (checkedCount + adjustment) === totalCount;
+
+            IndexAllCheck.prop('checked', allChecked);
+        });
+
+        IndexAllCheck.on('change', function () {
+            $('.CheckItem').prop('checked', this.checked);
+        });
+    });
+
+    function FormatNumber(num) {
+        if (num === "" || isNaN(num)) return "0";
+
+        var formattedValue = parseFloat(num).toFixed(10);
+        var parts = formattedValue.split(".");
+        if (parts.length > 1) {
+            parts[1] = parts[1].replace(/0+$/, "");
+            if (parts[1].length === 0) parts.pop();
+        }
+
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+
+        return parts.join(".");
+    }
+
+    async function CalculateFooter() {
+        var totalQty = 0;
+        var totalAmount = 0;
+        var totalExpense = 0;
+
+        $("tr.NewRow").each(function () {
+            var row = $(this);
+            var isDeleted = $(this).find("input.IsDeleted").val() === "true";
+            if (!isDeleted) {
+                var QtyField = row.find(".POI_Qty").val();
+                var AmountField = row.find(".POI_Amount").val();
+                var ExpenseField = row.find(".POI_ExpenseValue").val();
+
+                if (!AmountField) {
+                    AmountField = "0.00";
+                }
+                if (!ExpenseField) {
+                    ExpenseField = "0.00";
+                }
+
+                totalQty += parseFloat(removeCommas(QtyField));
+                totalAmount += parseFloat(removeCommas(AmountField));
+                totalExpense += parseFloat(removeCommas(ExpenseField));
+            }
+        });
+
+        $("#TotalQty").val(FormatNumber(totalQty));
+        $("#TotalAmount").val(DecimalIndianRupees(totalAmount.toFixed(2)));
+        $("#TotalExpense").val(DecimalIndianRupees(totalExpense.toFixed(2)));
+
+        CalculateExpense();
+
+        var HeaderExpenseTotal = 0;
+        $("tr.ExNewRow").each(function () {
+            var irow = $(this);
+            var isDeleted = $(this).find("input.IsDeleted").val() === "true";
+            if (!isDeleted) {
+                var expenseBase = parseFloat(removeCommas(irow.find(".POH_EXP_ExpenseValue").val())) || 0;
+
+                HeaderExpenseTotal += expenseBase;
+            }
+        });
+
+        var ItemExpenseTotal = 0;
+        $("tr.IExNewRow").each(function () {
+            var irow = $(this);
+            var isDeleted = $(this).find("input.IsDeleted").val() === "true";
+            if (!isDeleted) {
+                var expenseBase = parseFloat(removeCommas(irow.find(".POI_EXP_ExpenseValue").val())) || 0;
+
+                ItemExpenseTotal += expenseBase;
+            }
+        });
+
+        var MaterialCost = $("#POH_MaterialValue");
+        var ItemMiscExpense = $("#POH_ItemMiscExpense");
+        var HeaderMiscExpense = $("#POH_HeadMiscExpense");
+        var PurchaseValue = $("#POH_OrderValue");
+
+        var PurchaseAmo = parseFloat(totalAmount) + parseFloat(ItemExpenseTotal) + parseFloat(HeaderExpenseTotal);
+
+        MaterialCost.val(DecimalIndianRupees(totalAmount.toFixed(2)));
+        ItemMiscExpense.val(DecimalIndianRupees(ItemExpenseTotal.toFixed(2)));
+        HeaderMiscExpense.val(DecimalIndianRupees(HeaderExpenseTotal.toFixed(2)));
+        PurchaseValue.val(DecimalIndianRupees(PurchaseAmo.toFixed(2)));
+    }
+
+    async function CalculateExpense() {
+        $("tr.ExNewRow").each(function () {
+            var row = $(this);
+            var isDeleted = $(this).find("input.IsDeleted").val() === "true";
+            if (!isDeleted) {
+                ExAssignValue($(this));
+            }
+        });
+    }
+    async function CalculateIExpense(currentInput) {
+        var currentRow = currentInput.closest('tr.NewRow');
+
+        var ItemNumber = currentRow.find('input.POI_Item_Number').val();
+        var Index = currentRow.find('input.POI_Index').val();
+        var Qty = parseFloat(removeCommas(currentRow.find('input.POI_Qty').val())) || 0;
+        var MaterialValue = parseFloat(removeCommas(currentRow.find('input.POI_Amount').val())) || 0;
+        var POINumber = currentRow.find('input.POI_Number').val();
+
+        if (POINumber) {
+            var cout = 0;
+            $("tr.IExNewRow").each(function () {
+                var RowPOINumber = $(this).find("input.POI_EXP_POI_Number").val();
+                var isDeleted = $(this).find("input.IsDeleted").val();
+
+                if (RowPOINumber === POINumber && isDeleted !== 'true') {
+                    var Charge = $(this).find("select.POI_EXP_CM_Number").val();
+
+                    if (Charge === "1") {
+                        var ExpenseBase = parseFloat(removeCommas($(this).find("input.POI_EXP_ExpenseBase").val())) || 0;
+                        $(this).find("input.POI_EXP_ExpenseValue").val(DecimalIndianRupees(ExpenseBase));
+                    }
+                    else if (Charge === "2") {
+                        var ExpenseBase = parseFloat(removeCommas($(this).find("input.POI_EXP_ExpenseBase").val())) || 0;
+                        var ExpenseValue = Qty * ExpenseBase;
+                        $(this).find("input.POI_EXP_ExpenseValue").val(DecimalIndianRupees(ExpenseValue));
+                    }
+                    else if (Charge === "3") {
+                        var ExpenseBase = parseFloat(removeCommas($(this).find("input.POI_EXP_ExpenseBase").val())) || 0;
+                        var ExpenseValue = MaterialValue * ExpenseBase / 100;
+                        $(this).find("input.POI_EXP_ExpenseValue").val(DecimalIndianRupees(ExpenseValue));
+                    }
+
+                    cout++;
+                }
+            });
+        }
+        else if (ItemNumber) {
+            var cout = 0;
+            $("tr.IExNewRow").each(function () {
+                var RowItemNumber = $(this).find("input.POI_EXP_Item_Number").val();
+                var RowItemIndex = $(this).find("input.POI_EXP_Item_Index").val();
+                var isDeleted = $(this).find("input.IsDeleted").val();
+
+                if (RowItemNumber === ItemNumber && RowItemIndex === Index && isDeleted !== 'true') {
+
+                    var Charge = $(this).find("select.POI_EXP_CM_Number").val();
+
+                    if (Charge === "1") {
+                        var ExpenseBase = parseFloat(removeCommas($(this).find("input.POI_EXP_ExpenseBase").val())) || 0;
+                        $(this).find("input.POI_EXP_ExpenseValue").val(DecimalIndianRupees(ExpenseBase));
+                    }
+                    else if (Charge === "2") {
+                        var ExpenseBase = parseFloat(removeCommas($(this).find("input.POI_EXP_ExpenseBase").val())) || 0;
+                        var ExpenseValue = Qty * ExpenseBase;
+                        $(this).find("input.POI_EXP_ExpenseValue").val(DecimalIndianRupees(ExpenseValue));
+                    }
+                    else if (Charge === "3") {
+                        var ExpenseBase = parseFloat(removeCommas($(this).find("input.POI_EXP_ExpenseBase").val())) || 0;
+                        var ExpenseValue = MaterialValue * ExpenseBase / 100;
+                        $(this).find("input.POI_EXP_ExpenseValue").val(DecimalIndianRupees(ExpenseValue));
+                    }
+
+                    cout++;
+                }
+            });
+
+        }
+    }
+
+    function OnInput(inputElement) {
+        searchItem(inputElement);
+    }
+    function OnFocus(inputElement) {
+        var tax = inputElement.value;
+        if (!tax) {
+            searchItem(inputElement);
+        }
+        else {
+            $(this).select();
+        }
+    }
+    function searchItem(inputElement) {
+        var itemCode = inputElement.value;
+        var resultsDiv = $(inputElement).next('.search-results');
+        var Metrial = $("#POH_MS_Number").val();
+
+        if (Metrial) {
+            $.ajax({
+                url: 'item',
+                data: { ItemCode: itemCode, MS: Metrial },
+                type: 'GET',
+                success: function (data) {
+                    resultsDiv.empty();
+                    if (data && data.length > 0) {
+                        resultsDiv.show();
+                        var table = $('<div class="card-body modal-content table-responsive p-0"><table class="table table-bordered table-hover mb-0 table-fixed table-grid"><thead><tr class="table-info"><th>Item Code</th><th>Description</th><th>Item Group</th></tr></thead><tbody></tbody></table></div>');
+                        data.forEach(function (item) {
+                            var row = $('<tr></tr>');
+                            row.append('<td>' + item.itemCode + '</td>');
+                            row.append('<td>' + item.itemDescription + '</td>');
+                            row.append('<td>' + item.itemGroup + '</td>');
+                            table.find('tbody').append(row);
+
+                            row.on('click', function () {
+                                $(inputElement).val(item.itemCode);
+                                $(inputElement).closest('tr').find('input.POI_Item_Number').val(item.itemNumber);
+                                $(inputElement).closest('tr').find('input.POI_ItemCode').val(item.itemCode);
+                                $(inputElement).closest('tr').find('input.POI_Description').val(item.itemDescription);
+                                $(inputElement).closest('tr').find('input.POI_ITM_Thickness').val(item.thickness);
+                                $(inputElement).closest('tr').find('input.POI_ITM_Width').val(item.itM_Width);
+                                $(inputElement).closest('tr').find('input.POI_ITM_MaterialGrade').val(item.materialGrade);
+                                $(inputElement).closest('tr').find('input.POI_ItemGroup').val(item.itemGroup);
+                                $(inputElement).closest('tr').find('input.POI_DecimalPlaces').val(item.decimalPlaces);
+                                $(inputElement).closest('tr').find('input.POI_MS_Number').val(item.materialSegregation);
+                                $(inputElement).closest('tr').find('select.POI_UoM_Number').val(item.uoM);
+                                $(inputElement).closest('tr').find('input.POI_UoM').val(item.uoM);
+                                $(inputElement).closest('tr').find('select.POI_UoM_Number').focus();
+
+                                var decimalPlaces = item.decimalPlaces;
+                                if (decimalPlaces === "") {
+                                    decimalPlaces = 2;
+                                }
+                                var value = $(inputElement).closest('tr').find('input.POI_Qty').val();
+                                $(inputElement).closest('tr').find('input.POI_Qty').val(QtyDecimalRupees(value, decimalPlaces));
+
+                                resultsDiv.hide();
+                            });
+                        });
+
+                        var closeButton = $('<div class="card-header bg-primary py-1 px-2"><button type="button" class="p-0 float-end btn btn-sm btn-primary bg-opacity-10"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d = "M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"> </path></svg></button></div>');
+                        closeButton.on('click', function () {
+                            resultsDiv.hide();
+                        });
+
+                        resultsDiv.append(closeButton);
+                        resultsDiv.append(table);
+                    } else {
+                        resultsDiv.hide();
+                        resultsDiv.append('<p>No results found</p>');
+                    }
+                },
+                error: function () {
+                    resultsDiv.text('Error loading data.');
+                    resultsDiv.show();
+                }
+            });
+
+        }
+        else {
+        }
+    }
+
+    function CalAmount() {
+        $("tr.NewRow").each(function () {
+            var row = $(this).closest("tr.NewRow");
+
+            var itemNumber = row.find('input.POI_Item_Number').val();
+            var itemIndex = row.find('input.POI_Index').val();
+            var POINumber = row.find('input.POI_Number').val();
+
+            var qty = parseFloat(removeCommas(row.find("input.POI_Qty").val())) || 0;
+            var unitPrice = parseFloat(removeCommas(row.find("input.POI_UnitPrice").val())) || 0;
+            var amo = qty * unitPrice;
+            var amount = DecimalIndianRupees(amo);
+            row.find("input.POI_Amount").val(DecimalIndianRupees(amo));
+
+            CalculateExpense();
+            CalculateIExpense($(this));
+
+            var ExpenseTotal = 0;
+            $("tr.IExNewRow").each(function () {
+                var irow = $(this);
+                var isDeleted = $(this).find("input.IsDeleted").val() === "true";
+                if (!isDeleted) {
+                    var rowItemNumber = irow.find('input.POI_EXP_Item_Number').val();
+                    var rowItemIndex = irow.find('input.POI_EXP_Item_Index').val();
+                    var rowPOINumber = irow.find('input.POI_EXP_POI_Number').val();
+
+                    if (rowPOINumber) {
+                        if (rowPOINumber === POINumber) {
+                            var expenseBase = parseFloat(removeCommas(irow.find(".POI_EXP_ExpenseValue").val())) || 0;
+                            ExpenseTotal += expenseBase;
+                        }
+                    } else if (rowItemNumber) {
+                        if (rowItemNumber === itemNumber && rowItemIndex === itemIndex) {
+                            var expenseBase = parseFloat(removeCommas(irow.find(".POI_EXP_ExpenseValue").val())) || 0;
+                            ExpenseTotal += expenseBase;
+                        }
+                    }
+                }
+            });
+            ExpenseTotal = DecimalIndianRupees(ExpenseTotal);
+            row.find("input.POI_ExpenseValue").val(ExpenseTotal);
+        });
+        CalculateFooter();
+    }
+</script>
+<style>
+    .search-results {
+        width: 400px;
+    }
+</style>
+
+
+<script>
+    $(document).ready(function () {
+        ExchangeVisibility();
+
+        $("#POH_ImportOrder").change(function () {
+            var isChecked = $(this).is(':checked');
+
+            var resultsDiv = $(".vendor-search-results");
+            resultsDiv.hide();
+
+            if ($("#POH_VendorLocation").val() != "") {
+                if (isChecked && $("#POH_VendorLocation").val() != "2") {
+                    if (confirm("Do you want to change the status of the Import Order? This action will clear the already selected vendor.")) {
+                        $("#POH_Vendor").val("");
+                        $("#POH_Vendor_Number").val("");
+                        $("#POH_Currency").val("");
+                        $("#POH_Currency_Number").val("");
+                        $("#POH_VendorLocation").val("");
+                    }
+                    else {
+                        $(this).prop('checked', false);
+                    }
+                }
+                else if (!isChecked && $("#POH_VendorLocation").val() != "1") {
+                    if (confirm("Do you want to change the status of the Import Order? This action will clear the already selected vendor.")) {
+                        $("#POH_Vendor").val("");
+                        $("#POH_Vendor_Number").val("");
+                        $("#POH_Currency").val("");
+                        $("#POH_Currency_Number").val("");
+                        $("#POH_VendorLocation").val("");
+                    }
+                    else {
+                        $(this).prop('checked', true);
+                    }
+                }
+            }
+            ExchangeVisibility();
+        });
+
+        function ExchangeVisibility() {
+            if ($('#POH_ImportOrder').is(':checked')) {
+                $('#ExchangeRate').show();
+            } else {
+                $('#ExchangeRate').hide();
+            }
+        }
+
+    });
+</script>

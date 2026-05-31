@@ -1,0 +1,786 @@
+﻿function initializeFlatpickrs() {
+    $(".PRI_DeliveryDate").flatpickr({
+        dateFormat: "d-M-Y",
+        altInput: false,
+    });
+}
+
+var rowCount = @(Model != null ? Model.Count : 0);
+var isAddingRow = false;
+
+function addRow(Inv) {
+    var NewRow = $("#TempRow").clone().removeAttr("style").removeAttr("id").addClass("NewRow");
+    NewRow.find("input.PRI_Index").attr("name", "ReturnItems[" + rowCount + "].PRI_Index").val(rowCount + 1);
+    NewRow.find("input.PRI_PII_Number").attr("name", "ReturnItems[" + rowCount + "].PRI_PII_Number").val(Inv.piI_Number);
+    NewRow.find("input.PRI_PIH_Number").attr("name", "ReturnItems[" + rowCount + "].PRI_PIH_Number").val(Inv.piH_Number);
+    NewRow.find("input.PRI_SupplierInvoiceNo").attr("name", "ReturnItems[" + rowCount + "].PRI_SupplierInvoiceNo").val(Inv.piH_SupplierInvoiceNo);
+    NewRow.find("input.PRI_PI_Date").attr("name", "ReturnItems[" + rowCount + "].PRI_PI_Date").val(Inv.piH_InvoiceDate);
+    NewRow.find("input.PRI_POH_Number").attr("name", "ReturnItems[" + rowCount + "].PRI_POH_Number").val(Inv.piH_POH_OrderNo);
+    NewRow.find("input.PRI_MS_Number").attr("name", "ReturnItems[" + rowCount + "].PRI_MS_Number").val(Inv.piI_MS_Number);
+    NewRow.find("input.PRI_Item_Number").attr("name", "ReturnItems[" + rowCount + "].PRI_Item_Number").val(Inv.piI_Item_Number);
+    NewRow.find("input.PRI_ItemCode").attr("name", "ReturnItems[" + rowCount + "].PRI_ItemCode").val(Inv.piI_ItemCode);
+    NewRow.find("input.PRI_Description").attr("name", "ReturnItems[" + rowCount + "].PRI_Description").val(Inv.piI_Description);
+    NewRow.find("input.PRI_DecimalPlaces").attr("name", "ReturnItems[" + rowCount + "].PRI_DecimalPlaces").val(Inv.piI_DecimalPlaces);
+    NewRow.find("input.PRI_ItemGroup").attr("name", "ReturnItems[" + rowCount + "].PRI_ItemGroup").val(Inv.piI_ItemGroup);
+    NewRow.find("select.PRI_Warehouse_Number").attr("name", "ReturnItems[" + rowCount + "].PRI_Warehouse_Number").val(Inv.piI_Warehouse_Number);
+    NewRow.find("select.PRI_UoM_Number").attr("name", "ReturnItems[" + rowCount + "].PRI_UoM_Number").val(Inv.piI_UoM_Number);
+    NewRow.find("input.PRI_PII_Qty").attr("name", "ReturnItems[" + rowCount + "].PRI_PII_Qty").val(Inv.piI_Qty);
+    NewRow.find("input.PRI_Qty").attr("name", "ReturnItems[" + rowCount + "].PRI_Qty").val(-1 * Inv.piI_Qty);
+    NewRow.find("input.PRI_UnitPrice").attr("name", "ReturnItems[" + rowCount + "].PRI_UnitPrice").val(Inv.piI_UnitPrice);
+    NewRow.find("input.PRI_Amount").attr("name", "ReturnItems[" + rowCount + "].PRI_Amount").val(Inv.piI_Amount);
+
+    NewRow.find("input.PRI_ExpenseValue").attr("name", "ReturnItems[" + rowCount + "].PRI_ExpenseValue");
+    NewRow.find("select.PRI_HSN_Number").attr("name", "ReturnItems[" + rowCount + "].PRI_HSN_Number").val(Inv.piI_HSN_Number);
+    NewRow.find("input.PRI_GST_Amount").attr("name", "ReturnItems[" + rowCount + "].PRI_GST_Amount");
+    NewRow.find("input.PRI_WHT_Percent").attr("name", "ReturnItems[" + rowCount + "].PRI_WHT_Percent");
+    NewRow.find("input.PRI_WHT_Amount").attr("name", "ReturnItems[" + rowCount + "].PRI_WHT_Amount");
+    NewRow.find("input.PRI_IsDeleted").attr("name", "ReturnItems[" + rowCount + "].PRI_IsDeleted").val("false");
+
+    $("#TableBody").append(NewRow);
+    rowCount++;
+    initializeFlatpickrs();
+}
+
+$(document).on('keydown', "tr.NewRow select, tr.NewRow input.PRI_DeliveryDate,tr.NewRow input.PRI_Item_Number,tr.NewRow input.PRI_Qty,tr.NewRow input.PRI_UnitPrice, tr.NewRow input[type='text']", function (event) {
+    if (event.keyCode === 9) {
+        if (!validateField($(this)))
+            event.preventDefault();
+    }
+});
+
+$(document).on('change', "tr.NewRow select.PRI_UoM_Number", function () {
+    var selectedValue = $(this).val();
+    var currentInput = $(this);
+    var currentRow = currentInput.closest('tr.NewRow');
+
+    var uom = currentRow.find('input.PRI_UoM').val();
+
+    if (uom === selectedValue) { } else {
+        alert("Selected Uom differs from item master purchase unit");
+    }
+
+    $.ajax({
+        type: "get",
+        url: "uom",
+        data: { UoM: selectedValue },
+        datatype: "json",
+        traditional: true,
+        success: function (decimalPlaces) {
+            if (decimalPlaces === "") {
+                decimalPlaces = 2;
+            }
+
+            currentRow.find('input.PRI_DecimalPlaces').val(decimalPlaces);
+            var value = currentRow.find('input.PRI_Qty').val();
+            currentRow.find('input.PRI_Qty').val(NumberToIndianRupees(value, decimalPlaces));
+        }
+    });
+});
+$(document).on('change', "tr.NewRow select.PRI_HSN_Number", function () {
+    CalAmount();
+});
+
+function checkAllFieldsValid(currentRow) {
+    var allFieldsValid = true;
+    $("tr.NewRow:visible").each(function () {
+        $(this).find("select, input.PRI_DeliveryDate,input.PRI_Item_Number,input.PRI_Qty,input.PRI_UnitPrice, input[type='text']").each(function () {
+            if (!validateField($(this))) {
+                allFieldsValid = false;
+                return false;
+            }
+        });
+        if (!allFieldsValid) return false;
+    });
+    return allFieldsValid;
+}
+function validateField(currentInput) {
+    var valid = 1;
+    var inputValue = currentInput.val();
+    if (inputValue === "") {
+        valid = 0;
+    }
+
+    if (valid == 0) {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+$(document).on('input', "input.PRI_UnitPrice, input.PRI_Qty", function (event) {
+    var currentInput = $(this);
+
+    var row = currentInput.closest("tr.NewRow");
+
+    var QtyInput = row.find("input.PRI_Qty");
+    var PIQty = parseFloat(removeCommas(row.find("input.PRI_PII_Qty").val())) || 0;
+    var qty = parseFloat(removeCommas(row.find("input.PRI_Qty").val())) || 0;
+    if (qty > PIQty) {
+        alert("Quantity (" + qty + ") cannot be greater than PI Quantity (" + PIQty + ").\nIt will be reset to the maximum allowed: " + PIQty);
+
+        QtyInput.val(DecimalIndianRupees(PIQty));
+        qty = PIQty;
+    }
+
+    if (qty > 0) {
+        qty = -qty;
+    } else {
+        qty = qty;
+    }
+
+    var PIINumber = row.find(".PRI_PII_Number").val();
+    var HSNNumber = row.find(".PRI_HSN_Number").val();
+
+    var unitPrice = parseFloat(removeCommas(row.find("input.PRI_UnitPrice").val())) || 0;
+    var amo = qty * unitPrice;
+    var amount = DecimalIndianRupees(amo);
+    row.find("input.PRI_Amount").val(DecimalIndianRupees(amo));
+
+    CalculateIExpense($(this));
+    CalculateFooter();
+    CalculateExpense();
+
+    var ExpenseTotal = 0;
+    $("tr.IExNewRow").each(function () {
+        var irow = $(this);
+        var PRI_IsDeleted = $(this).find("input.PRI_IsDeleted").val() === "true";
+        if (!PRI_IsDeleted) {
+            var rowPIINumber = irow.find(".PRI_EXP_PII_Number").val();
+
+            if (rowPIINumber === PIINumber) {
+                var expenseBase = parseFloat(removeCommas(irow.find(".PRI_EXP_ExpenseValue").val())) || 0;
+                ExpenseTotal += expenseBase;
+            }
+        }
+    });
+    ExpenseTotal = DecimalIndianRupees(ExpenseTotal);
+    row.find("input.PRI_ExpenseValue").val(ExpenseTotal);
+
+    var Cluster = $("#PRH_TaxCluster_Number").val();
+    var WHTax = $("#PRH_WHT_Number").val();
+    var PRHDate = $("#PRH_ReturnDate").val();
+
+    var WHTax = $("#PRH_WHT_Tax").val();
+    var WHPercent = $("#PRH_WHT_Percent").val();
+
+    var BaseAmount = parseFloat(removeCommas(amount)) + parseFloat(removeCommas(ExpenseTotal));
+    var GstAmount = 0;
+    (async () => {
+        GstAmount = await GetClusterAmount(Cluster, PRHDate, HSNNumber, BaseAmount);
+        row.find("input.PRI_GST_Amount").val(DecimalIndianRupees(GstAmount));
+
+        if (WHTax == "1") {
+            TotalAmount = parseFloat(BaseAmount) + parseFloat(GstAmount);
+            WHTAmount = parseFloat(TotalAmount) * parseFloat(WHPercent) / 100;
+        }
+        else {
+            TotalAmount = parseFloat(BaseAmount);
+            WHTAmount = parseFloat(TotalAmount) * parseFloat(WHPercent) / 100;
+        }
+
+        if (WHTAmount < 0) {
+            WHTAmount = WHTAmount * -1;
+        }
+
+        row.find("input.PRI_WHT_Percent").val(DecimalIndianRupees(WHPercent));
+        row.find("input.PRI_WHT_Amount").val(DecimalIndianRupees(WHTAmount));
+
+        CalculateFooter();
+    })();
+    CalculateIBatch($(this));
+});
+$(document).on('focus', 'tr.NewRow input, tr.NewRow select, tr.NewRow .datepicker', function () {
+    $(this).closest('tr').find('.CheckItem').prop('checked', true);
+    $('.CheckItem').not($(this).closest('tr').find('.CheckItem')).prop('checked', false);
+});
+$(document).on("blur", "input.PRI_Qty", function () {
+    var value = removeCommas($(this).val());
+    var decimalPlaces = $(this).closest('tr').find("input.PRI_DecimalPlaces").val();
+
+    if (value > 0) {
+        value = -value;
+    } else {
+        value = value;
+    }
+
+    $(this).val(NumberToIndianRupees(value, decimalPlaces));
+});
+$(document).on('click', '.GSTView', function () {
+    let CheckedCheckbox = document.querySelector('.CheckItem:checked');
+    if (CheckedCheckbox) {
+        var currentRow = $(CheckedCheckbox).closest('tr.NewRow');
+
+        var PIINumber = currentRow.find('input.PRI_PII_Number').val();
+        var PIHNumber = currentRow.find('input.PRI_PIH_Number').val();
+        var HSNNumber = currentRow.find('select.PRI_HSN_Number').val();
+        var Expensive = currentRow.find('input.PRI_ExpenseValue').val();
+
+        var Cluster = $("#PRH_TaxCluster_Number").val();
+        var PRHDate = $("#PRH_ReturnDate").val();
+
+        var qty = parseFloat(removeCommas(currentRow.find("input.PRI_Qty").val())) || 0;
+        var unitPrice = parseFloat(removeCommas(currentRow.find("input.PRI_UnitPrice").val())) || 0;
+
+        var amo = qty * unitPrice;
+        var amount = DecimalIndianRupees(amo);
+        var BaseAmount = parseFloat(removeCommas(amount)) + parseFloat(removeCommas(Expensive));
+
+        if (PIINumber && PIHNumber) {
+            $.ajax({
+                type: "get",
+                url: "gst/view",
+                data: { Cluster: Cluster, PRHDate: PRHDate, HSN: HSNNumber, BaseAmount: BaseAmount },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    const Table = document.getElementById('GSTTableView');
+                    Table.innerHTML = "";
+
+                    if (Table) {
+                        const TaxView = ClusterTaxView(data);
+                        Table.appendChild(TaxView);
+                    }
+
+                    new bootstrap.Modal($("#GSTView")).show();
+                    $('#GSTView').on('shown.bs.modal', function () {
+                        $(this).find('[autofocus]').focus();
+                    });
+                }
+            });
+        }
+    }
+});
+
+function ClusterTaxView(data) {
+    const table = document.createElement('table');
+    table.classList.add('table', 'table-bordered', 'table-hover', 'align-middle', 'w-100');
+
+    const thead = table.createTHead();
+    const headerRow = thead.insertRow();
+    const headers = ["Tax Index", "Tax Element", "Category", "Type", "Load on Inventory", "Load on Inventory %", "Assessable Value", "Percentage", "Tax Amount",];
+    headers.forEach(headerText => {
+        const th = document.createElement('th');
+        th.textContent = headerText;
+        th.classList.add('table-info');
+        headerRow.appendChild(th);
+    });
+
+    const tbody = table.createTBody();
+    let totalAssessable = 0;
+    let totalTaxAmount = 0;
+
+
+    data.forEach(tax => {
+        const row = tbody.insertRow();
+        const TaxIndexCell = row.insertCell();
+        const TaxElementCell = row.insertCell();
+        const CategoryCell = row.insertCell();
+        const TypeCell = row.insertCell();
+        const LoadonCell = row.insertCell();
+        const LoadonPerCell = row.insertCell();
+        const AssessableCell = row.insertCell();
+        const PercentageCell = row.insertCell();
+        const AmountCell = row.insertCell();
+
+        TaxIndexCell.textContent = tax.taxIndex;
+        TaxElementCell.textContent = tax.taxElement;
+        CategoryCell.textContent = tax.taxCategory;
+        TypeCell.textContent = tax.taxType;
+        LoadonCell.textContent = tax.loadonInventory;
+        LoadonPerCell.textContent = tax.loadonInventoryPercent;
+        AssessableCell.textContent = tax.assessableValue.toFixed(2);
+        AssessableCell.style.textAlign = 'right';
+
+        PercentageCell.textContent = tax.percentage.toFixed(2);
+        PercentageCell.style.textAlign = 'right';
+
+        AmountCell.textContent = tax.amount.toFixed(2);
+        AmountCell.style.textAlign = 'right';
+
+        totalAssessable += tax.assessableValue;
+        totalTaxAmount += tax.amount;
+    });
+
+    const tfoot = table.createTFoot();
+    const footerRow = tfoot.insertRow();
+
+    const footerCells = headers.map(() => footerRow.insertCell());
+    footerCells.forEach(cell => {
+        cell.classList.add('table-info'); // Add the class to each footer cell
+    });
+
+    footerCells[footerCells.length - 2].textContent = `Total:`;
+    footerCells[footerCells.length - 2].style.textAlign = 'right';
+    footerCells[footerCells.length - 1].textContent = totalTaxAmount.toFixed(2);
+    footerCells[footerCells.length - 1].style.textAlign = 'right';
+
+    return table;
+}
+
+function CalAmount() {
+    $("tr.NewRow").each(function () {
+        var row = $(this);
+        var PIINumber = row.find(".PRI_PII_Number").val();
+        var HSNNumber = row.find(".PRI_HSN_Number").val();
+        var isDeleted = row.find(".PRI_IsDeleted").val();
+
+        if (PIINumber && isDeleted !== 'true') {
+            var qty = parseFloat(removeCommas(row.find("input.PRI_Qty").val())) || 0;
+            if (qty > 0) {
+                qty = -qty;
+            } else {
+                qty = qty;
+            }
+            var unitPrice = parseFloat(removeCommas(row.find("input.PRI_UnitPrice").val())) || 0;
+
+            var amo = qty * unitPrice;
+
+            var amount = DecimalIndianRupees(amo);
+            row.find("input.PRI_Amount").val(amount);
+
+            var ExpenseTotal = 0;
+            $("tr.IExNewRow").each(function () {
+                var irow = $(this);
+                var PRI_IsDeleted = $(this).find("input.PRI_EXP_IsDeleted").val() === "true";
+                if (!PRI_IsDeleted) {
+                    var rowPIINumber = irow.find(".PRI_EXP_PII_Number").val();
+
+                    if (rowPIINumber === PIINumber) {
+                        var expenseBase = parseFloat(removeCommas(irow.find(".PRI_EXP_ExpenseValue").val())) || 0;
+
+                        ExpenseTotal += expenseBase;
+                    }
+                }
+            });
+            ExpenseTotal = DecimalIndianRupees(ExpenseTotal);
+            row.find("input.PRI_ExpenseValue").val(ExpenseTotal);
+
+            var Cluster = $("#PRH_TaxCluster_Number").val();
+            if (Cluster === null) {
+                Cluster = $("#PRH_TaxClusterNumber").val();
+            }
+            var PRHDate = $("#PRH_ReturnDate").val();
+
+            var WHNumber = $("#PRH_WHT_Number").val();
+
+            var WHTax = 1;
+            var WHPercent = 0;
+
+            if (WHNumber) {
+                var WHTax = $("#PRH_WHT_Tax").val();
+                var WHPercent = $("#PRH_WHT_Percent").val();
+            }
+
+            var BaseAmount = parseFloat(removeCommas(amount)) + parseFloat(removeCommas(ExpenseTotal));
+
+            var GstAmount = 0;
+            var TotalAmount = 0;
+            var WHTAmount = 0;
+            (async () => {
+                GstAmount = await GetClusterAmount(Cluster, PRHDate, HSNNumber, BaseAmount);
+                row.find("input.PRI_GST_Amount").val(DecimalIndianRupees(GstAmount));
+
+                if (WHTax == "1") {
+                    TotalAmount = parseFloat(BaseAmount) + parseFloat(GstAmount);
+                    WHTAmount = parseFloat(TotalAmount) * parseFloat(WHPercent) / 100;
+                }
+                else {
+                    TotalAmount = parseFloat(BaseAmount);
+                    WHTAmount = parseFloat(TotalAmount) * parseFloat(WHPercent) / 100;
+                }
+                if (WHTAmount < 0) {
+                    WHTAmount = WHTAmount * -1;
+                }
+
+                row.find("input.PRI_WHT_Percent").val(DecimalIndianRupees(WHPercent));
+                row.find("input.PRI_WHT_Amount").val(DecimalIndianRupees(WHTAmount));
+
+                CalculateFooter();
+            })();
+        }
+    });
+
+    CalculateIBatch($(this));
+}
+
+async function GetClusterAmount(Cluster, PRHDate, HSN, BaseAmount) {
+    try {
+        const Amount = await $.ajax({
+            url: 'gst',
+            data: { Cluster: Cluster, PRHDate: PRHDate, HSN: HSN, BaseAmount: BaseAmount },
+            type: 'GET'
+        });
+        return Amount;
+    } catch (error) {
+        return 0;
+    }
+}
+async function CalculateFooter() {
+    var totalQty = 0;
+    var totalPIQty = 0;
+    var totalAmount = 0;
+    var totalExpense = 0;
+    var totalGst = 0;
+    var totalWHT = 0;
+
+    $("tr.NewRow").each(function () {
+        var row = $(this);
+        var PRI_IsDeleted = $(this).find("input[name*='PRI_IsDeleted']").val() === "true";
+        if (!PRI_IsDeleted) {
+            var PIQtyField = row.find(".PRI_PII_Qty").val();
+            var QtyField = row.find(".PRI_Qty").val();
+            var AmountField = row.find(".PRI_Amount").val();
+            var ExpenseField = row.find(".PRI_ExpenseValue").val();
+            var GstField = row.find(".PRI_GST_Amount").val();
+            var WHTtField = row.find(".PRI_WHT_Amount").val();
+
+            totalPIQty += parseFloat(removeCommas(PIQtyField));
+            totalQty += parseFloat(removeCommas(QtyField));
+            totalAmount += parseFloat(removeCommas(AmountField));
+            totalExpense += parseFloat(removeCommas(ExpenseField));
+            totalGst += parseFloat(removeCommas(GstField));
+            totalWHT += parseFloat(removeCommas(WHTtField));
+        }
+    });
+
+    $("#TotalPIQty").val(FormatNumber(totalPIQty.toFixed(2)));
+    $("#TotalQty").val(FormatNumber(totalQty.toFixed(2)));
+    $("#TotalAmount").val(totalAmount.toFixed(2));
+    $("#TotalExpenseValue").val(totalExpense.toFixed(2));
+    $("#TotalGST").val(totalGst.toFixed(2));
+    $("#TotalWHT").val(totalWHT.toFixed(2));
+
+    CalculateExpense();
+
+    var MaterialCost = $("#PRH_MaterialCost");
+    var ItemMiscExpense = $("#PRH_ItemMiscExpense");
+    var HeaderMiscExpense = $("#PRH_HeaderMiscExpense");
+    var GST_Amount = $("#PRH_GST_Amount");
+    var ReturnAmount = $("#PRH_ReturnAmount");
+    var WHT_Amount = $("#PRH_WHT_Amount");
+    var RoundOff = $("#PRH_RoundOff");
+    var VendorReceivable = $("#PRH_VendorReceivable");
+
+    var HeaderExpenseTotal = 0;
+    var HeaderExpenseGst = 0;
+    $("tr.ExNewRow").each(function () {
+        var irow = $(this);
+        var PRI_IsDeleted = $(this).find("input.PRH_EXP_IsDeleted").val() === "true";
+        if (!PRI_IsDeleted) {
+            var expenseBase = parseFloat(removeCommas(irow.find(".PRH_EXP_ExpenseValue").val())) || 0;
+            var expenseGst = parseFloat(removeCommas(irow.find(".PRH_EXP_TaxValue").val())) || 0;
+
+            HeaderExpenseTotal += expenseBase;
+            HeaderExpenseGst += expenseGst;
+        }
+    });
+    totalGst += HeaderExpenseGst;
+
+    var MaterialAmo = parseFloat(totalAmount);
+    var InvoiceAmo = parseFloat(MaterialAmo) + parseFloat(totalExpense) + parseFloat(HeaderExpenseTotal) + parseFloat(totalGst);
+    var Total = parseFloat(InvoiceAmo) + parseFloat(totalWHT);
+    var RoundedValue = customRound(Total);
+    var Rounded = parseFloat(RoundedValue) - parseFloat(Total);
+
+    // totalWHT = -totalWHT;
+
+    MaterialCost.val(MaterialAmo.toFixed(2));
+    ItemMiscExpense.val(totalExpense.toFixed(2));
+    HeaderMiscExpense.val(HeaderExpenseTotal.toFixed(2));
+    GST_Amount.val(totalGst.toFixed(2));
+    ReturnAmount.val(InvoiceAmo.toFixed(2));
+    WHT_Amount.val(totalWHT.toFixed(2));
+
+    RoundOff.val(Rounded.toFixed(2));
+    VendorReceivable.val(RoundedValue.toFixed(2));
+}
+function customRound(number) {
+    let numberStr = String(number);
+    let cleanStr = numberStr.replace(/,/g, '');
+    let num = parseFloat(cleanStr);
+    if (isNaN(num)) {
+        return 0;
+    }
+    return Math.round(num);
+}
+
+window.onload = CalculateFooter();
+
+function FormatNumber(num) {
+    const numberValue = Number(num);
+    if (isNaN(numberValue)) {
+        return 0;
+    }
+    if (Number.isInteger(numberValue)) {
+        return numberValue.toString();
+    } else {
+        return numberValue.toString();
+    }
+}
+
+function SearchWHT() {
+    var Vendor = $("#PRH_Vendor_Number").val();
+    var PRHDate = $("#PRH_ReturnDate").val();
+    var WHTax = $("#PRH_WHT_Number").val();
+
+    GetWHT(Vendor, WHTax, PRHDate);
+}
+function GetWHT(Vendor, WHTax, PRHDate) {
+    $.ajax({
+        type: "get",
+        url: "wht",
+        data: { Vendor: Vendor, WHTNumber: WHTax, PRHDate: PRHDate },
+        datatype: "json",
+        traditional: true,
+        success: function (data) {
+            if (data != null) {
+                $("#PRH_WHT_Tax").val(data.tax);
+                $("#PRH_WHT_Percent").val(data.percentage);
+            }
+            else {
+                $("#PRH_WHT_Tax").val(1);
+                $("#PRH_WHT_Percent").val(0);
+            }
+            CalAmount();
+        }
+    });
+}
+
+function SearchGST() {
+    CalAmount();
+}
+
+flatpickr(".datepicker", {
+    dateFormat: "d-M-Y",
+    altInput: false,
+    onChange: function () {
+        GetVendor();
+    }
+});
+
+function GetVendor() {
+    var vendor = $("#PRH_Vendor_Number").val();;
+    var PRHDate = $("#PRH_ReturnDate").val();
+    var isChecked = $("#PRH_ImportOrder").prop("checked");
+    var Import;
+
+    if (isChecked) {
+        Import = true;
+    } else {
+        Import = false;
+    }
+
+    if (vendor) {
+        $.ajax({
+            url: 'vendor/get',
+            data: { Vendor: vendor, PRHDate: PRHDate, Import: Import },
+            type: 'GET',
+            success: function (ven) {
+                var vengo = 0;
+                var vendorna = ven.vendorName;
+                var vendor = $("#PRHVendor").val();
+                if (vendor == '') {
+                    vengo = 1;
+                }
+                else if (vendor === vendorna) {
+                    vengo = 1;
+                }
+                else {
+                    let rowCount = $("tr.NewRow").length;
+                    if (rowCount > 0) {
+                        if (confirm("Do you want to change the Vendor Name? This action will clear all existing items.")) {
+
+                            $("tr.NewRow").each(function () {
+                                $(this).find("input.PII_IsDeleted").val("false");
+                                $(this).hide();
+                            });
+                            $("tr.ExNewRow").each(function () {
+                                $(this).find("input.PIH_EXP_IsDeleted").val("false");
+                                $(this).hide();
+                            });
+                            $("tr.IExNewRow").each(function () {
+                                $(this).find("input.PII_EXP_IsDeleted").val("false");
+                                $(this).hide();
+                            });
+
+                            vengo = 1;
+                        }
+                        else {
+                            $(inputElement).val(vendor);
+                        }
+                    }
+                    else { vengo = 1; }
+                }
+
+                $("#PRH_Vendor").val(ven.vendorName);
+                $("#PRHVendor").val(ven.vendorName);
+                $("#PRH_Vendor_Number").val(ven.vendorNumber);
+                $("#PRH_Currency").val(ven.currencyCode);
+                $("#PRH_Currency_Number").val(ven.currency);
+                $("#PRH_VendorLocation").val(ven.vendorLocation);
+                $("#PRH_WHT_Number").val(ven.withholdTax);
+                $("#PRH_CreditDays").val(ven.creditDays);
+                $("#PRH_PaymentBase").val(ven.paymentBase);
+
+                SearchClustor(ven.vendorNumber, ven.taxNumber);
+                GetWHT(ven.vendorNumber, ven.withholdTax, PRHDate);
+
+                var Credit = $("#PRH_CreditDays").val();
+
+
+                CalculateExpense();
+            },
+            error: function () {
+            }
+        });
+    }
+}
+
+async function CalculateExpense() {
+    $("tr.ExNewRow").each(function () {
+        var row = $(this);
+        var IsDeleted = $(this).find("input.PRH_EXP_IsDeleted").val() === "true";
+        if (!IsDeleted) {
+            ExAssignValue($(this));
+        }
+    });
+}
+async function CalculateIExpense(currentInput) {
+    var currentRow = currentInput.closest('tr.NewRow');
+
+    var PIINumber = currentRow.find('input.PRI_PII_Number').val();
+    var PIHNumber = currentRow.find('input.PRI_PIH_Number').val();
+    var Qty = removeCommas(currentRow.find('input.PRI_Qty').val());
+    var MatrialValue = removeCommas(currentRow.find('input.PRI_Amount').val());
+    var IsDeleted = currentRow.find('input.PRI_IsDeleted').val();
+
+    if (PIINumber && IsDeleted !== "true") {
+        var cout = 0;
+        $("tr.IExNewRow").each(function () {
+            var RowPIINumber = $(this).find("input.PRI_EXP_PII_Number").val();
+            var RowPIHNumber = $(this).find("input.PRI_EXP_PIH_Number").val();
+            var isDeleted = $(this).find("input.PRI_EXP_IsDeleted").val();
+
+            if (RowPIINumber === PIINumber && RowPIHNumber === PIHNumber && isDeleted !== 'true') {
+
+                var Charge = $(this).find("select.PRI_EXP_CM_Number").val();
+
+                if (Charge === "1") {
+                    var ExpenseBase = parseFloat(removeCommas($(this).find("input.PRI_EXP_ExpenseBase").val())) || 0;
+                    if (ExpenseBase > 0) {
+                        ExpenseBase = -ExpenseBase;
+                    } else {
+                        ExpenseBase = ExpenseBase;
+                    }
+                    $(this).find("input.PRI_EXP_ExpenseValue").val(DecimalIndianRupees(ExpenseBase));
+                }
+                else if (Charge === "2") {
+                    var ExpenseBase = parseFloat(removeCommas($(this).find("input.PRI_EXP_ExpenseBase").val())) || 0;
+                    if (Qty > 0) {
+                        Qty = -Qty;
+                    } else {
+                        Qty = Qty;
+                    }
+                    var ExpenseValue = Qty * ExpenseBase;
+                    $(this).find("input.PRI_EXP_ExpenseValue").val(DecimalIndianRupees(ExpenseValue));
+                }
+                else if (Charge === "3") {
+                    var ExpenseBase = parseFloat(removeCommas($(this).find("input.PRI_EXP_ExpenseBase").val())) || 0;
+                    var ExpenseValue = MatrialValue * ExpenseBase / 100;
+                    $(this).find("input.PRI_EXP_ExpenseValue").val(DecimalIndianRupees(ExpenseValue));
+                }
+
+                cout++;
+            }
+        });
+    }
+}
+async function CalculateIBatch(currentInput) {
+    var currentRow = currentInput.closest('tr.NewRow');
+
+    var PIINumber = currentRow.find("input.PRI_PII_Number").val();
+    var PIHNumber = currentRow.find("input.PRI_PIH_Number").val();
+    var Qty = parseFloat(removeCommas(currentRow.find('input.PRI_Qty').val())) || 0;
+    var MatrialValue = parseFloat(removeCommas(currentRow.find('input.PRI_Amount').val())) || 0;
+
+    var BTotalQty = 0;
+    var BTotalMatrial = 0;
+    var BExpense = 0;
+    var BIExpense = 0;
+    var BUnitPrice = 0;
+
+    $("tr.NewRow").each(function () {
+        var row = $(this);
+        var PIINumber = row.find("input.PRI_PII_Number").val();
+        var PIHNumber = row.find("input.PRI_PIH_Number").val();
+        var isDeleted = row.find("input.PRI_IsDeleted").val();
+
+        if (PIHNumber && isDeleted !== 'true') {
+            BTotalQty = parseFloat(removeCommas(row.find("input.PRI_Qty").val())) || 0;
+            BTotalMatrial = parseFloat(removeCommas(row.find("input.PRI_Amount").val())) || 0;
+        }
+    });
+
+    $("tr.ExNewRow").each(function () {
+        var row = $(this);
+        var isDeleted = $(this).find("input.PRH_EXP_IsDeleted").val();
+        if (!isDeleted) {
+            var EXPPIHNumber = row.find("input.PRH_EXP_PIH_Number").val();
+            var Charge = row.find("select.PRH_EXP_CM_Number").val();
+            var Allocate = row.find("select.PRH_EXP_Allocate_Number").val();
+            var ExpenseValue = parseFloat(removeCommas(row.find("input.PRH_EXP_ExpenseValue").val())) || 0;
+            var ExpenseBase = parseFloat(removeCommas(row.find("input.PRH_EXP_ExpenseBase").val())) || 0;
+
+            if (PIHNumber === EXPPIHNumber) {
+                if (Allocate == "1") {
+                    if (Charge === "1") {
+                        BExpense += parseFloat(parseFloat(ExpenseValue) / parseFloat(BTotalMatrial)) * parseFloat(MatrialValue);
+                    }
+                    else if (Charge === "2") {
+                        BExpense += parseFloat(Qty) * parseFloat(ExpenseBase);
+                    }
+                    else if (Charge === "3") {
+                        BExpense += parseFloat(MatrialValue) * parseFloat(ExpenseBase) / 100;
+                    }
+                }
+            }
+        }
+    });
+
+    if (PIINumber) {
+        $("tr.IExNewRow").each(function () {
+            var row = $(this);
+            var EXPPIINumber = row.find('input.PRI_EXP_PII_Number').val();
+            var EXPPIHNumber = row.find('input.PRI_EXP_PIH_Number').val();
+            var PRI_IsDeleted = row.find("input.PRI_EXP_IsDeleted").val();
+
+            if (EXPPIINumber === PIINumber && EXPPIHNumber === PIHNumber && PRI_IsDeleted !== 'true') {
+                var Allocate = row.find("select.PRI_EXP_Allocate_Number").val();
+                var ExpenseValue = parseFloat(removeCommas(row.find("input.PRI_EXP_ExpenseValue").val())) || 0;
+                var ExpenseBase = parseFloat(removeCommas(row.find("input.PRI_EXP_ExpenseBase").val())) || 0;
+
+                if (Allocate == "1") {
+                    BIExpense += ExpenseValue;
+                }
+            }
+        });
+    }
+
+    BUnitPrice = (BExpense + BIExpense + MatrialValue) / Qty;
+
+    $("tr.IBatNewRow").each(function () {
+        var irow = $(this);
+        var RowPIINumber = irow.find("input.PRI_BCH_PII_Number").val();
+        var RowPIHNumber = irow.find("input.PRI_BCH_PIH_Number").val();
+        var isDeleted = irow.find("input.PRI_BCH_IsDeleted").val();
+
+        if (RowPIINumber === PIINumber && RowPIHNumber === PIHNumber && PRI_BCH_IsDeleted !== 'true') {
+            var BtQty = parseFloat(removeCommas(irow.find("input.PRI_BCH_Qty").val())) || 0;
+            var BtBatchValue = BtQty * BUnitPrice;
+
+            irow.find("input.PRI_BCH_UnitPrice").val(DecimalIndianRupees(BUnitPrice));
+            irow.find("input.PRI_BCH_Value").val(DecimalIndianRupees(BtBatchValue));
+        }
+    });
+}

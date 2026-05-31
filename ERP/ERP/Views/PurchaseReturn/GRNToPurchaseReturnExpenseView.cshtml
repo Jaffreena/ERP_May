@@ -1,0 +1,363 @@
+﻿@model List<ERP_DTO.GRNToPurchaseReturnExpense_DTO>
+
+<table class="table table-bordered rounded-0 table-hover align-middle w-100">
+    <thead>
+        <tr class="table-info">
+            <th>Supplier Invoice No.</th>
+            <th>Order No</th>
+            <th>Expense Code</th>
+            <th>Description</th>
+            <th>Remarks</th>
+            <th>Occurrence</th>
+            <th>Chargeable method</th>
+            <th>Expense Base</th>
+            <th>Expense Value</th>
+            <th>Allocate</th>
+            <th>Ledger account</th>
+            <th>Tax calculating</th>
+            <th>Tax Value</th>
+            <th></th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody id="ExTableBody">
+        <tr id="ExTempRow" style="display: none;">
+            <td>
+                <input id="PRH_EXP_PIH_OrderNo" class="form-control PRH_EXP_PIH_OrderNo" readonly />
+            </td>
+            <td>
+                <input id="PRH_EXP_POH_OrderNo" class="form-control PRH_EXP_POH_OrderNo" readonly />
+                <input id="PRH_EXP_POH_Number" type="hidden" class="form-control PRH_EXP_POH_Number" readonly />
+            </td>
+            <td>
+                <select id="PRH_EXP_Expense_Number" class="form-select PRH_EXP_Expense_Number" disabled asp-items="@ViewBag.ExpenseCode"></select>
+            </td>
+            <td>
+                <input id="PRH_EXP_Description" class="form-control PRH_EXP_Description" readonly autocomplete="off" />
+                <input id="PRH_EXP_PIH_Number" class="form-control PRH_EXP_PIH_Number" type="hidden" readonly autocomplete="off" />
+                <input id="PRH_EXP_Number" class="form-control PRH_EXP_Number" type="hidden" readonly autocomplete="off" />
+            </td>
+            <td>
+                <input id="PRH_EXP_Remarks" class="form-control PRH_EXP_Remarks" autocomplete="off" />
+            </td>
+            <td>
+                <select disabled id="PRH_EXP_Occurrence_Number" class="form-select PRH_EXP_Occurrence_Number" asp-items="@ViewBag.Occurrence"></select>
+            </td>
+            <td>
+                <select disabled id="PRH_EXP_CM_Number" class="form-select PRH_EXP_CM_Number" asp-items="@ViewBag.ChargeableMethod"></select>
+            </td>
+            <td>
+                <input id="PRH_EXP_ExpenseBase" class="form-control PRH_EXP_ExpenseBase decimal text-end" autocomplete="off" />
+            </td>
+            <td>
+                <input id="PRH_EXP_ExpenseValue" class="form-control PRH_EXP_ExpenseValue decimal text-end" readonly />
+            </td>
+            <td>
+                <select disabled id="PRH_EXP_Allocate_Number" class="form-select PRH_EXP_Allocate_Number" asp-items="@ViewBag.Allocate"></select>
+            </td>
+            <td>
+                <input id="PRH_EXP_LA_Number" class="form-control PRH_EXP_LA_Number" readonly autocomplete="off" />
+            </td>
+            <td>
+                <select disabled id="PRH_EXP_TaxCalculate" class="form-select PRH_EXP_TaxCalculate" asp-items="@ViewBag.IsCalculate"></select>
+            </td>
+            <td>
+                <input id="PRH_EXP_TaxValue" class="form-control PRH_EXP_TaxValue decimal text-end" readonly autocomplete="off" />
+                <input id="PRH_EXP_SAC_Number" class="form-control PRH_EXP_SAC_Number" autocomplete="off" type="hidden" />
+            </td>
+            <td><a id="HeaderTaxView" class="btn btn-primary btn-sm TaxView">Tax View</a></td>
+            <td>
+                <input type="hidden" name="PRH_EXP_IsDeleted" class="PRH_EXP_IsDeleted" value="false" />
+                <a class="ExRowRemove btn btn-sm btn-danger p-1 icon-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                    </svg>
+                </a>
+            </td>
+        </tr>
+
+        @if (Model != null)
+        {
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <tr class="ExNewRow" style="@(@Model[i].PRH_EXP_IsDeleted == "true" ? "display: none;":"")">
+                    <td>
+                        <input id="PRH_EXP_PIH_OrderNo" name="Expenses[@i].PRH_EXP_PIH_OrderNo" readonly class="form-select PRH_EXP_PIH_OrderNo" value="@Model[i].PRH_EXP_PIH_OrderNo" />
+                    </td>
+                    <td>
+                        <input id="PRH_EXP_POH_OrderNo" name="Expenses[@i].PRH_EXP_POH_OrderNo" readonly class="form-select PRH_EXP_POH_OrderNo" value="@Model[i].PRH_EXP_POH_OrderNo" />
+                        <input id="PRH_EXP_POH_Number" type="hidden" name="Expenses[@i].PRH_EXP_POH_Number" readonly class="form-select PRH_EXP_POH_Number" value="@Model[i].PRH_EXP_POH_Number" />
+                    </td>
+                    <td>
+                        <select disabled id="PRH_EXP_Expense_Number" name="Expenses[@i].PRH_EXP_Expense_Number" class="form-select PRH_EXP_Expense_Number">
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.ExpenseCode)
+                            {
+                                if (item.Value == Model[i].PRH_EXP_Expense_Number)
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input id="PRH_EXP_Description" name="Expenses[@i].PRH_EXP_Description" readonly class="form-control PRH_EXP_Description" autocomplete="off" value="@Model[i].PRH_EXP_Description" />
+                    </td>
+                    <td>
+                        <input id="PRH_EXP_Remarks" name="Expenses[@i].PRH_EXP_Remarks" class="form-control PRH_EXP_Remarks" autocomplete="off" value="@Model[i].PRH_EXP_Remarks" />
+                    </td>
+                    <td>
+                        <select disabled id="PRH_EXP_Occurrence_Number" name="Expenses[@i].PRH_EXP_Occurrence_Number" class="form-select PRH_EXP_Occurrence_Number">
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Occurrence)
+                            {
+                                if (item.Value == Model[i].PRH_EXP_Occurrence_Number)
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <select disabled id="PRH_EXP_CM_Number" name="Expenses[@i].PRH_EXP_CM_Number" class="form-select PRH_EXP_CM_Number">
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.ChargeableMethod)
+                            {
+                                if (item.Value == Model[i].PRH_EXP_CM_Number)
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input id="PRH_EXP_ExpenseBase" name="Expenses[@i].PRH_EXP_ExpenseBase" class="form-control PRH_EXP_ExpenseBase decimal" autocomplete="off" value="@Model[i].PRH_EXP_ExpenseBase" />
+                    </td>
+                    <td>
+                        <input id="PRH_EXP_ExpenseValue" name="Expenses[@i].PRH_EXP_ExpenseValue" class="form-control PRH_EXP_ExpenseValue decimal text-end" readonly value="@Model[i].PRH_EXP_ExpenseValue" />
+                    </td>
+                    <td>
+                        <select disabled id="PRH_EXP_Allocate_Number" name="Expenses[@i].PRH_EXP_Allocate_Number" class="form-select PRH_EXP_Allocate_Number">
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Allocate)
+                            {
+                                if (item.Value == Model[i].PRH_EXP_Allocate_Number)
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input id="PRH_EXP_LA_Number" name="Expenses[@i].PRH_EXP_LA_Number" readonly class="form-control PRH_EXP_LA_Number" autocomplete="off" value="@Model[i].PRH_EXP_LA_Number" />
+                    </td>
+
+                    <td>
+                        <select disabled id="PRH_EXP_TaxCalculate" name="Expenses[@i].PRH_EXP_TaxCalculate" class="form-select PRH_EXP_TaxCalculate">
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.IsCalculate)
+                            {
+                                if (item.Value == Model[i].PRH_EXP_TaxCalculate)
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input id="PRH_EXP_TaxValue" name="Expenses[@i].PRH_EXP_TaxValue" class="form-control PRH_EXP_TaxValue decimal text-end" autocomplete="off" readonly value="@Model[i].PRH_EXP_TaxValue" />
+                        <input id="PRH_EXP_SAC_Number" name="Expenses[@i].PRH_EXP_SAC_Number" class="form-control PRH_EXP_SAC_Number" type="hidden" autocomplete="off" readonly value="@Model[i].PRH_EXP_SAC_Number" />
+                    </td>
+                    <td><a id="HeaderTaxView" class="btn btn-primary btn-sm TaxView">Tax View</a></td>
+                    <td>
+                        <input name="Expenses[@i].PRH_EXP_Number" type="hidden" class="PRH_EXP_Number" value="@Model[i].PRH_EXP_Number" />
+                        <input name="Expenses[@i].PRH_EXP_PIH_Number" type="hidden" class="PRH_EXP_PIH_Number" value="@Model[i].PRH_EXP_PIH_Number" />
+                        <input type="hidden" name="Expenses[@i].PRH_EXP_IsDeleted" class="PRH_EXP_IsDeleted" value="@Model[i].PRH_EXP_IsDeleted" />
+                        <a class="ExRowRemove btn btn-sm btn-danger p-1 icon-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                            </svg>
+                        </a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+<script>
+    var ExrowCount = @(Model != null ? Model.Count : 0);
+    var isAddingRow = false;
+
+    function ExAddRow(Inv) {
+        var ExNewRow = $("#ExTempRow").clone().removeAttr("style").removeAttr("id").addClass("ExNewRow");
+        ExNewRow.find("input.PRH_EXP_Number").attr("name", "Expenses[" + ExrowCount + "].PRH_EXP_Number").val(Inv.piH_EXP_Number);
+        ExNewRow.find("input.PRH_EXP_PIH_Number").attr("name", "Expenses[" + ExrowCount + "].PRH_EXP_PIH_Number").val(Inv.piH_EXP_PIH_Number);
+        ExNewRow.find("input.PRH_EXP_PIH_OrderNo").attr("name", "Expenses[" + ExrowCount + "].PRH_EXP_PIH_OrderNo").val(Inv.piH_EXP_PIH_InvoiceNo);
+        ExNewRow.find("input.PRH_EXP_POH_OrderNo").attr("name", "Expenses[" + ExrowCount + "].PRH_EXP_POH_OrderNo").val(Inv.piH_EXP_POH_OrderNo);
+        ExNewRow.find("input.PRH_EXP_POH_Number").attr("name", "Expenses[" + ExrowCount + "].PRH_EXP_POH_Number").val(Inv.piH_EXP_POH_Number);
+        ExNewRow.find("select.PRH_EXP_Expense_Number").attr("name", "Expenses[" + ExrowCount + "].PRH_EXP_Expense_Number").val(Inv.piH_EXP_Expense_Number);
+        ExNewRow.find("input.PRH_EXP_Description").attr("name", "Expenses[" + ExrowCount + "].PRH_EXP_Description").val(Inv.piH_EXP_Description);
+        ExNewRow.find("input.PRH_PRH_EXP_Remarks").attr("name", "Expenses[" + ExrowCount + "].PRH_PRH_EXP_Remarks").val(Inv.piH_EXP_Remarks);
+        ExNewRow.find("select.PRH_EXP_Occurrence_Number").attr("name", "Expenses[" + ExrowCount + "].PRH_EXP_Occurrence_Number").val(Inv.piH_EXP_Occurrence_Number);
+        ExNewRow.find("select.PRH_EXP_CM_Number").attr("name", "Expenses[" + ExrowCount + "].PRH_EXP_CM_Number").val(Inv.piH_EXP_CM_Number);
+        ExNewRow.find("input.PRH_EXP_ExpenseBase").attr("name", "Expenses[" + ExrowCount + "].PRH_EXP_ExpenseBase").val(Inv.piH_EXP_ExpenseBase);
+        ExNewRow.find("input.PRH_EXP_ExpenseValue").attr("name", "Expenses[" + ExrowCount + "].PRH_EXP_ExpenseValue").val(-Inv.piH_EXP_ExpenseValue);
+        ExNewRow.find("select.PRH_EXP_Allocate_Number").attr("name", "Expenses[" + ExrowCount + "].PRH_EXP_Allocate_Number").val(Inv.piH_EXP_Allocate_Number);
+        ExNewRow.find("input.PRH_EXP_LA_Number").attr("name", "Expenses[" + ExrowCount + "].PRH_EXP_LA_Number").val(Inv.piH_EXP_LA_Number);
+        ExNewRow.find("select.PRH_EXP_TaxCalculate").attr("name", "Expenses[" + ExrowCount + "].PRH_EXP_TaxCalculate").val(Inv.piH_EXP_TaxCalculate);
+        ExNewRow.find("input.PRH_EXP_TaxValue").attr("name", "Expenses[" + ExrowCount + "].PRH_EXP_TaxValue").val(-Inv.piH_EXP_TaxValue);
+        ExNewRow.find("input.PRH_EXP_SAC_Number").attr("name", "Expenses[" + ExrowCount + "].PRH_EXP_SAC_Number").val(Inv.piH_EXP_SAC_Number);
+        ExNewRow.find("input.PRH_EXP_IsDeleted").attr("name", "Expenses[" + ExrowCount + "].PRH_EXP_IsDeleted").val("false");
+
+        $("#ExTableBody").append(ExNewRow);
+        ExrowCount++;
+    }
+
+    $(document).on('click', '.ExRowRemove', function () {
+        $(this).closest('tr').find("input.PRH_EXP_IsDeleted").val("true");
+        $(this).closest('tr').hide();
+    });
+
+    $(document).on('click', '#ExCloseButton', function () {
+        $("#Expense").modal('hide');
+
+        CalAmount();
+    });
+
+    function ExAssignValue(currentInput) {
+        var row = currentInput.closest("tr.ExNewRow");
+        var ExpenseValue = 0;
+
+        var Charge = row.find("select.PRH_EXP_CM_Number").val();
+        var PIHNumber = row.find("input.PRH_EXP_PIH_Number").val();
+        var POHNumber = row.find("input.PRH_EXP_POH_Number").val();
+        var isGst = row.find("select.PRH_EXP_TaxCalculate").val();
+        var ExpenseBase = parseFloat(removeCommas(row.find("input.PRH_EXP_ExpenseBase").val())) || 0;
+        var ExpenseValue = 0;
+
+        var ItemQty = 0;
+        var ItemAmount = 0;
+        $("tr.NewRow").each(function () {
+            var irow = $(this);
+            var rowPIHNumber = irow.find(".PRI_PIH_Number").val();
+            var rowPOHNumber = irow.find(".PRI_POH_Number").val();
+            var isDeleted = irow.find("input.PRI_EXP_IsDeleted").val();
+
+            if (rowPIHNumber === PIHNumber && rowPOHNumber === POHNumber && isDeleted !== 'true') {
+                var Qty = parseFloat(removeCommas(irow.find(".PRI_Qty").val())) || 0;
+                var Amount = parseFloat(removeCommas(irow.find(".PRI_Amount").val())) || 0;
+
+                ItemQty += Qty;
+                ItemAmount += Amount;
+            }
+        });
+
+        if (Charge === "1") {
+            var ExpenseBase = parseFloat(removeCommas(row.find("input.PRH_EXP_ExpenseBase").val())) || 0;
+            if (ExpenseBase > 0) {
+                ExpenseBase = -ExpenseBase;
+            } else {
+                ExpenseBase = ExpenseBase;
+            }
+            ExpenseValue = ExpenseBase;
+            row.find("input.PRH_EXP_ExpenseValue").val(DecimalIndianRupees(ExpenseBase));
+        }
+        else if (Charge === "2") {
+            var ExpenseBase = parseFloat(removeCommas(row.find("input.PRH_EXP_ExpenseBase").val())) || 0;
+            if (ItemQty > 0) {
+                ItemQty = -ItemQty;
+            } else {
+                ItemQty = ItemQty;
+            }
+            ExpenseValue = ItemQty * ExpenseBase;
+            row.find("input.PRH_EXP_ExpenseValue").val(DecimalIndianRupees(ExpenseValue));
+        }
+        else if (Charge === "3") {
+            var ExpenseBase = parseFloat(removeCommas(row.find("input.PRH_EXP_ExpenseBase").val())) || 0;
+            ExpenseValue = ItemAmount * ExpenseBase / 100;
+            row.find("input.PRH_EXP_ExpenseValue").val(DecimalIndianRupees(ExpenseValue));
+        }
+        var Cluster = $("#PRH_TaxCluster_Number").val();
+        if (Cluster === null) {
+            Cluster = $("#PRH_TaxClusterNumber").val();
+        }
+        var GRNDate = $("#PRH_ReturnDate").val();
+        var SACNumber = row.find("input.PRH_EXP_SAC_Number").val();
+
+        if (isGst === "2") {
+            (async () => {
+                var GstAmount = await GetClusterExpenseAmount(Cluster, GRNDate, SACNumber, ExpenseValue);
+
+                row.find("input.PRH_EXP_TaxValue").val(DecimalIndianRupees(GstAmount));
+            })();
+        }
+        else {
+            var GstAmount = 0;
+            row.find("input.PRH_EXP_TaxValue").val(DecimalIndianRupees(GstAmount));
+        }
+    }
+
+    $(document).on('click', '.TaxView', function () {
+        var currentRow = $(this).closest('tr.ExNewRow');
+
+        var Cluster = $("#PRH_TaxCluster_Number").val();
+        var GRNDate = $("#PRH_ReturnDate").val();
+        var SACNumber = currentRow.find("input.PRH_EXP_SAC_Number").val();
+        var ExpenseValue = currentRow.find("input.PRH_EXP_ExpenseValue").val();
+
+        $.ajax({
+            type: "get",
+            url: "expense/gst/view",
+            data: { Cluster: Cluster, GRNDate: GRNDate, SAC: SACNumber, BaseAmount: ExpenseValue },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                const Table = document.getElementById('TaxTableView');
+                Table.innerHTML = "";
+
+                if (Table) {
+                    const TaxView = ClusterTaxView(data);
+                    Table.appendChild(TaxView);
+                }
+
+                new bootstrap.Modal($("#TaxView")).show();
+                $('#TaxView').on('shown.bs.modal', function () {
+                    $(this).find('[autofocus]').focus();
+                });
+            }
+        });
+    });
+
+    async function GetClusterExpenseAmount(Cluster, GRNDate, SACNumber, BaseAmount) {
+        const Amount = await $.ajax({
+            url: 'expense/gst',
+            data: { Cluster: Cluster, GRNDate: GRNDate, SAC: SACNumber, BaseAmount: BaseAmount },
+            type: 'GET'
+        });
+        return Amount;
+    }
+</script>
+<style>
+    .search-results {
+        position: absolute;
+        z-index: 1000;
+        overflow-y: auto;
+        width: 400px;
+        max-height: 300px;
+    }
+</style>

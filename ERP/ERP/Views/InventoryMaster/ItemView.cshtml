@@ -1,0 +1,168 @@
+﻿@model ERP_DTO.ItemHead_DTO
+
+
+@if (Model.ItemNumber != 0)
+{
+    <input asp-for="ItemNumber" type="hidden" class="Number" />
+}
+<div class="col-12 col-xl-9">
+    <div class="row">
+        <div class="col-12 col-sm-3 col-lg-2 mb-3">
+            <label asp-for="ItemCode" class="control-label"></label>
+            <input asp-for="ItemCode" class="form-control Key KeyDup" autofocus="true" autocomplete="off" />
+        </div>
+        <div class="col-12 col-sm-5 col-lg-4 mb-3">
+            <label asp-for="ItemDescription" class="control-label"></label>
+            <input asp-for="ItemDescription" class="form-control Key" autocomplete="off" />
+        </div>
+        <div class="col-12 col-sm-4 col-lg-3 mb-3">
+            <label asp-for="ItemPartNumber" class="control-label"></label>
+            <input asp-for="ItemPartNumber" class="form-control Key" autofocus="true" autocomplete="off" />
+        </div>
+    </div>
+</div>
+<div class="col-12">
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="specifications-tab" data-bs-toggle="tab" data-bs-target="#specifications-tab-pane" type="button" role="tab" aria-controls="specifications-tab-pane" aria-selected="true">Specifications</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="division-tab" data-bs-toggle="tab" data-bs-target="#division-tab-pane" type="button" role="tab" aria-controls="division-tab-pane" aria-selected="false">Division</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="Warehouse-tab" data-bs-toggle="tab" data-bs-target="#Warehouse-tab-pane" type="button" role="tab" aria-controls="Warehouse-tab-pane" aria-selected="false">Warehouse</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="Reference-tab" data-bs-toggle="tab" data-bs-target="#Reference-tab-pane" type="button" role="tab" aria-controls="Reference-tab-pane" aria-selected="false">Reference</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="UoM-tab" data-bs-toggle="tab" data-bs-target="#UoM-tab-pane" type="button" role="tab" aria-controls="UoM-tab-pane" aria-selected="false">UoM</button>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane fade show active p-3 pb-0 border border-top-0" id="specifications-tab-pane" role="tabpanel" aria-labelledby="specifications-tab" tabindex="0">
+            <div class="row">
+                <div class="col-12 col-sm-4 col-lg-2 mb-3">
+                    <label asp-for="InnerDia" class="control-label"></label>
+                    <input asp-for="InnerDia" class="form-control Key" autofocus="true" autocomplete="off" />
+                </div>
+                <div class="col-12 col-sm-4 col-lg-2 mb-3">
+                    <label asp-for="OuterDia" class="control-label"></label>
+                    <input asp-for="OuterDia" class="form-control Key" autofocus="true" autocomplete="off" />
+                </div>
+                <div class="col-12 col-sm-4 col-lg-2 mb-3">
+                    <label asp-for="Thickness" class="control-label"></label>
+                    <input asp-for="Thickness" class="form-control Key" autofocus="true" autocomplete="off" />
+                </div>
+                <div class="col-12 col-sm-4 col-lg-2 mb-3">
+                    <label asp-for="Length" class="control-label"></label>
+                    <input asp-for="Length" class="form-control Key" autofocus="true" autocomplete="off" />
+                </div>
+                <div class="col-12 col-sm-4 col-lg-2 mb-3">
+                    <label asp-for="Spec" class="control-label"></label>
+                    <input asp-for="Spec" class="form-control Key" autofocus="true" autocomplete="off" />
+                </div>
+                <div class="col-12 col-sm-4 col-lg-2 mb-3">
+                    <label asp-for="MaterialGrade" class="control-label"></label>
+                    <input asp-for="MaterialGrade" class="form-control Key" autofocus="true" autocomplete="off" />
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade p-3 pb-0 border border-top-0" id="division-tab-pane" role="tabpanel" aria-labelledby="division-tab" tabindex="0">
+            <div class="row">
+                <div class="col-12 col-xl-8">
+                    <div class="row">
+                        <div class="col-12 col-md-3 mb-3">
+                            <label asp-for="ItemGroup" class="control-label"></label>
+                            <select asp-for="ItemGroup" class="form-select" asp-items="@ViewBag.ItemGroup"></select>
+                        </div>
+                        <div class="col-12 col-md-3 mb-3">
+                            <label asp-for="ItemCategory" class="control-label"></label>
+                            <select asp-for="ItemCategory" class="form-select" asp-items="@ViewBag.ItemCategory"></select>
+                        </div>
+                        <div class="col-12 col-md-3 mb-3">
+                            <label asp-for="ItemSubCategory" class="control-label"></label>
+                            <select asp-for="ItemSubCategory" class="form-select" asp-items="@ViewBag.ItemSubCategory"></select>
+                        </div>
+                        <div class="col-12 col-md-3 mb-3">
+                            <label asp-for="MaterialSegregation" class="control-label"></label>
+                            <select asp-for="MaterialSegregation" class="form-select" asp-items="@ViewBag.MaterialSegregation"></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade p-3 pb-0 border border-top-0" id="Warehouse-tab-pane" role="tabpanel" aria-labelledby="Warehouse-tab" tabindex="0">
+
+            <div class="row">
+                <div class="col-12 col-xl-8">
+                    <div class="row">
+                        <div class="col-12 col-md-3 mb-3">
+                            <label asp-for="PurchaseWarehouse" class="control-label"></label>
+                            <select asp-for="PurchaseWarehouse" class="form-select" asp-items="@ViewBag.Warehouse"></select>
+                        </div>
+                        <div class="col-12 col-md-3 mb-3">
+                            <label asp-for="SaleWarehouse" class="control-label"></label>
+                            <select asp-for="SaleWarehouse" class="form-select" asp-items="@ViewBag.Warehouse"></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade p-3 pb-0 border border-top-0" id="Reference-tab-pane" role="tabpanel" aria-labelledby="Reference-tab" tabindex="0">
+            <div class="mb-3">
+                <div class="row">
+                    <div class="col-12 col-md-2 mb-0">
+                        <label asp-for="HSN_Code" class="control-label"></label>
+                        <div class="clearfix"></div>
+                        <select asp-for="HSN_Code" class="form-select form-search" asp-items="@ViewBag.HSN" data-live-search="true"></select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade p-3 pb-0 border border-top-0" id="UoM-tab-pane" role="tabpanel" aria-labelledby="UoM-tab" tabindex="0">
+            <div class="row">
+                <div class="col-12 col-xl-8">
+                    <div class="row">
+                        <div class="col-12 col-md-3 mb-3">
+                            <label asp-for="UoM" class="control-label"></label>
+                            <select asp-for="UoM" class="form-select" asp-items="@ViewBag.UOM"></select>
+                        </div>
+                        <div class="col-12 col-md-3 mb-3">
+                            <label asp-for="PurchaseUnit" class="control-label"></label>
+                            <select asp-for="PurchaseUnit" class="form-select" asp-items="@ViewBag.UOM"></select>
+                        </div>
+                        <div class="col-12 col-md-3 mb-3">
+                            <label asp-for="ProductionUnit" class="control-label"></label>
+                            <select asp-for="ProductionUnit" class="form-select" asp-items="@ViewBag.UOM"></select>
+                        </div>
+                        <div class="col-12 col-md-3 mb-3">
+                            <label asp-for="SaleUnit" class="control-label"></label>
+                            <select asp-for="SaleUnit" class="form-select" asp-items="@ViewBag.UOM"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-4">
+                    <label class="control-label">&nbsp;</label>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#UnitConversion">
+                        Unit Conversion
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="w-100 mt-2">
+    @if (Model.ItemNumber != 0)
+    {
+        <input type="submit" name="Mode" value="Update" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+    else
+    {
+        <input type="submit" name="Mode" value="Save" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+</div>

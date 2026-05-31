@@ -1,0 +1,468 @@
+﻿@{
+    ViewData["Title"] = "Procurement";
+}
+
+<style>
+    /* Context Menu Styling (mostly same as before) */
+.context-menu {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
+    min-width: 180px; /* Slightly wider for new options */
+    z-index: 1000;
+    border-radius: 4px;
+}
+
+.context-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.context-menu ul li {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    color: black;
+}
+
+.context-menu ul li:hover {
+    background-color: #f0f0f0;
+}
+
+.context-menu ul hr {
+    margin: 4px 0;
+    border: 0;
+    border-top: 1px solid #eee;
+}
+
+/* Column Hiding Class */
+.column-hidden {
+    display: none !important; /* Important to override default table cell display */
+}
+
+/* Modal Styling */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1001; /* Sit on top of the context menu if both were somehow visible */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: auto; /* Responsive centering */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 400px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    position: relative;
+}
+
+.close-button {
+    color: black;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#columnConfigCheckboxes div {
+    color: black;
+    margin-bottom: 8px;
+}
+
+    #columnConfigCheckboxes label {
+        color: black;
+    margin-left: 8px;
+    cursor: pointer;
+}
+</style>
+
+
+<form asp-action="Index" class="h-100">
+    <div class="row align-items-center panel-header h-auto">
+        <div class="col">
+            <div class="card rounded-0 mt-3">
+                <div class="card-body px-2 py-2">
+                    <h1 class="h6 fw-light">
+                        Table
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row panel-body">
+        <div class="col-12 panel-card-fixed" id="BodyHeight">
+            <div class="w-100 rounded-0 border border-primary bg-transparent px-3" id="CardBody">
+                <div class="row">
+                    <div class="col py-4">
+                        <table id="myTable" class="table  table-bordered">
+                            <thead>
+                                <tr>
+                                    <th colspan="2">ID</th>
+                                    <th colspan="2">Email</th>
+                                    <th>Action</th>
+                                </tr>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr data-id="1">
+                                    <td>1</td>
+                                    <td>Alice Smith</td>
+                                    <td>alice@example.com</td>
+                                    <td>Active</td>
+                                    <td><button class="action-btn">View</button></td>
+                                </tr>
+                                <tr data-id="2">
+                                    <td>2</td>
+                                    <td>Bob Johnson</td>
+                                    <td>bob@example.com</td>
+                                    <td>Inactive</td>
+                                    <td><button class="action-btn">View</button></td>
+                                </tr>
+                                <tr data-id="3">
+                                    <td>3</td>
+                                    <td>Carol Williams</td>
+                                    <td>carol@example.com</td>
+                                    <td>Active</td>
+                                    <td><button class="action-btn">View</button></td>
+                                </tr>
+                                <tr data-id="4">
+                                    <td>4</td>
+                                    <td>David Brown</td>
+                                    <td>david@example.com</td>
+                                    <td>Pending</td>
+                                    <td><button class="action-btn">View</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Custom Context Menu -->
+                        <div id="contextMenu" class="context-menu">
+                            <ul>
+                                <li data-action="view">View Details</li>
+                                <li data-action="edit">Edit Row</li>
+                                <li data-action="delete">Delete Row</li>
+                                <hr>
+                                <li data-action="copyCell">Copy Cell Text</li>
+                                <li data-action="copyRow">Copy Row Data</li>
+                                <hr>
+                                <!-- Placeholder for dynamic column hiding -->
+                                <li data-action="hideColumn" id="contextMenuHideColumn" style="display:none;">Hide Column</li>
+                                <li data-action="configureColumns">Configure Columns...</li>
+                            </ul>
+                        </div>
+
+                        <!-- Column Configuration Modal -->
+                        <div id="columnConfigModal" class="modal">
+                            <div class="modal-content">
+                                <span class="close-button" id="closeColumnConfigModal">×</span>
+                                <h2>Configure Columns</h2>
+                                <div id="columnConfigCheckboxes">
+                                    <!-- Checkboxes will be populated here by JavaScript -->
+                                </div>
+                                <button id="resetColumnsButton" style="margin-top: 15px;">Show All Columns</button>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const table = document.getElementById('myTable');
+        const contextMenu = document.getElementById('contextMenu');
+        const contextMenuHideColumnOption = document.getElementById('contextMenuHideColumn');
+
+        const columnConfigModal = document.getElementById('columnConfigModal');
+        const closeColumnConfigModalButton = document.getElementById('closeColumnConfigModal');
+        const columnConfigCheckboxesContainer = document.getElementById('columnConfigCheckboxes');
+        const resetColumnsButton = document.getElementById('resetColumnsButton');
+
+        let currentRow = null;
+        let currentCell = null;
+        let currentClickedColumnIndex = -1; // To store the index of the column right-clicked
+
+        // --- Column Management State and Functions ---
+        let columnStates = []; // Will store { index: number, name: string, visible: boolean }
+
+        function initializeColumnStates() {
+            columnStates = [];
+            const headers = table.querySelectorAll('thead th');
+            headers.forEach((th, index) => {
+                columnStates.push({
+                    index: index,
+                    name: th.textContent.trim(),
+                    visible: !th.classList.contains('column-hidden') // Initial state from class
+                });
+            });
+        }
+
+        function toggleColumnVisibility(columnIndex, show) {
+            if (columnIndex < 0 || columnIndex >= columnStates.length) return;
+
+            columnStates[columnIndex].visible = show;
+            const cellsToToggle = table.querySelectorAll(`th:nth-child(${columnIndex + 1}), td:nth-child(${columnIndex + 1})`);
+
+            cellsToToggle.forEach(cell => {
+                if (show) {
+                    cell.classList.remove('column-hidden');
+                } else {
+                    cell.classList.add('column-hidden');
+                }
+            });
+            // If the config modal is open, update its checkboxes
+            if (columnConfigModal.style.display === 'flex') {
+                populateColumnConfigModal();
+            }
+        }
+
+        function populateColumnConfigModal() {
+            columnConfigCheckboxesContainer.innerHTML = ''; // Clear existing checkboxes
+            columnStates.forEach(colState => {
+                const div = document.createElement('div');
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = `col-toggle-${colState.index}`;
+                checkbox.checked = colState.visible;
+                checkbox.dataset.columnIndex = colState.index;
+
+                const label = document.createElement('label');
+                label.htmlFor = `col-toggle-${colState.index}`;
+                label.textContent = colState.name;
+
+                checkbox.addEventListener('change', (event) => {
+                    const index = parseInt(event.target.dataset.columnIndex);
+                    toggleColumnVisibility(index, event.target.checked);
+                });
+
+                div.appendChild(checkbox);
+                div.appendChild(label);
+                columnConfigCheckboxesContainer.appendChild(div);
+            });
+        }
+
+        // --- Show Context Menu ---
+        table.addEventListener('contextmenu', (event) => {
+            event.preventDefault();
+
+            const target = event.target;
+            const tr = target.closest('tr');
+            currentCell = target.closest('td');
+            const th = target.closest('th');
+
+            if (!tr && !th) return; // Click was not on a row or header
+
+            currentRow = tr; // Can be null if click is on a TH in THEAD
+
+            // Determine current column for "Hide Column" option
+            currentClickedColumnIndex = -1;
+            let currentClickedColumnName = '';
+
+            if (th) { // Clicked on a header cell
+                currentClickedColumnIndex = th.cellIndex;
+                currentClickedColumnName = th.textContent.trim();
+            } else if (currentCell) { // Clicked on a data cell
+                currentClickedColumnIndex = currentCell.cellIndex;
+                if (columnStates[currentClickedColumnIndex]) { // Ensure columnStates is initialized
+                    currentClickedColumnName = columnStates[currentClickedColumnIndex].name;
+                }
+            }
+
+            // Configure the "Hide Column" option
+            if (currentClickedColumnIndex !== -1 && columnStates[currentClickedColumnIndex] && columnStates[currentClickedColumnIndex].visible) {
+                contextMenuHideColumnOption.textContent = `Hide "${currentClickedColumnName}"`;
+                contextMenuHideColumnOption.dataset.columnIndex = currentClickedColumnIndex;
+                contextMenuHideColumnOption.style.display = 'list-item';
+            } else {
+                contextMenuHideColumnOption.style.display = 'none';
+            }
+
+
+            const menuWidth = contextMenu.offsetWidth;
+            const menuHeight = contextMenu.offsetHeight;
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            let x = event.clientX;
+            let y = event.clientY;
+
+            if (x + menuWidth > windowWidth) x = windowWidth - menuWidth - 5;
+            if (y + menuHeight > windowHeight) y = windowHeight - menuHeight - 5;
+
+            contextMenu.style.top = `${y}px`;
+            contextMenu.style.left = `${x}px`;
+            contextMenu.style.display = 'block';
+        });
+
+        // --- Hide Context Menu ---
+        document.addEventListener('click', (event) => {
+            if (contextMenu.style.display === 'block' && !contextMenu.contains(event.target)) {
+                contextMenu.style.display = 'none';
+                contextMenuHideColumnOption.style.display = 'none'; // Reset dynamic option
+                resetContextState();
+            }
+            // Hide modal if click is outside modal content
+            if (columnConfigModal.style.display === 'flex' && event.target === columnConfigModal) {
+                columnConfigModal.style.display = 'none';
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                if (contextMenu.style.display === 'block') {
+                    contextMenu.style.display = 'none';
+                    contextMenuHideColumnOption.style.display = 'none';
+                    resetContextState();
+                }
+                if (columnConfigModal.style.display === 'flex') {
+                    columnConfigModal.style.display = 'none';
+                }
+            }
+        });
+
+        function resetContextState() {
+            currentRow = null;
+            currentCell = null;
+            currentClickedColumnIndex = -1;
+        }
+
+        // --- Handle Context Menu Item Clicks ---
+        contextMenu.addEventListener('click', (event) => {
+            const targetLi = event.target.closest('li');
+            if (!targetLi) return;
+
+            const action = targetLi.dataset.action;
+
+            if (action) {
+                const rowId = currentRow ? currentRow.dataset.id : null;
+                const cells = currentRow ? Array.from(currentRow.cells).map(cell => cell.textContent.trim()) : [];
+
+                switch (action) {
+                    case 'view':
+                        if (rowId) alert(`Viewing details for Row ID: ${rowId}\nName: ${cells[columnStates.findIndex(c => c.name === 'Name' && c.visible)] || 'N/A'}`);
+                        else alert("Right-click a data row to view details.");
+                        break;
+                    case 'edit':
+                        if (rowId) alert(`Editing Row ID: ${rowId}. Implement your edit logic here.`);
+                        else alert("Right-click a data row to edit.");
+                        break;
+                    case 'delete':
+                        if (rowId && confirm(`Are you sure you want to delete Row ID: ${rowId}?`)) {
+                            currentRow.remove();
+                            alert(`Row ID: ${rowId} deleted.`);
+                        } else if (!rowId) {
+                            alert("Right-click a data row to delete.");
+                        }
+                        break;
+                    case 'copyCell':
+                        if (currentCell) {
+                            navigator.clipboard.writeText(currentCell.textContent.trim())
+                                .then(() => alert(`Cell text copied: "${currentCell.textContent.trim()}"`))
+                                .catch(err => console.error('Failed to copy cell text: ', err));
+                        } else {
+                            alert("No specific cell was targeted for copy.");
+                        }
+                        break;
+                    case 'copyRow':
+                        if (currentRow) {
+                            const visibleCells = Array.from(currentRow.cells)
+                                .filter(cell => !cell.classList.contains('column-hidden'))
+                                .map(cell => cell.textContent.trim());
+                            const rowData = visibleCells.join('\t');
+                            navigator.clipboard.writeText(rowData)
+                                .then(() => alert(`Visible row data copied:\n${rowData}`))
+                                .catch(err => console.error('Failed to copy row data: ', err));
+                        } else {
+                            alert("Right-click a data row to copy.");
+                        }
+                        break;
+                    case 'hideColumn':
+                        const colIdxToHide = parseInt(targetLi.dataset.columnIndex);
+                        if (!isNaN(colIdxToHide) && columnStates[colIdxToHide] && columnStates[colIdxToHide].visible) {
+                            toggleColumnVisibility(colIdxToHide, false);
+                        }
+                        break;
+                    case 'configureColumns':
+                        populateColumnConfigModal();
+                        columnConfigModal.style.display = 'flex';
+                        break;
+                    default:
+                        console.warn('Unknown action:', action);
+                }
+            }
+            contextMenu.style.display = 'none'; // Hide menu after action
+            contextMenuHideColumnOption.style.display = 'none'; // Reset dynamic option
+            resetContextState();
+        });
+
+
+        // --- Column Configuration Modal Logic ---
+        closeColumnConfigModalButton.addEventListener('click', () => {
+            columnConfigModal.style.display = 'none';
+        });
+
+        resetColumnsButton.addEventListener('click', () => {
+            columnStates.forEach(colState => {
+                if (!colState.visible) {
+                    toggleColumnVisibility(colState.index, true);
+                }
+            });
+            // The populateColumnConfigModal will be called by toggleColumnVisibility if modal is open
+            // If not, we still need to update checkboxes if it's about to be shown
+            if (columnConfigModal.style.display === 'flex') {
+                populateColumnConfigModal();
+            }
+        });
+
+
+        // Optional: Handle clicks on regular action buttons in the table
+        table.addEventListener('click', (event) => {
+            if (event.target.classList.contains('action-btn')) {
+                const tr = event.target.closest('tr');
+                if (tr) {
+                    const rowId = tr.dataset.id;
+                    alert(`Regular button clicked for Row ID: ${rowId}`);
+                }
+            }
+        });
+
+        // Initialize column states on load
+        initializeColumnStates();
+        // Apply initial visibility based on any 'column-hidden' classes already present in HTML
+        columnStates.forEach(cs => {
+            if (!cs.visible) {
+                toggleColumnVisibility(cs.index, false); // This will add the class if not already there
+            }
+        });
+    });
+</script>

@@ -1,0 +1,584 @@
+﻿@model List<ERP_DTO.TaxClusterDetail_DTO>
+
+<div class="table-body-f w-100 border p-2">
+    <div class="table-body table-responsive h-100">
+        <table class="table table-bordered table-hover align-middle  mb-0 table-grid">
+        <thead>
+            <tr class="table-info">
+                <th style="max-width:30px" class="table-width-sm text-center">Index</th>
+                <th>Tax Element</th>
+                <th>Tax Description</th>
+                <th>Chargeable Basis</th>
+                <th>Calculation Factors</th>
+                <th class="action text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody id="TableBody">
+            <tr id="TempRow" style="display: none;">
+                <td style="max-width:30px" class="table-width-sm">
+                    <input id="TaxIndex" class="form-control TaxIndex text-center" readonly autocomplete="off" />
+                </td>
+                <td>
+                    <select id="TaxElement" class="form-select TaxElement" asp-items="@ViewBag.TaxElement"></select>
+                </td>
+                <td>
+                    <input id="TaxElementDescription" class="form-control TaxElementDescription" autocomplete="off" />
+                </td>
+                <td>
+                    <select id="ChargeableBasis" class="form-select ChargeableBasis" asp-items="@ViewBag.Chargeable"></select>
+                </td>
+                <td class="calculation-factors-wrapper">
+                    <div class="calculation-factors-tags form-control" autocomplete="off" type="button" data-bs-toggle="dropdown" aria-expanded="false"></div>
+                    <input id="CalculationFactors" class="CalculationFactors" type="hidden" />
+                    <ul class="calculation-factors-suggestions dropdown-menu"></ul>
+                </td>
+                <td class="action text-center">
+                    <input type="hidden" name="IsDeleted" value="false" class="IsDeleted" />
+                    <a class="RowRemove btn text-danger p-0 icon-link shadow-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                        </svg>
+                    </a>
+                </td>
+            </tr>
+            @if (Model != null)
+            {
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr class="NewRow">
+                            <td style="max-width:30px" class="table-width-sm">
+                                <input id="TaxIndex" name="TaxElement[@i].TaxIndex" class="form-control TaxIndex text-center" readonly autocomplete="off" value="@Model[i].TaxIndex" />
+                        </td>
+                        <td>
+                            <select id="TaxElement" name="TaxElement[@i].TaxElement" class="form-select TaxElement">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.TaxElement)
+                                {
+                                    if (item.Value == Model[i].TaxElement)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <input id="TaxElementDescription" name="TaxElement[@i].TaxElementDescription" class="form-control TaxElementDescription" autocomplete="off" value="@Model[i].TaxElementDescription" />
+                        </td>
+                        <td>
+                            <select id="ChargeableBasis" name="TaxElement[@i].ChargeableBasis" class="form-select ChargeableBasis">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Chargeable)
+                                {
+                                    if (item.Value == Model[i].ChargeableBasis)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td class="calculation-factors-wrapper">
+                            <div class="calculation-factors-tags form-control" autocomplete="off" type="button" data-bs-toggle="dropdown" aria-expanded="false"></div>
+                            <input id="CalculationFactors" name="TaxElement[@i].CalculationFactors" class="CalculationFactors" type="hidden" value="@Model[i].CalculationFactors" />
+                            <ul class="calculation-factors-suggestions dropdown-menu"></ul>
+                        </td>
+                       <td class="action text-center">
+                            @if (@Model[i].TaxClusterDetailsNumber != 0)
+                            {
+                                <input name="TaxElement[@i].TaxClusterDetailsNumber" type="hidden" class="TaxClusterDetailsNumber" value="@Model[i].TaxClusterDetailsNumber" />
+                            }
+                            <input type="hidden" name="TaxElement[@i].IsDeleted" value="false" />
+
+                                <a class="RowRemove btn text-danger p-0 icon-link shadow-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                    <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+</div>
+</div>
+
+<div class="w-100 table-footer align-items-center align-content-center">
+    <a id="addRowButton" class="btn btn-primary">Add Row</a>
+</div>
+<script>
+    $(document).ready(function () {
+        var rowCount = @(Model != null ? Model.Count : 0);
+        var isAddingRow = false;
+
+        function UpdateDropdownOptions() {
+            $("tr.NewRow").each(function () {
+                $(this).find("select.TaxElement option").prop("disabled", false);
+            });
+
+            $("tr.NewRow").each(function () {
+                const currentRow = $(this);
+                const isDeleted = currentRow.find('input[name*="IsDeleted"]').val() === "true";
+
+                if (!isDeleted) {
+                    const selectedOption = currentRow.find("select.TaxElement").val();
+
+                    if (selectedOption == "")
+                        return
+                    $("tr.NewRow")
+                        .not(currentRow)
+                        .each(function () {
+                            const row = $(this);
+                            const rowIsDeleted = row.find('input[name*="IsDeleted"]').val() === "true";
+                            if (!rowIsDeleted) {
+                                row.find('select.TaxElement option[value="' + selectedOption + '"]').prop("disabled", true);
+                            }
+                        });
+                }
+            });
+        }
+
+        function addRow() {
+            var newRow = $("#TempRow").clone().removeAttr("style").removeAttr("id").addClass("NewRow");
+            newRow.find("input.TaxIndex").attr("name", "TaxElement[" + rowCount + "].TaxIndex");
+            newRow.find("input.TaxElementDescription").attr("name", "TaxElement[" + rowCount + "].TaxElementDescription");
+            newRow.find("select.TaxElement").attr("name", "TaxElement[" + rowCount + "].TaxElement");
+            newRow.find("select.TaxElement option:selected").removeAttr('selected');
+            newRow.find("input.CalculationFactors").attr("name", "TaxElement[" + rowCount + "].CalculationFactors");
+            newRow.find("select.ChargeableBasis").attr("name", "TaxElement[" + rowCount + "].ChargeableBasis");
+            newRow.find("input.IsDeleted").attr("name", "TaxElement[" + rowCount + "].IsDeleted");
+            newRow.find("select.TaxElement").val(null);
+            newRow.find("input[name='TaxElement[" + rowCount + "].IsDeleted']").val(false);
+
+            $("#TableBody").append(newRow);
+            rowCount++;
+            newRow.data("isValid", false);
+            isAddingRow = false;
+            UpdateDropdownOptions();
+            UpdateTaxIndexes();
+        }
+
+        if ($("tr.NewRow").length == 0) {
+            addRow();
+        }
+
+        function UpdateTaxIndexes() {
+            $("tr.NewRow").filter(function () {
+                return $(this).is(":visible") && $(this).find("input[name*='IsDeleted']").val() !== "true";
+            }).each(function (i) {
+                $(this).find("input.TaxIndex").val(i + 1);
+            });
+        }
+
+        $(document).on("click", ".RowRemove", function () {
+            const $row = $(this).closest("tr.NewRow");
+            const taxElement = $row.find(".TaxElement").val();
+
+            $(this).closest('tr').find("input[name*='IsDeleted']").val(true);
+            $(this).closest('tr').hide();
+
+            UpdateDropdownOptions();
+
+            const rows = $("tr.NewRow").filter(":visible");
+            const rowIndex = rows.index($row);
+
+            rows.each(function (i, otherRow) {
+                if (i > rowIndex) {
+                    const inputField = $(otherRow).find(".CalculationFactors");
+                    RemoveTagFromInput(inputField, taxElement);
+                }
+            });
+            UpdateTaxIndexes();
+        });
+        // $(document).on('click', '.RowRemove', function () {
+        //     $(this).closest('tr').find("input[name*='IsDeleted']").val(true);
+        //     $(this).closest('tr').hide();
+        //     UpdateDropdownOptions();
+        // });
+
+        $(document).on('keydown', "tr.NewRow select, tr.NewRow input[type='text']", function (event) {
+            if (event.keyCode === 9) {
+                if (!validateField($(this)))
+                    event.preventDefault();
+            }
+        });
+
+        $(document).on('change', "tr.NewRow select.TaxElement", function () {
+            UpdateDropdownOptions();
+
+            var selectedValue = $(this).val();
+            var descriptionInput = $(this).closest("tr.NewRow").find(".TaxElementDescription");
+
+
+            $.ajax({
+                type: "get",
+                url: "tax-cluster/getdescription",
+                data: { Title: selectedValue },
+                datatype: "json",
+                traditional: true,
+                success: function (response) {
+                    var res = response;
+                    descriptionInput.val(res);
+                }
+            });
+        });
+
+        $(document).on("change", "tr.NewRow select, tr.NewRow input", function () {
+            if (isAddingRow)
+                return;
+            isAddingRow = true;
+
+            var currentInput = $(this);
+            var isValid = validateField(currentInput);
+            var currentRow = $(this).closest("tr.NewRow");
+            if (isValid) {
+                if (checkAllFieldsValid(currentRow)) {
+                    currentRow.data("isValid", true);
+                }
+                else {
+                    currentRow.data("isValid", false);
+                }
+            }
+            else {
+                currentRow.data("isValid", false);
+            }
+            if (currentRow.data("isValid")) {
+                var lastRow = $("tr.NewRow").last();
+                if (checkAllFieldsValid(lastRow))
+                    addRow();
+
+            }
+            else {
+                isAddingRow = false;
+            }
+        });
+
+        // function checkAllFieldsValid(currentRow) {
+        //     var allFieldsValid = true;
+        //     var taxIndexValues = [];
+        //     $("tr.NewRow:visible").each(function () {
+        //         $(this).find("select, input[type='text']").each(function () {
+        //             var taxElement = currentRow.find(".TaxElement");
+        //             if (!validateField(taxElement)) {
+        //                 allFieldsValid = false;
+        //             }
+
+        //             var chargeableBasis = currentRow.find(".ChargeableBasis");
+        //             if (!validateField(chargeableBasis)) {
+        //                 allFieldsValid = false;
+        //             }
+
+        //             var taxIndexInput = currentRow.find(".TaxIndex");
+        //             var taxIndex = currentRow.find(".TaxIndex");
+        //             if (!validateField(taxIndex)) {
+        //                 allFieldsValid = false;
+        //             }
+
+        //             var currentTaxIndex = taxIndexInput.val();
+
+        //             if (currentTaxIndex !== "" && !isNaN(parseInt(currentTaxIndex, 10))) {
+        //                 if (taxIndexValues.includes(currentTaxIndex)) {
+        //                     allFieldsValid = false;
+        //                     alert("Index, Duplicate value Not allow");
+        //                 } else {
+        //                     taxIndexValues.push(currentTaxIndex);
+        //                 }
+        //             }
+        //         });
+        //         if (!allFieldsValid) return false;
+        //     });
+        //     return allFieldsValid;
+        // }
+        function checkAllFieldsValid(currentRow) {
+            var allFieldsValid = true;
+            var taxIndexValues = [];
+            var firstInvalidTaxIndexElement = null;
+
+            $("tr.NewRow:visible").each(function () {
+                var currentRow = $(this);
+
+                var taxElement = currentRow.find(".TaxElement");
+                if (!validateField(taxElement)) {
+                    allFieldsValid = false;
+
+                    if (!firstInvalidTaxIndexElement) {
+                        firstInvalidTaxIndexElement = taxElement;
+                    }
+                }
+
+                var chargeableBasis = currentRow.find(".ChargeableBasis");
+                if (!validateField(chargeableBasis)) {
+                    allFieldsValid = false;
+
+                    if (!firstInvalidTaxIndexElement) {
+                        firstInvalidTaxIndexElement = chargeableBasis;
+                    }
+                }
+
+                var taxIndexInput = currentRow.find(".TaxIndex");
+                if (!validateField(taxIndexInput)) {
+                    allFieldsValid = false;
+
+                    if (!firstInvalidTaxIndexElement) {
+                        firstInvalidTaxIndexElement = taxIndexInput;
+                    }
+                } else {
+                    var currentTaxIndexValue = taxIndexInput.val();
+                    taxIndexValues.push({
+                        value: currentTaxIndexValue,
+                        element: taxIndexInput
+                    });
+                }
+            });
+
+            if (allFieldsValid) {
+                var uniqueIndexes = new Set();
+                for (var i = 0; i < taxIndexValues.length; i++) {
+                    var item = taxIndexValues[i];
+                    if (uniqueIndexes.has(item.value)) {
+                        item.element.addClass("error-field");
+                        allFieldsValid = false;
+                        taxIndexValues.forEach(function (otherItem) {
+                            if (otherItem.value === item.value) {
+                                otherItem.element.addClass("error-field");
+                            }
+                        });
+                        alert("Index, Duplicate value Not allowed: " + item.value);
+
+                        if (!firstInvalidTaxIndexElement) {
+                            firstInvalidTaxIndexElement = item.element;
+                        }
+                    } else {
+                        uniqueIndexes.add(item.value);
+                    }
+                }
+            }
+
+            if (!allFieldsValid && firstInvalidTaxIndexElement) {
+                firstInvalidTaxIndexElement.focus();
+            }
+
+            return allFieldsValid;
+        }
+
+
+        function validateField(currentInput) {
+            var inputValue = currentInput.val();
+
+            if (inputValue === "") {
+                return false;
+            }
+
+            if (currentInput.hasClass("TaxIndex")) {
+                var indexValue = parseInt(inputValue, 10);
+                if (isNaN(indexValue) || indexValue < 1) {
+                    alert("Index Not allow null or zero value");
+                    currentInput.focus();
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        $("#addRowButton").click(function () {
+            var lastRow = $("tr.NewRow").last();
+            if (checkAllFieldsValid(lastRow))
+                addRow();
+            else {
+                var firstInvalidField = null;
+                lastRow.find("select, input[type='text']").each(function () {
+                    if (!validateField($(this))) {
+                        if (firstInvalidField == null)
+                            firstInvalidField = $(this);
+                        return false;
+                    }
+                });
+                if (firstInvalidField != null) {
+                    alert("Please complete all fields before adding a new row");
+                    firstInvalidField.focus();
+                }
+            }
+        });
+
+        $('form').submit(function (event) {
+            var isValid = true;
+            $("tr.NewRow").each(function () {
+                var isEmpty = true;
+                $(this).find("select, input[type='text']").each(function () {
+                    if ($(this).val() !== "") {
+                        isEmpty = false;
+                        return false;
+                    }
+                });
+                if (isEmpty) {
+                    $(this).remove();
+                }
+                // else{
+                //     var currentRow = $(this);
+                //     if (!checkAllFieldsValid(currentRow)) {
+                //         isValid = false;
+                //     }
+                // }
+            });
+            if (!isValid){
+                return false;
+            }
+        });
+
+        $(document).on("focus keyup change blur click", ".CalculationFactors, .TaxElement, .calculation-factors-tags", function (e) {
+            const currentInput = $(this).hasClass('calculation-factors-tags') ? $(this).siblings('.CalculationFactors') : $(this);
+            const wrapper = currentInput.closest(".calculation-factors-wrapper");
+            const row = currentInput.closest("tr.NewRow");
+            const currentRowIndex = row.index();
+            let previousValue;
+
+            if (e.type === "focus") {
+                previousValue = currentInput.val();
+            }
+
+            if (e.type !== "blur") {
+                wrapper.find(".calculation-factors-suggestions").empty();
+
+                const suggestions = [];
+                $("tr.NewRow").each(function (index, otherRow) {
+                    if (index < currentRowIndex && otherRow !== row[0]) {
+                        const taxElement = $(otherRow).find("select.TaxElement");
+                        const value = taxElement.val();
+                        const text = taxElement.find("option:selected").text();
+                        if (text && !suggestions.some(s => s.text === text)) {
+                            suggestions.push({ value: value, text: text });
+                        }
+                    }
+                });
+
+                const suggestionDropdown = wrapper.find(".calculation-factors-suggestions");
+                suggestions.forEach(function (suggestion) {
+                    const suggestionItem = $("<li>").text(suggestion.text).addClass("dropdown-item");
+                    suggestionItem.on("click", function () {
+                        addTagToInput(currentInput, suggestion.value, suggestion.text);
+                        suggestionDropdown.empty();
+                    });
+                    suggestionDropdown.append(suggestionItem);
+                });
+
+                // Handle Enter key to add the typed value
+                if (e.type === "keyup" && e.key === "Enter" && currentInput.val().trim() !== "") {
+                    addTagToInput(currentInput, currentInput.val().trim(), currentInput.val().trim()); // Add the typed value to the input field
+                    currentInput.val(''); // Clear the input field
+                    suggestionDropdown.empty(); // Remove the suggestion list
+                }
+
+                // Add the Tax Element value to the input field when it changes
+                if (e.type === "change" && currentInput.hasClass("TaxElement")) {
+                    const selectedValue = currentInput.val();
+                    const displayText = currentInput.find("option:selected").text(); // Get the display text for the selected value
+                    addTagToInput(currentInput, selectedValue, displayText); // Add the selected value to the input field
+
+                    // Update tags in the below rows
+                    if (previousValue && previousValue !== selectedValue) {
+                        updateBelowRows(row, previousValue); // Remove previous value from below rows
+                    }
+                }
+            } else {
+                // Hide suggestions on blur
+                setTimeout(function () {
+                    wrapper.find(".calculation-factors-suggestions").empty();
+                }, 100); // Delay to allow click event on suggestion item
+            }
+        });
+
+        function addTagToInput(inputField, value, displayText) {
+            let currentValues = inputField.val().split(',').map(v => v.trim()).filter(v => v !== '');
+            if (!currentValues.includes(value)) {
+                currentValues.push(value);
+            }
+            inputField.val(currentValues.join(', '));
+            refreshTags(inputField);
+        }
+
+        function refreshTags(inputField) {
+            const wrapper = inputField.closest(".calculation-factors-wrapper");
+            const tagsContainer = wrapper.find(".calculation-factors-tags");
+            tagsContainer.empty();
+
+            let currentValues = inputField.val().split(',').map(v => v.trim()).filter(v => v !== '');
+            currentValues.forEach(function (value) {
+                const displayText = inputField.closest("tr.NewRow").find(`option[value="${value}"]`).text(); // Get the display text for the value
+                const tag = $("<span>").text(displayText).addClass("calculation-factors-tag").attr("data-value", value);
+                const removeButton = $("<span>").text(" ×").addClass("remove-tag").css({
+                    'cursor': 'pointer'
+                });
+                removeButton.on("click", function () {
+                    removeTagFromInput(inputField, value);
+                });
+                tag.append(removeButton);
+                tagsContainer.append(tag);
+            });
+
+            wrapper.append(tagsContainer);
+        }
+
+        function RemoveTagFromInput(inputField, value) {
+            const raw = inputField.val() || "";
+            let currentValues = raw
+                .split(",")
+                .map(v => v.trim())
+                .filter(Boolean);
+
+            currentValues = currentValues.filter(v => v !== value);
+
+            inputField.val(currentValues.join(", "));
+            refreshTags(inputField);
+        }
+
+        function updateBelowRows(currentRow, valueToRemove) {
+            const currentRowIndex = currentRow.index();
+            $("tr.NewRow").each(function (index, otherRow) {
+                if (index > currentRowIndex) {
+                    const inputField = $(otherRow).find(".CalculationFactors");
+                    removeTagFromInput(inputField, valueToRemove);
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            $(".CalculationFactors").each(function () {
+                refreshTags($(this));
+            });
+        });
+
+
+
+        UpdateDropdownOptions();
+    });
+</script>
+<style>
+    .calculation-factors-tags {
+        min-height: 20px;
+    }
+
+    .calculation-factors-tag {
+        width: fit-content;
+        padding: 2px 18px 2px 4px;
+        border-radius: 5px;
+        background: #023e5c;
+        position: relative;
+        margin-right: 5px;
+        color:#fff;
+    }
+
+    .remove-tag {
+        font-size: 0.9rem;
+        padding: 0;
+        position: absolute;
+        top: -1px;
+        right: 5px;
+    }
+</style>

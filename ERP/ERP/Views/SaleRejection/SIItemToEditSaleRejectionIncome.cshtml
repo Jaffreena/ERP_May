@@ -1,0 +1,365 @@
+﻿@model List<ERP_DTO.SIItemToSaleRejectionIncome_DTO>
+
+<div class="w-100 table-responsive">
+    <table class="table table-bordered table-hover align-middle w-100 mb-0">
+        <thead>
+            <tr class="table-info">
+                <th>Sale Invoice Number</th>
+                <th>@Html.DisplayNameFor(M => M.First().SRH_INC_MIC_Number)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SRH_INC_MIC_Description)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SRH_INC_Remarks)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SRH_INC_OCRN_Number)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SRH_INC_CM_Number)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SRH_INC_IncomeBase)</th>
+                <th class="table-width-3xl text-end">@Html.DisplayNameFor(M => M.First().SRH_INC_IncomeValue)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SRH_INC_ALCT_Number)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SRH_INC_LA_Number)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SRH_INC_CalculateGST)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SRH_INC_GST_Amount)</th>
+                <th class="table-width-md text-end">@Html.DisplayNameFor(M => M.First().SRH_INC_WHT_Percent)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SRH_INC_WHT_Amount)</th>
+                <th></th>
+                <th class="action text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody id="InTableBody">
+            <tr id="ExTempRow" style="display: none;">
+                <td>
+                    <input id="SRH_INC_SIH_InvoiceNo" class="form-control SRH_INC_SIH_InvoiceNo" readonly />
+                </td>
+                <td>
+                    <select id="SRH_INC_MIC_Number" class="form-select SRH_INC_MIC_Number" asp-items="@ViewBag.IncomeCode" disabled></select>
+                </td>
+                <td>
+                    <input id="SRH_INC_MIC_Description" class="form-control SRH_INC_MIC_Description" readonly />
+                </td>
+                <td>
+                    <input id="SRH_INC_Remarks" class="form-control SRH_INC_Remarks" readonly />
+                </td>
+                <td>
+                    <select id="SRH_INC_OCRN_Number" class="form-select SRH_INC_OCRN_Number" asp-items="@ViewBag.Occurrence" disabled></select>
+                </td>
+                <td>
+                    <select id="SRH_INC_CM_Number" class="form-select SRH_INC_CM_Number" asp-items="@ViewBag.ChargeableMethod" disabled></select>
+                </td>
+                <td>
+                    <input id="SRH_INC_IncomeBase" class="form-control SRH_INC_IncomeBase decimal text-end" readonly />
+                </td>
+                <td>
+                    <input id="SRH_INC_IncomeValue" class="form-control SRH_INC_IncomeValue decimal text-end" readonly />
+                </td>
+                <td>
+                    <select id="SRH_INC_ALCT_Number" class="form-select SRH_INC_ALCT_Number" asp-items="@ViewBag.Allocate" disabled></select>
+                </td>
+                <td>
+                    <select id="SRH_INC_LA_Number" class="form-select SRH_INC_LA_Number" asp-items="@ViewBag.LedgerAccount" disabled></select>
+                </td>
+                <td>
+                    <select id="SRH_INC_CalculateGST" class="form-select SRH_INC_CalculateGST" asp-items="@ViewBag.IsCalculate"></select>
+                </td>
+                <td>
+                    <input id="SRH_INC_GST_Amount" class="form-control SRH_INC_GST_Amount decimal text-end" readonly autocomplete="off" />
+                    <input id="SRH_INC_SAC_Number" class="form-control SRH_INC_SAC_Number" autocomplete="off" type="hidden" />
+                </td>
+
+                <td class="table-width-md">
+                    <input id="SRH_INC_WHT_Percent" class="form-control SRH_INC_WHT_Percent text-end" autocomplete="off" readonly />
+                </td>
+                <td class="table-width-xl">
+                    <input id="SRH_INC_WHT_Amount" class="form-control SRH_INC_WHT_Amount decimal text-end" autocomplete="off" readonly />
+                </td>
+                <td><a id="HeaderTaxView" class="btn btn-primary btn-sm TaxView">Tax View</a></td>
+                <td class="action text-center">
+                    <input id="SRH_INC_SIH_Number" class="form-control SRH_INC_SIH_Number" type="hidden" />
+                    <input id="SRH_INC_SIH_INC_Number" class="form-control SRH_INC_SIH_INC_Number" type="hidden" />
+                    <input id="SRH_INC_Number" class="form-control SRH_INC_Number" type="hidden" />
+                    <input type="hidden" name="SRH_INC_IsDeleted" class="SRH_INC_IsDeleted" />
+
+                    <a class="InRowRemove btn btn-sm btn-danger p-1 icon-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                        </svg>
+                    </a>
+                </td>
+            </tr>
+
+            @if (Model != null)
+            {
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr class="InNewRow" style="@(@Model[i].SRH_INC_IsDeleted == 1 ? "display: none;" : "")">
+                        <td>
+                            <input id="SRH_INC_SIH_InvoiceNo" name="Income[@i].SRH_INC_SIH_InvoiceNo" readonly class="form-select SRH_INC_SIH_InvoiceNo" value="@Model[i].SRH_INC_SIH_InvoiceNo" />
+                        </td>
+                        <td>
+                            <select id="SRH_INC_MIC_Number" name="Income[@i].SRH_INC_MIC_Number" readonly class="form-select SRH_INC_MIC_Number" disabled>
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.IncomeCode)
+                                {
+                                    if (item.Value == Model[i].SRH_INC_MIC_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <input id="SRH_INC_MIC_Description" name="Income[@i].SRH_INC_MIC_Description" readonly class="form-control SRH_INC_MIC_Description" value="@Model[i].SRH_INC_MIC_Description" />
+                        </td>
+                        <td>
+                            <input id="SRH_INC_Remarks" name="Income[@i].SRH_INC_Remarks" readonly class="form-control SRH_INC_Remarks" value="@Model[i].SRH_INC_Remarks" />
+                        </td>
+                        <td>
+                            <select id="SRH_INC_OCRN_Number" name="Income[@i].SRH_INC_OCRN_Number" class="form-select SRH_INC_OCRN_Number" disabled>
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Occurrence)
+                                {
+                                    if (item.Value == Model[i].SRH_INC_OCRN_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <select id="SRH_INC_CM_Number" name="Income[@i].SRH_INC_CM_Number" class="form-select SRH_INC_CM_Number" disabled>
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.ChargeableMethod)
+                                {
+                                    if (item.Value == Model[i].SRH_INC_CM_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <input id="SRH_INC_IncomeBase" name="Income[@i].SRH_INC_IncomeBase" class="form-control SRH_INC_IncomeBase decimal text-end" readonly value="@Model[i].SRH_INC_IncomeBase" />
+                        </td>
+                        <td>
+                            <input id="SRH_INC_IncomeValue" name="Income[@i].SRH_INC_IncomeValue" class="form-control SRH_INC_IncomeValue decimal text-end" readonly value="@Model[i].SRH_INC_IncomeValue" />
+                        </td>
+                        <td>
+                            <select id="SRH_INC_ALCT_Number" name="Income[@i].SRH_INC_ALCT_Number" class="form-select SRH_INC_ALCT_Number" disabled>
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Allocate)
+                                {
+                                    if (item.Value == Model[i].SRH_INC_ALCT_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <select id="SRH_INC_LA_Number" name="Income[@i].SRH_INC_LA_Number" class="form-select SRH_INC_LA_Number" disabled>
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.LedgerAccount)
+                                {
+                                    if (item.Value == Model[i].SRH_INC_LA_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <select id="SRH_INC_CalculateGST" name="Income[@i].SRH_INC_CalculateGST" class="form-select SRH_INC_CalculateGST">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.IsCalculate)
+                                {
+                                    if (item.Value == Model[i].SRH_INC_CalculateGST)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <input id="SRH_INC_GST_Amount" name="Income[@i].SRH_INC_GST_Amount" class="form-control SRH_INC_GST_Amount decimal text-end" autocomplete="off" readonly value="@Model[i].SRH_INC_GST_Amount" />
+                            <input id="SRH_INC_SAC_Number" name="Income[@i].SRH_INC_SAC_Number" class="form-control SRH_INC_SAC_Number" type="hidden" autocomplete="off" readonly value="@Model[i].SRH_INC_SAC_Number" />
+                        </td>
+
+                        <td class="table-width-md">
+                            <input id="SRH_INC_WHT_Percent" name="Income[@i].SRH_INC_WHT_Percent" class="form-control SRH_INC_WHT_Percent text-end" autocomplete="off" readonly value="@Model[i].SRH_INC_WHT_Percent" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="SRH_INC_WHT_Amount" name="Income[@i].SRH_INC_WHT_Amount" class="form-control SRH_INC_WHT_Amount decimal text-end" autocomplete="off" readonly value="@Model[i].SRH_INC_WHT_Amount" />
+                        </td>
+                        <td><a id="HeaderTaxView" class="btn btn-primary btn-sm TaxView">Tax View</a></td>
+                        <td class="action text-center">
+                            <input name="Income[@i].SRH_INC_SIH_INC_Number" type="hidden" class="SRH_INC_SIH_INC_Number" value="@Model[i].SRH_INC_SIH_INC_Number" />
+                            <input name="Income[@i].SRH_INC_SIH_Number" type="hidden" class="SRH_INC_SIH_Number" value="@Model[i].SRH_INC_SIH_Number" />
+                            <input name="Income[@i].SRH_INC_Number" type="hidden" class="SRH_INC_Number" value="@Model[i].SRH_INC_Number" />
+                            <input type="hidden" name="Income[@i].SRH_INC_IsDeleted" class="SRH_INC_IsDeleted" value="@Model[i].SRH_INC_IsDeleted" />
+
+                            <a class="InRowRemove btn btn-sm btn-danger p-1 icon-link">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+        <tfoot>
+            <tr class="table-info">
+                <td colspan="7" class="text-end py-2 pe-2">Total</td>
+                <td class="table-width-3xl text-end">
+                    <input id="TotalIncAmount" class="form-control text-end" readonly />
+                </td>
+                <td colspan="3">
+                </td>
+                <td class="table-width-xl text-end">
+                    <input id="TotalIncGST" class="form-control text-end" readonly />
+                </td>
+                <td>
+                </td>
+                <td>
+                    <input id="TotalIncWHT" class="form-control text-end" readonly />
+                </td>
+                <td colspan="2">
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+<script>
+    var InRowCount = @(Model != null ? Model.Count : 0);
+    function IncAddRow(SI) {
+        var InNewRow = $("#ExTempRow").clone().removeAttr("style").removeAttr("id").addClass("InNewRow");
+        InNewRow.find("input.SRH_INC_SIH_InvoiceNo").attr("name", "Income[" + InRowCount + "].SRH_INC_SIH_InvoiceNo").val(SI.siH_INC_SIH_InvoiceNo);
+        InNewRow.find("input.SRH_INC_SIH_INC_Number").attr("name", "Income[" + InRowCount + "].SRH_INC_SIH_INC_Number").val(SI.siH_INC_Number);
+        InNewRow.find("input.SRH_INC_SIH_Number").attr("name", "Income[" + InRowCount + "].SRH_INC_SIH_Number").val(SI.siH_INC_SIH_Number);
+        InNewRow.find("select.SRH_INC_MIC_Number").attr("name", "Income[" + InRowCount + "].SRH_INC_MIC_Number").val(SI.siH_INC_MIC_Number);
+        InNewRow.find("input.SRH_INC_MIC_Description").attr("name", "Income[" + InRowCount + "].SRH_INC_MIC_Description").val(SI.siH_INC_Description);
+        InNewRow.find("input.SRH_INC_Remarks").attr("name", "Income[" + InRowCount + "].SRH_INC_Remarks").val(SI.siH_INC_Remarks);
+        InNewRow.find("select.SRH_INC_OCRN_Number").attr("name", "Income[" + InRowCount + "].SRH_INC_OCRN_Number").val(SI.siH_INC_OCRN_Number);
+        InNewRow.find("select.SRH_INC_CM_Number").attr("name", "Income[" + InRowCount + "].SRH_INC_CM_Number").val(SI.siH_INC_CM_Number);
+        InNewRow.find("input.SRH_INC_IncomeBase").attr("name", "Income[" + InRowCount + "].SRH_INC_IncomeBase").val(SI.siH_INC_IncomeBase);
+        InNewRow.find("input.SRH_INC_IncomeValue").attr("name", "Income[" + InRowCount + "].SRH_INC_IncomeValue").val(SI.siH_INC_IncomeValue);
+        InNewRow.find("select.SRH_INC_ALCT_Number").attr("name", "Income[" + InRowCount + "].SRH_INC_ALCT_Number").val(SI.siH_INC_ALCT_Number);
+        InNewRow.find("select.SRH_INC_LA_Number").attr("name", "Income[" + InRowCount + "].SRH_INC_LA_Number").val(SI.siH_INC_LA_Number);
+        InNewRow.find("select.SRH_INC_CalculateGST").attr("name", "Income[" + InRowCount + "].SRH_INC_CalculateGST").val("2");
+        InNewRow.find("input.SRH_INC_GST_Amount").attr("name", "Income[" + InRowCount + "].SRH_INC_GST_Amount");
+        InNewRow.find("input.SRH_INC_WHT_Percent").attr("name", "Income[" + InRowCount + "].SRH_INC_WHT_Percent").val($("#SRH_WHT_Percent").val());
+        InNewRow.find("input.SRH_INC_WHT_Amount").attr("name", "Income[" + InRowCount + "].SRH_INC_WHT_Amount");
+        InNewRow.find("input.SRH_INC_SAC_Number").attr("name", "Income[" + InRowCount + "].SRH_INC_SAC_Number").val(SI.siH_INC_SAC_Number);
+        InNewRow.find("input.SRH_INC_IsDeleted").attr("name", "Income[" + InRowCount + "].SRH_INC_IsDeleted").val(0);
+
+        $("#InTableBody").append(InNewRow);
+        InRowCount++;
+    }
+
+    $(document).on('click', '#HeaderIncomeModal', function () {
+        IncCalculateFooter();
+    });
+
+    $(document).on('click', '.InRowRemove', function () {
+        $(this).closest('tr').find("input.SRH_INC_IsDeleted").val(1);
+        $(this).closest('tr').hide();
+        (async () => {
+            await CalculateAllIncomes();
+            await IncCalculateFooter()
+        })();
+    });
+
+    $(document).on('change', "tr.InNewRow select.SRH_INC_CalculateGST", function () {
+        var $row = $(this).closest("tr.InNewRow");
+        (async () => {
+            await CalculateAllIncomes();
+            await IncCalculateFooter()
+        })();
+    });
+    $(document).on('click', '.TaxView', function () {
+        var Cluster = $("#SRH_TCT_Number").val();
+        var SRHDate = $("#SRH_RejectionDate").val();
+
+        var currentRow = $(this).closest('tr.InNewRow');
+        var isGst = currentRow.find("select.SRH_INC_CalculateGST").val();
+        if (isGst === "2") {
+            var SACNumber = currentRow.find("input.SRH_INC_SAC_Number").val();
+            var IncomeValue = currentRow.find("input.SRH_INC_IncomeValue").val();
+
+            $.ajax({
+                type: "get",
+                url: "../income/gst/view",
+                data: { Cluster: Cluster, SRHDate: SRHDate, SAC: SACNumber, BaseAmount: IncomeValue },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    const Table = document.getElementById('TaxTableView');
+                    Table.innerHTML = "";
+
+                    if (Table) {
+                        const TaxView = ClusterTaxView(data);
+                        Table.appendChild(TaxView);
+                    }
+
+                    new bootstrap.Modal($("#TaxView")).show();
+                    $('#TaxView').on('shown.bs.modal', function () {
+                        $(this).find('[autofocus]').focus();
+                    });
+                }
+            });
+        }
+    });
+
+    async function GetClusterIncomeAmount(Cluster, GRNDate, SACNumber, BaseAmount) {
+        const Amount = await $.ajax({
+            url: '../income/gst',
+            data: { Cluster: Cluster, SRHDate: GRNDate, SAC: SACNumber, BaseAmount: BaseAmount },
+            type: 'GET'
+        });
+        return Amount;
+    }
+
+    async function IncCalculateFooter() {
+        var TotalIncAmount = 0;
+        var TotalIncGstAmount = 0;
+        var TotalIncWHTAmount = 0;
+        $("tr.InNewRow").each(function () {
+            var IsDeleted = parseInt($(this).find("input.SRH_INC_IsDeleted").val());
+            if(IsDeleted!=1){
+                var IncAmount = $(this).find(".SRH_INC_IncomeValue").val();
+                var GstAmount = $(this).find(".SRH_INC_GST_Amount").val();
+                var WHTAmount = $(this).find(".SRH_INC_WHT_Amount").val();
+
+                TotalIncAmount += parseFloat(removeCommas(IncAmount));
+                TotalIncGstAmount += parseFloat(removeCommas(GstAmount));
+                TotalIncWHTAmount += parseFloat(removeCommas(WHTAmount));
+            }
+        });
+        $("#TotalIncAmount").val(DecimalIndianRupees(TotalIncAmount.toFixed(2)));
+        $("#TotalIncGST").val(DecimalIndianRupees(TotalIncGstAmount.toFixed(2)));
+        $("#TotalIncWHT").val(DecimalIndianRupees(TotalIncWHTAmount.toFixed(2)));
+    }
+</script>
+<style>
+    .search-results {
+        position: absolute;
+        z-index: 1000;
+        overflow-y: auto;
+        width: 400px;
+        max-height: 300px;
+    }
+</style>

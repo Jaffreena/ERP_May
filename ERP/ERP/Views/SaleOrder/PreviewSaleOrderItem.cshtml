@@ -1,0 +1,238 @@
+﻿@model List<ERP_DTO.SaleOrderItem_DTO>
+
+<div class="w-100 table-responsive table-body table-body-f">
+    <table class="table table-one table-striped table-bordered table-hover align-middle" id="ItemTable">
+        <thead>
+            <tr class="table-info">
+                <th class="px-2 del text-center">
+                </th>
+                <th class="text-start">@Html.DisplayNameFor(M => M.First().SOI_ITM_Number)</th>
+                <th class="text-start">@Html.DisplayNameFor(M => M.First().SOI_ITM_Description)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SOI_ITM_OuterDia)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SOI_ITM_Thickness)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SOI_ITM_Length)</th>
+                <th class="text-start">@Html.DisplayNameFor(M => M.First().SOI_ITM_MaterialGrade)</th>
+                <th class="text-start">@Html.DisplayNameFor(M => M.First().SOI_ITM_Group)</th>
+                <th class="table-width-md text-center">@Html.DisplayNameFor(M => M.First().SOI_UoM_Number)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SOI_Qty)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SOI_UnitPrice)</th>
+                <th class="table-width-3xl text-end">@Html.DisplayNameFor(M => M.First().SOI_Amount)</th>
+                <th class="table-width-3xl text-end">@Html.DisplayNameFor(M => M.First().SOI_IncomeValue)</th>
+                <th class="datetype text-center">@Html.DisplayNameFor(M => M.First().SOI_DeliveryDate)</th>
+            </tr>
+        </thead>
+        <tbody id="TableBody">
+            @if (Model != null)
+            {
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr class="NewRow">
+                        <td class="p-2 del">
+                            <input type="checkbox" class="CheckItem form-check-input" name="CheckItem">
+                        </td>
+                        <td>
+                            <input id="SOI_Index" readonly name="SaleItems[@i].SOI_Index" type="hidden" class="SOI_Index" autocomplete="off" value="@Model[i].SOI_Index" />
+                            <input id="SOI_MS_Number" readonly name="SaleItems[@i].SOI_MS_Number" class="SOI_MS_Number" type="hidden" value="@Model[i].SOI_MS_Number" />
+                            <input id="SOI_ITM_Number" readonly name="SaleItems[@i].SOI_ITM_Number" class="SOI_ITM_Number" type="hidden" value="@Model[i].SOI_ITM_Number" />
+                            <input id="SOI_ITM_Code" readonly name="SaleItems[@i].SOI_ITM_Code" class="form-control SOI_ITM_Code" autocomplete="off" value="@Model[i].SOI_ITM_Code" oninput="OnInput(this)" onfocus="OnFocus(this)" />
+                            <div class="search-results bg-primary p-2 card" style="display:none"></div>
+                        </td>
+                        <td>
+                            <input id="SOI_ITM_Description" name="SaleItems[@i].SOI_ITM_Description" class="form-control SOI_ITM_Description" readonly value="@Model[i].SOI_ITM_Description" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="SOI_ITM_OuterDia" name="SaleItems[@i].SOI_ITM_OuterDia" class="form-control SOI_ITM_OuterDia text-end" readonly value="@Model[i].SOI_ITM_OuterDia" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="SOI_ITM_Thickness" name="SaleItems[@i].SOI_ITM_Thickness" class="form-control SOI_ITM_Thickness text-end" readonly value="@Model[i].SOI_ITM_Thickness" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="SOI_ITM_Length" name="SaleItems[@i].SOI_ITM_Length" class="form-control SOI_ITM_Length text-end" readonly value="@Model[i].SOI_ITM_Length" />
+                        </td>
+                        <td>
+                            <input id="SOI_ITM_MaterialGrade" name="SaleItems[@i].SOI_ITM_MaterialGrade" class="form-control SOI_ITM_MaterialGrade" readonly value="@Model[i].SOI_ITM_MaterialGrade" />
+                        </td>
+                        <td>
+                            <input id="SOI_ITM_Group" name="SaleItems[@i].SOI_ITM_Group" class="form-control SOI_ITM_Group" readonly value="@Model[i].SOI_ITM_Group" />
+                        </td>
+                        <td>
+                            <select id="SOI_UoM_Number" name="SaleItems[@i].SOI_UoM_Number" disabled class="form-select SOI_UoM_Number text-center">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.UoM)
+                                {
+                                    if (item.Value == Model[i].SOI_UoM_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                            <input id="SOI_UoM_OldNumber" readonly name="SaleItems[@i].SOI_UoM_OldNumber" class="form-control SOI_UoM_OldNumber" type="hidden" value="@Model[i].SOI_UoM_Number" />
+                            <input type="hidden" readonly id="SOI_UoM_DecimalPlaces" name="SaleItems[@i].SOI_UoM_DecimalPlaces" class="form-control SOI_UoM_DecimalPlaces" autocomplete="off" value="@Convert.ToDouble(@Model[i].SOI_UoM_DecimalPlaces)" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="SOI_Qty" readonly name="SaleItems[@i].SOI_Qty" class="form-control SOI_Qty number QtyNumbers text-end" autocomplete="off" value="@Convert.ToDouble(@Model[i].SOI_Qty)" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="SOI_UnitPrice" readonly name="SaleItems[@i].SOI_UnitPrice" class="form-control SOI_UnitPrice number UnitDecimal text-end" autocomplete="off" value="@Convert.ToDouble(@Model[i].SOI_UnitPrice)" />
+                        </td>
+                        <td class="table-width-3xl">
+                            <input id="SOI_Amount" name="SaleItems[@i].SOI_Amount" class="form-control SOI_Amount text-end decimal" readonly autocomplete="off" value="@Convert.ToDouble(@Model[i].SOI_Amount)" />
+                        </td>
+                        <td class="table-width-3xl">
+                            <input id="SOI_IncomeValue" name="SaleItems[@i].SOI_IncomeValue" class="form-control SOI_IncomeValue text-end decimal" readonly autocomplete="off" value="@Convert.ToDouble(@Model[i].SOI_IncomeValue)" />
+                        </td>
+                        <td class="datetype">
+                            <input id="SOI_DeliveryDate" readonly name="SaleItems[@i].SOI_DeliveryDate" class="form-control SOI_DeliveryDate datepicker text-center" autocomplete="off" value="@Model[i].SOI_DeliveryDate" />
+                            @if (@Model[i].SOI_Number != 0)
+                            {
+                                <input name="SaleItems[@i].SOI_Number" type="hidden" class="SOI_Number" value="@Model[i].SOI_Number" />
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+        <tfoot>
+            <tr class="table-info">
+                <td colspan="9" class="text-end py-2">Total</td>
+                <td class="table-width-xl">
+                    <input id="TotalQty" class="form-control text-end" readonly />
+                </td>
+                <td>
+                </td>
+                <td class="table-width-3xl">
+                    <input id="TotalAmount" class="form-control text-end" readonly />
+                </td>
+                <td class="table-width-3xl">
+                    <input id="TotalIncome" class="form-control text-end" readonly />
+                </td>
+                <td>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        function customRound(number) {
+            const num = parseFloat(number);
+            const decimal = num % 1;
+
+            if (decimal >= 0.5) {
+                return Math.ceil(num);
+            } else {
+                return Math.floor(num);
+            }
+        }
+        window.onload = CalculateFooter();
+        $(document).on('focus', 'tr.NewRow input:not(.CheckItem), tr.NewRow select, tr.NewRow .datepicker', function () {
+            $(this).closest('tr').find('.CheckItem').prop('checked', true);
+            $('.CheckItem').not($(this).closest('tr').find('.CheckItem')).prop('checked', false);
+        });
+    });
+
+    function FormatNumber(num) {
+       if (num === "" || isNaN(num)) return "0";
+
+        var formattedValue = parseFloat(num).toFixed(10);
+        var parts = formattedValue.split(".");
+        if (parts.length > 1) {
+            parts[1] = parts[1].replace(/0+$/, "");
+            if (parts[1].length === 0) parts.pop();
+        }
+
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+
+        return parts.join(".");
+    }
+
+    async function CalculateFooter() {
+        var totalQty = 0;
+        var totalAmount = 0;
+        var totalIncome = 0;
+
+        $("tr.NewRow").each(function () {
+            var row = $(this);
+            var SOI_IsDeleted = $(this).find("input.SOI_IsDeleted").val() ===1;
+            if (!SOI_IsDeleted) {
+                var QtyField = row.find(".SOI_Qty").val();
+                var AmountField = row.find(".SOI_Amount").val();
+                var IncomeField = row.find(".SOI_IncomeValue").val();
+
+                if (!AmountField) {
+                    AmountField = "0.00";
+                }
+                if (!IncomeField) {
+                    IncomeField = "0.00";
+                }
+
+                totalQty += parseFloat(removeCommas(QtyField));
+                totalAmount += parseFloat(removeCommas(AmountField));
+                totalIncome += parseFloat(removeCommas(IncomeField));
+            }
+        });
+
+        $("#TotalQty").val(FormatNumber(totalQty));
+        $("#TotalAmount").val(DecimalIndianRupees(totalAmount.toFixed(2)));
+        $("#TotalIncome").val(DecimalIndianRupees(totalIncome.toFixed(2)));
+
+        // CalculateIncome();
+
+        // var HeaderIncomeTotal = 0;
+        // $("tr.InNewRow").each(function () {
+        //     var irow = $(this);
+        //     var SOH_IsDeleted = $(this).find("input.SOH_INC_IsDeleted").val() === 1;
+        //         console.log("SOH_IsDeleted",SOH_IsDeleted);
+        //     if (!SOH_IsDeleted) {
+        //         var IncomeBase = parseFloat(removeCommas(irow.find(".SOH_INC_IncomeValue").val())) || 0;
+        //         console.log("IncomeBase",irow.find(".SOH_INC_IncomeValue").val());
+        //         console.log("IncomeBase",IncomeBase);
+        //         HeaderIncomeTotal += IncomeBase;
+        //     }
+        // });
+
+        // var ItemIncomeTotal = 0;
+        // $("tr.IInNewRow").each(function () {
+        //     var irow = $(this);
+        //     var SOI_IsDeleted = $(this).find("input.SOI_INC_IsDeleted").val() === 1;
+        //     if (!SOI_IsDeleted) {
+        //         var IncomeBase = parseFloat(removeCommas(irow.find(".SOI_INC_IncomeValue").val())) || 0;
+
+        //         ItemIncomeTotal += IncomeBase;
+        //     }
+        // });
+
+        // var TotalAmount = $("#SOH_TotalAmount");
+        // var ItemMiscIncome = $("#SOH_TotalItemIncome");
+        // var HeaderMiscIncome = $("#SOH_TotalHeadIncome");
+        // var SaleValue = $("#SOH_OrderValue");
+
+        // var SaleAmo = parseFloat(totalAmount) + parseFloat(ItemIncomeTotal) + parseFloat(HeaderIncomeTotal);
+
+        // TotalAmount.val(DecimalIndianRupees(totalAmount.toFixed(2)));
+        // ItemMiscIncome.val(DecimalIndianRupees(ItemIncomeTotal.toFixed(2)));
+        // HeaderMiscIncome.val(DecimalIndianRupees(HeaderIncomeTotal.toFixed(2)));
+        // SaleValue.val(DecimalIndianRupees(SaleAmo.toFixed(2)));
+    }
+
+    $(document).ready(function () {
+        ExchangeVisibility();
+
+        function ExchangeVisibility() {
+            if ($('#SOH_ExportOrder').is(':checked')) {
+                $('#ExchangeRate').show();
+            } else {
+                $('#ExchangeRate').hide();
+            }
+        }
+
+    });
+</script>
+<style>
+    .search-results {
+        width: 400px;
+    }
+</style>

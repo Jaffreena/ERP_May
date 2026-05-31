@@ -1,0 +1,533 @@
+﻿@model List<ERP_DTO.SIToSaleRejectionBatch_DTO>
+
+<div class="w-100 table-responsive">
+    <table class="table table-bordered table-hover align-middle table-grid mb-0">
+        <thead>
+            <tr class="table-info">
+                <th class="datetype text-center">@Html.DisplayNameFor(M => M.First().SRI_BCH_Date)</th>
+                <th>@Html.DisplayNameFor(M => M.First().SRI_BCH_No)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SRI_BCH_Qty)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SRI_BCH_UnitPrice)</th>
+                <th class="table-width-3xl text-end">@Html.DisplayNameFor(M => M.First().SRI_BCH_Value)</th>
+                <th class="action text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody id="IBatTableBody">
+            <tr id="IBatTempRow" style="display: none;">
+                <td class="datetype">
+                    <input id="SRI_BCH_SRI_Number" type="hidden" class="SRI_BCH_SRI_Number" />
+                    <input id="SRI_BCH_ITM_Number" class="SRI_BCH_ITM_Number" type="hidden" />
+                    <input id="SRI_BCH_ITM_Index" class="SRI_BCH_ITM_Index" type="hidden" />
+                    <input id="SRI_BCH_Date" class="form-control Key datepicker SRI_BCH_Date text-center" autocomplete="off" />
+                </td>
+                <td>
+                    <input id="SRI_BCH_No" class="form-control SRI_BCH_No" autocomplete="off" />
+                </td>
+                <td class="table-width-xl">
+                    <input id="SRI_BCH_Qty" class="form-control SRI_BCH_Qty  text-end decimal" autocomplete="off" />
+                </td>
+                <td class="table-width-xl">
+                    <input id="SRI_BCH_UnitPrice" class="form-control SRI_BCH_UnitPrice decimal text-end" autocomplete="off" />
+                </td>
+                <td class="table-width-3xl">
+                    <input id="SRI_BCH_Value" class="form-control SRI_BCH_Value decimal text-end" readonly autocomplete="off" />
+                </td>
+                <td class="action text-center">
+                    <input id="SRI_BCH_IsDeleted" type="hidden" name="SRI_BCH_IsDeleted" class="SRI_BCH_IsDeleted" value="false" />
+                    <a class="IBatRowRemove text-danger p-0 icon-link shadow-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                        </svg>
+                    </a>
+                </td>
+            </tr>
+            @if (Model != null)
+            {
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr class="IBatNewRow" style="@(@Model[i].SRI_BCH_IsDeleted == 1 ? "display: none;" : "")">
+                        <td class="datetype">
+                            <input id="SRI_BCH_SRI_Number" name="ItemBatch[@i].SRI_BCH_SRI_Number" type="hidden" class="SRI_BCH_SRI_Number" value="@Model[i].SRI_BCH_SRI_Number" />
+                            <input id="SRI_BCH_ITM_Number" name="ItemBatch[@i].SRI_BCH_ITM_Number" class="SRI_BCH_ITM_Number" type="hidden" value="@Model[i].SRI_BCH_ITM_Number" />
+                            <input id="SRI_BCH_ITM_Index" name="ItemBatch[@i].SRI_BCH_ITM_Index" class="SRI_BCH_ITM_Index" type="hidden" value="@Model[i].SRI_BCH_ITM_Index" />
+                            <input id="SRI_BCH_Date" name="ItemBatch[@i].SRI_BCH_Date" class="form-control Key datepicker SRI_BCH_Date text-center" autocomplete="off" value="@Model[i].SRI_BCH_Date" />
+                        </td>
+                        <td>
+                            <input id="SRI_BCH_No" name="ItemBatch[@i].SRI_BCH_No" class="form-control SRI_BCH_No" autocomplete="off" value="@Model[i].SRI_BCH_No" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="SRI_BCH_Qty" name="ItemBatch[@i].SRI_BCH_Qty" class="form-control SRI_BCH_Qty text-end" autocomplete="off" value="@Model[i].SRI_BCH_Qty" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="SRI_BCH_UnitPrice" name="ItemBatch[@i].SRI_BCH_UnitPrice" class="form-control SRI_BCH_UnitPrice decimal text-end" autocomplete="off" value="@Model[i].SRI_BCH_UnitPrice" />
+                        </td>
+                        <td class="table-width-3xl">
+                            <input id="SRI_BCH_Value" name="ItemBatch[@i].SRI_BCH_Value" readonly class="form-control SRI_BCH_Value decimal text-end" autocomplete="off" value="@Model[i].SRI_BCH_Value" />
+                        </td>
+                        <td class="action text-center">
+                            @if (@Model[i].SRI_BCH_Number != 0)
+                            {
+                                <input name="ItemBatch[@i].SRI_BCH_Number" type="hidden" class="Number" value="@Model[i].SRI_BCH_Number" />
+                            }
+                            <input type="hidden" id="SRI_BCH_IsDeleted" name="ItemBatch[@i].SRI_BCH_IsDeleted" class="SRI_BCH_IsDeleted" value="@Model[i].SRI_BCH_IsDeleted" />
+                            <a class="IBatRowRemove text-danger p-0 icon-link shadow-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                    <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+        <tfoot>
+            <tr class="table-info">
+                <td class="text-end" colspan="2">Total</td>
+                <td class="table-width-xl">
+                    <input id="BatchTotalQty" class="form-control text-end" readonly />
+                </td>
+                <td></td>
+                <td class="table-width-3xl">
+                    <input id="BatchTotalValue" class="form-control text-end" readonly />
+                </td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        var browCount = @(Model != null ? Model.Count : 0);
+        var isbAddingRow = false;
+
+        function IBatNewRow() {
+            var IBatNewRow = $("#IBatTempRow").clone().removeAttr("style").removeAttr("id").addClass("IBatNewRow");
+            IBatNewRow.find("input.SRI_BCH_SRI_Number").attr("name", "ItemBatch[" + browCount + "].SRI_BCH_SRI_Number").val($("#SRI_TEMP_BCH_SRI_Number").val());
+            IBatNewRow.find("input.SRI_BCH_ITM_Number").attr("name", "ItemBatch[" + browCount + "].SRI_BCH_ITM_Number").val($("#SRI_TEMP_BCH_ITM_Number").val());
+            IBatNewRow.find("input.SRI_BCH_ITM_Index").attr("name", "ItemBatch[" + browCount + "].SRI_BCH_ITM_Index").val($("#SRI_TEMP_BCH_Index").val());
+            IBatNewRow.find("input.SRI_BCH_Date").attr("name", "ItemBatch[" + browCount + "].SRI_BCH_Date").val($("#SRH_RejectionDate").val());;
+            IBatNewRow.find("input.SRI_BCH_No").attr("name", "ItemBatch[" + browCount + "].SRI_BCH_No");
+            IBatNewRow.find("input.SRI_BCH_Qty").attr("name", "ItemBatch[" + browCount + "].SRI_BCH_Qty");
+            IBatNewRow.find("input.SRI_BCH_UnitPrice").attr("name", "ItemBatch[" + browCount + "].SRI_BCH_UnitPrice");
+            IBatNewRow.find("input.SRI_BCH_Value").attr("name", "ItemBatch[" + browCount + "].SRI_BCH_Value");
+            IBatNewRow.find("input.SRI_BCH_IsDeleted").attr("name", "ItemBatch[" + browCount + "].SRI_BCH_IsDeleted").val(0);
+
+            $("#IBatTableBody").append(IBatNewRow);
+            browCount++;
+            IBatNewRow.data("isValid", false);
+            isbAddingRow = false;
+        }
+
+        $(document).on('click', '.ItemBatch', function () {
+            let CheckedCheckbox = document.querySelector('.CheckItem:checked');
+            if (CheckedCheckbox) {
+                var currentRow = $(CheckedCheckbox).closest('tr.NewRow');
+
+                var ItemNumber = currentRow.find('input.SRI_ITM_Number').val();
+                var Index = currentRow.find('input.SRI_Index').val();
+                var Qty = currentRow.find('input.SRI_Qty').val();
+                var MatrialValue = currentRow.find('input.SRI_Amount').val();
+
+                var SRINumber = currentRow.find('input.SRI_Number').val();
+
+                if (SRINumber) {
+                    $("#SRI_TEMP_BCH_ITM_Number").val(ItemNumber);
+                    $("#SRI_TEMP_BCH_Index").val(Index);
+                    $("#SRI_TEMP_BCH_Qty").val(removeCommas(Qty));
+                    $("#SRI_HIDE_BCH_Qty").text(removeCommas(Qty));
+
+                    $("#SRI_TEMP_BCH_SRI_Number").val(SRINumber);
+
+                    $("tr.IBatNewRow").each(function () {
+                        var SRI_BCH_IsDeleted =  parseInt($(this).find("input.SRI_BCH_IsDeleted").val()) === 1;
+                        if (!SRI_BCH_IsDeleted) {
+                            $(this).show();
+                        }
+                        else{
+                            $(this).closest('tr').find("input.SRI_BCH_IsDeleted").val(1);
+                            $(this).closest('tr').hide();
+                        }
+                    });
+
+                    var cout = 0;
+                    $("tr.IBatNewRow").each(function () {
+                        var RowItemNumber = $(this).find("input.SRI_BCH_SRI_Number").val();
+                        var SRI_BCH_IsDeleted = parseInt($(this).find("input.SRI_BCH_IsDeleted").val());
+
+                        if (RowItemNumber === SRINumber && SRI_BCH_IsDeleted !== 1) {
+                            $(this).show();
+                            cout++;
+                        } else {
+                            $(this).hide();
+                        }
+                    });
+
+                    if (cout === 0) {
+                        IBatNewRow();
+                    }
+
+                    new bootstrap.Modal($("#IBatch")).show();
+                    $('#IBatch').on('shown.bs.modal', function () {
+                        $(this).find('[autofocus]').focus();
+                        BatchCalculateFooter();
+                    });
+                }
+                else if (ItemNumber) {
+                    $("#SRI_TEMP_BCH_ITM_Number").val(ItemNumber);
+                    $("#SRI_TEMP_BCH_Index").val(Index);
+                    $("#SRI_TEMP_BCH_Qty").val(removeCommas(Qty));
+                    $("#SRI_HIDE_BCH_Qty").text(removeCommas(Qty));
+
+                    // BaseUnitPrice(ItemNumber, Index, Qty, MatrialValue);
+
+                    $("tr.IBatNewRow").each(function () {
+                        var SRI_BCH_IsDeleted =  parseInt($(this).find("input.SRI_BCH_IsDeleted").val()) === 1;
+                        if (!SRI_BCH_IsDeleted) {
+                            $(this).show();
+                        }
+                        else{
+                            $(this).closest('tr').find("input.SRI_BCH_IsDeleted").val(1);
+                            $(this).closest('tr').hide();
+                        }
+                    });
+
+                    var cout = 0;
+                    $("tr.IBatNewRow").each(function () {
+                        var RowItemNumber = $(this).find("input.SRI_BCH_ITM_Number").val();
+                        var RowItemIndex = $(this).find("input.SRI_BCH_ITM_Index").val();
+                        var SRI_BCH_IsDeleted = parseInt($(this).find("input.SRI_BCH_IsDeleted").val());
+
+                        if (RowItemNumber === ItemNumber && RowItemIndex === Index && SRI_BCH_IsDeleted !== 1) {
+                            $(this).show();
+                            cout++;
+                        } else {
+                            $(this).hide();
+                        }
+                    });
+
+                    if (cout === 0) {
+                        IBatNewRow();
+                    }
+
+
+                    new bootstrap.Modal($("#IBatch")).show();
+                    $('#IBatch').on('shown.bs.modal', function () {
+                        $(this).find('[autofocus]').focus();
+                        (async () => {
+                            BatchCalculateFooter();
+                        })();
+                    });
+                }
+            }
+        });
+
+        $(document).on('click', '.IBatRowRemove', function () {
+            $(this).closest('tr').find("input.SRI_BCH_IsDeleted").val(1);
+            $(this).closest('tr').hide();
+
+            (async () => {
+                BatchCalculateFooter();
+            })();
+        });
+
+        $(document).on('keydown', "tr.IBatNewRow select, tr.IBatNewRow input.SRI_BCH_Qty, tr.IBatNewRow input[type='text']", function (event) {
+            if (event.keyCode === 9) {
+                if (!IBatValidateField($(this)))
+                    event.preventDefault();
+            }
+        });
+
+        $(document).on("change", "tr.IBatNewRow select, tr.IBatNewRow input.SRI_BCH_Qty, input[type='text']", function () {
+            if (isbAddingRow)
+                return;
+            isbAddingRow = true;
+
+            var currentInput = $(this);
+            var isValid = IBatValidateField(currentInput);
+            var currentRow = $(this).closest("tr.IBatNewRow");
+            if (isValid) {
+                if (IBatCheckAllFieldsValid(currentRow)) {
+                    currentRow.data("isValid", true);
+                }
+                else {
+                    currentRow.data("isValid", false);
+                }
+            }
+            else {
+                currentRow.data("isValid", false);
+            }
+            if (currentRow.data("isValid")) {
+                var lastRow = $("tr.IBatNewRow").last();
+                if (IBatCheckAllFieldsValid(lastRow))
+                    IBatNewRow();
+            }
+            else {
+                isbAddingRow = false;
+            }
+        });
+
+        $(document).on('input', "tr.IBatNewRow input.SRI_BCH_Qty, tr.IBatNewRow input.SRI_BCH_UnitPrice", function (event) {
+            var row = $(this).closest("tr.IBatNewRow");
+            var Qty = parseFloat(removeCommas(row.find("input.SRI_BCH_Qty").val())) || 0;
+            var UnitPrice = parseFloat(removeCommas(row.find("input.SRI_BCH_UnitPrice").val())) || 0;
+            var BatchValue = Qty * UnitPrice;
+
+            row.find("input.SRI_BCH_Value").val(DecimalIndianRupees(BatchValue));
+
+            (async () => {
+                BatchCalculateFooter();
+            })();
+        });
+
+        $(document).on('change', 'tr.IBatNewRow input.SRI_BCH_No', function() {
+            var $currentInput = $(this);
+            var currentValue = $currentInput.val().trim();
+            var isDuplicate = false;
+
+            if (currentValue === "") return;
+
+            $('.SRI_BCH_No:visible').not($currentInput).each(function() {
+                if ($(this).val().trim() === currentValue) {
+                    isDuplicate = true;
+                    return false;
+                }
+            });
+
+            var BatchNumbers = [];
+            $("tr.IBatNewRow:visible").each(function () {
+                var irow = $(this);
+                var SRI_BCH_IsDeleted = parseInt($(this).find("input.SRI_BCH_IsDeleted").val()) === 1;
+                if (!SRI_BCH_IsDeleted) {
+                    var No = $(this).find("input.SRI_BCH_No").val().trim();
+
+                        if (No !== "" && BatchNumbers.includes(No)) {
+                            isDuplicate = true;
+                        } else {
+                            if (No !== "") BatchNumbers.push(No);
+                        }
+                }
+            });
+
+            if (isDuplicate) {
+                alert("This Batch Number (" + currentValue + ") already exists. Please enter a unique number.");
+                $currentInput.val('');
+                $currentInput.focus();
+            }
+        });
+
+        function IBatCheckAllFieldsValid(currentRow) {
+            var allFieldsValid = true;
+            $("tr.IBatNewRow:visible").each(function () {
+                $(this).find("select, input.SRI_BCH_Qty,input.SRI_BCH_No, input[type='text']").each(function () {
+                    if (!IBatValidateField($(this))) {
+                        allFieldsValid = false;
+                        return false;
+                    }
+                });
+                if (!allFieldsValid) return false;
+            });
+            return allFieldsValid;
+        }
+
+        function IBatValidateField(currentInput) {
+            var valid = 1;
+            var inputValue = currentInput.val();
+            if (inputValue === "") {
+                valid = 0;
+            }
+            if (currentInput.hasClass(".SRI_BCH_Qty")) {
+                valid = ExValidateAmount(currentInput);
+            }
+            if (valid == 0) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+        function ExValidateAmount(currentInput) {
+            var valid = 1;
+
+            var currentRow = currentInput.closest("tr.IBatNewRow");
+            var PercentInput = Math.abs(currentRow.find("input.SRI_BCH_Qty"));
+            var Percent = removeCommas(PercentInput.val());
+            if (Percent > 0) {
+            }
+            else {
+                valid = 0;
+            }
+            return valid;
+        }
+
+        $(document).on('click', '#IBatCloseButton', function () {
+            BatCloseButton();
+        });
+        $(document).on('click', '#IBatOkayButton', function () {
+            BatCloseButton();
+        });
+        function BatCloseButton() {
+            var ItemQty = Math.abs($("#SRI_TEMP_BCH_Qty").val());
+            var BatchQty = 0;
+            $("tr.IBatNewRow:visible").each(function () {
+                var irow = $(this);
+                var SRI_BCH_IsDeleted = parseInt($(this).find("input.SRI_BCH_IsDeleted").val()) === 1;
+                if (!SRI_BCH_IsDeleted) {
+                    var Date = $(this).find("input.SRI_BCH_Date").val();
+                    var No = $(this).find("input.SRI_BCH_No").val();
+                    var Qty = $(this).find("input.SRI_BCH_Qty").val();
+
+                    if (!No && !(Qty > 0)) {
+                        $(this).closest('tr').find("input.SRI_BCH_IsDeleted").val(1);
+                        $(this).closest('tr').hide();
+                    }
+                    else{
+                        BatchQty += parseFloat(Qty);
+                    }
+                }
+            });
+
+            if (parseFloat(ItemQty) === parseFloat(BatchQty)) {
+                var lastRow = $("tr.IBatNewRow").last();
+                if (IBatCheckAllFieldsValid(lastRow)) {
+                    $("#IBatch").modal('hide');
+                }
+                else {
+                    alert("Please complete all fields !");
+                }
+
+                $("tr.IBatNewRow").each(function () {
+                    var SRI_BCH_IsDeleted = parseInt($(this).find("input.SRI_BCH_IsDeleted").val()) === 1;
+                    if (!SRI_BCH_IsDeleted) {
+                        $(this).show();
+                    }
+                });
+            }
+            else{
+                var lastRow = $("tr.IBatNewRow").last();
+                if (IBatCheckAllFieldsValid(lastRow)) {
+                    alert("Qty Mismatch !");
+                    $("#IBatch").modal('hide');
+                }
+                else {
+                    alert("Please complete all fields !");
+                }
+            }
+        }
+
+        $("#IBatNewRowButton").click(function () {
+            var lastRow = $("tr.IBatNewRow").last();
+            if (IBatCheckAllFieldsValid(lastRow)) {
+                IBatNewRow();
+            }
+            else {
+                var firstInvalidField = null;
+                lastRow.find("select, input.SRI_BCH_Qty, input[type='text']").each(function () {
+                    if (!IBatValidateField($(this))) {
+                        if (firstInvalidField == null)
+                            firstInvalidField = $(this);
+                        return false;
+                    }
+                });
+                if (firstInvalidField != null) {
+                    alert("Please complete all fields !");
+                    firstInvalidField.focus();
+                }
+            }
+
+
+            (async () => {
+                BatchCalculateFooter();
+            })();
+        });
+    });
+    async function BatchCalculateFooter() {
+        var BtotalQty = 0;
+        var BtotalValue = 0;
+
+        $("tr.IBatNewRow:visible").each(function () {
+            var row = $(this);
+            var SRI_BCH_IsDeleted = parseInt($(this).find("input.SRI_BCH_IsDeleted").val()) === 1;
+            if (!SRI_BCH_IsDeleted) {
+                var Qty = parseFloat(removeCommas(row.find("input.SRI_BCH_Qty").val()));
+                var Value = parseFloat(removeCommas(row.find("input.SRI_BCH_Value").val()));
+
+                if (Qty != '') {
+                    BtotalQty += parseFloat(Qty);
+                }
+                if (Value != '') {
+                    BtotalValue += parseFloat(Value);
+                }
+            }
+        });
+
+        $("#BatchTotalQty").val(DecimalIndianRupees(BtotalQty));
+        $("#BatchTotalValue").val(DecimalIndianRupees(BtotalValue.toFixed(2)));
+    }
+    window.onload = BatchCalculateFooter();
+
+    // function BaseUnitPrice(ItemNumber, Index, Qty, MatrialValue) {
+    //     var Qty = parseFloat(removeCommas(Qty)) || 0;
+    //     var MatrialValue = parseFloat(removeCommas(MatrialValue)) || 0;
+    //     var BTotalQty = parseFloat(removeCommas($("#TotalQty").val())) || 0;
+    //     var BTotalMatrial = parseFloat(removeCommas($("#TotalAmount").val())) || 0;
+    //     var BIncome = 0;
+    //     var BIIncome = 0;
+    //     var BUnitPrice = 0;
+
+    //     $("tr.InNewRow").each(function () {
+    //         var row = $(this);
+    //         var SRI_BCH_IsDeleted = parseInt($(this).find("input.SRI_BCH_IsDeleted").val()) === 1;
+    //         if (!SRI_BCH_IsDeleted) {
+    //             var Charge = row.find("select.SRH_INC_CM_Number").val();
+    //             var Allocate = row.find("select.SRH_INC_ALCT_Number").val();
+    //             var IncomeValue = parseFloat(removeCommas(row.find("input.SRH_INC_IncomeValue").val())) || 0;
+    //             var IncomeBase = parseFloat(removeCommas(row.find("input.SRH_INC_IncomeBase").val())) || 0;
+
+    //             if (Allocate == "1") {
+    //                 if (Charge === "1") {
+    //                     BIncome += parseFloat(parseFloat(IncomeValue) / parseFloat(BTotalMatrial)) * parseFloat(MatrialValue);
+    //                 }
+    //                 else if (Charge === "2") {
+    //                     BIncome += parseFloat(Qty) * parseFloat(IncomeBase);
+    //                 }
+    //                 else if (Charge === "3") {
+    //                     BIncome += parseFloat(MatrialValue) * parseFloat(IncomeBase) / 100;
+    //                 }
+    //             }
+    //         }
+    //     });
+
+    //     if (ItemNumber) {
+    //         $("tr.IInNewRow").each(function () {
+    //             var row = $(this);
+    //             var RowItemNumber = $(this).find("input.SRI_INC_ITM_Number").val();
+    //             var RowItemIndex = $(this).find("input.SRI_INC_ITM_Index").val();
+    //             var SRI_BCH_IsDeleted = parseInt($(this).find("input.SRI_BCH_IsDeleted").val());
+
+    //             if (RowItemNumber === ItemNumber && RowItemIndex === Index && SRI_BCH_IsDeleted !== 1) {
+    //                 var Allocate = row.find("select.SRI_INC_ALCT_Number").val();
+    //                 var IncomeValue = parseFloat(removeCommas(row.find("input.SRI_INC_IncomeValue").val())) || 0;
+    //                 var IncomeBase = parseFloat(removeCommas(row.find("input.SRI_INC_IncomeBase").val())) || 0;
+
+    //                 if (Allocate == "1") {
+    //                     BIIncome += IncomeValue;
+    //                 }
+    //             }
+    //         });
+    //     }
+
+    //     BUnitPrice = (BIncome + BIIncome + MatrialValue) / Qty;
+
+    //     $("#SRI_TEMP_BCH_UnitPrice").val(BUnitPrice.toFixed(2));
+    // }
+</script>
+<style>
+    .search-results {
+        position: absolute;
+        z-index: 1000;
+        overflow-y: auto;
+        width: 400px;
+        max-height: 300px;
+    }
+</style>

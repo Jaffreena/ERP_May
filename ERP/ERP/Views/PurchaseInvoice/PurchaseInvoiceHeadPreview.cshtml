@@ -1,0 +1,100 @@
+﻿@model ERP_DTO.PurchaseInvoiceHead_DTO
+
+
+@if (Model.PIH_Number != 0)
+{
+    <input asp-for="PIH_Number" type="hidden" class="Number" />
+}
+
+    <div class="row">
+        
+        <div class="col-12 col-md">
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="PIH_InvoiceNo" class="col-sm-5 col-form-label ps-0"></label>
+                <div class="col-sm-7">
+                    <input asp-for="PIH_InvoiceNo" class="form-control Key KeyDup" autocomplete="off" readonly />
+                </div>
+            </div>
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="PIH_InvoiceDate" class="col-sm-5 col-form-label ps-0"></label>
+                <div class="col-sm-7">
+                    <input asp-for="PIH_InvoiceDate" class="form-control Key" readonly autocomplete="off" />
+                </div>
+            </div>
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="PIH_ImportOrder" class="col-sm-5 col-form-label ps-0"></label>
+                <div class="col-sm-7">
+                    <input class="form-check-input" type="checkbox" asp-for="PIH_ImportOrder" disabled/>
+                </div>
+            </div>
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="PIH_MS_Number" class="col-sm-5 col-form-label ps-0"></label>
+                <div class="col-sm-7">
+                    <select asp-for="PIH_MS_Number" class="form-select" asp-items="@ViewBag.MaterialSegregation" disabled></select>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md">
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="PIH_Vendor_Number" class="col-sm-5 col-form-label ps-0"></label>
+                <div class="col-sm-7">
+                    <input asp-for="PIH_Vendor_Number" class="form-control" type="hidden" />
+                    <input asp-for="PIH_VendorLocation" class="form-control" type="hidden" />
+                    <input asp-for="PIH_CreditDays" class="form-control" type="hidden" />
+                    <input asp-for="PIH_PaymentBase" class="form-control" type="hidden" />
+                    <input asp-for="PIH_Vendor" class="form-control" autocomplete="off" readonly oninput="OnVendorInput(this)" onfocus="OnVendorFocus(this)" />
+                    <div class="vendor-search-results card" style="display:none"></div>
+                </div>
+            </div>
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="PIH_SupplierInvoiceNo" class="col-sm-5 col-form-label ps-0"></label>
+                <div class="col-sm-7">
+                    <input asp-for="PIH_SupplierInvoiceNo" class="form-control Key KeyDup" readonly autocomplete="off" />
+                </div>
+            </div>
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="PIH_SupplierInvoiceDate" class="col-sm-5 col-form-label ps-0"></label>
+                <div class="col-sm-7">
+                    <input asp-for="PIH_SupplierInvoiceDate" class="form-control Key" readonly autocomplete="off" />
+                </div>
+            </div>
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="PIH_DueDate" class="col-sm-5 col-form-label ps-0"></label>
+                <div class="col-sm-7">
+                    <input asp-for="PIH_DueDate" class="form-control Key" readonly autocomplete="off" />
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md">
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="PIH_TaxCluster_Number" class="col-sm-5 col-form-label ps-0"></label>
+                <div class="col-sm-7">
+                    <select asp-for="PIH_TaxCluster" class="form-select" disabled></select>
+                    <input asp-for="PIH_TaxCluster_Number" type="hidden" />
+                    <div class="cluster-results dropdown-results search-results bg-primary p-2" style="display:none"></div>
+                </div>
+            </div>
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="PIH_WHT_Number" class="col-sm-5 col-form-label ps-0"></label>
+                <div class="col-sm-7">
+                    <input asp-for="PIH_WHT_Tax" class="form-control" type="hidden" />
+                    <input asp-for="PIH_WHT_Percent" class="form-control" type="hidden" />
+                    <select asp-for="PIH_WHT_Number" class="form-select" asp-items="@ViewBag.WHTax" disabled onchange="SearchWHT()"></select>
+                </div>
+            </div>
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="PIH_Currency_Number" class="col-sm-5 col-form-label ps-0"></label>
+                <div class="col-sm-7">
+                    <input asp-for="PIH_Currency" class="form-control" readonly autocomplete="off" />
+                    <input asp-for="PIH_Currency_Number" class="form-control" type="hidden" />
+                    <input asp-for="PIH_DecimalPlaces" class="form-control" type="hidden" />
+                </div>
+            </div>
+            <div class="row align-items-center px-2 mb-1" id="ExchangeRate">
+                <label asp-for="PIH_ExchangeRate" class="col-sm-5 col-form-label ps-0 text-nowrap"></label>
+                <div class="col-sm-7">
+                    <input asp-for="PIH_ExchangeRate" class="form-control Key decimal" readonly autocomplete="off" />
+                </div>
+            </div>
+        </div>
+    </div>

@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ERP_DAO\ERP_DAO.csproj" />
+    <ProjectReference Include="..\ERP_DTO\ERP_DTO.csproj" />
+  </ItemGroup>
+
+</Project>

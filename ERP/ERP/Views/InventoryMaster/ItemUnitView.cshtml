@@ -1,0 +1,333 @@
+﻿@model List<ERP_DTO.ItemDetail_DTO>
+
+<div class="w-100 table-responsive">
+    <table class="table table-bordered align-middle table-hover align-middle mb-0 table-grid">
+        <thead>
+            <tr class="table-info">
+                <th class="table-width-xxl text-end pe-1">From Qty</th>
+                <th class="table-width-xl text-center">From Unit</th>
+                <th class="table-width-sm text-center"></th>
+                <th class="table-width-xxl text-end pe-1">To Qty</th>
+                <th class="table-width-xl text-center">To Unit</th>
+                <th class="action text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody id="TableBody">
+            <tr id="TempRow" style="display: none;">
+                <td class="table-width-xxl">
+                    <input id="FromQty" class="form-control text-end pe-1 FromQty FiveDecimal" autocomplete="off" />
+                </td>
+                <td class="table-width-xl">
+                    <select id="FromUnit" class="form-select text-center FromUnit" asp-items="@ViewBag.UOM"></select>
+                </td>
+                <td class="table-width-sm text-center">
+                    =
+                </td>
+                <td class="table-width-xxl">
+                    <input id="ToQty" class="form-control text-end pe-1 ToQty FiveDecimal" autocomplete="off" />
+                </td>
+                <td class="table-width-xl">
+                    <select id="ToUnit" class="form-select text-center ToUnit" asp-items="@ViewBag.UOM"></select>
+                </td>
+                <td class="action text-center">
+                    <input type="hidden" name="IsDeleted" value="false" class="IsDeleted" />
+                    <a class="RowRemove btn text-danger p-0 icon-link shadow-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                        </svg>
+                    </a>
+                </td>
+            </tr>
+            @if (Model != null)
+            {
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr class="NewRow">
+                        <td class="table-width-xxl">
+                            <input id="FromQty" name="ItemDetail[@i].FromQty" class="form-control FromQty FiveDecimal text-end" autocomplete="off" value="@Model[i].FromQty" />
+                        </td>
+                        <td class="table-width-xl">
+                            <select id="FromUnit" name="ItemDetail[@i].FromUnit" class="form-select text-center FromUnit ">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.UOM)
+                                {
+                                    if (item.Value == Model[i].FromUnit)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td class="table-width-sm text-center">
+                            =
+                        </td>
+                        <td class="table-width-xxl">
+                            <input id="ToQty" name="ItemDetail[@i].ToQty" class="form-control ToQty FiveDecimal text-end" autocomplete="off" value="@Model[i].ToQty" />
+                        </td>
+                        <td class="table-width-xl">
+                            <select id="ToUnit" name="ItemDetail[@i].ToUnit" class="form-select text-center ToUnit">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.UOM)
+                                {
+                                    if (item.Value == Model[i].ToUnit)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td class="action text-center">
+                            @if (@Model[i].UnitNumber != 0)
+                            {
+                                <input name="ItemDetail[@i].UnitNumber" type="hidden" class="UnitNumber" value="@Model[i].UnitNumber" />
+                            }
+                            <input type="hidden" name="ItemDetail[@i].IsDeleted" value="false" />
+                            <a class="RowRemove  btn text-danger p-0 icon-link shadow-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                    <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        var rowCount = @(Model != null ? Model.Count : 0);
+        var isAddingRow = false;
+
+        function addRow() {
+            var NewRow = $("#TempRow").clone().removeAttr("style").removeAttr("id").addClass("NewRow");
+            NewRow.find("input.FromQty").attr("name", "ItemDetail[" + rowCount + "].FromQty");
+            NewRow.find("select.FromUnit").attr("name", "ItemDetail[" + rowCount + "].FromUnit");
+            NewRow.find("input.ToQty").attr("name", "ItemDetail[" + rowCount + "].ToQty");
+            NewRow.find("select.ToUnit").attr("name", "ItemDetail[" + rowCount + "].ToUnit");
+            NewRow.find("input.IsDeleted").attr("name", "ItemDetail[" + rowCount + "].IsDeleted");
+
+            NewRow.find("input[name='ItemDetail[" + rowCount + "].IsDeleted']").val(false);
+
+            $("#TableBody").append(NewRow);
+            rowCount++;
+            NewRow.data("isValid", false);
+            isAddingRow = false;
+        }
+
+        if ($("tr.NewRow").length == 0) {
+            addRow();
+        }
+
+        $(document).on('click', '.RowRemove', function () {
+            $(this).closest('tr').find("input[name*='IsDeleted']").val(true);
+            $(this).closest('tr').hide();
+        });
+
+        $(document).on('keydown', "tr.NewRow select, tr.NewRow input.FromQty, tr.NewRow input.ToQty, tr.NewRow input[type='text']", function (event) {
+            if (event.keyCode === 9) {
+                if (!validateField($(this)))
+                    event.preventDefault();
+            }
+        });
+
+        $(document).on("change", "tr.NewRow select, tr.NewRow input.FromQty, tr.NewRow input.ToQty, input[type='text']", function () {
+            if (isAddingRow)
+                return;
+            isAddingRow = true;
+
+            var currentInput = $(this);
+            var isValid = validateField(currentInput);
+            var currentRow = $(this).closest("tr.NewRow");
+            if (isValid) {
+                if (checkAllFieldsValid(currentRow)) {
+                    currentRow.data("isValid", true);
+                }
+                else {
+                    currentRow.data("isValid", false);
+                }
+            }
+            else {
+                currentRow.data("isValid", false);
+            }
+            if (currentRow.data("isValid")) {
+                var lastRow = $("tr.NewRow").last();
+                if (checkAllFieldsValid(lastRow))
+                    addRow();
+            }
+            else {
+                isAddingRow = false;
+            }
+        });
+
+        function checkAllFieldsValid(currentRow) {
+            var allFieldsValid = true;
+            $("tr.NewRow:visible").each(function () {
+                let isDeleted = $(this).find("input[name*='IsDeleted']").val() === "true";
+                if (!isDeleted) {
+                    $(this).find("select, input.FromQty, input.ToQty, input[type='text']").each(function () {
+                        if (!validateField($(this))) {
+                            allFieldsValid = false;
+                            return false;
+                        }
+                    });
+                    if (!allFieldsValid) return false;
+                }
+            });
+            return allFieldsValid;
+        }
+        function validateDuplicateUnits() {
+            var allRows = $("tr.NewRow:visible");
+            var uniqueCombinations = {};
+
+            for (var i = 0; i < allRows.length; i++) {
+                var row = $(allRows[i]);
+                var fromUnit = row.find("select.FromUnit").val();
+                var toUnit = row.find("select.ToUnit").val();
+
+                if (fromUnit == null || toUnit == null || fromUnit == '' || toUnit == '')
+                    return true;
+
+                var combination = fromUnit + "-" + toUnit;
+
+                if (uniqueCombinations[combination]) {
+                    alert("The combination '" + fromUnit + "' and '" + toUnit + "' has been used already");
+                    return false;
+                }
+
+                uniqueCombinations[combination] = true;
+            }
+            return true;
+        }
+
+        function validateFromToUnit(currentInput) {
+            var currentRow = currentInput.closest("tr.NewRow");
+            var FromUnit = currentRow.find("select.FromUnit");
+            var ToUnit = currentRow.find("select.ToUnit");
+            return (FromUnit.val() != ToUnit.val());
+        }
+
+
+        function validateField(currentInput) {
+            var valid = 1;
+            var inputValue = currentInput.val();
+
+            if (inputValue === "") {
+                valid = 0;
+            }
+
+            if (currentInput.hasClass("FromQty") || currentInput.hasClass("ToQty")) {
+                valid = ValidateAmount(currentInput);
+            }
+
+            if (currentInput.hasClass("FromUnit") || currentInput.hasClass("ToUnit")) {
+                var currentRow = currentInput.closest("tr.NewRow");
+                var FromUnit = currentRow.find("select.FromUnit");
+                var ToUnit = currentRow.find("select.ToUnit");
+
+                console.log("FromUnit", FromUnit.val());
+                console.log("ToUnit", ToUnit.val());
+
+                if (FromUnit.val() != "" && ToUnit.val() != "") {
+                    if (!validateFromToUnit(currentInput)) {
+                        valid = 0;
+                        alert("From Unit or To Unit cannot have same value");
+                        return false;
+                    }
+                }
+            }
+
+            if (valid == 0) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+        function ValidateAmount(currentInput) {
+            var valid = 1;
+
+            var currentRow = currentInput.closest("tr.NewRow");
+            var FromQty = currentRow.find("input.FromQty");
+            var ToQty = currentRow.find("input.ToQty");
+            var FromQtyPercent = FromQty.val();
+            var ToQtyPercent = ToQty.val();
+
+            if (currentInput.hasClass("FromQty")) {
+                if (FromQtyPercent > 0) {
+                }
+                else {
+                    valid = 0;
+                }
+            }
+            else if (currentInput.hasClass("ToQty")) {
+                if (ToQtyPercent > 0) {
+                }
+                else {
+                    valid = 0;
+                }
+            }
+            return valid;
+        }
+
+         $("#OkayButton").click(function () {
+            GridValidation();
+        });
+        $("#CloseButton").click(function () {
+            GridValidation();
+        });
+        function GridValidation(){
+            $("tr.NewRow").each(function () {
+                var FromQty = $(this).find("input.FromQty").val();
+                var ToQty = $(this).find("input.ToQty").val();
+                var FromUnit = $(this).find("select.FromUnit").val();
+                var ToUnit = $(this).find("select.ToUnit").val();
+
+                if (!FromUnit && !ToUnit && !(FromQty > 0) && !(ToQty > 0)) {
+                    $(this).remove();
+                }
+            });
+
+
+            var lastRow = $("tr.NewRow").last();
+            if (checkAllFieldsValid(lastRow)) {
+                $("#UnitConversion").modal('hide');
+            }
+            else {
+                alert("Please complete all fields !");
+                firstInvalidField.focus();
+            }
+
+        }
+
+        $("#AddRowButton").click(function () {
+            var lastRow = $("tr.NewRow").last();
+            if (checkAllFieldsValid(lastRow)) {
+                addRow();
+            }
+            else {
+                var firstInvalidField = null;
+                lastRow.find("select, input.FromQty, input.ToQty, input[type='text']").each(function () {
+                    if (!validateField($(this))) {
+                        if (firstInvalidField == null)
+                            firstInvalidField = $(this);
+                        return false;
+                    }
+                });
+                if (firstInvalidField != null) {
+                    alert("Please complete all fields !");
+                    firstInvalidField.focus();
+                }
+            }
+        });
+
+    });
+</script>

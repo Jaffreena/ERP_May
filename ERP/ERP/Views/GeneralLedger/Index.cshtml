@@ -1,0 +1,171 @@
+﻿<div class="row">
+    <div class="col-4 pb-3 pt-4">
+        <h1 class="h4 head-1">General Ledger</h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-4 pt-3">
+        <div class="card overflow-hidden mb-3">
+            <div class="card-header">
+                <h5 class="h6">
+                    Favourites
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text placeholder-glow">
+                    <span class="placeholder col-7"></span>
+                    <span class="placeholder col-4"></span>
+                    <span class="placeholder col-4"></span>
+                    <span class="placeholder col-6"></span>
+                    <span class="placeholder col-8"></span>
+                </p>
+            </div>
+        </div>
+        <div class="card overflow-hidden mb-3">
+            <div class="card-header">
+                <h5 class="h6">
+                    Reports
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text placeholder-glow">
+                    <span class="placeholder col-7"></span>
+                    <span class="placeholder col-4"></span>
+                    <span class="placeholder col-4"></span>
+                    <span class="placeholder col-6"></span>
+                    <span class="placeholder col-8"></span>
+                </p>
+            </div>
+        </div>
+        <div class="card overflow-hidden mb-3">
+            <div class="card-header">
+                <h5 class="h6">
+                    Setup
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text placeholder-glow">
+                    <span class="placeholder col-7"></span>
+                    <span class="placeholder col-4"></span>
+                    <span class="placeholder col-4"></span>
+                    <span class="placeholder col-6"></span>
+                    <span class="placeholder col-8"></span>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-4 pt-3">
+        <div class="card overflow-hidden mb-3">
+            <div class="card-header">
+                <h5 class="h6">
+                    Transactions
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text placeholder-glow">
+                    <span class="placeholder col-7"></span>
+                    <span class="placeholder col-4"></span>
+                    <span class="placeholder col-4"></span>
+                    <span class="placeholder col-6"></span>
+                    <span class="placeholder col-8"></span>
+                </p>
+            </div>
+        </div>
+        <div class="card overflow-hidden mb-3">
+            <div class="card-header">
+                <h5 class="h6">
+                    Periodic
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text placeholder-glow">
+                    <span class="placeholder col-7"></span>
+                    <span class="placeholder col-4"></span>
+                    <span class="placeholder col-4"></span>
+                    <span class="placeholder col-6"></span>
+                    <span class="placeholder col-8"></span>
+                </p>
+            </div>
+        </div>
+        <div class="card overflow-hidden mb-3">
+            <div class="card-header">
+                <h5 class="h6">
+                    Others
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text placeholder-glow">
+                    <span class="placeholder col-7"></span>
+                    <span class="placeholder col-4"></span>
+                    <span class="placeholder col-4"></span>
+                    <span class="placeholder col-6"></span>
+                    <span class="placeholder col-8"></span>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-4 pt-3">
+        <div class="card overflow-hidden mb-3">
+            <div class="card-header">
+                <h5 class="h6">
+                    Master Data
+                </h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <a asp-controller="GeneralLedgerMaster" asp-action="Currency">
+                            Currency
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a asp-controller="GeneralLedgerMaster" asp-action="COAGroup">
+                            COA Group
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a asp-controller="GeneralLedgerMaster" asp-action="COALedger">
+                            COA Ledger
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="card overflow-hidden mb-3">
+            <div class="card-header">
+                <h5 class="h6">
+                    Inquiries
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text placeholder-glow">
+                    <span class="placeholder col-7"></span>
+                    <span class="placeholder col-4"></span>
+                    <span class="placeholder col-4"></span>
+                    <span class="placeholder col-6"></span>
+                    <span class="placeholder col-8"></span>
+                </p>
+            </div>
+        </div>
+        <div class="card overflow-hidden mb-3">
+            <div class="card-header">
+                <h5 class="h6">
+                    Sub-Master Data
+                </h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <a asp-controller="GeneralLedgerSubmaster" asp-action="COAGroupNature">
+                            COA Group Nature
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('.navbar-nav > .nav-item.general > a').addClass("active");
+</script>

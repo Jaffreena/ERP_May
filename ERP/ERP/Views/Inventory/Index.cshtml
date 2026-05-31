@@ -1,0 +1,231 @@
+﻿@{
+    ViewData["Title"] = "Inventory";
+}
+
+<div class="row align-items-center panel-header h-auto">
+    <div class="col">
+        <div class="card rounded-0 mt-3">
+            <div class="card-body px-2 py-2">
+                <h1 class="h6 fw-light">
+                    Inventory
+                </h1>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row panel-body">
+    <div class="col-12 panel-card-fixed" id="BodyHeight">
+        <div class="w-100 rounded-0 border border-primary bg-transparent px-3" id="CardBody">
+            <div class="row">
+                <div class="col-4 pt-3">
+                    <div class="card rounded-0 mb-3 bg-transparent">
+                        <div class="card-header bg-secondary rounded-0">
+                            <p class="mb-0">
+                                Favourites
+                            </p>
+                        </div>
+                        <div class="card-body bg-transparent text-dark">
+                            <p class="card-text placeholder-glow">
+                                <span class="placeholder col-7"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-6"></span>
+                                <span class="placeholder col-8"></span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card rounded-0 mb-3 bg-transparent">
+                        <div class="card-header bg-secondary rounded-0">
+                            <p class="mb-0">
+                                Reports
+                            </p>
+                        </div>
+                        <div class="card-body bg-transparent text-dark">
+                            <p class="card-text placeholder-glow">
+                                <span class="placeholder col-7"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-6"></span>
+                                <span class="placeholder col-8"></span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card rounded-0 mb-3 bg-transparent">
+                        <div class="card-header bg-secondary rounded-0">
+                            <p class="mb-0">
+                                Setup
+                            </p>
+                        </div>
+                        <div class="card-body bg-transparent text-dark">
+                            <p class="card-text placeholder-glow">
+                                <span class="placeholder col-7"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-6"></span>
+                                <span class="placeholder col-8"></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4 pt-3">
+                    <div class="card rounded-0 mb-3 bg-transparent">
+                        <div class="card-header bg-secondary rounded-0">
+                            <p class="mb-0">
+                                Transactions
+                            </p>
+                        </div>
+                        <div class="card-body bg-transparent text-dark">
+                            <p class="card-text placeholder-glow">
+                                <span class="placeholder col-7"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-6"></span>
+                                <span class="placeholder col-8"></span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card rounded-0 mb-3 bg-transparent">
+                        <div class="card-header bg-secondary rounded-0">
+                            <p class="mb-0">
+                                Periodic
+                            </p>
+                        </div>
+                        <div class="card-body bg-transparent text-dark">
+                            <p class="card-text placeholder-glow">
+                                <span class="placeholder col-7"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-6"></span>
+                                <span class="placeholder col-8"></span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card rounded-0 mb-3 bg-transparent">
+                        <div class="card-header bg-secondary rounded-0">
+                            <p class="mb-0">
+                                Others
+                            </p>
+                        </div>
+                        <div class="card-body bg-transparent text-dark">
+                            <p class="card-text placeholder-glow">
+                                <span class="placeholder col-7"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-6"></span>
+                                <span class="placeholder col-8"></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4 pt-3">
+                    <div class="card rounded-0 mb-3 bg-transparent">
+                        <div class="card-header bg-secondary rounded-0">
+                            <p class="mb-0">
+                                Master Data
+                            </p>
+                        </div>
+                        <div class="card-body bg-transparent text-dark">
+                            <ul class="list-unstyled mb-0">
+                                <li class="mb-2">
+                                    <a asp-controller="InventoryMaster" asp-action="Item">
+                                        Item
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a asp-controller="InventoryMaster" asp-action="ItemCategory">
+                                        Item Category
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a asp-controller="InventoryMaster" asp-action="ItemSubcategory">
+                                        Item Sub-Category
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a asp-controller="InventoryMaster" asp-action="UoM">
+                                        UoM
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a asp-controller="InventoryMaster" asp-action="ItemGroup">
+                                        Item Group
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a asp-controller="InventoryMaster" asp-action="Warehouse">
+                                        Warehouse
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a asp-controller="InventoryMaster" asp-action="ExpenseCode">
+                                        Expense Code
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card rounded-0 mb-3 bg-transparent">
+                        <div class="card-header bg-secondary rounded-0">
+                            <p class="mb-0">
+                                Inquiries
+                            </p>
+                        </div>
+                        <div class="card-body bg-transparent text-dark">
+                            <p class="card-text placeholder-glow">
+                                <span class="placeholder col-7"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-6"></span>
+                                <span class="placeholder col-8"></span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card rounded-0 mb-3 bg-transparent">
+                        <div class="card-header bg-secondary rounded-0">
+                            <p class="mb-0">
+                                Sub-Master Data
+                            </p>
+                        </div>
+                        <div class="card-body bg-transparent text-dark">
+                            <ul class="list-unstyled mb-0">
+                                <li class="mb-2">
+                                    <a asp-controller="InventorySubmaster" asp-action="MaterialClassification">
+                                        Material Classification
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a asp-controller="InventorySubmaster" asp-action="MaterialOwnership">
+                                        Material Ownership
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a asp-controller="InventorySubmaster" asp-action="MaterialSegregation">
+                                        Material Segregation
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a asp-controller="InventorySubmaster" asp-action="WarehouseCategory">
+                                        Warehouse Category
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('.navbar-nav > .nav-item.inventory > a').addClass("active");
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const MainDiv = document.getElementById('BodyHeight');
+        const BodyDiv = document.getElementById('CardBody');
+
+        const MainHeight = MainDiv.offsetHeight;
+        BodyDiv.style.height = (MainHeight - 10) + 'px';
+    });
+</script>

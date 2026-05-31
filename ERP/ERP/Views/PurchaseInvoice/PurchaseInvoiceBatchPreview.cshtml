@@ -1,0 +1,137 @@
+﻿@model List<ERP_DTO.PurchaseInvoiceBatch_DTO>
+
+<div class="w-100 table-responsive">
+    <table class="table table-bordered table-hover align-middle table-grid mb-0">
+        <thead>
+            <tr class="table-info">
+                <th class="datetype text-center">@Html.DisplayNameFor(M => M.First().PII_BCH_Date)</th>
+                <th>@Html.DisplayNameFor(M => M.First().PII_BCH_No)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().PII_BCH_Qty)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().PII_BCH_UnitPrice)</th>
+                <th class="table-width-3xl text-end">@Html.DisplayNameFor(M => M.First().PII_BCH_Value)</th>
+            </tr>
+        </thead>
+        <tbody id="IBatTableBody">
+           
+            @if (Model != null)
+            {
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr class="IBatNewRow">
+                        <td class="datetype">
+                            <input id="PII_BCH_Item_Number" name="ItemBatch[@i].PII_BCH_Item_Number" class="PII_BCH_Item_Number" type="hidden" value="@Model[i].PII_BCH_Item_Number" />
+                            <input id="PII_BCH_PII_Number" name="ItemBatch[@i].PII_BCH_PII_Number" class="PII_BCH_PII_Number" type="hidden" value="@Model[i].PII_BCH_PII_Number" />
+                            <input id="PII_BCH_Date" name="ItemBatch[@i].PII_BCH_Date" class="form-control Key datepicker PII_BCH_Date text-center" autocomplete="off" value="@Model[i].PII_BCH_Date" />
+                        </td>
+                        <td>
+                            <input id="PII_BCH_No" name="ItemBatch[@i].PII_BCH_No" class="form-control PII_BCH_No" readonly autocomplete="off" value="@Model[i].PII_BCH_No" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="PII_BCH_Qty" name="ItemBatch[@i].PII_BCH_Qty" class="form-control PII_BCH_Qty text-end" readonly autocomplete="off" value="@Model[i].PII_BCH_Qty" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="PII_BCH_UnitPrice" name="ItemBatch[@i].PII_BCH_UnitPrice" readonly class="form-control PII_BCH_UnitPrice UnitDecimal text-end" autocomplete="off" value="@Model[i].PII_BCH_UnitPrice" />
+                        </td>
+                        <td class="table-width-3xl">
+                            <input id="PII_BCH_Value" name="ItemBatch[@i].PII_BCH_Value" readonly class="form-control PII_BCH_Value decimal text-end" autocomplete="off" value="@Model[i].PII_BCH_Value" />
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+        <tfoot>
+            <tr class="table-info">
+                <td colspan="2" class="text-end py-2">Total</td>
+                <td class="table-width-xl">
+                    <input id="BatchTotalQty" class="form-control text-end" readonly />
+                </td>
+                <td></td>
+                <td class="table-width-3xl">
+                    <input id="BatchTotalValue" class="form-control text-end" readonly />
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        var rowCount = @(Model != null ? Model.Count : 0);
+        var isAddingRow = false;
+
+        $(document).on('click', '.ItemBatch', function () {
+            let CheckedCheckbox = document.querySelector('.CheckItem:checked');
+            if (CheckedCheckbox) {
+                var currentRow = $(CheckedCheckbox).closest('tr.NewRow');
+
+                var ItemNumber = currentRow.find('input.PII_Number').val();
+                var Qty = currentRow.find('input.PII_Qty').val();
+
+                if (ItemNumber) {
+                    $("#PII_BATCHQty").text(removeCommas(Qty));
+
+                    var cout = 0;
+                    $("tr.IBatNewRow").each(function () {
+                        var RowItemNumber = $(this).find("input.PII_BCH_PII_Number").val();
+                        var isDeleted = $(this).find("input.IsDeleted").val();
+
+                        if (RowItemNumber === ItemNumber && isDeleted !== 'true') {
+                            $(this).show();
+                            cout++;
+                        } else {
+                            $(this).hide();
+                        }
+                    });
+
+                    new bootstrap.Modal($("#IBatch")).show();
+                    $('#IBatch').on('shown.bs.modal', function () {
+                        $(this).find('[autofocus]').focus();
+                        (async () => {
+                            BatchCalculateFooter();
+                        })();
+                    });
+                }
+            }
+        });
+
+
+        $("#IBatCloseButton").click(function () {
+            $("#IBatch").modal('hide');
+        });
+
+
+        async function BatchCalculateFooter() {
+            var BtotalQty = 0;
+            var BtotalValue = 0;
+
+            $("tr.IBatNewRow:visible").each(function () {
+                var row = $(this);
+                var PII_BCH_IsDeleted = $(this).find("input.PII_BCH_IsDeleted").val() === "true";
+                if (!PII_BCH_IsDeleted) {
+                    var Qty = parseFloat(removeCommas(row.find("input.PII_BCH_Qty").val()));
+                    var Value = parseFloat(removeCommas(row.find("input.PII_BCH_Value").val()));
+
+                    if (Qty != '') {
+                        BtotalQty += parseFloat(Qty);
+                    }
+                    if (Value != '') {
+                        BtotalValue += parseFloat(Value);
+                    }
+                }
+            });
+
+            $("#BatchTotalQty").val(DecimalIndianRupees(BtotalQty.toFixed(2)));
+            $("#BatchTotalValue").val(DecimalIndianRupees(BtotalValue.toFixed(2)));
+        }
+        window.onload = BatchCalculateFooter();
+
+    });
+</script>
+<style>
+    .search-results {
+        position: absolute;
+        z-index: 1000;
+        overflow-y: auto;
+        width: 400px;
+        max-height: 300px;
+    }
+</style>

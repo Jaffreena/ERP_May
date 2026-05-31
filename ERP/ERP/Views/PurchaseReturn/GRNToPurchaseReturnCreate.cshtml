@@ -1,0 +1,1546 @@
+﻿@model ERP_DTO.GRNToPurchaseReturnHead_DTO
+@{
+    ViewData["Title"] = "GRN To Purchase Return Create";
+}
+<script>
+    function removeCommas(value) {
+        if (!value) return '0';
+        return value.replace(/,/g, '');
+    }
+    function DecimalIndianRupees(value) {
+        if (value === "" || isNaN(value)) {
+            return "0.00";
+        }
+
+        var formattedValue = parseFloat(value).toFixed(2);
+
+        var parts = formattedValue.split(".");
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+        return parts.join(".");
+    }
+</script>
+
+
+<form asp-action="GRNToPurchaseReturnCreate" class="h-100">
+
+    <input id="PRI_EXP_PIINumber" type="hidden" />
+    <input id="PRI_EXP_PIHNumber" type="hidden" />
+    <input id="PRI_EXP_Qty" type="hidden" />
+    <input id="PRI_EXP_MatrialValue" type="hidden" />
+
+    <input id="PRI_BATCH_Warehouse" type="hidden" />
+    <input id="PRI_BATCH_Qty" type="hidden" />
+    <input id="PRI_BATCH_Unit_Price" type="hidden" />
+    <input id="PRI_BATCH_ItemNumber" type="hidden" />
+    <input id="PRI_BATCH_ItemIndex" type="hidden" />
+
+    <div class="modal modal-lg modal-xl fade" id="Expense" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title">Expense</p>
+                </div>
+                <div class="modal-body py-4 text-dark fs-6 text-center icon-link justify-content-center">
+                    <div class="w-100 table-responsive">
+                                <partial name="GRNToPurchaseReturnExpenseView.cshtml" model="@Model.Expenses" />
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" id="ExCloseButton" class="btn btn-primary px-4" ref="always_focus" autofocus>Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-lg modal-xl fade" id="IExpense" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title">Item Expense</p>
+                </div>
+                <div class="modal-body py-4 text-dark icon-link justify-content-center">
+                    <div class="w-100 table-responsive">
+                                <partial name="GRNToPurchaseReturnIExpenseView.cshtml" model="@Model.ItemExpenses" />
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" id="IExCloseButton" class="btn btn-primary px-4" ref="always_focus" autofocus>Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-lg fade" id="GSTView" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title">Cluster</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-dark icon-link justify-content-center">
+                    <div id="GSTTableView" class="w-100 table-responsive"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-lg fade" id="InvoiceView" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title">Purchase Invoice</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-dark icon-link justify-content-center">
+                    <div class="w-100 table-responsive">
+                        <div id="InvoiceTableView" class="w-100 table-responsive"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-lg fade" id="IBatch" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title w-100">
+                        Batch <span class="float-end">
+                            Item Qty : <span id="PRI_BATCHQty"></span>
+                        </span>
+                    </p>
+                </div>
+                <div class="modal-body text-dark icon-link justify-content-center">
+                    <div class="w-100 table-responsive">
+                                <partial name="GRNToPurchaseReturnBatchView.cshtml" model="@Model.ItemBatch" />
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" id="IBatCloseButton" class="btn btn-primary px-4" ref="always_focus" autofocus>Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-lg fade" id="TaxView" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title">Header Tax View</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-dark icon-link justify-content-center">
+                    <div id="TaxTableView" class="w-100 table-responsive"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row align-items-center panel-header h-auto">
+        <div class="col">
+            <div class="card rounded-0 mt-3">
+                <div class="card-body px-2 py-2">
+                    <h1 class="h6">
+                        Purchase Return
+                        <a asp-controller="Procurement" asp-action="Index" class="float-end btn p-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                            </svg>
+                        </a>
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row panel-body">
+        <div class="col-12 panel-card-fixed" id="BodyHeight">
+            <div class="card rounded-0 border border-primary bg-transparent">
+                <div class="card rounded-0 bg-transparent shadow-none" id="CardHeader">
+                    <div class="card-body pb-0">
+                        <div class="row ps-2">
+                            <partial name="GRNToPurchaseReturnHeadView.cshtml" model="@Model" />
+                        </div>
+                    </div>
+                </div>
+                <div class="card rounded-0 bg-transparent shadow-none" id="CardBody">
+                    <div class="card-body h-100">
+                        <div class="row h-100">
+                            <div class="col-auto left-menu h-100">
+                                <ul class="nav nav-tabs tab-header">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" aria-current="page">Item</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark">Other</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content tab-body tab-body-h-o">
+                                    <div class="tab-pane fade show active p-2 pb-0 border border-top-0 h-100 table-fixed" tabindex="0">
+                                        <div class="row h-100">
+                                            <partial name="GRNToPurchaseReturnItemView.cshtml" model="@Model.ReturnItems" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto right-menu text-center border-start">
+                                <a class="ItemExpense btn btn-sm btn-primary px-2 mb-2 w-100">
+                                    Misc Expense
+                                </a>
+                                <a class="GSTView btn btn-sm btn-primary px-2 mb-2 w-100">
+                                    GST View
+                                </a>
+                                <a class="ItemBatch btn btn-sm btn-primary px-2 mb-2 w-100">
+                                    Batch
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card rounded-0 bg-transparent shadow-none pt-0" id="CardFooter">
+                    <div class="card-body text-black pt-0">
+                        <div class="row">
+                            <div class="col-auto left-menu">
+                                <div class="row ps-2">
+                                    <div class="col-12 col-md-4 col-lg-3">
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="PRH_MaterialCost" class="col-sm-7 col-form-label ps-0"></label>
+                                            <div class="col-sm-5">
+                                                <input asp-for="PRH_MaterialCost" class="form-control text-black text-end" autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="PRH_ItemMiscExpense" class="col-sm-7 col-form-label ps-0"></label>
+                                            <div class="col-sm-5">
+                                                <input asp-for="PRH_ItemMiscExpense" class="form-control text-black text-end" autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="PRH_HeaderMiscExpense" class="col-sm-7 col-form-label ps-0"></label>
+                                            <div class="col-sm-5">
+                                                <input asp-for="PRH_HeaderMiscExpense" class="form-control text-black text-end" autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="PRH_GST_Amount" class="col-sm-7 col-form-label ps-0"></label>
+                                            <div class="col-sm-5">
+                                                <input asp-for="PRH_GST_Amount" class="form-control text-black text-end" autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="PRH_ReturnAmount" class="col-sm-7 col-form-label ps-0"></label>
+                                            <div class="col-sm-5">
+                                                <input asp-for="PRH_ReturnAmount" class="form-control text-black text-end" autocomplete="off" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-4 col-lg-3 px-4">
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="PRH_WHT_Amount" class="col-sm-7 col-form-label ps-0"></label>
+                                            <div class="col-sm-5">
+                                                <input asp-for="PRH_WHT_Amount" class="form-control text-black text-end" autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="PRH_RoundOff" class="col-sm-7 col-form-label ps-0"></label>
+                                            <div class="col-sm-5">
+                                                <input asp-for="PRH_RoundOff" class="form-control text-black text-end" autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="PRH_VendorReceivable" class="col-sm-7 col-form-label ps-0"></label>
+                                            <div class="col-sm-5">
+                                                <input asp-for="PRH_VendorReceivable" class="form-control text-black text-end" autocomplete="off" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto right-menu text-centert">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script src="~/js/site.js"></script>
+
+<script>
+    $('.navbar-nav > .nav-Vendor.inventory > a').addClass("active");
+</script>
+
+<script>
+    $('form').submit(function (event) {
+        $("tr.ExNewRow").each(function () {
+            var ExpenseCode = $(this).find("select.PRH_EXP_Expense_Number").val();
+            var Occurrence = $(this).find("select.PRH_EXP_Occurrence_Number").val();
+            var ChargeableMethod = $(this).find("select.PRH_EXP_CM_Number").val();
+            var ExpenseBase = removeCommas($(this).find("input.PRH_EXP_ExpenseBase").val());
+            var Allocate = $(this).find("select.PRH_EXP_Allocate_Number").val();
+            var LedgerAccount = $(this).find("select.PRH_EXP_LA_Number").val();
+
+            if (!ExpenseCode && !Occurrence && !ChargeableMethod && !Allocate && !LedgerAccount && !(ExpenseBase > 0)) {
+                $(this).find("input.PRH_EXP_IsDeleted").val("true");
+                $(this).hide();
+            }
+        });
+        $("tr.IExNewRow").each(function () {
+            var ExpenseCode = $(this).find("select.PRI_EXP_Expense_Number").val();
+            var Occurrence = $(this).find("select.PRI_EXP_Occurrence_Number").val();
+            var ChargeableMethod = $(this).find("select.PRI_EXP_CM_Number").val();
+            var ExpenseBase = removeCommas($(this).find("input.PRI_EXP_ExpenseBase").val());
+            var Allocate = $(this).find("select.PRI_EXP_Allocate_Number").val();
+            var LedgerAccount = $(this).find("select.PRI_EXP_LA_Number").val();
+
+            if (!ExpenseCode && !Occurrence && !ChargeableMethod && !Allocate && !LedgerAccount && !(ExpenseBase > 0)) {
+                $(this).find("input.PRI_EXP_IsDeleted").val("true");
+                $(this).hide();
+            }
+        });
+
+        $("tr.NewRow").each(function () {
+            var ItemNumber = $(this).find("input.PRI_Item_Number").val();
+            var Qty = removeCommas($(this).find("input.PRI_Qty").val());
+            var UnitPrice = removeCommas($(this).find("input.PRI_UnitPrice").val());
+            var UoMNumber = $(this).find("select.PRI_UoM_Number").val();
+
+            if (!ItemNumber && !UoMNumber && !(Qty > 0) && !(UnitPrice > 0)) {
+                $(this).find("input.IsDeleted").val("true");
+                $(this).hide();
+            }
+        });
+
+        $('select').prop('disabled', false);
+    });
+
+    
+    function NumberToIndianRupees(value, decimalPlaces) {
+        if (value === "" || isNaN(value)) {
+            return "";
+        }
+
+        var formattedValue = parseFloat(value).toFixed(decimalPlaces);
+
+        var parts = formattedValue.split(".");
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+
+        if (parseFloat(value) % 1 === 0) {
+            return parts[0];
+        }
+        return parts.join(".");
+    }
+    $(".QtyNumbers").each(function () {
+        var value = $(this).val();
+        var decimalPlaces = $(this).closest('tr').find("input.PRI_DecimalPlaces").val();
+        if (decimalPlaces === "" || isNaN(value)) {
+            decimalPlaces = 2;
+        }
+        $(this).val(NumberToIndianRupees(value, decimalPlaces));
+    });
+    $(document).on("blur", ".QtyNumbers", function () {
+        var value = $(this).val();
+        var decimalPlaces = $(this).closest('tr').find("input.PRI_DecimalPlaces").val();
+
+        if (value.trim() === "" || isNaN(value)) {
+            $(this).val("0");
+        } else {
+            $(this).val(NumberToIndianRupees(value, decimalPlaces));
+        }
+    });
+    $(document).on("focus", ".QtyNumbers", function () {
+        var value = $(this).val();
+        $(this).val(removeCommas(value));
+        $(this).select();
+    });
+
+
+    $(".UnitDecimal").each(function () {
+        var ValueResult = "0";
+        var value = $(this).val();
+        var decimalPlaces = $("#PRH_DecimalPlaces").val();
+        if (decimalPlaces === "" || isNaN(value)) {
+            decimalPlaces = 2;
+        }
+        ValueResult = formatToIndianRupees(removeCommas(value), decimalPlaces);
+        $(this).val(ValueResult);
+    });
+    $(document).on("blur", ".UnitDecimal", function () {
+        var ValueResult = "0";
+        var value = $(this).val();
+
+        var decimalPlaces = $("#PRH_DecimalPlaces").val();
+
+        if (decimalPlaces === "" || isNaN(value)) {
+            decimalPlaces = 2;
+        }
+
+        if (value.trim() === "" || isNaN(value)) {
+        } else {
+            ValueResult = formatToIndianRupees(value, decimalPlaces);
+            $(this).val(ValueResult);
+        }
+    });
+    $(document).on("focus", ".UnitDecimal", function () {
+        var value = $(this).val();
+        $(this).val(removeCommas(value));
+        $(this).select();
+    });
+    function formatToIndianRupees(value, UnitDecimalPlaces) {
+        var ValueResult = "0";
+        if (value === "" || isNaN(value)) {
+        }
+        else {
+            ValueResult = value;
+        }
+
+        var fromat = parseFloat(ValueResult).toFixed(UnitDecimalPlaces);
+
+        var parts = fromat.split(".");
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+        return parts.join(".");
+    }
+
+
+    function OnVendorInput(inputElement) {
+        SearchVendor(inputElement);
+    }
+    function OnVendorFocus(inputElement) {
+        var tax = inputElement.value;
+        if (!tax) {
+            SearchVendor(inputElement);
+        }
+        else {
+            $(this).select();
+        }
+    }
+    function SearchVendor(inputElement) {
+        var vendor = inputElement.value;
+        var PRHDate = $("#PRH_ReturnDate").val();
+        var resultsDiv = $(inputElement).next('.vendor-search-results');
+        var isChecked = $("#PRH_ImportOrder").prop("checked");
+        var Import;
+
+        if (isChecked) {
+            Import = true;
+        } else {
+            Import = false;
+        }
+
+        $.ajax({
+            url: 'vendor',
+            data: { Vendor: vendor, PRHDate: PRHDate, Import: Import },
+            type: 'GET',
+            success: function (data) {
+                resultsDiv.empty();
+                if (data && data.length > 0) {
+                    resultsDiv.show();
+                    var table = $('<div class="card-body modal-content"><table class="table table-bordered mb-0 table-hover"><thead><tr class="table-info"><th>Vendor Code</th><th>Vendor Name</th><th>Currency</th></tr></thead><tbody></tbody></table></div>');
+                    data.forEach(function (ven) {
+                        var row = $('<tr></tr>');
+                        row.append('<td>' + ven.vendorCode + '</td>');
+                        row.append('<td>' + ven.vendorName + '</td>');
+                        row.append('<td>' + ven.currencyCode + '</td>');
+                        table.find('tbody').append(row);
+
+                        row.on('click', function () {
+                            var vengo = 0;
+                            var vendorna = ven.vendorName;
+                            var vendor = $("#PRHVendor").val();
+                            if (vendor == '') {
+                                vengo = 1;
+                            }
+                            else if (vendor === vendorna) {
+                                vengo = 1;
+                            }
+                            else {
+                                let rowCount = $("tr.NewRow").length;
+                                if (rowCount > 0) {
+                                    if (confirm("Do you want to change the Vendor Name? This action will clear all existing items.")) {
+
+                                        $("tr.NewRow").each(function () {
+                                            $(this).find("input.PII_IsDeleted").val("true");
+                                            $(this).hide();
+                                        });
+                                        $("tr.ExNewRow").each(function () {
+                                            $(this).find("input.PIH_EXP_IsDeleted").val("true");
+                                            $(this).hide();
+                                        });
+                                        $("tr.IExNewRow").each(function () {
+                                            $(this).find("input.PII_EXP_IsDeleted").val("true");
+                                            $(this).hide();
+                                        });
+
+                                        vengo = 1;
+                                    }
+                                    else {
+                                        $(inputElement).val(vendor);
+                                    }
+                                }
+                                else { vengo = 1; }
+                            }
+
+                            if (vengo === 1) {
+                                $(inputElement).val(ven.vendorName);
+                                $("#PRH_Vendor_Number").val(ven.vendorNumber);
+                                $("#PRHVendor").val(ven.vendorName);
+                                $("#PRH_Currency").val(ven.currencyCode);
+                                $("#PRH_Currency_Number").val(ven.currency);
+                                $("#PRH_VendorLocation").val(ven.vendorLocation);
+                                $("#PRH_WHT_Number").val(ven.withholdTax);
+                                $("#PRH_CreditDays").val(ven.creditDays);
+                                $("#PRH_PaymentBase").val(ven.paymentBase);
+
+                                resultsDiv.hide();
+
+                                SearchClustor(ven.vendorNumber, ven.taxNumber);
+                                GetWHT(ven.vendorNumber, ven.withholdTax, PRHDate);
+
+                                SearchInvoice();
+                            }
+                            resultsDiv.hide();
+                        });
+                    });
+
+                    var closeButton = $('<div class="card-header bg-primary py-1"><button type="button" class="p-0 float-end btn btn-sm btn-primary bg-opacity-10"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d = "M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"> </path></svg></button></div>');
+                    closeButton.on('click', function () {
+                        resultsDiv.hide();
+                    });
+
+                    resultsDiv.append(closeButton);
+                    resultsDiv.append(table);
+                } else {
+                    resultsDiv.hide();
+                    resultsDiv.append('<p>No results found</p>');
+                }
+            },
+            error: function () {
+                resultsDiv.text('Error loading data.');
+                resultsDiv.show();
+            }
+        });
+    }
+
+
+    $(".decimal").each(function () {
+        var value = $(this).val();
+        $(this).val(DecimalIndianRupees(removeCommas(value)));
+    });
+    $(document).on("blur", ".decimal", function () {
+        var value = $(this).val();
+        if (value.trim() === "" || isNaN(value)) {
+            $(this).val("0.00");
+        } else {
+            $(this).val(DecimalIndianRupees(removeCommas(value)));
+        }
+    });
+    $(document).on("focus", ".decimal", function () {
+        var value = $(this).val();
+        $(this).val(removeCommas(value));
+        $(this).select();
+    });
+
+
+    function OnClustorInput(inputElement) {
+        SearchVendor(inputElement);
+    }
+    function OnClustorFocus(inputElement) {
+        var tax = inputElement.value;
+        if (!tax) {
+            SearchClustor(inputElement);
+        }
+        else {
+            $(this).select();
+        }
+    }
+    function SearchClustor(Vendor, taxNumber) {
+        if (Vendor) {
+            $.ajax({
+                url: 'cluster',
+                data: { Vendor: Vendor },
+                type: 'GET',
+                success: function (data) {
+                    if (data && data.length > 0) {
+                        var dropdown = document.getElementById("PRH_TaxCluster_Number");
+                        dropdown.innerHTML = "";
+
+                        var option = document.createElement("option");
+                        option.value = "";
+                        option.text = "";
+                        dropdown.appendChild(option);
+
+                        data.forEach(function (item) {
+                            var option = document.createElement("option");
+                            option.value = item.taxClusterNumber;
+                            option.text = item.taxCluster;
+                            dropdown.appendChild(option);
+                        });
+
+                        if (taxNumber) {
+                            $("#PRH_TaxCluster_Number").val(taxNumber);
+                        }
+                        else {
+                            AssignGST();
+                        }
+                    }
+                },
+                error: function () {
+                    resultsDiv.text('Error loading data.');
+                    resultsDiv.show();
+                }
+            });
+        }
+    }
+    function AssignGST() {
+        var TaxCluster = $("#PRH_TaxClusterNumber").val();
+        $("#PRH_TaxCluster_Number").val(TaxCluster);
+    }
+    AssignGST();
+
+
+    // // $(document).on('change', "#PRH_ReturnDate", function () {
+    // //     var InDate = $("#PRH_ReturnDate").val();
+    // //     var Credit = $("#PRH_CreditDays").val();
+
+    // //     if (InDate == '' || Credit == '') { } else {
+    // //         var CurentDate = addDays(InDate, Credit);
+    // //         $("#PRH_DueDate").val(CurentDate);
+    // //     }
+
+    // //     var PIHDate = $("#PRH_ReturnDate").val();
+    // //     const date = new Date(PIHDate);
+
+    // //     const Year = date.getFullYear();
+    // //     const Month = date.getMonth() + 1;
+    // //     const Day = date.getDate();
+
+    // //     const ForMonth = String(Month).padStart(2, '0');
+    // //     const ForDay = String(Day).padStart(2, '0');
+
+    // //     const ForDate = `${Year}${ForMonth}${ForDay}`;
+
+    // //     $.ajax({
+    // //         url: 'numbering',
+    // //         data: { PRDate: ForDate },
+    // //         type: 'GET',
+    // //         success: function (data) {
+    // //             if (data === "") {
+
+    // //             }
+    // //             else {
+    // //                 $('#PRH_ReturnNo').val(data);
+    // //             }
+    // //         },
+    // //         error: function () {
+    // //         }
+    // //     });
+    // //     GetVendor();
+    // //     SearchInvoice();
+    // // });
+
+    function addDays(date, days) {
+        const dateAfterAddingDays = new Date(date);
+        dateAfterAddingDays.setDate(dateAfterAddingDays.getDate() + parseInt(days));
+
+        const day = dateAfterAddingDays.getDate().toString().padStart(2, '0');
+        const year = dateAfterAddingDays.getFullYear();
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const monthAbbr = monthNames[dateAfterAddingDays.getMonth()];
+
+        const result = `${day}-${monthAbbr}-${year}`;
+        return result;
+    }
+    function ExchangeVisibility() {
+        if ($('#PRH_ImportOrder').is(':checked')) {
+            $('#ExchangeRate').show();
+        } else {
+            $('#ExchangeRate').hide();
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        ExchangeVisibility();
+
+        const MainDiv = document.getElementById('BodyHeight');
+        const HeadDiv = document.getElementById('CardHeader');
+        const BodyDiv = document.getElementById('CardBody');
+        const FooterDiv = document.getElementById('CardFooter');
+
+        if (HeadDiv && BodyDiv) {
+            const MainHeight = MainDiv.offsetHeight;
+            const HeadHeight = HeadDiv.offsetHeight;
+            const FooterHeight = FooterDiv.offsetHeight;
+            BodyDiv.style.height = (MainHeight - HeadHeight - FooterHeight - 10) + 'px';
+        } else {
+        }
+    });
+
+    $("#PRH_ReturnDate").change(function (e) {
+        const PRHHDate = $("#PRH_ReturnDate").val();
+        const InvoiceDate = ParseCustomDate(PRHHDate);
+
+        let CheckedPI = [];
+        $("tr.NewRow").each(function () {
+            var irow = $(this);
+            var Pi_Number = irow.find("input.PRI_PIH_Number").val();
+            var PisDate = irow.find("input.PRI_PI_Date").val();
+
+            var PIDeleteInRow = $(this).find(".PRI_IsDeleted").val();
+            if (PIDeleteInRow == "false") {
+                const PiDate = ParseCustomDate(PisDate);
+                if (InvoiceDate.getTime() < PiDate.getTime()) {
+                    CheckedPI.push(Pi_Number);
+                }
+            }
+        });
+        const UniqueCheckedPI = [...new Set(CheckedPI)];
+
+        if (UniqueCheckedPI.length > 0) {
+            if (confirm("Do you want to change the Date? This action will clear all existing items.")) {
+
+                let DisplayedPI = [];
+                $("tr.NewRow").each(function () {
+                    var PIDeleteInRow = $(this).find(".PRI_IsDeleted").val();
+                    if (PIDeleteInRow == "false") {
+                        const PINumberInRow = $(this).find(".PRI_PIH_Number").val();
+                        if (PINumberInRow) {
+                            DisplayedPI.push(PINumberInRow);
+                        }
+                    }
+                });
+
+                const PIToRemove = DisplayedPI.filter(PI => UniqueCheckedPI.includes(PI));
+                const UniquePIToRemove = [...new Set(PIToRemove)];
+
+                console.log("UniquePIToRemove", UniquePIToRemove);
+
+                UniquePIToRemove.forEach(PINumberToRemove => {
+                    let $ExistingRow = $("tr.NewRow").filter(function () {
+                        return $(this).find(".PRI_PIH_Number").val() === PINumberToRemove;
+                    });
+
+                    let EXAlreadyExists = $ExistingRow.length > 0;
+
+                    if (EXAlreadyExists) {
+                        $ExistingRow.find("input.CheckItem").val(false);
+                        $ExistingRow.find("input.PRI_IsDeleted").val("true");
+                        $ExistingRow.hide();
+                    }
+                });
+
+
+
+                let DisplayedExPI = [];
+                $("tr.ExNewRow").each(function () {
+                    const PINumberInRow = $(this).find(".PRH_EXP_PIH_Number").val();
+                    if (PINumberInRow) {
+                        DisplayedExPI.push(PINumberInRow);
+                    }
+                });
+
+                const ExPIToRemove = DisplayedExPI.filter(PI => UniqueCheckedPI.includes(PI));
+                const ExUniquePIToRemove = [...new Set(ExPIToRemove)];
+
+                ExUniquePIToRemove.forEach(PINumberToRemove => {
+                    let $ExistingRow = $("tr.ExNewRow").filter(function () {
+                        return $(this).find(".PRH_EXP_PIH_Number").val() === PINumberToRemove;
+                    });
+
+                    let EXAlreadyExists = $ExistingRow.length > 0;
+
+                    if (EXAlreadyExists) {
+                        $ExistingRow.find("input.PRH_EXP_IsDeleted").val("true");
+                        $ExistingRow.hide();
+                    }
+                });
+
+
+
+                let DisplayedIExPI = [];
+                $("tr.IExNewRow").each(function () {
+                    const PINumberInRow = $(this).find(".PRI_EXP_PIH_Number").val();
+                    if (PINumberInRow) {
+                        DisplayedIExPI.push(PINumberInRow);
+                    }
+                });
+
+                const IExPIToRemove = DisplayedIExPI.filter(PI => UniqueCheckedPI.includes(PI));
+                const IExUniquePIToRemove = [...new Set(IExPIToRemove)];
+
+                IExUniquePIToRemove.forEach(PINumberToRemove => {
+                    let $ExistingRow = $("tr.IExNewRow").filter(function () {
+                        return $(this).find(".PRI_EXP_PIH_Number").val() === PINumberToRemove;
+                    });
+
+                    let EXAlreadyExists = $ExistingRow.length > 0;
+
+                    if (EXAlreadyExists) {
+                        $ExistingRow.find("input.PRI_EXP_IsDeleted").val("true");
+                        $ExistingRow.hide();
+                    }
+                });
+
+                $("#PRHReturnDate").val($("#PRH_ReturnDate").val());
+
+                SearchInvoice();
+            }
+            else {
+                $("#PRH_ReturnDate").val($("#PRH_ReturnDate").val());
+
+                SearchInvoice();
+            }
+        }
+        else {
+            SearchInvoice();
+        }
+
+        var PIHDate = $("#PRH_ReturnDate").val();
+        const date = new Date(PIHDate);
+
+        const Year = date.getFullYear();
+        const Month = date.getMonth() + 1;
+        const Day = date.getDate();
+
+        const ForMonth = String(Month).padStart(2, '0');
+        const ForDay = String(Day).padStart(2, '0');
+
+        const ForDate = `${Year}${ForMonth}${ForDay}`;
+
+        $.ajax({
+            url: 'numbering',
+            data: { PRDate: ForDate },
+            type: 'GET',
+            success: function (data) {
+                if (data === "") {
+
+                }
+                else {
+                    $('#PRH_ReturnNo').val(data);
+                }
+            },
+            error: function () {
+            }
+        });
+        GetVendor();
+
+        CalAmount();
+        (async () => {
+            CalculateFooter();
+        })();
+        $("#PRH_DeliveryTerms").focus();
+    });
+
+    function ParseCustomDate(dateString) {
+        if (!dateString || typeof dateString !== 'string') {
+            return null;
+        }
+
+        const months = {
+            'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5,
+            'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
+        };
+
+        const parts = dateString.split('-');
+
+        if (parts.length === 3) {
+            const day = parseInt(parts[0], 10);
+            const monthStr = parts[1];
+            const year = parseInt(parts[2], 10);
+
+            if (months.hasOwnProperty(monthStr) && !isNaN(day) && !isNaN(year) && year > 1000) {
+                const monthIndex = months[monthStr];
+                const dateObj = new Date(year, monthIndex, day);
+                if (dateObj.getFullYear() === year && dateObj.getMonth() === monthIndex && dateObj.getDate() === day) {
+                    return dateObj;
+                } else {
+                }
+            }
+        }
+        console.warn("Could not parse date string:", dateString, "Parts:", parts);
+        return null;
+    }
+</script>
+<script>
+    function SearchInvoice() {
+        var Vendor = $("#PRH_Vendor_Number").val();
+        var MSNumber = $("#PRH_MS_Number").val();
+        var PRHDate = $("#PRH_ReturnDate").val();
+        var isChecked = $("#PRH_ImportOrder").prop("checked");
+        var resultsDiv = $("#InvoiceTableView");
+        var Import;
+
+        if (isChecked) {
+            Import = true;
+        } else {
+            Import = false;
+        }
+
+        if (Vendor) {
+            $.ajax({
+                url: 'invoice',
+                data: { Vendor: Vendor, MSNumber: MSNumber, Import: Import, PRHDate: PRHDate },
+                type: 'GET',
+                success: function (data) {
+                    let DisplayedPI = [];
+                    $("tr.NewRow").each(function () {
+                        const PINumberInRow = $(this).find(".PRI_PIH_Number").val();
+                        if (PINumberInRow) {
+                            DisplayedPI.push(PINumberInRow);
+                        }
+                    });
+                    const UniqueDisplayedPIs = [...new Set(DisplayedPI)];
+
+                    if (data && data.length > 0) {
+                        resultsDiv.empty();
+                        var tableHTML = `<table class="table table-bordered mb-0 table-hover">
+                                            <thead>
+                                                <tr class="table-info">
+                                                    <th class="px-2 del"></th>
+                                                    <th>Invoice No</th>
+                                                    <th>Invoice Date</th>
+                                                    <th>Supp. Inv. No</th>
+                                                    <th>Supp. Inv. Date</th>
+                                                    <th>Material Cost</th>
+                                                    <th class='text-center'>Recover Deleted Item</th>
+                                                    <th class='text-center'>Recover Deleted Header Expense</th>
+                                                    <th class='text-center'>Recover Deleted Item Expense</th>
+                                               </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                         </table>`;
+                        var table = $(tableHTML);
+
+                        data.forEach(function (Inv) {
+                            var CheckboxCell = $('<td class="px-2 del text-center"></td>');
+                            var Checkbox = $('<input type="checkbox" class="form-check-input invoice-item-checkbox">');
+                            Checkbox.val(Inv.piH_Number);
+                            const pihnum = String(Inv.piH_Number).trim();
+
+                            if (UniqueDisplayedPIs.includes(pihnum.trim())) {
+                                Checkbox.prop('checked', true);
+                            }
+                            CheckboxCell.append(Checkbox);
+
+                            var ItemCheckboxCell = $('<td class="px-2 del text-center"></td>');
+                            var ItemCheckbox = $('<input type="checkbox" class="form-check-input item-delete-checkbox">');
+                            ItemCheckbox.val(Inv.piH_Number);
+                            ItemCheckboxCell.append(ItemCheckbox);
+
+                            var HeaderExCheckboxCell = $('<td class="px-2 del text-center"></td>');
+                            var HeaderExCheckbox = $('<input type="checkbox" class="form-check-input headerEx-delete-checkbox">');
+                            HeaderExCheckbox.val(Inv.piH_Number);
+                            HeaderExCheckboxCell.append(HeaderExCheckbox);
+
+                            var ItemExCheckboxCell = $('<td class="px-2 del text-center"></td>');
+                            var ItemExCheckbox = $('<input type="checkbox" class="form-check-input itemEx-delete-checkbox">');
+                            ItemExCheckbox.val(Inv.piH_Number);
+                            ItemExCheckboxCell.append(ItemExCheckbox);
+
+                            var checkboxCell = $('<td class="px-2 del"></td>');
+                            var checkbox = $('<input type="checkbox" class="form-check-input invoice-item-checkbox">');
+
+                            var row = $('<tr class="picheck"></tr>');
+                            row.append(CheckboxCell);
+                            row.append('<td>' + Inv.piH_InvoiceNo + '</td>');
+                            row.append('<td>' + Inv.piH_InvoiceDate + '</td>');
+                            row.append('<td>' + Inv.piH_SupplierInvoiceNo + '</td>');
+                            row.append('<td>' + Inv.piH_SupplierInvoiceDate + '</td>');
+                            row.append('<td>' + Inv.piH_MaterialCost + '</td>');
+                            row.append(ItemCheckboxCell);
+                            row.append(HeaderExCheckboxCell);
+                            row.append(ItemExCheckboxCell);
+                            table.find('tbody').append(row);
+                        });
+
+                        var checkButton = $('<div class="w-100 p-2 text-center"><button type="button" class="btn btn-primary" id="GetInvoice">Get</button></div>');
+
+                        resultsDiv.append(table);
+                        resultsDiv.append(checkButton);
+
+                        resultsDiv.find('#GetInvoice').on('click', function () {
+                            var SelectedPI = $.map($('tbody .invoice-item-checkbox:checked'), function (c) { return c.value; })
+                            var SelectedItemPI = $.map($('tbody .item-delete-checkbox:checked'), function (c) { return c.value; })
+                            var SelectedHeaderExPI = $.map($('tbody .headerEx-delete-checkbox:checked'), function (c) { return c.value; })
+                            var SelectedItemExPI = $.map($('tbody .itemEx-delete-checkbox:checked'), function (c) { return c.value; })
+
+                            
+                            (SelectedPI, SelectedItemPI, SelectedHeaderExPI, SelectedItemExPI);
+
+                            $("#InvoiceView").modal('hide');
+                        });
+                    }
+
+                    if (data.length === 0) {
+                        resultsDiv.empty();
+
+                        (async () => {
+                            CalAmount();
+                            CalculateFooter();
+                        })();
+                    }
+                },
+                error: function () {
+                }
+            });
+        }
+    }
+
+    function InsertInvoice(SelectedPI, SelectedItemPI, SelectedHeaderExPI, SelectedItemExPI) {
+        var Selected_Number = SelectedPI.join(',');
+
+        let DisplayedPI = [];
+        $("tr.NewRow").each(function () {
+            var PIDeleteInRow = $(this).find(".PRI_IsDeleted").val();
+            if (PIDeleteInRow == "false") {
+                const PINumberInRow = $(this).find(".PRI_PIH_Number").val();
+                if (PINumberInRow) {
+                    DisplayedPI.push(PINumberInRow);
+                }
+            }
+        });
+
+        const PIToRemove = DisplayedPI.filter(PI => !SelectedPI.includes(PI));
+        const UniquePIToRemove = [...new Set(PIToRemove)];
+
+        UniquePIToRemove.forEach(PINumberToRemove => {
+            let $ExistingRow = $("tr.NewRow").filter(function () {
+                return $(this).find(".PRI_PIH_Number").val() === PINumberToRemove;
+            });
+
+            let EXAlreadyExists = $ExistingRow.length > 0;
+
+            if (EXAlreadyExists) {
+                $ExistingRow.find("input.CheckItem").val(false);
+                $ExistingRow.find("input.PRI_IsDeleted").val("true");
+                $ExistingRow.hide();
+            }
+        });
+
+
+
+        let DisplayedExPI = [];
+        $("tr.ExNewRow").each(function () {
+            const PINumberInRow = $(this).find(".PRH_EXP_PIH_Number").val();
+            if (PINumberInRow) {
+                DisplayedExPI.push(PINumberInRow);
+            }
+        });
+
+        const ExPIToRemove = DisplayedExPI.filter(PI => !SelectedPI.includes(PI));
+        const ExUniquePIToRemove = [...new Set(ExPIToRemove)];
+
+        ExUniquePIToRemove.forEach(PINumberToRemove => {
+            let $ExistingRow = $("tr.ExNewRow").filter(function () {
+                return $(this).find(".PRH_EXP_PIH_Number").val() === PINumberToRemove;
+            });
+
+            let EXAlreadyExists = $ExistingRow.length > 0;
+
+            if (EXAlreadyExists) {
+                $ExistingRow.find("input.PRH_EXP_IsDeleted").val("true");
+                $ExistingRow.hide();
+            }
+        });
+
+
+
+        let DisplayedIExPI = [];
+        $("tr.IExNewRow").each(function () {
+            const PINumberInRow = $(this).find(".PRI_EXP_PIH_Number").val();
+            if (PINumberInRow) {
+                DisplayedIExPI.push(PINumberInRow);
+            }
+        });
+
+        const IExPIToRemove = DisplayedIExPI.filter(PI => !SelectedPI.includes(PI));
+        const IExUniquePIToRemove = [...new Set(IExPIToRemove)];
+
+        IExUniquePIToRemove.forEach(PINumberToRemove => {
+            let $ExistingRow = $("tr.IExNewRow").filter(function () {
+                return $(this).find(".PRI_EXP_PIH_Number").val() === PINumberToRemove;
+            });
+
+            let EXAlreadyExists = $ExistingRow.length > 0;
+
+            if (EXAlreadyExists) {
+                $ExistingRow.find("input.PRI_EXP_IsDeleted").val("true");
+                $ExistingRow.hide();
+            }
+        });
+
+        if (Selected_Number) {
+            let OldItemPIs = [];
+            $("tr.NewRow").each(function () {
+                var PIDeleteInRow = $(this).find(".PRI_IsDeleted").val();
+                if (PIDeleteInRow == "false") {
+                    const PINumberInRow = $(this).find(".PRI_PIH_Number").val();
+                    if (PINumberInRow) {
+                        OldItemPIs.push(PINumberInRow);
+                    }
+                }
+            });
+            const OldItemPI = [...new Set(OldItemPIs)];
+
+            console.log("OldItemPI", OldItemPI);
+
+            $.ajax({
+                url: 'invoice/item',
+                data: { PIHNumber: Selected_Number },
+                type: 'GET',
+                success: function (data) {
+                    var PRItem = data.prItems;
+                    var PRExpense = data.prExpenses;
+                    var PRItemExpense = data.prItemExpenses;
+
+                    if (PRItem && PRItem.length > 0) {
+                        PRItem.forEach(function (PI) {
+                            var ItemNumber = String(PI.piI_Number);
+                            var HeadNumber = String(PI.piH_Number);
+
+                            let PIOldItem = OldItemPI.includes(HeadNumber);
+                            let DeletedItem = SelectedItemPI.includes(HeadNumber);
+
+                            let $ExistingRow = $("tr.NewRow").filter(function () {
+                                var PIINumber = $(this).find(".PRI_PII_Number").val();
+                                var PIHNumber = $(this).find(".PRI_PIH_Number").val();
+
+                                return PIINumber === ItemNumber && PIHNumber === HeadNumber;
+                            });
+
+                            PIIAlreadyExists = $ExistingRow.length > 0;
+
+                            if (!PIOldItem) {
+                                if (PIIAlreadyExists) {
+                                    $ExistingRow.find("input.PRI_IsDeleted").val("false");
+                                    $ExistingRow.show();
+                                }
+                                else {
+                                    addRow(PI);
+                                }
+                            }
+                            else {
+                                if (DeletedItem && !PIIAlreadyExists) {
+                                    addRow(PI);
+                                }
+                                else if (DeletedItem && PIIAlreadyExists) {
+                                    $ExistingRow.find("input.PRI_IsDeleted").val("false");
+                                    $ExistingRow.show();
+                                }
+                            }
+                        });
+                    }
+
+                    if (PRExpense && PRExpense.length > 0) {
+                        PRExpense.forEach(function (PI) {
+                            var ExpenNumber = String(PI.piH_EXP_Number);
+                            var HeadNumber = String(PI.piH_EXP_PIH_Number);
+
+                            let PIOldEx = OldItemPI.includes(HeadNumber);
+                            let DeletedEx = SelectedHeaderExPI.includes(HeadNumber);
+
+                            let $ExistingRow = $("tr.ExNewRow").filter(function () {
+                                var ExpNum = $(this).find(".PRH_EXP_Number").val();
+                                var PINum = $(this).find(".PRH_EXP_PIH_Number").val();
+
+                                return PINum === HeadNumber && ExpNum === ExpenNumber;
+                            });
+
+                            let EXAlreadyExists = $ExistingRow.length > 0;
+
+                            if (!PIOldEx) {
+                                if (EXAlreadyExists) {
+                                    $ExistingRow.find("input.PRH_EXP_IsDeleted").val("false");
+                                    $ExistingRow.show();
+                                }
+                                else {
+                                    ExAddRow(PI);
+                                }
+                            }
+                            else {
+                                if (DeletedEx && !EXAlreadyExists) {
+                                    ExAddRow(PI);
+                                }
+                                else if (DeletedEx && EXAlreadyExists) {
+                                    $ExistingRow.find("input.PRH_EXP_IsDeleted").val("false");
+                                    $ExistingRow.show();
+                                }
+                            }
+                        });
+                    }
+
+                    if (PRItemExpense && PRItemExpense.length > 0) {
+                        PRItemExpense.forEach(function (PI) {
+                            var ExpenNumber = String(PI.piI_EXP_Number);
+                            var HeadNumber = String(PI.piI_EXP_PIH_Number);
+
+                            let PIOldIEx = OldItemPI.includes(HeadNumber);
+                            let DeletedEx = SelectedItemExPI.includes(HeadNumber);
+
+                            let $ExistingRow = $("tr.IExNewRow").filter(function () {
+                                var ExpNum = $(this).find(".PRI_EXP_Number").val();
+                                var PINum = $(this).find(".PRI_EXP_PIH_Number").val();
+
+                                return PINum === HeadNumber && ExpNum === ExpenNumber;
+                            });
+
+                            let IEXAlreadyExists = $ExistingRow.length > 0;
+
+                            if (!PIOldIEx) {
+                                if (IEXAlreadyExists) {
+                                    $ExistingRow.find("input.PRI_EXP_IsDeleted").val("false");
+                                    $ExistingRow.show();
+                                }
+                                else {
+                                    IExAddRow(PI);
+                                }
+                            }
+                            else {
+                                if (DeletedEx && !IEXAlreadyExists) {
+                                    IExAddRow(PI);
+                                }
+                                else if (DeletedEx && IEXAlreadyExists) {
+                                    $ExistingRow.find("input.PRI_EXP_IsDeleted").val("false");
+                                    $ExistingRow.show();
+                                }
+                            }
+                        });
+                    }
+
+                    CalculateExpense();
+                    CalculateItemExpense();
+                    CalAmount();
+                    // CalculateFooter();
+                    UnChecked();
+                },
+                error: function () {
+                    CalculateExpense();
+                    CalculateItemExpense();
+                    CalAmount();
+                    // CalculateFooter();
+                    UnChecked();
+                }
+            });
+        }
+    }
+
+    $("#PRH_MS_Number").change(function () {
+        var PIH_MS_Number = $(this).val();
+        var PII_MS_Number = "";
+        var PIH_MS = $(this).val();
+        var AllMatch = true;
+
+        $("tr.NewRow").each(function () {
+            var irow = $(this);
+            var PII_IsDeleted = irow.find("input.PRI_IsDeleted").val() === "true";
+            if (!PII_IsDeleted) {
+                PII_MS_Number = irow.find("input.PRI_MS_Number").val();
+                if (PII_MS_Number !== PIH_MS_Number) {
+                    AllMatch = false;
+                    return false;
+                }
+            }
+        });
+
+        if (!AllMatch) {
+            if (PII_MS_Number != "") {
+                if (confirm("Do you want to change the Material Segregation? This action will clear all existing items.")) {
+                    $("tr.NewRow").each(function () {
+                        $(this).find("input.PRI_IsDeleted").val("false");
+                        $(this).show();
+                    });
+                    $("tr.ExNewRow").each(function () {
+                        $(this).find("input.PRH_EXP_IsDeleted").val("false");
+                        $(this).show();
+                    });
+                    $("tr.IExNewRow").each(function () {
+                        $(this).find("input.PRI_EXP_IsDeleted").val("false");
+                        $(this).show();
+                    });
+                }
+                else {
+                    $("#PRH_MS_Number").val(PRI_MS_Number);
+                }
+            }
+        }
+
+        SearchInvoice();
+        CalAmount();
+        CalculateFooter();
+    });
+
+    function PIUncheckInvoice() {
+        let DisplayedPI = [];
+        $("tr.NewRow").each(function () {
+            var PIDeleteInRow = $(this).find(".PRI_IsDeleted").val();
+            if (PIDeleteInRow == "false") {
+                const PINumberInRow = $(this).find(".PRI_PIH_Number").val();
+                if (PINumberInRow) {
+                    DisplayedPI.push(PINumberInRow);
+                }
+            }
+        });
+
+        var $CheckedCheckboxes = $('tbody .invoice-item-checkbox:checked');
+        var SelectedPOValues = $.map($CheckedCheckboxes, function (c) { return c.value; });
+
+        const UniqueDisplayedPIs = [...new Set(DisplayedPI)];
+
+        $CheckedCheckboxes.each(function () {
+            const $Checkbox = $(this);
+            const CheckboxValue = $Checkbox.val();
+
+            if (!UniqueDisplayedPIs.includes(CheckboxValue)) {
+                $Checkbox.prop('checked', false);
+            }
+        });
+    }
+
+    function PICheckInvoice() {
+        let DisplayedPI = [];
+        $("tr.NewRow").each(function () {
+            var PIDeleteInRow = $(this).find(".PRI_IsDeleted").val();
+            if (PIDeleteInRow == "false") {
+                const PINumberInRow = $(this).find(".PRI_PIH_Number").val();
+                if (PINumberInRow) {
+                    DisplayedPI.push(PINumberInRow);
+                }
+            }
+        });
+
+        const UniquePIToRemove = [...new Set(DisplayedPI)];
+
+        $("tr.picheck").each(function () {
+            const $checkbox = $(this).find(".invoice-item-checkbox");
+            const checkboxValue = $checkbox.val();
+
+            if (checkboxValue && UniquePIToRemove.includes(checkboxValue.trim())) {
+                $checkbox.prop('checked', true);
+                console.log(`Checked checkbox with value: "${checkboxValue}" (matches a NewRow PI)`);
+            } else {
+            }
+        });
+    }
+
+    function UnChecked() {
+        var $SelectedItemPI = $('tbody .item-delete-checkbox:checked');
+        $SelectedItemPI.prop('checked', false);
+
+        var $SelectedHeaderExPI = $('tbody .headerEx-delete-checkbox:checked');
+        $SelectedHeaderExPI.prop('checked', false);
+
+        var $SelectedItemExPI = $('tbody .itemEx-delete-checkbox:checked');
+        $SelectedItemExPI.prop('checked', false);
+    }
+
+    function PIExRemove() {
+        let DisplayedPI = [];
+        $("tr.NewRow").each(function () {
+            var PIDeleteInRow = $(this).find(".PRI_IsDeleted").val();
+            if (PIDeleteInRow == "false") {
+                const PINumberInRow = $(this).find(".PRI_PIH_Number").val();
+                if (PINumberInRow) {
+                    DisplayedPI.push(PINumberInRow);
+                }
+            }
+        });
+
+        const UniqueDisplayedPI = [...new Set(DisplayedPI)];
+
+
+        const validKeys = new Set();
+        $("tr.NewRow").each(function () {
+            const $row = $(this);
+
+            if ($row.find(".PRI_IsDeleted").val() === "false") {
+                const piNumber = $row.find(".PRI_PIH_Number").val();
+
+                if (piNumber) {
+                    const poNumber = $row.find(".PRI_POH_Number").val();
+                    const key = poNumber ? `${piNumber}|${poNumber}` : piNumber;
+                    validKeys.add(key);
+                }
+            }
+        });
+
+        $("tr.ExNewRow").each(function () {
+            const $exRow = $(this);
+            const piNumberInRow = $exRow.find(".PRH_EXP_PIH_Number").val();
+
+            if (piNumberInRow) {
+                const poNumberInRow = $exRow.find(".PRH_EXP_POH_Number").val();
+
+                const exKey = poNumberInRow ? `${piNumberInRow}|${poNumberInRow}` : piNumberInRow;
+
+                if (!validKeys.has(exKey)) {
+                    $exRow.find("input.PRH_EXP_IsDeleted").val("true");
+                    $exRow.hide();
+                }
+            }
+        });
+
+        // let DisplayedExPI = [];
+        // $("tr.ExNewRow").each(function () {
+        //     const PINumberInRow = $(this).find(".PRH_EXP_PIH_Number").val();
+        //     if (PINumberInRow) {
+        //         DisplayedExPI.push(PINumberInRow);
+        //     }
+        // });
+        
+        // const ExPIToRemove = DisplayedExPI.filter(PI => !UniqueDisplayedPI.includes(PI));
+        // const ExUniquePIToRemove = [...new Set(ExPIToRemove)];
+
+        // ExUniquePIToRemove.forEach(PINumberToRemove => {
+        //     let $ExistingRow = $("tr.ExNewRow").filter(function () {
+        //         return $(this).find(".PRH_EXP_PIH_Number").val() === PINumberToRemove;
+        //     });
+
+        //     let EXAlreadyExists = $ExistingRow.length > 0;
+
+        //     if (EXAlreadyExists) {
+        //         $ExistingRow.find("input.PRH_EXP_IsDeleted").val("true");
+        //         $ExistingRow.hide();
+        //     }
+        // });
+
+
+
+        let DisplayedIExPI = [];
+        $("tr.IExNewRow").each(function () {
+            const PINumberInRow = $(this).find(".PRI_EXP_PIH_Number").val();
+            if (PINumberInRow) {
+                DisplayedIExPI.push(PINumberInRow);
+            }
+        });
+
+        const IExPIToRemove = DisplayedIExPI.filter(PI => !UniqueDisplayedPI.includes(PI));
+        const IExUniquePIToRemove = [...new Set(IExPIToRemove)];
+
+        IExUniquePIToRemove.forEach(PINumberToRemove => {
+            let $ExistingRow = $("tr.IExNewRow").filter(function () {
+                return $(this).find(".PRI_EXP_PIH_Number").val() === PINumberToRemove;
+            });
+
+            let EXAlreadyExists = $ExistingRow.length > 0;
+
+            if (EXAlreadyExists) {
+                $ExistingRow.find("input.PRH_EXP_IsDeleted").val("true");
+                $ExistingRow.hide();
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        SearchInvoice();
+        CalAmount();
+        CalculateFooter();
+    });
+
+    $(document).on('click', '.RowRemove', function () {
+        $(".CheckItem:checked").each(function () {
+            const $checkbox = $(this);
+            const $row = $checkbox.closest('tr');
+
+            $row.find(".CheckItem").prop('checked', false);
+            $row.find(".PRI_IsDeleted").val("true");
+            $row.hide();
+        });
+
+        (async () => {
+            PIUncheckInvoice();
+            PIExRemove();
+            CalAmount();
+            CalculateFooter();
+        })();
+    });
+
+    async function CalculateItemExpense() {
+        $("tr.NewRow").each(function () {
+            var row = $(this);
+
+            var currentRow = row.closest('tr.NewRow');
+
+            var PIINumber = currentRow.find('input.PRI_PII_Number').val();
+            var PIHNumber = currentRow.find('input.PRI_PIH_Number').val();
+            var Qty = removeCommas(currentRow.find('input.PRI_Qty').val());
+            var MatrialValue = removeCommas(currentRow.find('input.PRI_Amount').val());
+
+            if (PIINumber) {
+                var cout = 0;
+                $("tr.IExNewRow").each(function () {
+                    var RowPIINumber = $(this).find("input.PRI_EXP_PII_Number").val();
+                    var RowPIHNumber = $(this).find("input.PRI_EXP_PIH_Number").val();
+                    var isDeleted = $(this).find("input.PRI_EXP_IsDeleted").val();
+
+                    if (RowPIINumber === PIINumber && RowPIHNumber === PIHNumber && isDeleted !== 'true') {
+
+                        var Charge = $(this).find("select.PRI_EXP_CM_Number").val();
+
+                        if (Charge === "1") {
+                            var ExpenseBase = parseFloat(removeCommas($(this).find("input.PRI_EXP_ExpenseBase").val())) || 0;
+                            if (ExpenseBase > 0) {
+                                ExpenseBase = -ExpenseBase;
+                            } else {
+                                ExpenseBase = ExpenseBase;
+                            }
+                            $(this).find("input.PRI_EXP_ExpenseValue").val(DecimalIndianRupees(ExpenseBase));
+                        }
+                        else if (Charge === "2") {
+                            var ExpenseBase = parseFloat(removeCommas($(this).find("input.PRI_EXP_ExpenseBase").val())) || 0;
+                            if (Qty > 0) {
+                                Qty = -Qty;
+                            } else {
+                                Qty = Qty;
+                            }
+                            var ExpenseValue = Qty * ExpenseBase;
+                            $(this).find("input.PRI_EXP_ExpenseValue").val(DecimalIndianRupees(ExpenseValue));
+                        }
+                        else if (Charge === "3") {
+                            var ExpenseBase = parseFloat(removeCommas($(this).find("input.PRI_EXP_ExpenseBase").val())) || 0;
+                            if (MatrialValue > 0) {
+                                MatrialValue = -MatrialValue;
+                            } else {
+                                MatrialValue = MatrialValue;
+                            }
+                            var ExpenseValue = MatrialValue * ExpenseBase / 100;
+                            $(this).find("input.PRI_EXP_ExpenseValue").val(DecimalIndianRupees(ExpenseValue));
+                        }
+
+                    }
+                });
+            }
+        });
+    }
+
+    $("#IExCloseButton").click(function () {
+        $("#IExpense").modal('hide');
+
+        CalAmount();
+    });
+
+    $(document).ready(function () {
+        let isSafeExit = false;
+        const cleanupURL = '@Url.Action("ClearGRNToPurchaseReturnTemp", "Procurement")';
+
+        if (!cleanupURL) {
+            return;
+        }
+
+        $('#ReturnCreate').on('submit', function () {
+            isSafeExit = true;
+        });
+
+        window.addEventListener('pagehide', function (event) {
+            if (event.persisted) {
+                return;
+            }
+
+            if (isSafeExit) {
+            } else {
+                navigator.sendBeacon(cleanupURL);
+            }
+        });
+
+    });
+</script>

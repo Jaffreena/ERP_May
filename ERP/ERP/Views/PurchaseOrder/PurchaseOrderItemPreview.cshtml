@@ -1,0 +1,186 @@
+﻿@model List<ERP_DTO.PurchaseOrderItem_DTO>
+
+<div class="w-100 table-body table-responsive h-100">
+    <table class="table table-bordered table-hover align-middle mb-0 table-grid" id="MyTable">
+        <thead>
+            <tr class="table-info">
+                <th class="px-2 del">
+                </th>
+                <th>@Html.DisplayNameFor(M => M.First().POI_ItemCode)</th>
+                <th>@Html.DisplayNameFor(M => M.First().POI_Description)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().POI_ITM_Thickness)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().POI_ITM_Width)</th>
+                <th>@Html.DisplayNameFor(M => M.First().POI_ITM_MaterialGrade)</th>
+                <th>@Html.DisplayNameFor(M => M.First().POI_ItemGroup)</th>
+                <th class="table-width-md text-center">@Html.DisplayNameFor(M => M.First().POI_UoM_Number)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().POI_Qty)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().POI_UnitPrice)</th>
+                <th class="table-width-3xl text-end">@Html.DisplayNameFor(M => M.First().POI_Amount)</th>
+                <th class="table-width-3xl text-end">@Html.DisplayNameFor(M => M.First().POI_ExpenseValue)</th>
+                <th class="datetype text-center">@Html.DisplayNameFor(M => M.First().POI_DeliveryDate)</th>
+            </tr>
+        </thead>
+        <tbody id="TableBody">
+            @if (Model != null)
+            {
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr class="NewRow">
+                        <td class="p-2 del">
+                            <input type="checkbox" class="CheckItem form-check-input" name="CheckItem">
+                        </td>
+                        <td>
+                            <input id="POI_Index" name="PurchaseItems[@i].POI_Index" type="hidden" class="POI_Index" autocomplete="off" value="@Model[i].POI_Index" />
+                            <input id="POI_MS_Number" name="PurchaseItems[@i].POI_MS_Number" class="POI_MS_Number" type="hidden" value="@Model[i].POI_MS_Number" />
+                            <input id="POI_Item_Number" name="PurchaseItems[@i].POI_Item_Number" class="POI_Item_Number" type="hidden" value="@Model[i].POI_Item_Number" />
+                            <input id="POI_ItemCode" name="PurchaseItems[@i].POI_ItemCode" readonly class="form-control POI_ItemCode" autocomplete="off" value="@Model[i].POI_ItemCode" oninput="OnInput(this)" onfocus="OnFocus(this)" />
+                            <div class="search-results bg-primary p-2 card" style="display:none"></div>
+                        </td>
+                        <td>
+                            <input id="POI_Description" name="PurchaseItems[@i].POI_Description" class="form-control POI_Description" readonly value="@Model[i].POI_Description" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="POI_ITM_Thickness" name="PurchaseItems[@i].POI_ITM_Thickness" class="form-control POI_ITM_Thickness text-end" readonly value="@Model[i].POI_ITM_Thickness" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="POI_ITM_Width" name="PurchaseItems[@i].POI_ITM_Width" class="form-control POI_ITM_Width text-end" readonly value="@Model[i].POI_ITM_Width" />
+                        </td>
+                        <td>
+                            <input id="POI_ITM_MaterialGrade" name="PurchaseItems[@i].POI_ITM_MaterialGrade" class="form-control POI_ITM_MaterialGrade" readonly value="@Model[i].POI_ITM_MaterialGrade" />
+                        </td>
+                        <td>
+                            <input id="POI_ItemGroup" name="PurchaseItems[@i].POI_ItemGroup" class="form-control POI_ItemGroup" readonly value="@Model[i].POI_ItemGroup" />
+                        </td>
+                        <td class="table-width-md">
+                            <select id="POI_UoM_Number" name="PurchaseItems[@i].POI_UoM_Number" disabled class="form-select POI_UoM_Number text-center">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.UoM)
+                                {
+                                    if (item.Value == Model[i].POI_UoM_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                            <input id="POI_UoM" name="PurchaseItems[@i].POI_UoM" class="form-control POI_UoM text-center" type="hidden" value="@Model[i].POI_UoM" />
+                            <input type="hidden" id="POI_DecimalPlaces" name="PurchaseItems[@i].POI_DecimalPlaces" class="form-control POI_DecimalPlaces" autocomplete="off" value="@Convert.ToDouble(@Model[i].POI_DecimalPlaces)" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="POI_Qty" name="PurchaseItems[@i].POI_Qty" class="form-control POI_Qty  text-end" readonly autocomplete="off" value="@Model[i].POI_Qty" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="POI_UnitPrice" name="PurchaseItems[@i].POI_UnitPrice" class="form-control POI_UnitPrice  text-end" readonly autocomplete="off" value="@Model[i].POI_UnitPrice" />
+                        </td>
+                        <td class="table-width-3xl">
+                            <input id="POI_Amount" name="PurchaseItems[@i].POI_Amount" class="form-control POI_Amount decimal text-end " readonly autocomplete="off" value="@Model[i].POI_Amount" />
+                        </td>
+                        <td class="table-width-3xl">
+                            <input id="POI_ExpenseValue" name="PurchaseItems[@i].POI_ExpenseValue" class="form-control decimal POI_ExpenseValue text-end " readonly autocomplete="off" value="@Convert.ToDouble(@Model[i].POI_ExpenseValue)" />
+                        </td>
+                        <td class="datetype">
+                            <input id="POI_DeliveryDate" name="PurchaseItems[@i].POI_DeliveryDate" class="form-control POI_DeliveryDate datepicker text-center" readonly autocomplete="off" value="@Model[i].POI_DeliveryDate" />
+                            @if (@Model[i].POI_Number != 0)
+                            {
+                                <input name="PurchaseItems[@i].POI_Number" type="hidden" class="POI_Number" id="POI_Number" readonly value="@Model[i].POI_Number" />
+                            }
+                            <input type="hidden" name="PurchaseItems[@i].IsDeleted" class="IsDeleted" value="false" />
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+        <tfoot>
+            <tr class="table-info">
+                <td colspan="8" class="text-end py-2">Total</td>
+                <td class="table-width-xl text-end">
+                    <input id="TotalQty" class="form-control text-end" readonly />
+                </td>
+                <td>
+                </td>
+                <td class="table-width-3xl text-end">
+                    <input id="TotalAmount" class="form-control text-end" readonly />
+                </td>
+                <td class="table-width-3xl text-end">
+                    <input id="TotalExpense" class="form-control text-end" readonly />
+                </td>
+                <td class="datetype text-center">
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        function customRound(number) {
+            const num = parseFloat(number);
+            const decimal = num % 1;
+
+            if (decimal >= 0.5) {
+                return Math.ceil(num);
+            } else {
+                return Math.floor(num);
+            }
+        }
+        window.onload = CalculateFooter();
+
+        $(document).on('focus', 'tr.NewRow input, tr.NewRow select, tr.NewRow .datepicker', function () {
+            $(this).closest('tr').find('.CheckItem').prop('checked', true);
+            $('.CheckItem').not($(this).closest('tr').find('.CheckItem')).prop('checked', false);
+        });
+    });
+    function FormatNumber(num) {
+        console.log("num",num);
+        if (num === "" || isNaN(num)) return "0";
+
+        var formattedValue = parseFloat(num).toFixed(10);
+        var parts = formattedValue.split(".");
+        if (parts.length > 1) {
+            parts[1] = parts[1].replace(/0+$/, "");
+            if (parts[1].length === 0) parts.pop();
+        }
+
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+
+        console.log("num",parts.join("."));
+        return parts.join(".");
+    }
+
+    async function CalculateFooter() {
+        var totalQty = 0;
+        var totalAmount = 0;
+        var totalExpense = 0;
+
+        $("tr.NewRow").each(function () {
+            var row = $(this);
+                var QtyField = row.find(".POI_Qty").val();
+                var AmountField = row.find(".POI_Amount").val();
+                var ExpenseField = row.find(".POI_ExpenseValue").val();
+
+                totalQty += parseFloat(removeCommas(QtyField));
+                totalAmount += parseFloat(removeCommas(AmountField));
+                totalExpense += parseFloat(removeCommas(ExpenseField));
+        });
+
+        $("#TotalQty").val(FormatNumber(totalQty.toFixed(2)));
+        $("#TotalAmount").val(DecimalIndianRupees(totalAmount.toFixed(2)));
+        $("#TotalExpense").val(DecimalIndianRupees(totalExpense.toFixed(2)));
+
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        ExchangeVisibility();
+
+        function ExchangeVisibility() {
+            if ($('#POH_ImportOrder').is(':checked')) {
+                $('#ExchangeRate').show();
+            } else {
+                $('#ExchangeRate').hide();
+            }
+        }
+
+    });
+</script>

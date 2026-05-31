@@ -1,0 +1,126 @@
+﻿@model ERP_DTO.SONumber_DTO
+
+
+@{
+    ViewData["Title"] = "Sale Order Numbering Setup";
+}
+<form asp-action="SONumbering" class="h-100">
+    <div class="row align-items-center panel-header gx-2">
+        <div class="col h-100 align-items-center">
+            <div class="h6 fw-light text-white h-100 align-content-center bg-secondary px-2">
+                Sale Order Numbering Setup
+                <a asp-controller="Sale" asp-action="Index" class="float-end btn p-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row panel-body gx-2">
+        <div class="col-12 panel-card-fixed h-100">
+            <div class="w-100 rounded-0 h-100 border border-primary bg-transparent" id="BodyHeight">
+                <div class="card rounded-0 bg-transparent shadow-none h-100" id="CardHeader">
+                    <div class="card-body pb-0">
+                        <div class="row h-100">
+                            <div class="col-auto left-menu h-100">
+                                <div class="row text-dark">
+                                    <div class="col-12 col-sm-5 col-lg-3">
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="SON_Method" class="col-md-6 col-lg-5 col-form-label ps-0">Method of Numbering</label>
+                                            <div class="col-md-6 col-lg-7">
+                                                <select asp-for="SON_Method" class="form-select" asp-items="@ViewBag.Method"></select>
+                                                <input asp-for="SON_Number" type="hidden" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-5 col-lg-3">
+                                    </div>
+                                </div>
+                                <div class="@(@Model.SON_Method == "3" ? "row py-3 d-none" : "row py-3")">
+                                    <div class="col-12 col-md-3">
+                                        <div class="row">
+                                            <div class="col text-dark pb-2">
+                                                <h6>Prefix</h6>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <partial name="SONumberingPrefix.cshtml" model="@Model.SONumberPrefix" />
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <div class="row">
+                                            <div class="col text-dark pb-2">
+                                                <h6>Numbering</h6>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <partial name="SONumberingReset.cshtml" model="@Model.SONumberReset" />
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-3">
+                                        <div class="row">
+                                            <div class="col text-dark pb-2">
+                                                <h6>Suffix</h6>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <partial name="SONumberingSuffix.cshtml" model="@Model.SONumberSuffix" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto right-menu text-center border-start">
+                                <input type="submit" name="Mode" value="Submit" class="btn btn-primary btn-sm px-2 w-100 mb-1" />
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+<script>
+    $('.navbar-nav > .nav-item.sale > a').addClass("active");
+
+    $('form').submit(function (event) {
+        $("tr.SubNewRow").each(function () {
+            var Date = $(this).find("input.SOS_Date").val();
+            var Particulars = $(this).find("input.SOS_Particulars").val();
+
+            if (!Date && !Particulars) {
+                $(this).remove();
+            }
+        });
+
+        $("tr.PreNewRow").each(function () {
+            var Date = $(this).find("input.SOP_Date").val();
+            var Particulars = $(this).find("input.SOP_Particulars").val();
+
+            if (!Date && !Particulars) {
+                $(this).remove();
+            }
+        });
+
+        $("tr.ResetNewRow").each(function () {
+            var Date = $(this).find("input.SOP_Date").val();
+            var StartingNumber = $(this).find("input.SOR_StartingNumber").val();
+            var NumberofDigits = $(this).find("input.SOR_NumberofDigits").val();
+            var PrefilZero = $(this).find("select.SOR_PrefilZero").val();
+            var Frequency = $(this).find("select.SOR_Frequency").val();
+
+            if (!Date && !StartingNumber && !NumberofDigits && !PrefilZero && !Frequency) {
+                $(this).remove();
+            }
+        });
+
+        $(".datepicker").flatpickr({
+            dateFormat: "d-M-Y",
+            altInput: false,
+        });
+    });
+
+</script>

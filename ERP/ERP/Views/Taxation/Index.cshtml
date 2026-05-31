@@ -1,0 +1,261 @@
+﻿@{
+    ViewData["Title"] = "Taxation";
+}
+
+<div class="row align-items-center panel-header h-auto">
+    <div class="col">
+        <div class="card rounded-0 mt-3">
+            <div class="card-body px-2 py-2">
+                <h1 class="h6 fw-light">
+                    Taxation
+                </h1>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row panel-body">
+    <div class="col-12 panel-card-fixed" id="BodyHeight">
+        <div class="w-100 rounded-0 border border-primary bg-transparent px-3" id="CardBody">
+            <div class="row">
+                <div class="col-4 pt-3">
+                    <div class="card rounded-0 mb-3 bg-transparent">
+                        <div class="card-header bg-secondary rounded-0">
+                            <p class="mb-0">
+                                Favourites
+                            </p>
+                        </div>
+                        <div class="card-body bg-transparent text-dark">
+                            <p class="card-text placeholder-glow">
+                                <span class="placeholder col-7"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-6"></span>
+                                <span class="placeholder col-8"></span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card rounded-0 mb-3 bg-transparent">
+                        <div class="card-header bg-secondary rounded-0">
+                            <p class="mb-0">
+                                Reports
+                            </p>
+                        </div>
+                        <div class="card-body bg-transparent text-dark">
+                            <p class="card-text placeholder-glow">
+                                <span class="placeholder col-7"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-6"></span>
+                                <span class="placeholder col-8"></span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card rounded-0 mb-3 bg-transparent">
+                        <div class="card-header bg-secondary rounded-0">
+                            <p class="mb-0">
+                                Setup
+                            </p>
+                        </div>
+                        <div class="card-body bg-transparent text-dark">
+                            <p class="card-text placeholder-glow">
+                                <span class="placeholder col-7"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-6"></span>
+                                <span class="placeholder col-8"></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4 pt-3">
+                    <div class="card rounded-0 mb-3 bg-transparent">
+                        <div class="card-header bg-secondary rounded-0">
+                            <p class="mb-0">
+                                Transactions
+                            </p>
+                        </div>
+                        <div class="card-body bg-transparent text-dark">
+                            <p class="card-text placeholder-glow">
+                                <span class="placeholder col-7"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-6"></span>
+                                <span class="placeholder col-8"></span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card rounded-0 mb-3 bg-transparent">
+                        <div class="card-header bg-secondary rounded-0">
+                            <p class="mb-0">
+                                Periodic
+                            </p>
+                        </div>
+                        <div class="card-body bg-transparent text-dark">
+                            <p class="card-text placeholder-glow">
+                                <span class="placeholder col-7"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-6"></span>
+                                <span class="placeholder col-8"></span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card rounded-0 mb-3 bg-transparent">
+                        <div class="card-header bg-secondary rounded-0">
+                            <p class="mb-0">
+                                Others
+                            </p>
+                        </div>
+                        <div class="card-body bg-transparent text-dark">
+                            <p class="card-text placeholder-glow">
+                                <span class="placeholder col-7"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-6"></span>
+                                <span class="placeholder col-8"></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4 pt-3">
+                    <div class="card rounded-0 mb-3 bg-transparent">
+                        <div class="card-header bg-secondary rounded-0">
+                            <p class="mb-0">
+                                Master Data
+                            </p>
+                        </div>
+                        <div class="card-body bg-transparent text-dark">
+                            <ul class="list-unstyled mb-0">
+                                <li class="mb-2">
+                                    <a asp-controller="TaxationMaster" asp-action="HSN">
+                                        HSN
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a asp-controller="TaxationMaster" asp-action="SAC">
+                                        SAC
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a asp-controller="TaxationMaster" asp-action="WithholdTax">
+                                        Withhold Tax
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a asp-controller="TaxationMaster" asp-action="TaxCluster">
+                                        Tax Cluster
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a asp-controller="TaxationMaster" asp-action="WHTaxAssign">
+                                        Withhold Tax Assign
+                                    </a>
+                                </li>
+                                <li>
+                                    <a asp-controller="TaxationMaster" asp-action="TaxElement">
+                                        Tax Element
+                                    </a>
+                                </li>
+                                @*  <li class="mb-2">
+                                <a asp-controller="TaxationMaster" asp-action="WHTaxCategory">
+                                Tax Design
+                                </a>
+                                </li> *@
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card rounded-0 mb-3 bg-transparent">
+                        <div class="card-header bg-secondary rounded-0">
+                            <p class="mb-0">
+                                Inquiries
+                            </p>
+                        </div>
+                        <div class="card-body bg-transparent text-dark">
+                            <p class="card-text placeholder-glow">
+                                <span class="placeholder col-7"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-6"></span>
+                                <span class="placeholder col-8"></span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card rounded-0 mb-3 bg-transparent">
+                        <div class="card-header bg-secondary rounded-0">
+                            <p class="mb-0">
+                                Sub-Master Data
+                            </p>
+                        </div>
+                        <div class="card-body bg-transparent text-dark">
+                            <ul class="list-unstyled mb-0">
+                                <li class="mb-2">
+                                    <a asp-controller="TaxationSubmaster" asp-action="WHTaxCategory">
+                                        WH_TaxCategory
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a asp-controller="TaxationSubmaster" asp-action="WHTaxType">
+                                        WH_TaxType
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a asp-controller="TaxationSubmaster" asp-action="WHTaxImpact">
+                                        WH_TaxImpact
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a asp-controller="TaxationSubmaster" asp-action="NatureofAssessee">
+                                        Nature of assessee
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a asp-controller="TaxationSubmaster" asp-action="RegistrationType">
+                                        Registration type
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a asp-controller="TaxationSubmaster" asp-action="AssesseeTerritory">
+                                        Assessee Territory
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a asp-controller="TaxationSubmaster" asp-action="GSTTaxCategory">
+                                        GST_TaxCategory
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a asp-controller="TaxationSubmaster" asp-action="GSTTaxType">
+                                        GST_TaxType
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a asp-controller="TaxationSubmaster" asp-action="GSTTaxNature">
+                                        GST_Tax Nature
+                                    </a>
+                                </li>
+                                <li>
+                                    <a asp-controller="TaxationSubmaster" asp-action="GSTChargeableBasis">
+                                        GST Chargeable Basis
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('.navbar-nav > .nav-item.taxation > a').addClass("active");
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const MainDiv = document.getElementById('BodyHeight');
+        const BodyDiv = document.getElementById('CardBody');
+
+        const MainHeight = MainDiv.offsetHeight;
+        BodyDiv.style.height = (MainHeight - 10) + 'px';
+    });
+</script>

@@ -1,0 +1,455 @@
+﻿@model ERP_DTO.BuyerHead_DTO
+@{
+    ViewData["Title"] = "Buyer";
+}
+<div class="row align-items-center panel-header gx-2">
+    <div class="col h-100">
+        <div class="h6 fw-light text-white h-100 align-content-center bg-secondary px-2">
+            Buyer
+            <a asp-controller="Sale" asp-action="Index" class="float-end btn p-0 shadow-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                </svg>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row panel-body gx-2">
+    <div class="col-12 panel-card-fixed h-100">
+        <div class="w-100 rounded-0 border border-primary bg-transparent h-100" id="BodyHeight">
+            <div class="w-100 p-3 text-black border-bottom" id="BodyCardHeader">
+                <form asp-action="Buyer">
+                    <div class="row">
+                        <input type="hidden" name="PSize" value="@ViewData["PageSize"]" />
+                        <input type="hidden" name="PageNumber" value="@ViewData["PageNumber"]" />
+                        <input type="hidden" name="Search" value="@ViewData["CurrentFilter"]" />
+                        <partial name="BuyerView.cshtml" model="@Model" />
+                    </div>
+
+                    <!-- Modal -->
+                    <div class="modal modal-lg fade" id="WHTModel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content border">
+                                <div class="modal-header">
+                                    <p class="modal-title text-white" id="staticBackdropLabel">Withhold Tax</p>
+                                    <button type="button" class="btn-close" id="WHTCloseButton" aria-label="Close"></button>
+                                </div>
+                                <div class="card bg-transparent shadow-none h-100">
+                                    <div class="p-2 text-black h-100 nav-tab-fix">
+                                        <ul class="nav nav-tabs tab-header" role="tablist">
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-tab-pane" type="button" role="tab" aria-controls="overview-tab-pane" aria-selected="true">Overview</button>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content tab-body">
+                                            <div class="tab-pane fade show active pb-0 border border-top-0 h-100" id="overview-tab-pane" role="tabpanel" aria-labelledby="overview-tab" tabindex="0">
+                                                <div class="modal-body p-2 text-dark justify-content-center">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <partial name="BuyerWHTView.cshtml" model="@Model.BUY_WHT_List" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer justify-content-between">
+                                    <a id="WHTAddRowButton" class="btn btn-primary">Add Row</a>
+                                    <button type="button" id="WHTOkayButton" class="btn btn-primary px-4" ref="always_focus" autofocus>Ok</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal modal-lg fade border" id="GSTModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content border">
+                                <div class="modal-header">
+                                    <p class="modal-title text-white" id="staticBackdropLabel">GST</p>
+                                    <button type="button" class="btn-close" id="GSTCloseButton" aria-label="Close"></button>
+                                </div>
+                                <div class="card bg-transparent shadow-none h-100">
+                                    <div class="p-2 text-black h-100 nav-tab-fix">
+                                        <ul class="nav nav-tabs tab-header" role="tablist">
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-tab-pane" type="button" role="tab" aria-controls="overview-tab-pane" aria-selected="true">Tax Details</button>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content tab-body">
+                                            <div class="tab-pane fade show active pb-0 border border-top-0 h-100" id="overview-tab-pane" role="tabpanel" aria-labelledby="overview-tab" tabindex="0">
+                                                <div class="modal-body p-2 text-dark justify-content-center">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <partial name="BuyerGSTView.cshtml" model="@Model.BUY_GST_List" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer justify-content-between">
+                                    <a id="GSTAddRowButton" class="btn btn-primary">Add Row</a>
+                                    <button type="button" id="GSTOkayButton" class="btn btn-primary px-4" ref="always_focus" autofocus>Ok</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="w-100" id="BodyCardBody">
+                <div class="card bg-transparent shadow-none overflow-hidden h-100">
+                    <div class="card-body text-black h-100 nav-tab-fix">
+                        <ul class="nav nav-tabs tab-header" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-tab-pane" type="button" role="tab" aria-controls="overview-tab-pane" aria-selected="true">Overview</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content tab-body">
+                            <div class="tab-pane fade show active p-3 pb-0 border border-top-0 h-100" id="overview-tab-pane" role="tabpanel" aria-labelledby="overview-tab" tabindex="0">
+                                <div class="w-100 h-100 table-fixed">
+                                    <div class="w-100 table-header">
+                                            <form asp-action="Buyer" method="get">
+                                                <input type="hidden" name="sortOrder" value="@ViewData["CurrentSort"]" />
+                                                <input type="hidden" name="PageNumber" value="@ViewData["PageNumber"]" />
+                                                <input type="hidden" name="PageFilter" value="PageFilter" />
+                                                <div class="row">
+                                                    <div class="col-8">
+                                                        <div class="row gx-0">
+                                                            <div class="col-auto me-3">
+                                                                <select name="PSize" class="form-select w-auto  py-1 pe-4" asp-route-PageFilter="PageFilter" asp-items="@ViewBag.Page" onchange="form.submit();"></select>
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <input id="Search" name="Search" class="form-control p-1 search-control" autocomplete="off" value="@ViewData["CurrentFilter"]" />
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <input type="submit" name="Mode" value="Search" class="btn btn-primary btn-sm" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-4">
+                                                        <div class="w-100 MenuAction d-none text-end">
+                                                            <a class="DeleteAllButton btn btn-sm btn-danger me-2">
+                                                                Delete
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                    </div>
+                                    <partial name="BuyerListView.cshtml" model="@Model.Buyer_List" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/js/site.js"></script>
+
+<script>
+    $('.navbar-nav > .nav-Buyer.sale > a').addClass("active");
+</script>
+
+
+<script>
+    function validateAddressGrid() {
+        var addressMap = {};
+        var defaultMap = {};
+        var isValid = true;
+        var errors = [];
+
+        console.log("Starting address validation...");
+
+        $('tr.AddNewRow').each(function(index) {
+            var type = $(this).find('.BUY_ADD_ADTP_Number').val();
+            var addressId = $(this).find('.BUY_ADD_AddressID').val();
+            var isDefault = $(this).find('.BUY_ADD_Primary').is(':checked');
+
+            console.log("Row", index, "Type:", type, "AddressID:", addressId, "Default:", isDefault);
+
+            if (type && addressId) {
+                var key = type + '_' + addressId;
+
+                if (addressMap[key]) {
+                    errors.push('Duplicate Address ID "' + addressId + '" for Address Type "' + type + '"');
+                    isValid = false;
+                    console.log("DUPLICATE FOUND:", key);
+                }
+                addressMap[key] = true;
+
+                if (isDefault) {
+                    if (defaultMap[type]) {
+                        errors.push('Multiple default addresses for Address Type "' + type + '"');
+                        isValid = false;
+                        console.log("MULTIPLE DEFAULT FOUND for type:", type);
+                    }
+                    defaultMap[type] = true;
+                }
+            }
+        });
+
+        console.log("Validation completed. isValid:", isValid, "Errors:", errors);
+
+        if (errors.length > 0) {
+            alert('Please fix the following errors:\n\n' + errors.join('\n'));
+        }
+
+        return isValid;
+    }
+    $('form').submit(function (event) {
+        var isValid = validateAddressGrid();
+
+        if (!isValid) {
+            event.preventDefault();
+            return false;
+        }
+
+        $("tr.GSTNewRow").each(function () {
+            var FromDate = $(this).find("input.BUY_GST_FromDate").val();
+            var ToDate = $(this).find("input.BUY_GST_ToDate").val();
+            var GSTC_Number = $(this).find("select.BUY_GST_GSTC_Number").val();
+            var GSTT_Number = $(this).find("select.BUY_GST_GSTT_Number").val();
+            var Tax = $(this).find("select.BUY_GST_TCT_Number").val();
+
+            if (!FromDate && !ToDate && !GSTC_Number && !GSTT_Number && !Tax) {
+                $(this).closest('tr').find("input.BUY_GST_IsDeleted").val(1);
+                $(this).closest('tr').hide();
+            }
+        });
+        $("tr.WHTNewRow").each(function () {
+            var FromDate = $(this).find("input.BUY_WHT_FromDate").val();
+            var ToDate = $(this).find("input.BUY_WHT_ToDate").val();
+            var WHTC_Number = $(this).find("select.BUY_WHT_WHTC_Number").val();
+            var WHTT_Number = $(this).find("select.BUY_WHT_WHTT_Number").val();
+            var WHT_Number = $(this).find("select.BUY_WHT_WHT_Number").val();
+
+            if (!FromDate && !ToDate && !WHTC_Number && !WHTT_Number && !WHT_Number) {
+                $(this).closest('tr').find("input.BUY_WHT_IsDeleted").val(1);
+                $(this).closest('tr').hide();
+            }
+        });
+        $("tr.AddNewRow").each(function () {
+            var ADTP = $(this).find("select.BUY_ADD_ADTP_Number").val();
+            var Address = $(this).find("input.BUY_ADD_Address").val();
+            var City = $(this).find("input.BUY_ADD_City").val();
+            var State = $(this).find("input.BUY_ADD_State").val();
+            var Country = $(this).find("input.BUY_ADD_Country").val();
+            var Pin = $(this).find("input.BUY_ADD_Pin").val();
+
+            if (!ADTP && !Address && !City && !State && !Country && !Pin) {
+                $(this).closest('tr').find("input.BUY_ADD_IsDeleted").val(1);
+                console.log("BUY_ADD_IsDeleted",$(this).find("input.BUY_ADD_IsDeleted").val());
+                $(this).closest('tr').hide();
+            }
+        });
+
+        $('select').prop('disabled', false);
+    });
+
+    let ajaxPending = false;
+
+    function validateTextbox(textbox, event) {
+        if (ajaxPending) {
+            event.preventDefault();
+            return;
+        }
+        let value = textbox.val().trim();
+        if (value === "") {
+            return;
+        }
+
+        ajaxPending = true;
+        event.preventDefault();
+
+        $.ajax({
+            type: "get",
+            url: "buyer/duplicate",
+            data: { Title: textbox.val(), Number: $(".Number").val() },
+            datatype: "json",
+            traditional: true,
+            success: function (response) {
+                var res = response;
+                if (response) {
+                    ajaxPending = false;
+                    if (!$("#DuplicateAlert").is(':visible')) {
+                        new bootstrap.Modal($("#DuplicateAlert")).show();
+                        $('#DuplicateAlert').on('shown.bs.modal', function () {
+                            $(this).find('[autofocus]').focus();
+                        });
+                    }
+                    return;
+                }
+            }
+        });
+    }
+    $(document).on("blur", ".KeyDup", function (event) {
+        validateTextbox($(this), event);
+    });
+    $(document).on("keydown", ".KeyDup", function (event) {
+        if (event.key === "Enter") {
+            validateTextbox($(this), event);
+        }
+    });
+
+    $('#DuplicateAlert').on('hidden.bs.modal', function () {
+        setTimeout(function () {
+            $('#BuyerCode').focus();
+        }, 1);
+    });
+
+    $(".decimal").each(function () {
+        var value = $(this).val();
+        $(this).val(formatToIndianRupees(value));
+    });
+    $(document).on("blur", ".decimal", function () {
+        var value = $(this).val();
+        if (value.trim() === "" || isNaN(value)) {
+            $(this).val("0.00");
+        } else {
+            $(this).val(formatToIndianRupees(value));
+        }
+    });
+    $(document).on("focus", ".decimal", function () {
+        var value = $(this).val();
+        $(this).val(removeCommas(value));
+        $(this).select();
+    });
+    function formatToIndianRupees(value) {
+        if (value === "" || isNaN(value)) {
+            return "0.00";
+        }
+
+        var formattedValue = parseFloat(value).toFixed(2);
+
+        var parts = formattedValue.split(".");
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+        return parts.join(".");
+    }
+    function removeCommas(value) {
+        return value.replace(/,/g, '');
+    }
+
+    $(document).on('click', '.BUY_YN_Number', function () {
+        let validRowsCount = GetWHTRowCount();
+
+        var selectedValue = $(this).val();
+        var radio = $(this);
+
+        if (selectedValue === "1") {
+            if (!$("#WHTModel").is(':visible')) {
+                new bootstrap.Modal($("#WHTModel")).show();
+                $('#WHTModel').on('shown.bs.modal', function () {
+                    $(this).find('[autofocus]').focus();
+                });
+            }
+        } else if (selectedValue === "2") {
+            if (validRowsCount > 0) {
+                alert("There are records available in Withhold Tax grid");
+                if (!$("#WHTModel").is(':visible')) {
+                    new bootstrap.Modal($("#WHTModel")).show();
+                    $('#WHTModel').on('shown.bs.modal', function () {
+                        $(this).find('[autofocus]').focus();
+                    });
+                }
+
+                radio.prop('checked', false);
+                let other = $('input[name="WithholdTax"][value="1"]');
+                other.prop('checked', true);
+                other.focus()
+            }
+        }
+    });
+    function GetWHTRowCount() {
+        let rowCount = 0;
+        $("tr.WHTNewRow").each(function () {
+            let row = $(this);
+            if (!row.find("input.BUY_WHT_IsDeleted").val() === 1) {
+                let isEmpty = true;
+                row.find("select, input.FromDate, input.ToDate, input[type='text']").each(function () {
+                    let value = $(this).val();
+                    if (value && value.trim() !== "") {
+                        isEmpty = false;
+                        return false;
+                    }
+                });
+
+                if (!isEmpty) {
+                    rowCount++;
+                }
+            }
+        });
+        return rowCount;
+    }
+
+
+    function OnAssesseeInput(inputElement) {
+        SearchAssessee(inputElement);
+    }
+    function OnAssesseeFocus(inputElement) {
+        var tax = inputElement.value;
+        if (!tax) {
+            SearchAssessee(inputElement);
+        }
+        else {
+            $(this).select();
+        }
+    }
+    function SearchAssessee(inputElement) {
+        var Assessee = inputElement.value;
+        var Location = $("input[name='BUY_LOC_Number']:checked").val();
+        var resultsDiv = $(inputElement).next('.assessee-results');
+
+        $.ajax({
+            url: 'buyer/assessee',
+            data: { Assessee: Assessee, Location: Location },
+            type: 'GET',
+            success: function (data) {
+                resultsDiv.empty();
+                if (data && data.length > 0) {
+                    resultsDiv.show();
+                    var list = $('<ul class="list-unstyled ulmode m-0"></ul>');
+                    data.forEach(function (assessee) {
+                        var listItem = $('<li></li>').text(assessee.buY_GST_GSTC_Number);
+                        list.append(listItem);
+
+                        listItem.on('click', function () {
+                            $(inputElement).val(assessee.buY_GST_GSTC_Number);
+                            $("#BUY_AT_Number").val(assessee.buY_GST_Number);
+                            resultsDiv.hide();
+                        });
+                    });
+                    resultsDiv.append(list);
+                } else {
+                    resultsDiv.hide();
+                    resultsDiv.append('<p>No results found</p>');
+                }
+            },
+            error: function () {
+                resultsDiv.text('Error loading data.');
+                resultsDiv.show();
+            }
+        });
+    }
+</script>
+<script>
+    $('.navbar-nav > .nav-item.sale > a').addClass("active");
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const MainDiv = document.getElementById('BodyHeight');
+        const HeadDiv = document.getElementById('BodyCardHeader');
+        const BodyDiv = document.getElementById('BodyCardBody');
+
+        if (HeadDiv && BodyDiv) {
+            const MainDivHeight = MainDiv.offsetHeight;
+            const HeadDivHeight = HeadDiv.offsetHeight;
+            BodyDiv.style.height = (MainDivHeight - HeadDivHeight) + 'px';
+        }
+    });
+</script>

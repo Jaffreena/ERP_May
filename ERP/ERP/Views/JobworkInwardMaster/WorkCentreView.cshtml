@@ -1,0 +1,40 @@
+﻿@model ERP_DTO.WorkCentre_DTO
+
+
+@if (Model != null)
+{
+    <input asp-for="WC_Number" type="hidden" class="Number" />
+}
+<div class="mb-3">
+    <label asp-for="WC_WorkCentre" class="control-label"></label>
+    <input asp-for="WC_WorkCentre" class="form-control Key KeyDup" autofocus="true" autocomplete="off" />
+</div>
+<div class="mb-3">
+    <label asp-for="WC_Description" class="control-label"></label>
+    <textarea asp-for="WC_Description" class="form-control Key" autocomplete="off"></textarea>
+</div>
+<div class="mb-3">
+    <label asp-for="WC_WCG_Number" class="control-label"></label>
+    <select asp-for="WC_WCG_Number" class="form-select" asp-items="@ViewBag.WorkCentreGroup"></select>
+</div>
+<div class="mb-3">
+    <label asp-for="WC_Warehouse_Number" class="control-label"></label>
+    <select asp-for="WC_Warehouse_Number" class="form-select form-search" asp-items="@ViewBag.Warehouse"></select>
+</div>
+<div class="mb-3">
+    <label asp-for="WC_PRS_Number" class="control-label"></label>
+    <select asp-for="WC_PRS_Number" class="form-select form-search" asp-items="@ViewBag.Process"></select>
+</div>
+ 
+<div>
+    @if (Model != null)
+    {
+        <input type="submit" name="Mode" value="Update" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+    else
+    {
+        <input type="submit" name="Mode" value="Save" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+</div>

@@ -1,0 +1,47 @@
+﻿@model ERP_DTO.JW_Process_DTO
+
+
+@if (Model != null)
+{
+    <input asp-for="ProcessNumber" type="hidden" class="Number" />
+}
+<div class="mb-3">
+    <label asp-for="ProcessName" class="control-label"></label>
+    <input asp-for="ProcessName" class="form-control Key KeyDup" autofocus="true" autocomplete="off" />
+</div>
+<div class="mb-3">
+    <label asp-for="Description" class="control-label"></label>
+    <textarea asp-for="Description" class="form-control Key" autocomplete="off"></textarea>
+</div>
+<div class="mb-3">
+    <label asp-for="ConsumptionUoM" class="control-label"></label>
+    <select asp-for="ConsumptionUoM" class="form-select" asp-items="@ViewBag.UOM"></select>
+</div>
+<div class="mb-3">
+    <label asp-for="ProductionUoM" class="control-label"></label>
+    <select asp-for="ProductionUoM" class="form-select form-search" asp-items="@ViewBag.UOM"></select>
+</div>
+<div class="mb-3">
+    <label asp-for="ScrapUoM" class="control-label"></label>
+    <select asp-for="ScrapUoM" class="form-select form-search" asp-items="@ViewBag.UOM"></select>
+</div>
+<div class="mb-3">
+    <label asp-for="ScrapItemCode" class="control-label"></label>
+    <select asp-for="ScrapItemCode" class="form-select form-search" asp-items="@ViewBag.ScrapItemCode"></select>
+</div>
+<div class="mb-3">
+    <label asp-for="SAC" class="control-label"></label>
+    <select asp-for="SAC" class="form-select form-search" asp-items="@ViewBag.SAC"></select>
+</div>
+<div>
+    @if (Model != null)
+    {
+        <input type="submit" name="Mode" value="Update" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+    else
+    {
+        <input type="submit" name="Mode" value="Save" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+</div>

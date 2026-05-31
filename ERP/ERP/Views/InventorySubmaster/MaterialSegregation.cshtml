@@ -1,0 +1,247 @@
+﻿@model ERP.Models.PaginatedList<ERP_DTO.InventorySubmaster_DTO>
+
+@{
+    ViewData["Title"] = "MaterialSegregation";
+}
+
+<div class="row align-items-center panel-header gx-2">
+    <div class="col h-100">
+        <div class="h6 fw-light h-100 align-content-center bg-secondary px-2">
+            Material Segregation
+            <a asp-controller="Inventory" asp-action="Index" class="float-end btn p-0 shadow-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                </svg>
+            </a>
+        </div>
+    </div>
+</div>
+<div class="row panel-body gx-2">
+    <div class="col-12 panel-card-fixed" id="BodyHeight">
+        <div class="w-100 rounded-0 border border-primary bg-transparent h-100">
+            <div class="row h-100 gx-0">
+                <div class="col-12 col-md-4 h-100">
+                    <div class="card bg-transparent shadow-none overflow-hidden mb-2 sticky-top top-100 border-end h-100">
+                        <div class="card-body text-black">
+                            <form asp-action="MaterialSegregation">
+                                <partial name="View.cshtml" model="(ERP_DTO.InventorySubmaster_DTO)@ViewBag.Submaster" />
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-8">
+                    <div class="card bg-transparent shadow-none overflow-hidden h-100">
+                        <div class="card-body text-black" id="CardPanel">
+                            <div class="row pb-3" id="CardHeader">
+                                <div class="col">
+                                    <form asp-action="MaterialSegregation" method="get">
+                                        <input type="hidden" name="sortOrder" value="@ViewData["CurrentSort"]" />
+                                        <input type="hidden" name="PageNumber" value="@ViewData["PageNumber"]" />
+                                        <input type="hidden" name="PageFilter" value="PageFilter" />
+                                        <div class="row">
+                                            <div class="col-8">
+                                                <div class="row gx-0">
+                                                    <div class="col-auto me-3">
+                                                        <select name="PSize" class="form-select w-auto py-1 pe-4" asp-route-PageFilter="PageFilter" asp-items="@ViewBag.Page" onchange="form.submit();"></select>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <input id="Search" name="Search" class="form-control p-1 search-control" autocomplete="off" value="@ViewData["CurrentFilter"]" />
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <input type="submit" name="Mode" value="Search" class="btn btn-primary btn-sm" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="w-100 MenuAction d-none text-end">
+                                                    <a class="DeleteAllButton btn btn-sm btn-danger">
+                                                        Delete All
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div id="CardBody" class="w-100 border p-2">
+                                <table class="table table-bordered table-hover align-middle mb-0 table-grid">
+                                    <thead>
+                                        <tr class="table-info">
+                                            <th class="px-2 del">
+                                                <input type="checkbox" class="selectAllCheckbox form-check-input border-white" id="selectAllCheckbox">
+                                            </th>
+                                            <th class="table-width-1">
+                                                <a asp-action="MaterialSegregation" asp-route-sortOrder="@ViewData["KeySort"]" asp-route-Search="@ViewData["CurrentFilter"]" asp-route-PSize="@ViewData["PageSize"]" asp-route-PageNumber="@ViewData["PageNumber"]">Title</a>
+                                            </th>
+                                            <th>Notes</th>
+                                            <th class="action text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td class="p-2 del">
+                                                    <input type="checkbox" class="DeleteNumber form-check-input" name="DeleteNumber" value="@item.Number">
+                                                </td>
+                                                <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                                                <td>@Html.DisplayFor(modelItem => item.Notes)</td>
+                                                <td class="action text-center">
+
+                                                    <form asp-action="MaterialSegregation">
+                                                        <input name="Number" id="Number" value="@item.Number" type="hidden" />
+                                                        <button type="submit" name="Mode" value="Edit" class="btn text-primary p-0 me-1 shadow-none icon-link">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                                                                <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z" />
+                                                            </svg>
+                                                        </button>
+                                                        <a value="@item.Number" class="DeleteButton btn text-danger p-0 icon-link shadow-none" data-value="@item.Number">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                                                <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                                            </svg>
+                                                        </a>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            @{
+                                var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+                                var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+                            }
+                            <div class="row pt-3" id="CardFooter">
+
+                                <div class="col">
+                                    <form asp-action="MaterialSegregation" method="get">
+                                        <div class="row align-items-center">
+                                            <div class="col">
+                                                @{
+                                                    Int32 TotalSize = Convert.ToInt32(ViewData["TotalSize"]);
+                                                    Int32 PageNumber = Convert.ToInt32(ViewData["PageNumber"]);
+                                                    Int32 PageSize = Convert.ToInt32(ViewData["PageSize"]);
+                                                    Int32 StartNumber = 1;
+                                                    Int32 EndNumber = 0;
+
+                                                    if (PageNumber > 1)
+                                                    {
+                                                        StartNumber = StartNumber + ((PageNumber - 1) * PageSize);
+                                                    }
+                                                    EndNumber = (EndNumber + PageSize) + ((PageNumber - 1) * PageSize);
+                                                    if (EndNumber > TotalSize)
+                                                    {
+                                                        EndNumber = TotalSize;
+                                                    }
+                                                    if (StartNumber > EndNumber)
+                                                    {
+                                                        StartNumber = EndNumber;
+                                                    }
+                                                }
+                                                Showing @StartNumber to @EndNumber
+                                            </div>
+                                            <div class="col text-center">
+                                                Total records @TotalSize
+                                            </div>
+                                            <div class="col">
+                                                <nav>
+                                                    <ul class="pagination mb-0 float-end">
+                                                        <li class="page-item">
+                                                            <a asp-action="MaterialSegregation" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-Search="@ViewData["CurrentFilter"]" asp-route-PSize="@ViewData["PageSize"]" asp-route-pageNumber="@(Model.PageIndex - 1)" class="page-link @prevDisabled">
+                                                                Previous
+                                                            </a>
+                                                        </li>
+                                                        <li class="page-item">
+                                                            <a asp-action="MaterialSegregation" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-Search="@ViewData["CurrentFilter"]" asp-route-PSize="@ViewData["PageSize"]" asp-route-pageNumber="@(Model.PageIndex + 1)" class="page-link @nextDisabled">
+                                                                Next
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </nav>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/js/site.js"></script>
+
+
+<script>
+    let ajaxPending = false;
+
+    function validateTextbox(textbox, event) {
+        if (ajaxPending) {
+            event.preventDefault();
+            return;
+        }
+        let value = textbox.val().trim();
+        if (value === "") {
+            return;
+        }
+
+        ajaxPending = true;
+        event.preventDefault();
+
+        $.ajax({
+            type: "get",
+            url: "material-segregation/duplicate",
+            data: { Title: textbox.val(), Number: $(".Number").val() },
+            datatype: "json",
+            traditional: true,
+            success: function (response) {
+                var res = response;
+                if (response) {
+                    ajaxPending = false;
+                    if (!$("#DuplicateAlert").is(':visible')) {
+                        new bootstrap.Modal($("#DuplicateAlert")).show();
+                        $('#DuplicateAlert').on('shown.bs.modal', function () {
+                            $(this).find('[autofocus]').focus();
+                        });
+                    }
+                    return;
+                }
+            }
+        });
+    }
+
+    $(document).on("blur", ".KeyDup", function (event) {
+        validateTextbox($(this), event);
+    });
+
+    $(document).on("keydown", ".KeyDup", function (event) {
+        if (event.key === "Enter") {
+            validateTextbox($(this), event);
+        }
+    });
+
+    $('#DuplicateAlert').on('hidden.bs.modal', function () {
+        setTimeout(function () {
+            $('#Title').focus();
+        }, 1);
+    });
+</script>
+
+<script>
+    $('.navbar-nav > .nav-item.inventory > a').addClass("active");
+
+
+     document.addEventListener("DOMContentLoaded", function () {
+           const MainTab = document.getElementById('CardPanel');
+           const HeaderTab = document.getElementById('CardHeader');
+           const bodyTab = document.getElementById('CardBody');
+           const FooterTab = document.getElementById('CardFooter');
+
+           const MainHeight = MainTab.offsetHeight;
+           const HeaderHeight = HeaderTab.offsetHeight;
+           const FooterHeight = FooterTab.offsetHeight;
+
+           bodyTab.style.height = (MainHeight - HeaderHeight - FooterHeight - 30) + 'px';
+       });
+</script>

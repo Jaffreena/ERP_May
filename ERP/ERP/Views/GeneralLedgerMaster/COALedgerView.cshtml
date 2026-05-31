@@ -1,0 +1,32 @@
+﻿@model ERP_DTO.COA_Ledger_DTO
+
+
+@if (Model != null)
+{
+    <input asp-for="LedgerNumber" type="hidden" class="Number" />
+}
+<div class="mb-3">
+    <label asp-for="LedgerAccount" class="control-label"></label>
+    <input asp-for="LedgerAccount" class="form-control Key KeyDup number-only" autofocus="true" autocomplete="off" />
+</div>
+<div class="mb-3">
+    <label asp-for="LedgerName" class="control-label"></label>
+    <input asp-for="LedgerName" class="form-control Key" autofocus="true" autocomplete="off" />
+</div>
+<div class="mb-3">
+    <label asp-for="LedgerGroup" class="control-label"></label>
+    <select asp-for="LedgerGroup" class="form-select form-search" asp-items="@ViewBag.Group" data-live-search="true"></select>
+</div>
+
+<div>
+    @if(Model != null)
+    {
+        <input type="submit" name="Mode" value="Update" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+    else
+    {
+        <input type="submit" name="Mode" value="Save" class="btn btn-primary me-3" />
+        <input type="submit" name="Mode" value="Clear" class="btn btn-primary" />
+    }
+</div>

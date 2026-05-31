@@ -1,0 +1,264 @@
+﻿@model List<ERP_DTO.TaxElementDetail_DTO>
+
+<div class="w-100 table-responsive">
+    <table class="table table-bordered align-middle table-hover align-middle mb-0 table-grid">
+        <thead>
+            <tr class="table-info">
+                <th class="datetype text-center">From Date</th>
+                <th class="datetype text-center">To Date</th>
+                <th class="table-width-lg text-end">Fixed Percent</th>
+                <th class="action text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody id="FNTableBody">
+            <tr id="FNTempRow" style="display: none;">
+                <td class="datetype">
+                    <input id="FromDate" class="form-control FromDate datepicker text-center" autocomplete="off" style="max-width:120px !important" />
+                </td>
+                <td class="datetype">
+                    <input id="ToDate" class="form-control ToDate datepicker text-center" autocomplete="off" style="max-width:120px !important" />
+                </td>
+                <td class="table-width-lg">
+                    <div class="d-flex align-items-center">
+                        <input id="FixedPercent" class="form-control decimal  FixedPercent text-end" autocomplete="off" /><span class="percent-symbol">%</span>
+                    </div>
+                </td>
+                <td class="action text-center">
+                    <input type="hidden" name="IsDeleted" value="false" class="IsDeleted" />
+                    <a class="FNRowRemove btn text-danger p-0 icon-link shadow-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                        </svg>
+                    </a>
+                </td>
+            </tr>
+            @if (Model != null)
+            {
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr class="FNNewRow">
+                        <td class="datetype">
+                            <input id="FromDate" name="Fixed_Nature_List[@i].FromDate" class="form-control FromDate datepicker text-center" autocomplete="off" value="@Model[i].FromDate" style="max-width:120px !important" />
+                        </td>
+                        <td class="datetype">
+                            <input id="ToDate" name="Fixed_Nature_List[@i].ToDate" class="form-control ToDate datepicker text-center" autocomplete="off" value="@Model[i].ToDate" style="max-width:120px !important" />
+                        </td>
+                        <td class="table-width-lg">
+                            <div class="d-flex align-items-center">
+                                <input id="FixedPercent" name="Fixed_Nature_List[@i].FixedPercent" class="form-control decimal FixedPercent text-end" autocomplete="off" value="@Model[i].FixedPercent" />
+                                <span class="percent-symbol">%</span>
+                            </div>
+                        </td>
+                        <td class="action text-center">
+                            @if (@Model[i].TaxNumber != 0)
+                            {
+                                <input name="Fixed_Nature_List[@i].TaxNumber" type="hidden" class="TaxNumber" value="@Model[i].TaxNumber" />
+                            }
+                            <input type="hidden" name="Fixed_Nature_List[@i].IsDeleted" value="false" />
+                            <a class="FNRowRemove btn text-danger p-0 icon-link shadow-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                    <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+</div>
+<script>
+     $(document).ready(function () {
+        function InitializeFlatpickrs() {
+            $(".datepicker").flatpickr({
+                dateFormat: "d-M-Y",
+                altInput: false,
+            });
+        }
+
+        var rowCount = @(Model != null ? Model.Count : 0);
+        var isAddingRow = false;
+
+        function addRow() {
+            var FNNewRow = $("#FNTempRow").clone().removeAttr("style").removeAttr("id").addClass("FNNewRow");
+            FNNewRow.find("input.FromDate").attr("name", "Fixed_Nature_List[" + rowCount + "].FromDate");
+            FNNewRow.find("input.ToDate").attr("name", "Fixed_Nature_List[" + rowCount + "].ToDate");
+            FNNewRow.find("input.FixedPercent").attr("name", "Fixed_Nature_List[" + rowCount + "].FixedPercent").val("0.00");
+            FNNewRow.find("input.IsDeleted").attr("name", "Fixed_Nature_List[" + rowCount + "].IsDeleted");
+
+            FNNewRow.find("input[name='Fixed_Nature_List[" + rowCount + "].IsDeleted']").val(false);
+
+            $("#FNTableBody").append(FNNewRow);
+            rowCount++;
+            FNNewRow.data("isValid", false);
+            isAddingRow = false;
+
+            InitializeFlatpickrs();
+        }
+
+        if ($("tr.FNNewRow").length == 0) {
+            addRow();
+        }
+
+        $(document).on('click', '.FNRowRemove', function () {
+            $(this).closest('tr').find("input[name*='IsDeleted']").val(true);
+            $(this).closest('tr').hide();
+        });
+
+        $(document).on('keydown', "tr.FNNewRow select, tr.FNNewRow input.FromDate, tr.FNNewRow input.ToDate,tr.FNNewRow input.FixedPercent, tr.FNNewRow input[type='text']", function (event) {
+            if (event.keyCode === 9) {
+                if (!validateField($(this)))
+                    event.preventDefault();
+            }
+        });
+
+        $(document).on("change", "tr.FNNewRow select, tr.FNNewRow input.FromDate, tr.FNNewRow input.ToDate, tr.FNNewRow input.FixedPercent, input[type='text']", function () {
+            if (isAddingRow)
+                return;
+            isAddingRow = true;
+
+            var currentInput = $(this);
+            var isValid = validateField(currentInput);
+            var currentRow = $(this).closest("tr.FNNewRow");
+            if (isValid) {
+                if (checkAllFieldsValid(currentRow)) {
+                    currentRow.data("isValid", true);
+                }
+                else {
+                    currentRow.data("isValid", false);
+                }
+            }
+            else {
+                currentRow.data("isValid", false);
+            }
+            if (currentRow.data("isValid")) {
+                var lastRow = $("tr.FNNewRow").last();
+                if (checkAllFieldsValid(lastRow))
+                    addRow();
+            }
+            else {
+                isAddingRow = false;
+            }
+        });
+
+        function checkAllFieldsValid(currentRow) {
+            var allFieldsValid = true;
+            $("tr.FNNewRow:visible").each(function () {
+                $(this).find("select, input.FromDate, input.ToDate,input.FixedPercent, input[type='text']").each(function () {
+                    if (!validateField($(this))) {
+                        allFieldsValid = false;
+                        return false;
+                    }
+                });
+                if (!allFieldsValid) return false;
+            });
+            return allFieldsValid;
+        }
+
+        function validateField(currentInput) {
+            var valid = 1;
+            var inputValue = currentInput.val();
+            if (currentInput.hasClass("FromDate") || currentInput.hasClass("ToDate")) {
+                valid = validateDateRange(currentInput);
+            }
+            if (inputValue === "") {
+                valid = 0;
+            }
+
+            if (currentInput.hasClass("FixedPercent")) {
+                valid = validateAmount(currentInput);
+            }
+
+            if (valid == 0) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+        function validateDateRange(currentInput) {
+            var valid = 1;
+            var currentRow = currentInput.closest("tr.FNNewRow");
+            var fromDateInput = currentRow.find("input.FromDate");
+            var toDateInput = currentRow.find("input.ToDate");
+            var fromDate = fromDateInput.val();
+            var toDate = toDateInput.val();
+            if (fromDate === "" || toDate === "") {
+                valid = 0;
+            }
+            var from = new Date(fromDate);
+            var to = new Date(toDate);
+            if (to < from) {
+                alert("'To Date' must be greater than or equal to 'From Date'");
+                currentInput.val("");
+                valid = 0;
+            }
+            return valid;
+        }
+        function validateAmount(currentInput) {
+            var valid = 1;
+
+            var currentRow = currentInput.closest("tr.FNNewRow");
+            var FixedPercentInput = currentRow.find("input.FixedPercent");
+            var FixedPercent = FixedPercentInput.val();
+            if (FixedPercent > 0) {
+            }
+            else {
+                valid = 0;
+            }
+            return valid;
+        }
+
+        $("#FNOkayButton").click(function () {
+            GridValidation();
+        });
+        $("#FNCloseButton").click(function () {
+            GridValidation();
+        });
+        function GridValidation(){
+            $("tr.FNNewRow").each(function () {
+                var fromDate = $(this).find("input.FromDate").val();
+                var toDate = $(this).find("input.ToDate").val();
+                var fixedPercent = $(this).find("input.FixedPercent").val();
+
+                if (!fromDate && !toDate && !(fixedPercent > 0)) {
+                    $(this).remove();
+                }
+            });
+
+            var lastRow = $("tr.FNNewRow").last();
+            if (checkAllFieldsValid(lastRow)) {
+
+                $("#FixedNatureModel").modal('hide');
+            }
+            else {
+                alert("Please complete all fields !");
+                firstInvalidField.focus();
+            }
+        }
+
+        $("#FNAddRowButton").click(function () {
+            var lastRow = $("tr.FNNewRow").last();
+            if (checkAllFieldsValid(lastRow)) {
+                addRow();
+            }
+            else {
+                var firstInvalidField = null;
+                lastRow.find("select, input.FromDate, input.ToDate,input.FixedPercent, input[type='text']").each(function () {
+                    if (!validateField($(this))) {
+                        if (firstInvalidField == null)
+                            firstInvalidField = $(this);
+                        return false;
+                    }
+                });
+                if (firstInvalidField != null) {
+                    alert("Please complete all fields !");
+                    firstInvalidField.focus();
+                }
+            }
+        });
+
+    });
+</script>

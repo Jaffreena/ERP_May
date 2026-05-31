@@ -1,0 +1,294 @@
+﻿@model List<ERP_DTO.VendorWHT_DTO>
+
+<div class="w-100 table-responsive">
+    <table class="table table-bordered align-middle table-hover align-middle mb-0 table-grid">
+        <thead>
+            <tr class="table-info">
+                <th>WHT Category</th>
+                <th>WHT Type</th>
+                <th>Tax Code</th>
+                <th class="datetype text-center">From Date</th>
+                <th class="datetype text-center">To Date</th>
+                <th class="action text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody id="WHTTableBody">
+            <tr id="WHTTempRow" style="display: none;">
+                <td>
+                    <select id="Category" class="form-select Category" asp-items="@ViewBag.WHT_Category"></select>
+                </td>
+                <td>
+                    <select id="Type" class="form-select Type" asp-items="@ViewBag.WHT_Type"></select>
+                </td>
+                <td>
+                    <select id="Tax" class="form-select Tax" asp-items="@ViewBag.WHT_Tax"></select>
+                </td>
+                <td class ="datetype">
+                    <input id="FromDate" class="form-control text-center FromDate datepicker" autocomplete="off" />
+                </td>
+                <td class="datetype">
+                    <input id="ToDate" class="form-control text-center ToDate datepicker" autocomplete="off" />
+                </td>
+                <td class="action text-center">
+                    <input type="hidden" name="IsDeleted" value="false" class="IsDeleted" />
+                    <a class="WHTRowRemove btn text-danger p-0 icon-link shadow-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                        </svg>
+                    </a>
+                </td>
+            </tr>
+            @if (Model != null)
+            {
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr class="WHTNewRow">
+                        <td>
+                            <select id="Category" name="WHT_List[@i].Category" class="form-select Category">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.WHT_Category)
+                                {
+                                    if (item.Value == Model[i].Category)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <select id="Type" name="WHT_List[@i].Type" class="form-select Type">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.WHT_Type)
+                                {
+                                    if (item.Value == Model[i].Type)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <select id="Tax" name="WHT_List[@i].Tax" class="form-select Tax">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.WHT_Tax)
+                                {
+                                    if (item.Value == Model[i].Tax)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td class="datetype">
+                            <input id="FromDate" name="WHT_List[@i].FromDate" class="form-control text-center FromDate datepicker" autocomplete="off" value="@Model[i].FromDate" />
+                        </td>
+                        <td class="datetype">
+                            <input id="ToDate" name="WHT_List[@i].ToDate" class="form-control text-center ToDate datepicker" autocomplete="off" value="@Model[i].ToDate" />
+                        </td>
+                        <td class="action text-center">
+                            @if (@Model[i].Number != 0)
+                            {
+                                <input name="WHT_List[@i].Number" type="hidden" class="Number" value="@Model[i].Number" />
+                            }
+                            <input type="hidden" name="WHT_List[@i].IsDeleted" value="false" />
+                            <a class="WHTRowRemove btn text-danger p-0 icon-link shadow-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                    <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+         function InitializeFlatpickrs() {
+            $(".datepicker").flatpickr({
+                dateFormat: "d-M-Y",
+                altInput: false,
+            });
+        }
+
+        var rowCount = @(Model != null ? Model.Count : 0);
+        var isAddingRow = false;
+
+        function addRow() {
+            var NewRow = $("#WHTTempRow").clone().removeAttr("style").removeAttr("id").addClass("WHTNewRow");
+            NewRow.find("select.Category").attr("name", "WHT_List[" + rowCount + "].Category");
+            NewRow.find("select.Type").attr("name", "WHT_List[" + rowCount + "].Type");
+            NewRow.find("select.Tax").attr("name", "WHT_List[" + rowCount + "].Tax");
+            NewRow.find("input.FromDate").attr("name", "WHT_List[" + rowCount + "].FromDate");
+            NewRow.find("input.ToDate").attr("name", "WHT_List[" + rowCount + "].ToDate");
+
+            NewRow.find("input[name='WHT_List[" + rowCount + "].IsDeleted']").val(false);
+
+            $("#WHTTableBody").append(NewRow);
+            rowCount++;
+            NewRow.data("isValid", false);
+            isAddingRow = false;
+
+             InitializeFlatpickrs();
+        }
+
+        if ($("tr.WHTNewRow").length == 0) {
+            addRow();
+        }
+
+        $(document).on('click', '.WHTRowRemove', function () {
+            $(this).closest('tr').find("input[name*='IsDeleted']").val(true);
+            $(this).closest('tr').hide();
+        });
+
+        $(document).on('keydown', "tr.WHTNewRow select, tr.WHTNewRow input.FromDate, tr.WHTNewRow input.ToDate, tr.WHTNewRow input[type='text']", function (event) {
+            if (event.keyCode === 9) {
+                if (!validateField($(this)))
+                    event.preventDefault();
+            }
+        });
+
+        $(document).on("change", "tr.WHTNewRow select, tr.WHTNewRow input.FromDate, tr.WHTNewRow input.ToDate, input[type='text']", function () {
+            if (isAddingRow)
+                return;
+            isAddingRow = true;
+
+            var currentInput = $(this);
+            var isValid = validateField(currentInput);
+            var currentRow = $(this).closest("tr.WHTNewRow");
+            if (isValid) {
+                if (checkAllFieldsValid(currentRow)) {
+                    currentRow.data("isValid", true);
+                }
+                else {
+                    currentRow.data("isValid", false);
+                }
+            }
+            else {
+                currentRow.data("isValid", false);
+            }
+            if (currentRow.data("isValid")) {
+                var lastRow = $("tr.WHTNewRow").last();
+                if (checkAllFieldsValid(lastRow))
+                    addRow();
+            }
+            else {
+                isAddingRow = false;
+            }
+        });
+
+        function checkAllFieldsValid(currentRow) {
+            var allFieldsValid = true;
+            $("tr.WHTNewRow:visible").each(function () {
+                $(this).find("select, input.FromDate, input.ToDate, input[type='text']").each(function () {
+                    if (!validateField($(this))) {
+                        allFieldsValid = false;
+                        return false;
+                    }
+                });
+                if (!allFieldsValid) return false;
+            });
+            return allFieldsValid;
+        }
+
+        function validateField(currentInput) {
+            var valid = 1;
+            var inputValue = currentInput.val();
+            if (currentInput.hasClass("FromDate") || currentInput.hasClass("ToDate")) {
+                valid = validateDateRange(currentInput);
+            }
+            if (inputValue === "") {
+                valid = 0;
+            }
+
+            if (valid == 0) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+        function validateDateRange(currentInput) {
+            var valid = 1;
+            var currentRow = currentInput.closest("tr.WHTNewRow");
+            var fromDateInput = currentRow.find("input.FromDate");
+            var toDateInput = currentRow.find("input.ToDate");
+            var fromDate = fromDateInput.val();
+            var toDate = toDateInput.val();
+            if (fromDate === "" || toDate === "") {
+                valid = 0;
+            }
+            var from = new Date(fromDate);
+            var to = new Date(toDate);
+            if (to < from) {
+                alert("'To Date' must be greater than or equal to 'From Date'");
+                currentInput.val("");
+                valid = 0;
+            }
+            return valid;
+        }
+
+        $("#WHTAddRowButton").click(function () {
+            var lastRow = $("tr.WHTNewRow").last();
+            if (checkAllFieldsValid(lastRow)) {
+                addRow();
+            }
+            else {
+                var firstInvalidField = null;
+                lastRow.find("select, input.FromDate, input.ToDate, input[type='text']").each(function () {
+                    if (!validateField($(this))) {
+                        if (firstInvalidField == null)
+                            firstInvalidField = $(this);
+                        return false;
+                    }
+                });
+                if (firstInvalidField != null) {
+                    alert("Please complete all fields !");
+                    firstInvalidField.focus();
+                }
+            }
+        });
+        $("#WHTOkayButton").click(function () {
+           GridValidation();
+        });
+        $("#WHTCloseButton").click(function () {
+           GridValidation();
+        });
+        function GridValidation(){
+            $("tr.WHTNewRow").each(function () {
+                var FromDate = $(this).find("input.FromDate").val();
+                var ToDate = $(this).find("input.ToDate").val();
+                var Category = $(this).find("select.Category").val();
+                var Type = $(this).find("select.Type").val();
+                var Tax = $(this).find("select.Tax").val();
+
+                if (!FromDate && !ToDate && !Category && !Type && !Tax) {
+                    $(this).remove();
+                }
+            });
+
+
+            var lastRow = $("tr.WHTNewRow").last();
+            if (checkAllFieldsValid(lastRow)) {
+
+                $("#WHTModel").modal('hide');
+            }
+            else {
+                alert("Please complete all fields !");
+                firstInvalidField.focus();
+            }
+        }
+    });
+</script>

@@ -1,0 +1,874 @@
+﻿@model List<ERP_DTO.SaleOrderItem_DTO>
+
+<div class="w-100 table-responsive table-body table-body-f">
+    <table class="table table-one table-striped table-bordered table-hover align-middle" id="ItemTable">
+        <thead>
+            <tr class="table-info">
+                <th class="px-2 del text-center">
+                    <input type="checkbox" class="IndexAllCheckItem form-check-input border-white" name="IndexAllCheckItem" id="IndexAllCheckItem">
+                </th>
+                <th class="text-start">@Html.DisplayNameFor(M => M.First().SOI_ITM_Number)</th>
+                <th class="text-start">@Html.DisplayNameFor(M => M.First().SOI_ITM_Description)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SOI_ITM_OuterDia)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SOI_ITM_Thickness)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SOI_ITM_Length)</th>
+                <th class="text-start">@Html.DisplayNameFor(M => M.First().SOI_ITM_MaterialGrade)</th>
+                <th class="text-start">@Html.DisplayNameFor(M => M.First().SOI_ITM_Group)</th>
+                <th class="table-width-md text-center">@Html.DisplayNameFor(M => M.First().SOI_UoM_Number)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SOI_OLD_Qty)</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SOI_SII_Qty)</th>
+                <th class="table-width-xl text-end">SO Amend Qty</th>
+                <th class="table-width-xl text-end">@Html.DisplayNameFor(M => M.First().SOI_UnitPrice)</th>
+                <th class="table-width-3xl text-end">@Html.DisplayNameFor(M => M.First().SOI_Amount)</th>
+                <th class="table-width-3xl text-end">@Html.DisplayNameFor(M => M.First().SOI_IncomeValue)</th>
+                <th class="datetype text-center">@Html.DisplayNameFor(M => M.First().SOI_DeliveryDate)</th>
+            </tr>
+        </thead>
+        <tbody id="TableBody">
+            <tr id="TempRow" style="display: none;">
+                <td class="p-2 del">
+                    <input type="checkbox" class="CheckItem form-check-input" name="CheckItem">
+                </td>
+                <td>
+                    <input id="SOI_Index" type="hidden" class="form-control SOI_Index" autocomplete="off" />
+                    <input id="SOI_MS_Number" class="SOI_MS_Number" type="hidden" />
+                    <input id="SOI_ITM_Number" class="SOI_ITM_Number" type="hidden" />
+                    <input id="SOI_ITM_Code" class="form-control SOI_ITM_Code" autocomplete="off" oninput="OnInput(this)" onfocus="OnFocus(this)" />
+                    <div class="search-results bg-primary card" style="display:none"></div>
+                </td>
+                <td>
+                    <input id="SOI_ITM_Description" class="form-control SOI_ITM_Description" autocomplete="off" readonly />
+                </td>
+                <td class="table-width-xl">
+                    <input id="SOI_ITM_OuterDia" class="form-control SOI_ITM_OuterDia text-end" autocomplete="off" readonly />
+                </td>
+                <td class="table-width-xl">
+                    <input id="SOI_ITM_Thickness" class="form-control SOI_ITM_Thickness text-end" autocomplete="off" readonly />
+                </td>
+                <td class="table-width-xl">
+                    <input id="SOI_ITM_Length" class="form-control SOI_ITM_Length text-end" autocomplete="off" readonly />
+                </td>
+                <td>
+                    <input id="SOI_ITM_MaterialGrade" class="form-control SOI_ITM_MaterialGrade" autocomplete="off" readonly />
+                </td>
+                <td>
+                    <input id="SOI_ITM_Group" class="form-control SOI_ITM_Group" autocomplete="off" readonly />
+                </td>
+                <td class="table-width-md">
+                    <select id="SOI_UoM_Number" class="form-select SOI_UoM_Number text-center" asp-items="@ViewBag.UoM"></select>
+                    <input type="hidden" id="SOI_UoM_DecimalPlaces" class="form-control SOI_UoM_DecimalPlaces" autocomplete="off" />
+                    <input type="hidden" id="SOI_UoM_OldNumber" class="form-control SOI_UoM_OldNumber" autocomplete="off" />
+                </td>
+                <td class="table-width-xl">
+                    <input id="SOI_OLD_Qty" class="form-control SOI_OLD_Qty number QtyNumbers text-end" readonly autocomplete="off" />
+                </td>
+                <td class="table-width-xl">
+                    <input id="SOI_SII_Qty" class="form-control SOI_SII_Qty number QtyNumbers text-end" readonly autocomplete="off" />
+                </td>
+                <td class="table-width-xl">
+                    <input id="SOI_Qty" class="form-control SOI_Qty number QtyNumbers text-end" autocomplete="off" />
+                </td>
+                <td class="table-width-xl">
+                    <input id="SOI_UnitPrice" class="form-control SOI_UnitPrice number UnitDecimal text-end" autocomplete="off" />
+                </td>
+                <td class="table-width-3xl">
+                    <input id="SOI_Amount" class="form-control SOI_Amount text-end" autocomplete="off" readonly />
+                </td>
+                <td class="table-width-3xl">
+                    <input id="SOI_IncomeValue" class="form-control SOI_IncomeValue text-end" autocomplete="off" readonly />
+                </td>
+                <td class="datetype">
+                    <input id="SOI_DeliveryDate" class="form-control SOI_DeliveryDate datepicker text-center" autocomplete="off" />
+                    <input type="hidden" name="SOI_IsDeleted" class="SOI_IsDeleted" />
+                </td>
+            </tr>
+            @if (Model != null)
+            {
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr class="NewRow" style="@(@Model[i].SOI_IsDeleted == 1 ? "display: none;" : "")">
+                        <td class="p-2 del">
+                            <input type="checkbox" class="CheckItem form-check-input" name="CheckItem">
+                        </td>
+                        <td>
+                            <input id="SOI_Index" name="SaleItems[@i].SOI_Index" type="hidden" class="SOI_Index" autocomplete="off" value="@Model[i].SOI_Index" />
+                            <input id="SOI_MS_Number" name="SaleItems[@i].SOI_MS_Number" class="SOI_MS_Number" type="hidden" value="@Model[i].SOI_MS_Number" />
+                            <input id="SOI_ITM_Number" name="SaleItems[@i].SOI_ITM_Number" class="SOI_ITM_Number" type="hidden" value="@Model[i].SOI_ITM_Number" />
+                            <input id="SOI_ITM_Code" name="SaleItems[@i].SOI_ITM_Code" class="form-control SOI_ITM_Code" autocomplete="off" value="@Model[i].SOI_ITM_Code" oninput="OnInput(this)" onfocus="OnFocus(this)" />
+                            <div class="search-results bg-primary card" style="display:none"></div>
+                        </td>
+                        <td>
+                            <input id="SOI_ITM_Description" name="SaleItems[@i].SOI_ITM_Description" class="form-control SOI_ITM_Description" readonly value="@Model[i].SOI_ITM_Description" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="SOI_ITM_OuterDia" name="SaleItems[@i].SOI_ITM_OuterDia" class="form-control SOI_ITM_OuterDia text-end" readonly value="@Model[i].SOI_ITM_OuterDia" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="SOI_ITM_Thickness" name="SaleItems[@i].SOI_ITM_Thickness" class="form-control SOI_ITM_Thickness text-end" readonly value="@Model[i].SOI_ITM_Thickness" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="SOI_ITM_Length" name="SaleItems[@i].SOI_ITM_Length" class="form-control SOI_ITM_Length text-end" readonly value="@Model[i].SOI_ITM_Length" />
+                        </td>
+                        <td>
+                            <input id="SOI_ITM_MaterialGrade" name="SaleItems[@i].SOI_ITM_MaterialGrade" class="form-control SOI_ITM_MaterialGrade" readonly value="@Model[i].SOI_ITM_MaterialGrade" />
+                        </td>
+                        <td>
+                            <input id="SOI_ITM_Group" name="SaleItems[@i].SOI_ITM_Group" class="form-control SOI_ITM_Group" readonly value="@Model[i].SOI_ITM_Group" />
+                        </td>
+                        <td>
+                            <select id="SOI_UoM_Number" name="SaleItems[@i].SOI_UoM_Number" class="form-select SOI_UoM_Number text-center">
+                                @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.UoM)
+                                {
+                                    if (item.Value == Model[i].SOI_UoM_Number)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                            <input id="SOI_UoM_OldNumber" name="SaleItems[@i].SOI_UoM_OldNumber" class="form-control SOI_UoM_OldNumber" type="hidden" value="@Model[i].SOI_UoM_OldNumber" />
+                            <input type="hidden" id="SOI_UoM_DecimalPlaces" name="SaleItems[@i].SOI_UoM_DecimalPlaces" class="form-control SOI_UoM_DecimalPlaces" autocomplete="off" value="@Convert.ToDouble(@Model[i].SOI_UoM_DecimalPlaces)" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="SOI_OLD_Qty" name="SaleItems[@i].SOI_OLD_Qty" class="form-control SOI_OLD_Qty number QtyNumbers text-end" readonly autocomplete="off" value="@Convert.ToDouble(@Model[i].SOI_OLD_Qty)" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="SOI_SII_Qty" name="SaleItems[@i].SOI_SII_Qty" class="form-control SOI_SII_Qty number QtyNumbers text-end" readonly autocomplete="off" value="@Convert.ToDouble(@Model[i].SOI_SII_Qty)" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="SOI_Qty" name="SaleItems[@i].SOI_Qty" class="form-control SOI_Qty number QtyNumbers text-end" autocomplete="off" value="@Convert.ToDouble(@Model[i].SOI_Qty)" />
+                        </td>
+                        <td class="table-width-xl">
+                            <input id="SOI_UnitPrice" name="SaleItems[@i].SOI_UnitPrice" class="form-control SOI_UnitPrice number UnitDecimal text-end" autocomplete="off" value="@Convert.ToDouble(@Model[i].SOI_UnitPrice)" />
+                        </td>
+                        <td class="table-width-3xl">
+                            <input id="SOI_Amount" name="SaleItems[@i].SOI_Amount" class="form-control SOI_Amount text-end decimal" readonly autocomplete="off" value="@Convert.ToDouble(@Model[i].SOI_Amount)" />
+                        </td>
+                        <td class="table-width-3xl">
+                            <input id="SOI_IncomeValue" name="SaleItems[@i].SOI_IncomeValue" class="form-control SOI_IncomeValue text-end decimal" readonly autocomplete="off" value="@Convert.ToDouble(@Model[i].SOI_IncomeValue)" />
+                        </td>
+                        <td class="datetype">
+                            <input id="SOI_DeliveryDate" name="SaleItems[@i].SOI_DeliveryDate" class="form-control SOI_DeliveryDate datepicker text-center" autocomplete="off" value="@Model[i].SOI_DeliveryDate" />
+                            @if (@Model[i].SOI_Number != 0)
+                            {
+                                <input name="SaleItems[@i].SOI_Number" type="hidden" class="SOI_Number" value="@Model[i].SOI_Number" />
+                            }
+                            <input type="hidden" name="SaleItems[@i].SOI_IsDeleted" id="SOI_IsDeleted" class="SOI_IsDeleted" value="@Model[i].SOI_IsDeleted" />
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+        <tfoot>
+            <tr class="table-info">
+                <td colspan="11" class="text-end py-2">Total</td>
+                <td class="table-width-xl">
+                    <input id="TotalQty" class="form-control text-end" readonly />
+                </td>
+                <td>
+                </td>
+                <td class="table-width-3xl">
+                    <input id="TotalAmount" class="form-control text-end" readonly />
+                </td>
+                <td class="table-width-3xl">
+                    <input id="TotalIncome" class="form-control text-end" readonly />
+                </td>
+                <td>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+<div class="w-100 table-footer align-items-center">
+    <a id="AddRowButton" class="btn btn-primary">Add Row</a>
+    <a class="RowRemove btn btn-primary">
+        Delete Row
+    </a>
+</div>
+<script>
+    $(document).ready(function () {
+        function InitializeFlatpickrs() {
+            $(".SOI_DeliveryDate").flatpickr({
+                dateFormat: "d-M-Y",
+                altInput: false,
+                minDate: $("#SOH_OrderDate").val()
+            });
+        }
+
+        var rowCount = @(Model != null ? Model.Count : 0);
+        var isAddingRow = false;
+
+        function addRow() {
+            var NewRow = $("#TempRow").clone().removeAttr("style").removeAttr("id").addClass("NewRow");
+            NewRow.find("input.SOI_Index").attr("name", "SaleItems[" + rowCount + "].SOI_Index").val(rowCount + 1);
+            NewRow.find("input.SOI_MS_Number").attr("name", "SaleItems[" + rowCount + "].SOI_MS_Number");
+            NewRow.find("input.SOI_ITM_Number").attr("name", "SaleItems[" + rowCount + "].SOI_ITM_Number");
+            NewRow.find("input.SOI_ITM_Code").attr("name", "SaleItems[" + rowCount + "].SOI_ITM_Code");
+            NewRow.find("input.SOI_ITM_Description").attr("name", "SaleItems[" + rowCount + "].SOI_ITM_Description");
+            NewRow.find("input.SOI_ITM_OuterDia").attr("name", "SaleItems[" + rowCount + "].SOI_ITM_OuterDia");
+            NewRow.find("input.SOI_ITM_Thickness").attr("name", "SaleItems[" + rowCount + "].SOI_ITM_Thickness");
+            NewRow.find("input.SOI_ITM_Length").attr("name", "SaleItems[" + rowCount + "].SOI_ITM_Length");
+            NewRow.find("input.SOI_ITM_MaterialGrade").attr("name", "SaleItems[" + rowCount + "].SOI_ITM_MaterialGrade");
+            NewRow.find("input.SOI_UoM_DecimalPlaces").attr("name", "SaleItems[" + rowCount + "].SOI_UoM_DecimalPlaces");
+            NewRow.find("input.SOI_ITM_Group").attr("name", "SaleItems[" + rowCount + "].SOI_ITM_Group");
+            NewRow.find("select.SOI_UoM_Number").attr("name", "SaleItems[" + rowCount + "].SOI_UoM_Number");
+            NewRow.find("input.SOI_UoM_OldNumber").attr("name", "SaleItems[" + rowCount + "].SOI_UoM_OldNumber");
+            NewRow.find("input.SOI_OLD_Qty").attr("name", "SaleItems[" + rowCount + "].SOI_OLD_Qty").val(0);
+            NewRow.find("input.SOI_SII_Qty").attr("name", "SaleItems[" + rowCount + "].SOI_SII_Qty").val(0);
+            NewRow.find("input.SOI_Qty").attr("name", "SaleItems[" + rowCount + "].SOI_Qty");
+            NewRow.find("input.SOI_UnitPrice").attr("name", "SaleItems[" + rowCount + "].SOI_UnitPrice");
+            NewRow.find("input.SOI_Amount").attr("name", "SaleItems[" + rowCount + "].SOI_Amount");
+            NewRow.find("input.SOI_IncomeValue").attr("name", "SaleItems[" + rowCount + "].SOI_IncomeValue");
+            NewRow.find("input.SOI_DeliveryDate").attr("name", "SaleItems[" + rowCount + "].SOI_DeliveryDate").val($("#SOH_OrderDate").val());
+            NewRow.find("input.SOI_IsDeleted").attr("name", "SaleItems[" + rowCount + "].SOI_IsDeleted").val(0);
+
+            $("#TableBody").append(NewRow);
+            rowCount++;
+            NewRow.data("isValid", false);
+            isAddingRow = false;
+
+            InitializeFlatpickrs();
+        }
+
+        if ($("tr.NewRow").length == 0) {
+            addRow();
+        }
+
+        $(document).on('click', '.RowRemove', function () {
+            let CheckedCheckbox = document.querySelector('.CheckItem:checked');
+            if (CheckedCheckbox) {
+                $(CheckedCheckbox).closest('tr').find("input.SOI_IsDeleted").val(1);
+                $(CheckedCheckbox).closest('tr').hide();
+            }
+
+            (async () => {
+                CalculateFooter();
+            })();
+        });
+
+        $(document).on('keydown', "tr.NewRow select, tr.NewRow input.SOI_DeliveryDate,tr.NewRow input.SOI_ITM_Number,tr.NewRow input.SOI_Qty,tr.NewRow input.SOI_UnitPrice, tr.NewRow input[type='text']", function (event) {
+            if (event.keyCode === 9) {
+                if (!validateField($(this)))
+                    event.preventDefault();
+            }
+        });
+
+        $(document).on('input', "input.SOI_UnitPrice, input.SOI_Qty", function (event) {
+            var currentInput = $(this);
+            var row = currentInput.closest("tr.NewRow");
+
+            var SOINumber = row.find("input.SOI_Number").val();
+            var itemNumber = row.find("input.SOI_ITM_Number").val();
+            var itemIndex = row.find("input.SOI_Index").val();
+
+            var qty = parseFloat(removeCommas(row.find("input.SOI_Qty").val())) || 0;
+            var unitPrice = parseFloat(removeCommas(row.find("input.SOI_UnitPrice").val())) || 0;
+            var amo = qty * unitPrice;
+            var amount = DecimalIndianRupees(amo);
+            row.find("input.SOI_Amount").val(DecimalIndianRupees(amo));
+
+            CalculateFooter();
+            CalculateIncome();
+            CalculateIIncome($(this));
+
+            var IncomeTotal = 0;
+            $("tr.IInNewRow").each(function () {
+                var irow = $(this);
+                var SOI_IsDeleted = $(this).find("input.SOI_INC_IsDeleted").val();
+                if (SOI_IsDeleted != 1) {
+                    var rowItemNumber = irow.find('input.SOI_INC_ITM_Number').val();
+                    var rowItemIndex = irow.find('input.SOI_INC_ITM_Index').val();
+                    var rowSOINumber = irow.find('input.SOI_INC_SOI_Number').val();
+
+                    if (SOINumber) {
+                        if (rowSOINumber === SOINumber) {
+                            var IncomeBase = parseFloat(removeCommas(irow.find(".SOI_INC_IncomeValue").val())) || 0;
+                            IncomeTotal += IncomeBase;
+                        }
+                    }
+                    else if (itemNumber){
+                        if (rowItemNumber === itemNumber && rowItemIndex === itemIndex) {
+                            var IncomeBase = parseFloat(removeCommas(irow.find(".SOI_INC_IncomeValue").val())) || 0;
+                            IncomeTotal += IncomeBase;
+                        }
+                    }
+                }
+            });
+            IncomeTotal = DecimalIndianRupees(IncomeTotal);
+            row.find("input.SOI_IncomeValue").val(IncomeTotal);
+        });
+        $(document).on('input', "input.SOI_UnitPrice, input.SOI_Qty", function (event) {
+            var currentInput = $(this);
+            var row = currentInput.closest("tr.NewRow");
+
+            var SOINumber = row.find("input.SOI_Number").val();
+            var itemNumber = row.find("input.SOI_ITM_Number").val();
+            var itemIndex = row.find("input.SOI_Index").val();
+
+            var Oldqty = parseFloat(removeCommas(row.find("input.SOI_OLD_Qty").val())) || 0;
+            var qty = parseFloat(removeCommas(row.find("input.SOI_Qty").val())) || 0;
+            var SIQty = parseFloat(removeCommas(row.find("input.SOI_SII_Qty").val())) || 0;
+
+            if (qty < SIQty) {
+                alert("Quantity (" + SIQty + ") cannot be Less than Invoice Quantity (" + SIQty + ").\nIt will be reset to the SO Qty: " + Oldqty);
+                QtyInput.val(FormatNumber(Oldqty));
+                qty = Oldqty;
+            }
+            var unitPrice = parseFloat(removeCommas(row.find("input.SOI_UnitPrice").val())) || 0;
+            var amo = qty * unitPrice;
+            var amount = DecimalIndianRupees(amo);
+            row.find("input.SOI_Amount").val(DecimalIndianRupees(amo));
+
+            CalculateFooter();
+            CalculateIncome();
+            CalculateIIncome($(this));
+
+            var IncomeTotal = 0;
+            $("tr.IInNewRow").each(function () {
+                var irow = $(this);
+                var SOI_IsDeleted = $(this).find("input.SOI_INC_IsDeleted").val();
+                if (SOI_IsDeleted != 1) {
+                    var rowItemNumber = irow.find('input.SOI_INC_ITM_Number').val();
+                    var rowItemIndex = irow.find('input.SOI_INC_ITM_Index').val();
+                    var rowSOINumber = irow.find('input.SOI_INC_SOI_Number').val();
+
+                    if (SOINumber) {
+                        if (rowSOINumber === SOINumber) {
+                            var IncomeBase = parseFloat(removeCommas(irow.find(".SOI_INC_IncomeValue").val())) || 0;
+                            IncomeTotal += IncomeBase;
+                        }
+                    }
+                    else if (itemNumber){
+                        if (rowItemNumber === itemNumber && rowItemIndex === itemIndex) {
+                            var IncomeBase = parseFloat(removeCommas(irow.find(".SOI_INC_IncomeValue").val())) || 0;
+                            IncomeTotal += IncomeBase;
+                        }
+                    }
+                }
+            });
+            IncomeTotal = DecimalIndianRupees(IncomeTotal);
+            row.find("input.SOI_IncomeValue").val(IncomeTotal);
+        });
+
+        $(document).on('change', "tr.NewRow select.SOI_UoM_Number", function () {
+            var selectedValue = $(this).val();
+            var currentInput = $(this);
+            var currentRow = currentInput.closest('tr.NewRow');
+
+            var uom = currentRow.find('input.SOI_UoM_OldNumber').val();
+
+            if (uom === selectedValue) { } else {
+                alert("Selected Uom differs from item master Sale unit");
+            }
+
+            $.ajax({
+                type: "get",
+                url: "../uom",
+                data: { UoM: selectedValue },
+                datatype: "json",
+                traditional: true,
+                success: function (decimalPlaces) {
+                    if (decimalPlaces === "") {
+                        decimalPlaces = 2;
+                    }
+
+                    currentRow.find('input.SOI_UoM_DecimalPlaces').val(decimalPlaces);
+                    var value = removeCommas(currentRow.find('input.SOI_Qty').val());
+                    currentRow.find('input.SOI_Qty').val(QtyDecimalRupees(value, decimalPlaces));
+
+                    var qty = parseFloat(removeCommas(currentRow.find("input.SOI_Qty").val())) || 0;
+                    var unitPrice = parseFloat(removeCommas(currentRow.find("input.SOI_UnitPrice").val())) || 0;
+                    var amo = qty * unitPrice;
+                    currentRow.find("input.SOI_Amount").val(DecimalIndianRupees(amo));
+
+                    CalculateFooter();
+                }
+            });
+        });
+
+        $(document).on("change", "tr.NewRow select, input.SOI_DeliveryDate,input.SOI_ITM_Number,input.SOI_Qty,input.SOI_UnitPrice, input[type='text']", function () {
+            if (isAddingRow)
+                return;
+            isAddingRow = true;
+
+            var currentInput = $(this);
+            var isValid = validateField(currentInput);
+            var currentRow = $(this).closest("tr.NewRow");
+            if (isValid) {
+                if (checkAllFieldsValid(currentRow)) {
+                    currentRow.data("isValid", true);
+                }
+                else {
+                    currentRow.data("isValid", false);
+                }
+            }
+            else {
+                currentRow.data("isValid", false);
+            }
+            if (currentRow.data("isValid")) {
+                var lastRow = $("tr.NewRow").last();
+                if (checkAllFieldsValid(lastRow))
+                    addRow();
+            }
+            else {
+                isAddingRow = false;
+            }
+        });
+
+        function checkAllFieldsValid(currentRow) {
+            var allFieldsValid = true;
+            $("tr.NewRow:visible").each(function () {
+                $(this).find("select, input.SOI_DeliveryDate,input.SOI_ITM_Number,input.SOI_Qty,input.SOI_UnitPrice, input[type='text']").each(function () {
+                    if (!validateField($(this))) {
+                        allFieldsValid = false;
+                        return false;
+                    }
+                });
+                if (!allFieldsValid) return false;
+            });
+            return allFieldsValid;
+        }
+
+        function validateField(currentInput) {
+            var valid = 1;
+            var inputValue = currentInput.val();
+            if (inputValue === "") {
+                valid = 0;
+            }
+
+            if (valid == 0) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+        $("#AddRowButton").click(function () {
+            var lastRow = $("tr.NewRow").last();
+            if (checkAllFieldsValid(lastRow)) {
+                addRow();
+            }
+            else {
+                var firstInvalidField = null;
+                lastRow.find("select, input.SOI_DeliveryDate,input.SOI_ITM_Number,input.SOI_Qty,input.SOI_UnitPrice, input[type='text']").each(function () {
+                    if (!validateField($(this))) {
+                        if (firstInvalidField == null)
+                            firstInvalidField = $(this);
+                        return false;
+                    }
+                });
+                if (firstInvalidField != null) {
+                    alert("Please complete all fields !");
+                    firstInvalidField.focus();
+                }
+            }
+        });
+
+        $(document).on('focus', 'tr.NewRow input:not(.CheckItem), tr.NewRow select, tr.NewRow .datepicker', function () {
+            $(this).closest('tr').find('.CheckItem').prop('checked', true);
+            $('.CheckItem').not($(this).closest('tr').find('.CheckItem')).prop('checked', false);
+            $('.IndexAllCheckItem').prop('checked', false);
+        });
+
+        $("#SOH_MS_Number").change(function () {
+            var SOH_MS_Number = $(this).val();
+            var SOI_MS_Number = "";
+            var SOH_MS = $(this).val();
+            var AllMatch = true;
+
+            $("tr.NewRow").each(function () {
+                var irow = $(this);
+                var SOI_IsDeleted = $(this).find("input.SOI_IsDeleted").val() 
+                ;
+                if (SOI_IsDeleted != 0) {
+                    SOI_MS_Number = irow.find("input.SOI_MS_Number").val();
+                    if (SOI_MS_Number !== SOH_MS_Number) {
+                        AllMatch = false;
+                        return false;
+                    }
+                }
+            });
+
+            if (!AllMatch) {
+                if (SOI_MS_Number != "") {
+                    if (confirm("Do you want to change the Material Segregation? This action will clear all existing items.")) {
+                        $("tr.NewRow").each(function () {
+                            var irow = $(this);
+                            var IsDeleted = $(this).find("input.SOI_IsDeleted").val();
+                            if (IsDeleted != 0) {
+                                $(this).find("input.SOI_IsDeleted").val(0);
+                                $(this).hide();
+                            }
+                        });
+                        $("tr.IInNewRow").each(function () {
+                            var irow = $(this);
+                            var IsDeleted = $(this).find("input.SOI_INC_IsDeleted").val();
+                            if (IsDeleted != 0) {
+                                $(this).find("input.SOI_INC_IsDeleted").val(0);
+                                $(this).hide();
+                            }
+                        });
+                        $("tr.InNewRow").each(function () {
+                            var irow = $(this);
+                            var IsDeleted = $(this).find("input.SOH_INC_IsDeleted").val();
+                            if (IsDeleted != 0) {
+                                $(this).find("input.SOH_INC_IsDeleted").val(0);
+                                $(this).hide();
+                            }
+                        });
+                        addRow();
+                    }
+                    else {
+                        $("#SOH_MS_Number").val(SOI_MS_Number);
+                    }
+                }
+            }
+        });
+
+        function customRound(number) {
+            const num = parseFloat(number);
+            const decimal = num % 1;
+
+            if (decimal >= 0.5) {
+                return Math.ceil(num);
+            } else {
+                return Math.floor(num);
+            }
+        }
+    });
+
+    function FormatNumber(num) {
+       if (num === "" || isNaN(num)) return "0";
+
+        var formattedValue = parseFloat(num).toFixed(10);
+        var parts = formattedValue.split(".");
+        if (parts.length > 1) {
+            parts[1] = parts[1].replace(/0+$/, "");
+            if (parts[1].length === 0) parts.pop();
+        }
+
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+
+        return parts.join(".");
+    }
+
+    function CalAmount() {
+        $("tr.NewRow").each(function () {
+            var row = $(this).closest("tr.NewRow");
+
+            var itemNumber = row.find('input.SOI_ITM_Number').val();
+            var itemIndex = row.find('input.SOI_Index').val();
+            var SOINumber = row.find('input.SOI_Number').val();
+
+            var qty = parseFloat(removeCommas(row.find("input.SOI_Qty").val())) || 0;
+            var unitPrice = parseFloat(removeCommas(row.find("input.SOI_UnitPrice").val())) || 0;
+            var amo = qty * unitPrice;
+            row.find("input.SOI_Amount").val(DecimalIndianRupees(amo));
+
+            CalculateIncome();
+            CalculateIIncome($(this));
+
+            var IncomeTotal = 0;
+            $("tr.IInNewRow").each(function () {
+                var irow = $(this);
+                var rowIsDeleted = irow.find("input.SOI_INC_IsDeleted").val();
+                var rowItemNumber = irow.find('input.SOI_INC_ITM_Number').val();
+                var rowItemIndex = irow.find('input.SOI_INC_ITM_Index').val();
+                var rowSOINumber = irow.find('input.SOI_INC_SOI_Number').val();
+
+                if (SOINumber) {
+                    if (rowSOINumber === SOINumber && (rowIsDeleted != 1)) {
+                        var IncomeBase = parseFloat(removeCommas(irow.find(".SOI_INC_IncomeValue").val())) || 0;
+                        IncomeTotal += IncomeBase;
+                    }
+                }
+                else if (itemNumber){
+                    if (rowItemNumber === itemNumber && rowItemIndex === itemIndex && (rowIsDeleted != 1)) {
+                        var IncomeBase = parseFloat(removeCommas(irow.find(".SOI_INC_IncomeValue").val())) || 0;
+                        IncomeTotal += IncomeBase;
+                    }
+                }
+            });
+            IncomeTotal = DecimalIndianRupees(IncomeTotal);
+            row.find("input.SOI_IncomeValue").val(IncomeTotal);
+        });
+        CalculateFooter();
+    }
+
+
+    $(document).ready(function () {
+        const IndexAllCheck = $('#IndexAllCheckItem');
+
+        $(document).on('change', '.CheckItem', function () {
+            const checkedCount = $('tr.NewRow input.CheckItem:checked').length;
+            const totalCount = $('tr.NewRow input.CheckItem').length;
+
+            const adjustment = this.checked ? 0 : -1;
+            const allChecked = (checkedCount + adjustment) === totalCount;
+
+            IndexAllCheck.prop('checked', allChecked);
+        });
+
+        IndexAllCheck.on('change', function () {
+            $('.CheckItem').prop('checked', this.checked);
+        });
+    });
+
+    async function CalculateFooter() {
+        var totalQty = 0;
+        var totalAmount = 0;
+        var totalIncome = 0;
+
+        $("tr.NewRow").each(function () {
+            var row = $(this);
+            var SOI_IsDeleted = $(this).find("input.SOI_IsDeleted").val();
+            if (SOI_IsDeleted != 1) {
+                var QtyField = row.find(".SOI_Qty").val();
+                var AmountField = row.find(".SOI_Amount").val();
+                var IncomeField = row.find(".SOI_IncomeValue").val();
+
+                if (!AmountField) {
+                    AmountField = "0.00";
+                }
+                if (!IncomeField) {
+                    IncomeField = "0.00";
+                }
+
+                totalQty += parseFloat(removeCommas(QtyField));
+                totalAmount += parseFloat(removeCommas(AmountField));
+                totalIncome += parseFloat(removeCommas(IncomeField));
+            }
+        });
+
+        $("#TotalQty").val(FormatNumber(totalQty));
+        $("#TotalAmount").val(DecimalIndianRupees(totalAmount.toFixed(2)));
+        $("#TotalIncome").val(DecimalIndianRupees(totalIncome.toFixed(2)));
+
+        CalculateIncome();
+
+        var HeaderIncomeTotal = 0;
+        $("tr.InNewRow").each(function () {
+            var irow = $(this);
+            var SOH_IsDeleted = irow.find("input.SOH_INC_IsDeleted").val();
+            if (SOH_IsDeleted != 1) {
+                var IncomeBase = parseFloat(removeCommas(irow.find(".SOH_INC_IncomeValue").val())) || 0;
+                HeaderIncomeTotal += IncomeBase;
+            }
+        });
+
+        var ItemIncomeTotal = 0;
+        $("tr.IInNewRow").each(function () {
+            var irow = $(this);
+            var SOI_IsDeleted = irow.find("input.SOI_INC_IsDeleted").val();
+            if (SOI_IsDeleted != 1) {
+                var IncomeBase = parseFloat(removeCommas(irow.find(".SOI_INC_IncomeValue").val())) || 0;
+                ItemIncomeTotal += IncomeBase;
+            }
+        });
+
+        var TotalAmount = $("#SOH_TotalAmount");
+        var ItemMiscIncome = $("#SOH_TotalItemIncome");
+        var HeaderMiscIncome = $("#SOH_TotalHeadIncome");
+        var SaleValue = $("#SOH_OrderValue");
+
+        var SaleAmo = parseFloat(totalAmount) + parseFloat(ItemIncomeTotal) + parseFloat(HeaderIncomeTotal);
+
+        TotalAmount.val(DecimalIndianRupees(totalAmount.toFixed(2)));
+        ItemMiscIncome.val(DecimalIndianRupees(ItemIncomeTotal.toFixed(2)));
+        HeaderMiscIncome.val(DecimalIndianRupees(HeaderIncomeTotal.toFixed(2)));
+        SaleValue.val(DecimalIndianRupees(SaleAmo.toFixed(2)));
+    }
+
+    async function CalculateIncome() {
+        $("tr.InNewRow").each(function () {
+            var row = $(this);
+            var SOI_IsDeleted = $(this).find("input.SOH_INC_IsDeleted").val();
+            if (SOI_IsDeleted===0) {
+                InAssignValue($(this));
+            }
+        });
+    }
+    async function CalculateIIncome(currentInput) {
+        var currentRow = currentInput.closest('tr.NewRow');
+
+        var ItemNumber = currentRow.find('input.SOI_ITM_Number').val();
+        var Index = currentRow.find('input.SOI_Index').val();
+        var Qty = parseFloat(removeCommas(currentRow.find('input.SOI_Qty').val())) || 0;
+        var MatrialValue = parseFloat(removeCommas(currentRow.find('input.SOI_Amount').val())) || 0;
+
+        if (ItemNumber) {
+            var cout = 0;
+            $("tr.IInNewRow").each(function () {
+                var RowItemNumber = $(this).find("input.SOI_INC_ITM_Number").val();
+                var RowItemIndex = $(this).find("input.SOI_INC_ITM_Index").val();
+                var SOI_IsDeleted = $(this).find("input.SOI_INC_IsDeleted").val();
+
+                if (RowItemNumber === ItemNumber && RowItemIndex === Index && SOI_IsDeleted != 1) {
+
+                    var Charge = $(this).find("select.SOI_INC_CM_Number").val();
+
+                    if (Charge === "1") {
+                        var IncomeBase = parseFloat(removeCommas($(this).find("input.SOI_INC_IncomeBase").val())) || 0;
+                        $(this).find("input.SOI_INC_IncomeValue").val(DecimalIndianRupees(IncomeBase));
+                    }
+                    else if (Charge === "2") {
+                        var IncomeBase = parseFloat(removeCommas($(this).find("input.SOI_INC_IncomeBase").val())) || 0;
+                        var IncomeValue = Qty * IncomeBase;
+                        $(this).find("input.SOI_INC_IncomeValue").val(DecimalIndianRupees(IncomeValue));
+                    }
+                    else if (Charge === "3") {
+                        var IncomeBase = parseFloat(removeCommas($(this).find("input.SOI_INC_IncomeBase").val())) || 0;
+                        var IncomeValue = MatrialValue * IncomeBase / 100;
+                        $(this).find("input.SOI_INC_IncomeValue").val(DecimalIndianRupees(IncomeValue));
+                    }
+
+                    cout++;
+                }
+            });
+        }
+    }
+
+    function OnInput(inputElement) {
+        searchItem(inputElement);
+    }
+    function OnFocus(inputElement) {
+        var tax = inputElement.value;
+        if (!tax) {
+            searchItem(inputElement);
+        }
+        else {
+            $(this).select();
+        }
+    }
+    function searchItem(inputElement) {
+        var itemCode = inputElement.value;
+        var resultsDiv = $(inputElement).next('.search-results');
+        var Metrial = $("#SOH_MS_Number").val();
+
+        if (Metrial) {
+            $.ajax({
+                url: '../item',
+                data: { ItemCode: itemCode, MS: Metrial },
+                type: 'GET',
+                success: function (data) {
+                    resultsDiv.empty();
+                    if (data && data.length > 0) {
+                        resultsDiv.show();
+                        var table = $('<div class="card-body modal-content p-0 table-responsive"><table class="table table-bordered table-hover table-fixed mb-0 table-grid"><thead><tr class="table-info"><th>Item Code</th><th>Description</th><th>Item Group</th></tr></thead><tbody></tbody></table></div>');
+                        data.forEach(function (item) {
+                            var row = $('<tr></tr>');
+                            row.append('<td>' + item.itemCode + '</td>');
+                            row.append('<td>' + item.itemDescription + '</td>');
+                            row.append('<td>' + item.itemGroup + '</td>');
+                            table.find('tbody').append(row);
+
+                            row.on('click', function () {
+                                $(inputElement).val(item.itemCode);
+                                $(inputElement).closest('tr').find('input.SOI_ITM_Number').val(item.itemNumber);
+                                $(inputElement).closest('tr').find('input.SOI_ITM_Code').val(item.itemCode);
+                                $(inputElement).closest('tr').find('input.SOI_ITM_Description').val(item.itemDescription);
+                                $(inputElement).closest('tr').find('input.SOI_ITM_OuterDia').val(item.outerDia);
+                                $(inputElement).closest('tr').find('input.SOI_ITM_Thickness').val(item.thickness);
+                                $(inputElement).closest('tr').find('input.SOI_ITM_Length').val(item.length);
+                                $(inputElement).closest('tr').find('input.SOI_ITM_MaterialGrade').val(item.materialGrade);
+                                $(inputElement).closest('tr').find('input.SOI_ITM_Group').val(item.itemGroup);
+                                $(inputElement).closest('tr').find('input.SOI_UoM_DecimalPlaces').val(item.decimalPlaces);
+                                $(inputElement).closest('tr').find('input.SOI_MS_Number').val(item.materialSegregation);
+                                $(inputElement).closest('tr').find('select.SOI_UoM_Number').val(item.uoM);
+                                $(inputElement).closest('tr').find('input.SOI_UoM_OldNumber').val(item.uoM);
+                                $(inputElement).closest('tr').find('select.SOI_UoM_Number').focus();
+
+                                var decimalPlaces = item.decimalPlaces;
+                                if (decimalPlaces === "") {
+                                    decimalPlaces = 2;
+                                }
+                                var value = $(inputElement).closest('tr').find('input.SOI_Qty').val();
+                                $(inputElement).closest('tr').find('input.SOI_Qty').val(QtyDecimalRupees(value, decimalPlaces));
+
+                                resultsDiv.hide();
+                            });
+                        });
+
+                        var closeButton = $('<div class="card-header bg-primary py-1 px-1"><button type="button" class="p-0 float-end btn btn-sm btn-primary bg-opacity-10"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16"><path d = "M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"> </path></svg></button></div>');
+                        closeButton.on('click', function () {
+                            resultsDiv.hide();
+                        });
+
+                        resultsDiv.append(closeButton);
+                        resultsDiv.append(table);
+                    } else {
+                        resultsDiv.hide();
+                        resultsDiv.append('<p>No results found</p>');
+                    }
+                },
+                error: function () {
+                    resultsDiv.text('Error loading data.');
+                    resultsDiv.show();
+                }
+            });
+
+        }
+        else {
+        }
+    }
+</script>
+<style>
+    .search-results {
+        width: 400px;
+    }
+</style>
+
+
+<script>
+    $(document).ready(function () {
+        ExchangeVisibility();
+
+        $("#SOH_ExportOrder").change(function () {
+            var isChecked = $(this).is(':checked');
+
+            var resultsDiv = $(".buyer-search-results");
+            resultsDiv.hide();
+
+            if ($("#SOH_BUY_LOC_Number").val() != "") {
+                if (isChecked && $("#SOH_BUY_LOC_Number").val() != "2") {
+                    if (confirm("Do you want to change the status of the Import Order? This action will clear the already selected buyer.")) {
+                        $("#SOH_BUY_Name").val("");
+                        $("#SOH_BUY_Number").val("");
+                        $("#SOH_CUR_Name").val("");
+                        $("#SOH_CUR_Number").val("");
+                        $("#SOH_BUY_LOC_Number").val("");
+                    }
+                    else {
+                        $(this).prop('checked', false);
+                    }
+                }
+                else if (!isChecked && $("#SOH_BUY_LOC_Number").val() != "1") {
+                    if (confirm("Do you want to change the status of the Import Order? This action will clear the already selected buyer.")) {
+                        $("#SOH_BUY_Name").val("");
+                        $("#SOH_BUY_Number").val("");
+                        $("#SOH_CUR_Name").val("");
+                        $("#SOH_CUR_Number").val("");
+                        $("#SOH_BUY_LOC_Number").val("");
+                    }
+                    else {
+                        $(this).prop('checked', true);
+                    }
+                }
+            }
+            ExchangeVisibility();
+        });
+
+        function ExchangeVisibility() {
+            if ($('#SOH_ExportOrder').is(':checked')) {
+                $('#ExchangeRate').show();
+            } else {
+                $('#ExchangeRate').hide();
+            }
+        }
+
+    });
+</script>

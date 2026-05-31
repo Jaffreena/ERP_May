@@ -1,0 +1,374 @@
+﻿@model List<ERP_DTO.PurchaseReturnExpense_DTO>
+
+<table class="table table-bordered table-hover align-middle w-100">
+    <thead>
+        <tr class="table-info">
+            @if (ViewBag.Mode == "2" || ViewBag.Mode == "3")
+            {
+                <th>Supplier Invoice No.</th>
+                <th>Order No</th>
+            }
+            <th>Expense Code</th>
+            <th>Description</th>
+            <th>Remarks</th>
+            <th>Occurrence</th>
+            <th>Chargeable method</th>
+            <th>Expense Base</th>
+            <th>Expense Value</th>
+            <th>Allocate</th>
+            <th>Ledger account</th>
+            <th>Tax calculating</th>
+            <th>Tax Value</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="ExTableBody">
+        <tr id="ExTempRow" style="display: none;">
+            @if (ViewBag.Mode == "2" || ViewBag.Mode == "3")
+            {
+                <td>
+                    <input id="PRH_EXP_SupplierInvoiceNo" class="form-control PRH_EXP_SupplierInvoiceNo" readonly />
+                </td>
+                <td>
+                    <input id="PRH_EXP_POH_OrderNo" class="form-control PRH_EXP_POH_OrderNo" readonly />
+                </td>
+            }
+            <td>
+                <select id="PRH_EXP_Expense_Number" class="form-select PRH_EXP_Expense_Number" asp-items="@ViewBag.ExpenseCode"></select>
+            </td>
+            <td>
+                <input id="PRH_EXP_Description" class="form-control PRH_EXP_Description" readonly autocomplete="off" />
+            </td>
+            <td>
+                <input id="PRH_EXP_Remarks" class="form-control PRH_EXP_Remarks" autocomplete="off" />
+            </td>
+            <td>
+                <select id="PRH_EXP_Occurrence_Number" class="form-select PRH_EXP_Occurrence_Number" asp-items="@ViewBag.Occurrence"></select>
+            </td>
+            <td>
+                <select id="PRH_EXP_CM_Number" class="form-select PRH_EXP_CM_Number" asp-items="@ViewBag.ChargeableMethod"></select>
+            </td>
+            <td>
+                <input id="PRH_EXP_ExpenseBase" class="form-control PRH_EXP_ExpenseBase decimal text-end" autocomplete="off" />
+            </td>
+            <td>
+                <input id="PRH_EXP_ExpenseValue" class="form-control PRH_EXP_ExpenseValue decimal text-end" autocomplete="off" />
+            </td>
+            <td>
+                <select id="PRH_EXP_Allocate_Number" class="form-select PRH_EXP_Allocate_Number" asp-items="@ViewBag.Allocate"></select>
+            </td>
+            <td>
+                <input id="PRH_EXP_LA_Number" class="form-control PRH_EXP_LA_Number" readonly autocomplete="off" />
+            </td>
+            <td>
+                <select id="PRH_EXP_TaxCalculate" class="form-select PRH_EXP_TaxCalculate" asp-items="@ViewBag.IsCalculate"></select>
+            </td>
+            <td>
+                <input id="PRH_EXP_TaxValue" class="form-control PRH_EXP_TaxValue decimal text-end" readonly autocomplete="off" />
+                <input id="PRH_EXP_SAC_Number" class="form-control PRH_EXP_SAC_Number" autocomplete="off" type="hidden" />
+            </td>
+            <td><a id="HeaderTaxView" class="btn btn-primary btn-sm TaxView">Tax View</a></td>
+        </tr>
+
+        @if (Model != null)
+        {
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <tr class="ExNewRow">
+                    @if (ViewBag.Mode == "2" || ViewBag.Mode == "3")
+                    {
+                        <td>
+                            <input id="PRH_EXP_SupplierInvoiceNo" name="Expenses[@i].PRH_EXP_SupplierInvoiceNo" readonly class="form-select PRH_EXP_SupplierInvoiceNo" value="@Model[i].PRH_EXP_SupplierInvoiceNo" />
+                        </td>
+                        <td>
+                            <input id="PRH_EXP_POH_OrderNo" name="Expenses[@i].PRH_EXP_POH_OrderNo" readonly class="form-select PRH_EXP_POH_OrderNo" value="@Model[i].PRH_EXP_POH_OrderNo" />
+                        </td>
+                    }
+                    <td>
+                        <select id="PRH_EXP_Expense_Number" name="Expenses[@i].PRH_EXP_Expense_Number" class="form-select PRH_EXP_Expense_Number" disabled>
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.ExpenseCode)
+                                {
+                                if (item.Value == Model[i].PRH_EXP_Expense_Number)
+                                    {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                    <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                        </select>
+                    </td>
+                    <td>
+                        <input id="PRH_EXP_Description" name="Expenses[@i].PRH_EXP_Description" readonly class="form-control PRH_EXP_Description" autocomplete="off" value="@Model[i].PRH_EXP_Description" />
+                    </td>
+                    <td>
+                        <input id="PRH_EXP_Remarks" name="Expenses[@i].PRH_EXP_Remarks" readonly class="form-control PRH_EXP_Remarks" autocomplete="off" value="@Model[i].PRH_EXP_Remarks" />
+                    </td>
+                    <td>
+                        <select id="PRH_EXP_Occurrence_Number" name="Expenses[@i].PRH_EXP_Occurrence_Number" class="form-select PRH_EXP_Occurrence_Number" disabled>
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Occurrence)
+                            {
+                                if (item.Value == Model[i].PRH_EXP_Occurrence_Number)
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <select id="PRH_EXP_CM_Number" name="Expenses[@i].PRH_EXP_CM_Number" class="form-select PRH_EXP_CM_Number" disabled>
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.ChargeableMethod)
+                            {
+                                if (item.Value == Model[i].PRH_EXP_CM_Number)
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input id="PRH_EXP_ExpenseBase" name="Expenses[@i].PRH_EXP_ExpenseBase" readonly class="form-control PRH_EXP_ExpenseBase decimal text-end" autocomplete="off" value="@Model[i].PRH_EXP_ExpenseBase" />
+                    </td>
+                    <td>
+                        <input id="PRH_EXP_ExpenseValue" name="Expenses[@i].PRH_EXP_ExpenseValue" class="form-control PRH_EXP_ExpenseValue decimal text-end" autocomplete="off" value="@Model[i].PRH_EXP_ExpenseValue" />
+                    </td>
+                    <td>
+                        <select id="PRH_EXP_Allocate_Number" name="Expenses[@i].PRH_EXP_Allocate_Number" class="form-select PRH_EXP_Allocate_Number" disabled>
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Allocate)
+                            {
+                                if (item.Value == Model[i].PRH_EXP_Allocate_Number)
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input id="PRH_EXP_LA_Number" name="Expenses[@i].PRH_EXP_LA_Number" readonly class="form-control PRH_EXP_LA_Number" autocomplete="off" value="@Model[i].PRH_EXP_LA_Number" />
+                        @if (@Model[i].PRH_EXP_Number != 0)
+                        {
+                            <input name="Expenses[@i].PRH_EXP_Number" type="hidden" class="Number" value="@Model[i].PRH_EXP_Number" />
+                        }
+                        <input type="hidden" name="Expenses[@i].PRH_EXP_IsDeleted" class="PRH_EXP_IsDeleted" value="false" />
+                    </td>
+                    <td>
+                        <select id="PRH_EXP_TaxCalculate" name="Expenses[@i].PRH_EXP_TaxCalculate" class="form-select PRH_EXP_TaxCalculate">
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.IsCalculate)
+                            {
+                                if (item.Value == Model[i].PRH_EXP_TaxCalculate)
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input id="PRH_EXP_TaxValue" name="Expenses[@i].PRH_EXP_TaxValue" class="form-control PRH_EXP_TaxValue decimal text-end" autocomplete="off" readonly value="@Model[i].PRH_EXP_TaxValue" />
+                        <input id="PRH_EXP_SAC_Number" name="Expenses[@i].PRH_EXP_SAC_Number" class="form-control PRH_EXP_SAC_Number" type="hidden" autocomplete="off" readonly value="@Model[i].PRH_EXP_SAC_Number" />
+                    </td>
+                    <td><a id="HeaderTaxView" class="btn btn-primary btn-sm TaxView">Tax View</a></td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+<script>
+    $(document).ready(function () {
+        var rowCount = @(Model != null ? Model.Count : 0);
+        var isAddingRow = false;
+
+
+        document.getElementById('MiscExpenseModal').addEventListener('click', AddNewRowClick);
+        function AddNewRowClick() {
+            var count = $("tr.ExNewRow").filter(function () {
+                return $(this).find("input[name*='PRH_EXP_IsDeleted']").val() !== "true";
+            }).length;
+
+        }
+
+        var count = $("tr.ExNewRow").filter(function () {
+            return $(this).find("input[name*='PRH_EXP_IsDeleted']").val() !== "true";
+        }).length;
+
+        $(document).on('keydown', "tr.ExNewRow select, tr.ExNewRow input.PRH_EXP_ExpenseBase, tr.ExNewRow input[type='text']", function (event) {
+            if (event.keyCode === 9) {
+                if (!ExValidateField($(this)))
+                    event.preventDefault();
+            }
+        });
+
+        $(document).on("change", "tr.ExNewRow select, tr.ExNewRow input.PRH_EXP_ExpenseBase, input[type='text']", function () {
+            if (isAddingRow)
+                return;
+            isAddingRow = true;
+
+            var currentInput = $(this);
+            var isValid = ExValidateField(currentInput);
+            var currentRow = $(this).closest("tr.ExNewRow");
+            if (isValid) {
+                if (ExCheckAllFieldsValid(currentRow)) {
+                    currentRow.data("isValid", true);
+                }
+                else {
+                    currentRow.data("isValid", false);
+                }
+            }
+            else {
+                currentRow.data("isValid", false);
+            }
+            if (currentRow.data("isValid")) {
+                var lastRow = $("tr.ExNewRow").last();
+                if (ExCheckAllFieldsValid(lastRow))
+                    ExAddRow();
+            }
+            else {
+                isAddingRow = false;
+            }
+        });
+
+        function ExCheckAllFieldsValid(currentRow) {
+            var allFieldsValid = true;
+            $("tr.ExNewRow:visible").each(function () {
+                $(this).find("select, input.PRH_EXP_ExpenseBase, input[type='text']").each(function () {
+                    if (!ExValidateField($(this))) {
+                        allFieldsValid = false;
+                        return false;
+                    }
+                });
+                if (!allFieldsValid) return false;
+            });
+            return allFieldsValid;
+        }
+
+        function ExValidateField(currentInput) {
+            var valid = 1;
+            var inputValue = currentInput.val();
+            if (inputValue === "") {
+                valid = 0;
+            }
+            if (currentInput.hasClass(".PRH_EXP_ExpenseBase")) {
+                valid = ExValidateAmount(currentInput);
+            }
+            if (valid == 0) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+        function ExValidateAmount(currentInput) {
+            var valid = 1;
+
+            var currentRow = currentInput.closest("tr.ExNewRow");
+            var PercentInput = currentRow.find("input.PRH_EXP_ExpenseBase");
+            var Percent = removeCommas(PercentInput.val());
+            if (Percent > 0) {
+            }
+            else {
+                valid = 0;
+            }
+            return valid;
+        }
+
+        $(document).on('change', "tr.ExNewRow select.PRH_EXP_Expense_Number", function () {
+            var selectedValue = $(this).val();
+            var Description = $(this).closest("tr.ExNewRow").find(".PRH_EXP_Description");
+            var Ledger = $(this).closest("tr.ExNewRow").find(".PRH_EXP_LA_Number");
+            $.ajax({
+                type: "get",
+                url: "expense/des",
+                data: { Title: selectedValue },
+                datatype: "json",
+                traditional: true,
+                success: function (Expense) {
+                    Description.val(Expense.PRH_EXP_Description);
+                    Ledger.val(Expense.PRH_EXP_LA_Number);
+                }
+            });
+        });
+
+        $("#ExCloseButton").click(function () {
+            $("tr.ExNewRow").each(function () {
+                var ExpenseCode = $(this).find("select.PRH_EXP_Expense_Number").val();
+                var Occurrence = $(this).find("select.PRH_EXP_Occurrence_Number").val();
+                var ChargeableMethod = $(this).find("select.PRH_EXP_CM_Number").val();
+                var ExpenseBase = removeCommas($(this).find("input.PRH_EXP_ExpenseBase").val());
+                var Allocate = $(this).find("select.PRH_EXP_Allocate_Number").val();
+                var LedgerAccount = $(this).find("select.PRH_EXP_LA_Number").val();
+
+                if (!ExpenseCode && !Occurrence && !ChargeableMethod && !Allocate && !LedgerAccount && !(ExpenseBase > 0)) {
+                    $(this).closest('tr').find("input.PRH_EXP_IsDeleted").val("true");
+                    $(this).closest('tr').hide();
+                }
+            });
+
+            var lastRow = $("tr.ExNewRow").last();
+            if (ExCheckAllFieldsValid(lastRow)) {
+                $("#Expense").modal('hide');
+
+                CalAmount();
+            }
+            else {
+                alert("Please complete all fields !");
+            }
+        });
+
+        $(document).on('click', '.TaxView', function () {
+            var currentRow = $(this).closest('tr.ExNewRow');
+
+            var Cluster = $("#PRH_TaxCluster_Number").val();
+            var GRNDate = $("#PRH_ReturnDate").val();
+            var SACNumber = currentRow.find("input.PRH_EXP_SAC_Number").val();
+            var ExpenseValue = currentRow.find("input.PRH_EXP_ExpenseValue").val();
+
+            $.ajax({
+                type: "get",
+                url: "../expense/gst/view",
+                data: { Cluster: Cluster, GRNDate: GRNDate, SAC: SACNumber, BaseAmount: ExpenseValue },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    const Table = document.getElementById('TaxTableView');
+                    Table.innerHTML = "";
+
+                    if (Table) {
+                        const TaxView = ClusterTaxView(data);
+                        Table.appendChild(TaxView);
+                    }
+
+                    new bootstrap.Modal($("#TaxView")).show();
+                    $('#TaxView').on('shown.bs.modal', function () {
+                        $(this).find('[autofocus]').focus();
+                    });
+                }
+            });
+        });
+    });
+</script>
+<style>
+    .search-results {
+        position: absolute;
+        z-index: 1000;
+        overflow-y: auto;
+        width: 400px;
+        max-height:300px;
+    }
+</style>

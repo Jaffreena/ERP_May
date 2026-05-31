@@ -1,0 +1,61 @@
+﻿@model ERP_DTO.JobInwardTransaction.ReceiptNoteHead_DTO 
+
+
+@if (Model.JIRNH_Number != 0)
+{
+    <input asp-for="JIRNH_Number" type="hidden" class="Number" />
+}
+
+<div class="col-auto left-menu text-black">
+    <div class="row">
+       
+        <div class="col-12 col-md">
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="RN_No" class="col-md-6 col-lg-5 col-form-label ps-0"></label>
+                <div class="col-md-6 col-lg-7">
+                    <input asp-for="RN_No" class="form-control Key KeyDup" autocomplete="off" readonly />
+                </div>
+            </div>
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="RN_Date" class="col-md-6 col-lg-5 col-form-label ps-0"></label>
+                <div class="col-md-6 col-lg-7">
+                    <input asp-for="RN_Date" class="form-control Key datepicker" autocomplete="off" />
+                </div>
+            </div>
+           
+            <div class="row align-items-center px-2 mb-1">
+                <label asp-for="MS_Number" class="col-md-6 col-lg-5 col-form-label ps-0"></label>
+                <div class="col-md-6 col-lg-7">
+                    <select asp-for="MS_Number" class="form-select" asp-items="@ViewBag.MaterialSegregation"></select>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-12 col-md">
+      
+         
+          @*   <div class="row align-items-center px-2 mb-1">
+                <label asp-for="PIH_Currency_Number" class="col-sm-5 col-form-label ps-0"></label>
+                <div class="col-sm-7">
+                    <input asp-for="PIH_Currency" class="form-control" readonly autocomplete="off" />
+                    <input asp-for="PIH_Currency_Number" class="form-control" type="hidden" />
+                    <input asp-for="PIH_DecimalPlaces" class="form-control" type="hidden" />
+                </div>
+            </div> *@
+         
+        </div>
+    </div>
+</div>
+<div class="col-auto right-menu text-center border-start">
+    @if (Model.JIRNH_Number != 0)
+    {
+        <input type="submit" name="Mode" value="Update" class="btn btn-primary btn-sm px-2 w-100 mb-1" />
+        <input type="submit" name="Mode" value="Clear All" class="btn btn-primary btn-sm px-2 w-100 mb-1" />
+    }
+    else
+    {
+        <input type="submit" name="Mode" value="Save" class="btn btn-primary btn-sm px-2 w-100 mb-1" />
+        <input type="submit" name="Mode" value="Clear All" class="btn btn-primary btn-sm px-2 w-100 mb-1" />
+    }
+    
+</div>
