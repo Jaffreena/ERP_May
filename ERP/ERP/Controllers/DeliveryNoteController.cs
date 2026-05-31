@@ -1061,5 +1061,44 @@ namespace ERP.Controllers
         }
         #endregion
 
+
+        #region temp batch delete row
+        [Route("DeliveryNote/TempDeliveryBatchDeleteChangeItemDBRow")]
+        [HttpPost]
+        public IActionResult TempDeliveryBatchDeleteChangeItemDBRow(int index)
+        {
+            try
+            {
+                if (index <= 0)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Invalid index"
+                    });
+                }
+
+                DeliveryNote_DAO dbch_DAO = new DeliveryNote_DAO();
+
+                dbch_DAO.TempDeliveryBatchDeleteChangeItemDBRow(index);
+
+                return Json(new
+                {
+                    success = true,
+                    message = "Row deleted successfully",
+                    index = index
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+        }
+        #endregion
+
     }
 }

@@ -846,7 +846,7 @@ function DeleteItemRowTempTable(inputElement) {
             .index("#ItemTable tbody tr.NewRow:visible") + 1;
     $.ajax({
 
-        url: '/DeliveryNote/DeleteTempDeliveryBatchRow',
+        url: '/DeliveryNote/TempDeliveryBatchDeleteChangeItemDBRow',
 
         type: 'POST',
 

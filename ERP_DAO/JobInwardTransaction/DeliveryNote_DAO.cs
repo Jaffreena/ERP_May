@@ -777,8 +777,9 @@ namespace ERP_DAO.JobInwardTransaction
                     }
                 }
             }
-        }
-        public void TempDeliveryBatchDeleteDBRow1(int index)
+        } 
+
+        public void TempDeliveryBatchDeleteChangeItemDBRow(int index)
         {
             using (SqlConnection con = new SqlConnection(DB.Connection()))
             {
@@ -788,19 +789,20 @@ namespace ERP_DAO.JobInwardTransaction
                 {
                     try
                     {
-                        
 
                         // =========================
-                        // 2. DELETE CURRENT INDEX ROWS
+                        // 3. DELETE INDEX GROUP
                         // =========================
                         using (SqlCommand delCmd = new SqlCommand(@"
                     DELETE FROM Temp_DeliveryNoteBatch
-                    WHERE DBCH_Index = @DBCH_Index
+                    WHERE DBCH_Index = @DBCH_Index;
                 ", con, tr))
                         {
                             delCmd.Parameters.AddWithValue("@DBCH_Index", index);
                             delCmd.ExecuteNonQuery();
                         }
+
+                        
 
                         tr.Commit();
                     }
@@ -812,6 +814,7 @@ namespace ERP_DAO.JobInwardTransaction
                 }
             }
         }
+
         public void TempDeliveryBatchDeleteDBRow(int index)
         {
             using (SqlConnection con = new SqlConnection(DB.Connection()))
