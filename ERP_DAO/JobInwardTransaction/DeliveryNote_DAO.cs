@@ -612,6 +612,40 @@ namespace ERP_DAO.JobInwardTransaction
             }
         }
 
+        public DataSet GetBatchDetailsViewDB(long fromWarehouse, long lineItemNumber)
+        {
+            try
+            {
+                Database db = new SqlDatabase(DB.Connection());
+
+                DbCommand cmd = db.GetStoredProcCommand("JI_DeliveryNote_InCommonBatch_GetBatchView_SP");
+
+                db.AddInParameter(cmd, "@FromWarehouse", DbType.Int64, fromWarehouse);
+
+                db.AddInParameter(cmd, "@LineItem_Number", DbType.Int64, lineItemNumber);
+
+           
+
+                return db.ExecuteDataSet(cmd);
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception(
+                    "SQL Error : " + ex.Message +
+                    Environment.NewLine +
+                    "Procedure : JI_DeliveryNote_InCommonBatch_GetBatchDetails_SP",
+                    ex
+                );
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(
+                    "Application Error : " + ex.Message,
+                    ex
+                );
+            }
+        }
+
 
         public DataSet GetBatchDetailsDB(long fromWarehouse, long lineItemNumber,int ItemGridIndex)
         {

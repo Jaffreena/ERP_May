@@ -217,7 +217,7 @@
                                                         </th>
 
                                                         <th colspan="5" class="text-center">
-                                                            Delivery Details
+                                                            Item Details
                                                         </th>
 
                                                     </tr>
@@ -240,7 +240,7 @@
                                                                    asp-route-PSize="@ViewData["PageSize"]"
                                                                    asp-route-PageNumber="@ViewData["PageNumber"]">
 
-                                                                DN No
+                                                               Number
 
                                                             </a>
 
@@ -275,16 +275,16 @@
                                                         </th>
 
                                                         <th>
-                                                            Segregation
+                                                            Material Segregation
                                                         </th>
 
-                                                     
-                                                        <th class="text-center">
-                                                            Warehouse
-                                                        </th>
                                                         <th class="text-center">
                                                             No Of Items
                                                         </th>
+                                                        <th class="text-center">
+                                                            Warehouse
+                                                        </th>
+                                                  
                                                         <th class="text-end">
                                                             Qty
                                                         </th>
@@ -354,14 +354,14 @@
                                                             <td>
                                                                 @item.Segregation
                                                             </td>
-
+                                                            <td class="text-center">
+                                                                @item.NoOfLineItems
+                                                            </td>
                                                            
                                                             <td class="text-center">
                                                                 @item.ItemWareHouse
                                                             </td>
-                                                            <td class="text-center">
-                                                                @item.NoOfLineItems
-                                                            </td>
+                                                          
                                                             <td class="text-end">
                                                                 @item.Qty
                                                             </td>

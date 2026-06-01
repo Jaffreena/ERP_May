@@ -451,7 +451,7 @@
                                        
 
                                             <th class="table-width-xl text-end">
-                                                Delivered Qty
+                                                Available Qty
                                             </th>
 
                                             <th class="table-width-xl text-end">
@@ -469,7 +469,7 @@
                                     <tbody id="DeliveryNoteOtherBatchTableBody">
 
                                         <!-- Template Row -->
-                                        <tr id="DeliveryNoteBatchTemplateRow"
+                                        <tr id="DeliveryNoteOtherBatchTemplateRow"
                                             style="display:none;">
 
                                             <td>
@@ -508,8 +508,8 @@
 
                                             <td class="table-width-xl">
 
-                                                <input type="number" autocomplete="off"
-                                                       class="form-control text-end JIDNI_BCH_QtyInvoice">
+                                                <input type="number" autocomplete="off" readonly
+                                                       class="form-control text-end JIDNI_BCH_AvailableQty">
 
                                             </td>
 
@@ -534,13 +534,11 @@
                                     </tbody>
 
                                     <!-- Footer -->
-                                    <tfoot>
+                                    <tfoot style="display:none">
 
                                         <tr class="table-info">
 
-                                            <td></td>
-
-                                            <td></td>
+                                            
 
                                             <td class="text-end fw-bold">
                                                 Total Qty

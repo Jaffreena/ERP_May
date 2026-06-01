@@ -687,19 +687,20 @@ function AddDeliveryNoteBatchRow(data = {}) {
 //#region BIND TABLE
 function BindDeliveryNoteOtherBatchTable(response) {
 
-    $("#DeliveryNoteOtherBatchTableBody")
-        .find(".DeliveryNoteBatchRow")
-        .remove();
+    let tbody = $("#DeliveryNoteOtherBatchTableBody");
+
+    // Clear all rows except template
+    tbody.find(".DeliveryNoteOtherBatchRow").remove();
 
     $.each(response, function (index, data) {
 
         let row =
-            $("#DeliveryNoteBatchTemplateRow")
+            $("#DeliveryNoteOtherBatchTemplateRow")
                 .clone()
                 .removeAttr("id")
                 .removeAttr("style")
                 .show()
-                .addClass("DeliveryNoteBatchRow");
+                .addClass("DeliveryNoteOtherBatchRow");
 
         row.find(".JIDNI_BCH_Number")
             .val(data.lineBatch_Number);
@@ -716,8 +717,8 @@ function BindDeliveryNoteOtherBatchTable(response) {
         row.find(".JIDNI_BCH_BatchNo")
             .val(data.batchNo);
 
-        row.find(".JIDNI_BCH_QtyInvoice")
-            .val(data.deliveredQty);
+        row.find(".JIDNI_BCH_AvailableQty")
+            .val(data.availableQty);
 
         row.find(".JIDNI_BCH_BatchUnitPrice")
             .val(data.batchUnitPrice);
@@ -725,8 +726,7 @@ function BindDeliveryNoteOtherBatchTable(response) {
         row.find(".JIDNI_BCH_BatchValue")
             .val(data.batchValue);
 
-        $("#DeliveryNoteOtherBatchTableBody")
-            .append(row);
+        tbody.append(row);
 
     });
 
