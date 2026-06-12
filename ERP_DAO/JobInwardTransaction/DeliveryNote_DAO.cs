@@ -1,15 +1,17 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Data;
+﻿using ERP_DTO;
+using ERP_DTO.JobInwardTransaction;
+using Microsoft.Practices.EnterpriseLibrary.Data;
 using Microsoft.Practices.EnterpriseLibrary.Data.Sql;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data;
 using System.Data.Common;
+using System.Data.OleDb;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ERP_DTO.JobInwardTransaction;
-using System.Data;
-using System.Data.SqlClient;
 
 namespace ERP_DAO.JobInwardTransaction
 {
@@ -85,8 +87,196 @@ namespace ERP_DAO.JobInwardTransaction
 
             return db.ExecuteDataSet(cmd);
         }
+        public bool IsTempDeliveryBatchEmpty()
+        {
+            using (SqlConnection con =
+                new SqlConnection(DB.Connection()))
+            {
+                con.Open();
+
+                using (SqlCommand cmd = new SqlCommand(@"
+            SELECT *
+            FROM Temp_DeliveryNoteBatch
+        ", con))
+                {
+                    using (SqlDataAdapter da =
+                        new SqlDataAdapter(cmd))
+                    {
+                        DataTable dtTempBatch =
+                            new DataTable();
+
+                        da.Fill(dtTempBatch);
+
+                        return
+                            dtTempBatch.Rows.Count == 0;
+                    }
+                }
+            }
+        }
 
 
+        public void DeleteTempDeliveryNoteBatch()
+        {
+            using (SqlConnection con = new SqlConnection(DB.Connection()))
+            {
+                con.Open();
+
+                using (SqlTransaction tr = con.BeginTransaction())
+                {
+                    try
+                    {
+                        //-------------------------------------------------
+                        // DELETE TABLE
+                        //-------------------------------------------------
+
+                        using (SqlCommand cmd = new SqlCommand(@"
+                    DELETE FROM temp_DeliveryNoteBatch
+                ", con, tr))
+                        {
+                            cmd.ExecuteNonQuery();
+                        }
+
+                        //-------------------------------------------------
+                        // COMMIT
+                        //-------------------------------------------------
+
+                        tr.Commit();
+                    }
+                    catch
+                    {
+                        tr.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
+        #region update deliverynote
+        public void DeliveryNoteUpdateDB(DeliveryNoteCreate_DTO DN_DTO)
+        {
+            using (SqlConnection con = new SqlConnection(DB.Connection()))
+            {
+                con.Open();
+
+                using (SqlTransaction tr = con.BeginTransaction())
+                {
+                    try
+                    {
+                        DeliveryNoteHeaderUpdate(DN_DTO, con, tr);
+
+                        DeliveryNoteItemBulkUpdate(DN_DTO, con, tr);
+                        DeliveryNoteBatchBulkUpdate(DN_DTO.Header.JIDNH_Number, con, tr);
+
+                        tr.Commit();
+                    }
+                    catch (Exception)
+                    {
+                        tr.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
+        public void DeliveryNoteBatchBulkUpdate(
+    long JIDNH_Number,
+    SqlConnection con,
+    SqlTransaction tr)
+        {
+            using (SqlCommand cmd = new SqlCommand("JI_DeliveryNoteBatch_BulkUpdate_SP", con, tr))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@JIDNH_Number", JIDNH_Number);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+        public void DeliveryNoteHeaderUpdate(
+    DeliveryNoteCreate_DTO DN_DTO,
+    SqlConnection con,
+    SqlTransaction tr)
+        {
+            using (SqlCommand cmd = new SqlCommand("JI_DeliveryNoteHead_Update_SP", con, tr))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@JIDNH_Number", DN_DTO.Header.JIDNH_Number);
+                cmd.Parameters.AddWithValue("@JIDNH_DN_No", DN_DTO.Header.JIDNH_DN_No);
+                cmd.Parameters.AddWithValue("@JIDNH_DN_Date", DN_DTO.Header.JIDNH_DN_Date);
+                cmd.Parameters.AddWithValue("@JIDNH_MS_Number", DN_DTO.Header.JIDNH_MS_Number);
+                cmd.Parameters.AddWithValue("@JIDNH_JW_Customer_Number", DN_DTO.Header.JIDNH_JW_Customer_Number);
+                cmd.Parameters.AddWithValue("@JIDNH_Currency_Number", DN_DTO.Header.JIDNH_Currency_Number);
+                cmd.Parameters.AddWithValue("@JIDNH_WH_Number", DN_DTO.Header.JIDNH_WH_Number);
+
+                cmd.Parameters.AddWithValue("@JIDNH_PaymentTerms",
+                    DN_DTO.Header.JIDNH_PaymentTerms ?? (object)DBNull.Value);
+
+                cmd.Parameters.AddWithValue("@JIDNH_DeliveryTerms",
+                    DN_DTO.Header.JIDNH_DeliveryTerms ?? (object)DBNull.Value);
+
+                cmd.Parameters.AddWithValue("@JIDNH_DeliveryMode",
+                    DN_DTO.Header.JIDNH_DeliveryMode ?? (object)DBNull.Value);
+
+                cmd.Parameters.AddWithValue("@JIDNH_DespatchDocumentNo",
+                    DN_DTO.Header.JIDNH_DespatchDocumentNo ?? (object)DBNull.Value);
+
+                cmd.Parameters.AddWithValue("@JIDNH_DespatchedThrough",
+                    DN_DTO.Header.JIDNH_DespatchedThrough ?? (object)DBNull.Value);
+
+                cmd.Parameters.AddWithValue("@JIDNH_Remarks",
+                    DN_DTO.Header.JIDNH_Remarks ?? (object)DBNull.Value);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+        public void DeliveryNoteItemBulkUpdate(
+    DeliveryNoteCreate_DTO DN_DTO,
+    SqlConnection con,
+    SqlTransaction tr)
+        {
+            DataTable dt = new DataTable();
+
+          
+           dt.Columns.Add("JIDNI_JIDNH_Number", typeof(long));
+            dt.Columns.Add("JIDNI_Number", typeof(long));
+            dt.Columns.Add("JIDNI_PRS_Number", typeof(long));
+            dt.Columns.Add("JIDNI_Item_Number", typeof(long));
+            dt.Columns.Add("JIDNI_WH_Number", typeof(long));
+            dt.Columns.Add("JIDNI_UoM_Number", typeof(long));
+            dt.Columns.Add("JIDNI_Qty", typeof(decimal));
+            dt.Columns.Add("JIDNI_UnitPrice", typeof(decimal));
+            dt.Columns.Add("JIDNI_Amount", typeof(decimal));
+            dt.Columns.Add("JIDNI_JW_InvoiceTracking", typeof(string));
+
+            foreach (var item in DN_DTO.Items)
+            {
+                dt.Rows.Add(
+                    
+                   DN_DTO.Header.JIDNH_Number,
+                   item.JIDNI_Number,
+                    item.JIDNI_PRS_Number,
+                    item.JIDNI_Item_Number,
+                    item.JIDNI_WH_Number,
+                    item.JIDNI_UoM_Number,
+                    item.JIDNI_Qty,
+                    item.JIDNI_UnitPrice,
+                    item.JIDNI_Amount,
+                    item.JIDNI_JW_InvoiceTracking
+                );
+            }
+
+            using (SqlCommand cmd = new SqlCommand("JI_DeliveryNoteItem_BulkUpdate_SP", con, tr))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                SqlParameter param = cmd.Parameters.AddWithValue("@Items", dt);
+
+                param.SqlDbType = SqlDbType.Structured;
+                param.TypeName = "DeliveryNoteItemUpdateType";
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+        #endregion
         public DataSet DeliveryNoteCreateDB(DeliveryNoteCreate_DTO DN_DTO)
         {
             DataSet ds = new DataSet();
@@ -215,6 +405,7 @@ namespace ERP_DAO.JobInwardTransaction
                             insertedItems.Add(new ItemMapDTO
                             {
                                 ItemNumber = insertedItemNumber,
+                                ItemMasterNumber =Convert.ToInt64(item.JIDNI_Item_Number),
                                 Qty = Convert.ToDecimal(item.JIDNI_Qty)
                             });
                         }
@@ -319,7 +510,9 @@ namespace ERP_DAO.JobInwardTransaction
                                 BatchQty,
                                 BatchUnitPrice,
                                 BatchValue,
-                                RefBatch_Number
+                                RefBatch_Number,
+                                Item_Number
+
                             )
 
                             VALUES
@@ -335,7 +528,8 @@ namespace ERP_DAO.JobInwardTransaction
                                 @BatchQty,
                                 @BatchUnitPrice,
                                 @BatchValue,
-                                @RefBatchNumber
+                                @RefBatchNumber,
+                                @Item_Number
                             )", con, tr))
                                 {
                                     cmd.Parameters.AddWithValue("@TransType", "Delivery Note");
@@ -350,7 +544,7 @@ namespace ERP_DAO.JobInwardTransaction
                                     cmd.Parameters.AddWithValue("@BatchUnitPrice", batch.JIDNI_BCH_BatchUnitPrice);
                                     cmd.Parameters.AddWithValue("@BatchValue", batch.JIDNI_BCH_BatchValue);
                                     cmd.Parameters.AddWithValue("@RefBatchNumber", batch.JIDNI_BCH_Number);
-
+                                    cmd.Parameters.AddWithValue("@Item_Number", item.ItemMasterNumber);
                                     outcommon =
                                       Convert.ToInt64(cmd.ExecuteScalar());
                                 }
@@ -436,6 +630,7 @@ namespace ERP_DAO.JobInwardTransaction
 
         public class ItemMapDTO
         {
+            public long ItemMasterNumber { get; set; }
             public long ItemNumber { get; set; }
 
             public decimal Qty { get; set; }
@@ -646,6 +841,118 @@ namespace ERP_DAO.JobInwardTransaction
             }
         }
 
+        public void InsertEditBatchToTempDB(long JIDNI_Number)
+        {
+            try
+            {
+                Database db = new SqlDatabase(DB.Connection());
+
+                DbCommand cmd =
+                    db.GetStoredProcCommand(
+                        "JI_DeliveryNote_InsertEditBatchToTemp_SP"
+                    );
+
+                db.AddInParameter(
+                    cmd,
+                    "@JIDNI_Number",
+                    DbType.Int64,
+                    JIDNI_Number
+                );
+
+                db.ExecuteNonQuery(cmd);
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception(
+                    "SQL Error : " + ex.Message +
+                    Environment.NewLine +
+                    "Procedure : JI_DeliveryNote_InsertEditBatchToTemp_SP",
+                    ex
+                );
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(
+                    "Application Error : " + ex.Message,
+                    ex
+                );
+            }
+        }
+
+        public DataSet GetBatchDetailsEditDB_ItemChanged(long fromWarehouse, long lineItemNumber, long JIDNI_Number, int ItemGridIndex,long JIDNH_Number)
+        {
+            try
+            {
+                Database db = new SqlDatabase(DB.Connection());
+
+                //  DbCommand cmd = db.GetStoredProcCommand("JI_DeliveryNote_GetBatchDetails_Edit_SP");
+
+                //    DbCommand cmd = db.GetStoredProcCommand("JI_DeliveryNote_GetBatchDetails_Edit_SP_ItemChange");
+                DbCommand cmd = db.GetStoredProcCommand("SP_GetBatchStock");
+                
+                db.AddInParameter(cmd, "@Warehouse_Number", DbType.Int64, fromWarehouse);
+
+                db.AddInParameter(cmd, "@Item_Number", DbType.Int64, lineItemNumber);
+
+                db.AddInParameter(cmd, "@DBCH_Index", DbType.Int64, ItemGridIndex);
+            //    db.AddInParameter(cmd, "@Header_Number", DbType.Int64, JIDNH_Number);
+                
+
+                return db.ExecuteDataSet(cmd);
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception(
+                    "SQL Error : " + ex.Message +
+                    Environment.NewLine +
+                    "Procedure : JI_DeliveryNote_InCommonBatch_GetBatchDetails_SP",
+                    ex
+                );
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(
+                    "Application Error : " + ex.Message,
+                    ex
+                );
+            }
+        }
+
+        public DataSet GetBatchDetailsEditDB(long fromWarehouse, long lineItemNumber,long JIDNI_Number,int ItemGridIndex)
+        {
+            try
+            {
+                Database db = new SqlDatabase(DB.Connection());
+
+                //  DbCommand cmd = db.GetStoredProcCommand("JI_DeliveryNote_GetBatchDetails_Edit_SP");
+
+                DbCommand cmd = db.GetStoredProcCommand("JI_DeliveryNote_GetBatchDetails_Edit_SP");
+                db.AddInParameter(cmd, "@Warehouse_Number", DbType.Int64, fromWarehouse);
+
+                db.AddInParameter(cmd, "@LineItem_Number", DbType.Int64, JIDNI_Number);
+
+                db.AddInParameter(cmd, "@ItemGridIndex", DbType.Int64, ItemGridIndex);
+
+                return db.ExecuteDataSet(cmd);
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception(
+                    "SQL Error : " + ex.Message +
+                    Environment.NewLine +
+                    "Procedure : JI_DeliveryNote_InCommonBatch_GetBatchDetails_SP",
+                    ex
+                );
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(
+                    "Application Error : " + ex.Message,
+                    ex
+                );
+            }
+        }
+
 
         public DataSet GetBatchDetailsDB(long fromWarehouse, long lineItemNumber,int ItemGridIndex)
         {
@@ -728,7 +1035,7 @@ namespace ERP_DAO.JobInwardTransaction
                 return ds;
             }
         }
-        public DataSet OutCommonBatchSaveDB(OutCommonBatch_DTO dto)
+        public DataSet OutCommonBatchSaveDB (OutCommonBatch_DTO dto)
         {
             Database db = new SqlDatabase(DB.Connection());
 
@@ -748,6 +1055,101 @@ namespace ERP_DAO.JobInwardTransaction
 
             return db.ExecuteDataSet(cmd);
         }
+
+        #region INSERT TEMP DELIVERY BATCH
+        /*
+            PURPOSE
+            -------
+            Insert Temp Delivery Batch Record.
+
+            ONLY THESE 4 VALUES ARE PASSED:
+            --------------------------------
+            1. DBCH_Index
+            2. DBCH_Item_Number
+            3. DBCH_Warehouse_Number
+            4. DBCH_DBCH_Number
+
+            ALL OTHER COLUMNS:
+            ------------------
+            Saved as 0 / Empty / Default Values.
+        */
+
+        public void InsertTempDeliveryBatch(
+            int DBCH_Index,
+            long DBCH_Item_Number,
+            long DBCH_Warehouse_Number,
+            long DBCH_DBCH_Number
+        )
+        {
+            using (SqlConnection con = new SqlConnection(DB.Connection()))
+            {
+                con.Open();
+
+                using (SqlCommand cmd = new SqlCommand(@"
+DELETE FROM Temp_DeliveryNoteBatch
+WHERE DBCH_Index = @DBCH_Index;
+            INSERT INTO Temp_DeliveryNoteBatch
+            (
+                DBCH_Index,
+                DBCH_DBCH_Number,
+                DBCH_Item_Number,
+                DBCH_Warehouse_Number,
+                DBCH_Date,
+                DBCH_No,
+                DBCH_Qty,
+                DBCH_UnitPrice,
+                DBCH_Value,
+                Mode,
+                CreatorCode,
+                CreatorDate,
+                DBCH_MainQty,
+                JINDI_Number,
+                JINDH_Number,
+                RefBatch_Number,
+                ReservedQty
+            )
+            VALUES
+            (
+                @DBCH_Index,
+                @DBCH_DBCH_Number,
+                @DBCH_Item_Number,
+                @DBCH_Warehouse_Number,
+                GETDATE(),
+                '',
+                0,
+                0,
+                0,
+                1,
+                1,
+                GETDATE(),
+                0,
+                0,
+                0,
+                0,
+                0
+            )
+
+        ", con))
+                {
+                    //#region PARAMETERS
+
+                    cmd.Parameters.AddWithValue("@DBCH_Index", DBCH_Index);
+
+                    cmd.Parameters.AddWithValue("@DBCH_DBCH_Number", DBCH_DBCH_Number);
+
+                    cmd.Parameters.AddWithValue("@DBCH_Item_Number", DBCH_Item_Number);
+
+                    cmd.Parameters.AddWithValue("@DBCH_Warehouse_Number", DBCH_Warehouse_Number);
+
+                    //#endregion
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        #endregion
+
 
         public void TempDeliveryBatchSaveDB(List<TempDeliveryBatch_DTO> list)
         {
@@ -777,8 +1179,7 @@ namespace ERP_DAO.JobInwardTransaction
                 ", con, tr))
                         {
                             delCmd.Parameters.AddWithValue("@DBCH_Index", first.DBCH_Index);
-                            delCmd.Parameters.AddWithValue("@ItemNo", first.DBCH_Item_Number);
-                            delCmd.Parameters.AddWithValue("@WH", first.DBCH_Warehouse_Number);
+                          
 
                             delCmd.ExecuteNonQuery();
                         }
@@ -800,9 +1201,12 @@ namespace ERP_DAO.JobInwardTransaction
                             DBCH_Qty,
                             DBCH_UnitPrice,
                             DBCH_Value,
+                            JINDI_NUMBER,
+                            JINDH_NUMBER,
                             Mode,
                             CreatorCode,
-                            CreatorDate
+                            CreatorDate,
+                            RefBatch_Number
                         )
                         VALUES
                         (
@@ -815,9 +1219,12 @@ namespace ERP_DAO.JobInwardTransaction
                             @DBCH_Qty,
                             @DBCH_UnitPrice,
                             @DBCH_Value,
+                            @JINDI_NUMBER,
+                            @JINDH_NUMBER,
                             @Mode,
                             @CreatorCode,
-                            @CreatorDate
+                            @CreatorDate,
+                            @RefBatch_Number
                         )
                     ", con, tr))
                             {
@@ -833,21 +1240,25 @@ namespace ERP_DAO.JobInwardTransaction
                                 cmd.Parameters.AddWithValue("@Mode", obj.Mode ?? 1);
                                 cmd.Parameters.AddWithValue("@CreatorCode", obj.CreatorCode);
                                 cmd.Parameters.AddWithValue("@CreatorDate", obj.CreatorDate);
+                                cmd.Parameters.AddWithValue("@JINDI_NUMBER", obj.JIDNI_NUMBER);
+                                cmd.Parameters.AddWithValue("@JINDH_NUMBER", obj.JIDNH_NUMBER);
+                                cmd.Parameters.AddWithValue("@RefBatch_Number", obj.RefBatch_Number);
 
                                 cmd.ExecuteNonQuery();
                             }
-                        }
+                        }  
 
                         tr.Commit();
                     }
                     catch
-                    {
+                    { 
                         tr.Rollback();
                         throw;
                     }
                 }
             }
-        } 
+        }
+
 
         public void TempDeliveryBatchDeleteChangeItemDBRow(int index)
         {
@@ -872,8 +1283,84 @@ namespace ERP_DAO.JobInwardTransaction
                             delCmd.ExecuteNonQuery();
                         }
 
-                        
+                        // =========================
+                        // 4. RESEQUENCE INDEX GROUPS
+                        // =========================
+                        using (SqlCommand seqCmd = new SqlCommand(@"
+                    ;WITH Grouped AS
+                    (
+                        SELECT DISTINCT DBCH_Index
+                        FROM Temp_DeliveryNoteBatch
+                    ),
+                    Renumber AS
+                    (
+                        SELECT 
+                            DBCH_Index,
+                            ROW_NUMBER() OVER (ORDER BY DBCH_Index) AS NewIndex
+                        FROM Grouped
+                    )
+                    UPDATE t
+                    SET t.DBCH_Index = r.NewIndex
+                    FROM Temp_DeliveryNoteBatch t
+                    JOIN Renumber r
+                        ON t.DBCH_Index = r.DBCH_Index;
+                ", con, tr))
+                        {
+                            seqCmd.ExecuteNonQuery();
+                        }
 
+                        tr.Commit();
+                    }
+                    catch
+                    {
+                        tr.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
+
+
+        public void TempDeliveryBatchEditChangeItemDBRow(long DBCH_Item_Number, long warehouse,long JINDI_Number,long JINDH_Number,int DBCH_Index)
+        {
+            using (SqlConnection con = new SqlConnection(DB.Connection()))
+            {
+                con.Open();
+
+                using (SqlTransaction tr = con.BeginTransaction())
+                {
+                    try
+                    {
+                        // =========================
+                        // 3. update INDEX GROUP
+                        // =========================
+                        using (SqlCommand delCmd = new SqlCommand(@"
+                   UPDATE Temp_DeliveryNoteBatch SET DBCH_Warehouse_Number=@DBCH_Warehouse_Number, DBCH_Item_Number = @DBCH_Item_Number,DBCH_Date = getdate(),
+                        DBCH_No = NULL,
+                        DBCH_DBCH_Number =0,
+                        DBCH_Qty = 0,
+                        DBCH_UnitPrice = 0,
+                        DBCH_Value = 0 
+WHERE
+(
+    (@JINDI_Number <> 0
+        AND JINDI_Number = @JINDI_Number
+        AND JINDH_Number = @JINDH_Number
+    )
+    OR
+    (@JINDI_Number = 0
+        AND DBCH_Index = @DBCH_Index
+    )
+);
+", con, tr))
+                        {
+                            delCmd.Parameters.AddWithValue("@DBCH_Item_Number", DBCH_Item_Number);
+                            delCmd.Parameters.AddWithValue("@DBCH_Warehouse_Number", warehouse);
+                            delCmd.Parameters.AddWithValue("@JINDI_Number", JINDI_Number);
+                            delCmd.Parameters.AddWithValue("@JINDH_Number", JINDH_Number);
+                            delCmd.Parameters.AddWithValue("@DBCH_Index", DBCH_Index);
+                            delCmd.ExecuteNonQuery();
+                        }
                         tr.Commit();
                     }
                     catch
@@ -945,5 +1432,335 @@ namespace ERP_DAO.JobInwardTransaction
             }
         }
 
+        public void DeleteRemovedRowsDB(List<DeletedRowInfo_DTO> deletedRows)
+        {
+            using (SqlConnection con = new SqlConnection(DB.Connection()))
+            {
+                con.Open();
+
+                using (SqlTransaction tr = con.BeginTransaction())
+                {
+                    try
+                    {
+                        foreach (var item in deletedRows)
+                        {
+                            // =========================
+                            // DELETE BATCH
+                            // =========================
+                            using (SqlCommand cmd = new SqlCommand(@"
+                        DELETE FROM JI_DeliveryNoteBatch
+                        WHERE JIDNI_BCH_JIDNI_Number = @JIDNI_Number
+                          AND JIDNI_BCH_JIDNH_Number = @JIDNH_Number;
+                    ", con, tr))
+                            {
+                                cmd.Parameters.AddWithValue("@JIDNI_Number", item.JIDNI_Number);
+                                cmd.Parameters.AddWithValue("@JIDNH_Number", item.JIDNH_Number);
+
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            // =========================
+                            // DELETE ITEM
+                            // =========================
+                            using (SqlCommand cmd = new SqlCommand(@"
+                        DELETE FROM JI_DeliveryNoteItem
+                        WHERE JIDNI_Number = @JIDNI_Number
+                          AND JIDNI_JIDNH_Number = @JIDNH_Number;
+                    ", con, tr))
+                            {
+                                cmd.Parameters.AddWithValue("@JIDNI_Number", item.JIDNI_Number);
+                                cmd.Parameters.AddWithValue("@JIDNH_Number", item.JIDNH_Number);
+
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+
+                        tr.Commit();
+                    }
+                    catch
+                    {
+                        tr.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
+
+        public void UpdateTempBatchReservedQty()
+        {
+            using (SqlConnection con = new SqlConnection(DB.Connection()))
+            {
+                con.Open();
+
+                using (SqlCommand cmd = new SqlCommand(@"
+ 
+ 
+         ;WITH RowTotal AS
+(
+    SELECT
+        DBCH_Item_Number,
+        DBCH_Warehouse_Number,
+        RefBatch_Number,
+        DBCH_Index,
+        SUM(DBCH_Qty) AS RowQty
+    FROM Temp_DeliveryNoteBatch
+    GROUP BY
+        DBCH_Item_Number,
+        DBCH_Warehouse_Number,
+        RefBatch_Number,
+        DBCH_Index
+),
+
+Reserved AS
+(
+    SELECT
+        R1.DBCH_Item_Number,
+        R1.DBCH_Warehouse_Number,
+        R1.RefBatch_Number,
+        R1.DBCH_Index,
+
+        ISNULL(SUM(R2.RowQty),0) AS ReservedQty
+    FROM RowTotal R1
+
+    LEFT JOIN RowTotal R2
+        ON  R1.DBCH_Item_Number      = R2.DBCH_Item_Number
+        AND R1.DBCH_Warehouse_Number = R2.DBCH_Warehouse_Number
+        AND R1.RefBatch_Number       = R2.RefBatch_Number
+        AND R1.DBCH_Index           <> R2.DBCH_Index
+
+    GROUP BY
+        R1.DBCH_Item_Number,
+        R1.DBCH_Warehouse_Number,
+        R1.RefBatch_Number,
+        R1.DBCH_Index
+)
+
+UPDATE T
+SET T.reservedqty = R.ReservedQty
+FROM Temp_DeliveryNoteBatch T
+
+INNER JOIN Reserved R
+    ON  T.DBCH_Item_Number      = R.DBCH_Item_Number
+    AND T.DBCH_Warehouse_Number = R.DBCH_Warehouse_Number
+    AND T.RefBatch_Number       = R.RefBatch_Number
+    AND T.DBCH_Index            = R.DBCH_Index;
+        ", con))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+      
+        public DataTable GetBatchStockDetails(
+       long Item_Number,
+       long Warehouse,
+       long Header_Number,
+       long LineItem_Number,int ItemGridIndex)
+        {
+            DataTable dt = new DataTable();
+            UpdateTempBatchReservedQty();
+            using (SqlConnection con = new SqlConnection(DB.Connection()))
+            {
+                using (SqlCommand cmd = new SqlCommand(@"
+        
+      SELECT distinct
+    I.LineBatch_Number,
+    I.BatchNo,
+    I.BatchDate,
+    I.Item_Number,
+    I.FromWarehouse,
+
+    ISNULL(I.BatchQty,0) AS BatchQty,
+
+    -- Delivered Qty from current draft
+    ISNULL(temp.DBCH_Qty,0) AS DeliveredQty,
+
+    ISNULL(I.BatchQty,0) AS QtyReceived,
+
+   ISNULL(T.TotalDeliveredQty,0) AS QtyUsedTillNow,
+
+    -- Reserved Qty from other grid rows
+   ISNULL(R.ReservedQty,0) AS ReservedQty,
+
+    -- Final Available Qty
+    ISNULL(I.BatchQty,0) - ISNULL(T.TotalDeliveredQty,0) AS AvailableQty,
+    --    - ISNULL(R.ReservedQty,0)
+    --    + ISNULL(D.DeliveredQty,0) AS AvailableQty,
+
+    ISNULL(D.BatchUnitPrice,0) AS BatchUnitPrice,
+    ISNULL(D.BatchValue,0) AS BatchValue,
+    ISNULL(D.RefBatch_Number,0) AS RefBatch_Number,
+
+    W.WarehouseCode
+
+FROM IN_COMMON_BATCH I
+
+---- Already consumed stock
+LEFT JOIN
+(
+    SELECT
+        RefBatch_Number,
+        SUM(BatchQty) AS TotalDeliveredQty
+    FROM OUT_COMMON_BATCH
+    GROUP BY RefBatch_Number
+) T
+    ON T.RefBatch_Number = I.LineBatch_Number
+
+---- Current delivery draft
+LEFT JOIN
+(
+    SELECT
+        RefBatch_Number,
+        JIDNI_BCH_WH_Number AS Warehouse,
+        SUM(JIDNI_BCH_BatchQty) AS DeliveredQty,
+        SUM(JIDNI_BCH_BatchUnitPrice) AS BatchUnitPrice,
+        SUM(JIDNI_BCH_BatchValue) AS BatchValue
+    FROM JI_DeliveryNoteBatch
+  -- WHERE JIDNI_BCH_JIDNH_Number =@Header_Number
+    --  AND JIDNI_BCH_JIDNI_Number =@LineItem_Number
+    GROUP BY
+        RefBatch_Number,
+        JIDNI_BCH_WH_Number
+) D
+    ON D.RefBatch_Number = I.LineBatch_Number
+
+-- Reserved Qty from Temp Table
+LEFT JOIN
+(
+
+    SELECT
+        RefBatch_Number,
+        DBCH_Index,
+        sum(ReservedQty) AS ReservedQty
+    FROM Temp_DeliveryNoteBatch
+    GROUP BY
+        RefBatch_Number,
+        DBCH_Index
+) R
+    ON R.RefBatch_Number = I.LineBatch_Number
+   AND R.DBCH_Index = @ItemGridIndex
+
+LEFT JOIN Warehouse W
+    ON W.WarehouseNumber = D.Warehouse
+left join (
+
+    select DBCH_Qty,refbatch_number  from Temp_DeliveryNoteBatch where DBCH_Index=@ItemGridIndex
+    )temp on temp.refbatch_number=I.LineBatch_Number
+WHERE I.Item_Number =@Item_Number
+  AND I.FromWarehouse = @Warehouse;
+        
+        ", con))
+                {
+                    cmd.Parameters.AddWithValue("@Item_Number", Item_Number);
+                    cmd.Parameters.AddWithValue("@Warehouse", Warehouse);
+                    cmd.Parameters.AddWithValue("@Header_Number", Header_Number);
+                    cmd.Parameters.AddWithValue("@LineItem_Number", LineItem_Number);
+                    cmd.Parameters.AddWithValue("@ItemGridIndex", ItemGridIndex);
+                    
+                    using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                    {
+                        da.Fill(dt);
+                    }
+                }
+            }
+
+            return dt;
+        }
+
+        #region ValidateBatchDetails
+
+        public string ValidateBatchDetails(long JINDH_Number)
+        {
+            try
+            {
+                Database db =
+                    new SqlDatabase(DB.Connection());
+
+                DbCommand cmd =
+                    db.GetSqlStringCommand(@"
+
+                SELECT
+                    dbo.FN_ValidateBatchDetails
+                    (
+                        @JINDH_Number
+                    )
+
+            ");
+
+                db.AddInParameter(
+                    cmd,
+                    "@JINDH_Number",
+                    DbType.Int64,
+                    JINDH_Number
+                );
+
+                object result = db.ExecuteScalar(cmd);
+
+                return Convert.ToString(result);
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception(
+                    "SQL Error : " + ex.Message,
+                    ex
+                );
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(
+                    "Application Error : " + ex.Message,
+                    ex
+                );
+            }
+        }
+        #endregion
+
+        #region Validate_Amended_BatchQty
+        public List<BatchQtyValidationDto> Validate_Amended_BatchQty(long JIDNH_Number)
+        {
+            List<BatchQtyValidationDto> result = new List<BatchQtyValidationDto>();
+
+            using (SqlConnection con = new SqlConnection(DB.Connection()))
+            {
+                con.Open();
+
+                using (SqlCommand cmd = new SqlCommand(@"
+            SELECT
+                DBCH_Index,
+                SUM(ISNULL(DBCH_Qty,0)) AS DBCH_Qty
+            FROM Temp_DeliveryNoteBatch
+            WHERE JINDH_Number = @JINDH_Number
+            GROUP BY DBCH_Index
+        ", con))
+                {
+                    cmd.Parameters.Add("@JINDH_Number", SqlDbType.BigInt).Value = JIDNH_Number;
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            result.Add(new BatchQtyValidationDto
+                            {
+                                DBCH_Index = Convert.ToInt32(reader["DBCH_Index"]),
+                                DBCH_Qty = Convert.ToDecimal(reader["DBCH_Qty"])
+                            });
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        #endregion
+
+ 
+
+    }
+
+    public class BatchQtyValidationDto
+    {
+        public int DBCH_Index { get; set; }
+        public decimal DBCH_Qty { get; set; }
     }
 }

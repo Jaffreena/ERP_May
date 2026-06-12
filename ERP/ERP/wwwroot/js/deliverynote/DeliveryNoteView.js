@@ -86,17 +86,14 @@ $(document).on("click", ".OpenBatchPopup", function (e) {
 
                     DeliveryNoteBatchList.push({
 
-                        JIDNI_BCH_WH_Number: batch.fromWarehouse,
-                        JIDNI_BCH_JIDNI_Number: lineItemNumber,
+                    
                         JIDNI_BCH_WH_Name: batch.wareHouseCode,
                         JIDNI_BCH_BatchDate: batch.batchDate,
                         JIDNI_BCH_BatchNo: batch.batchNo,
-                        JIDNI_BCH_QtyAvailable: batch.availableQty,
-                        JIDNI_BCH_QtyReserved: batch.reservedQty,
-                        JIDNI_BCH_QtyInvoice: batch.deliveredQty,
+                        JIDNI_BCH_QtyAvailable: batch.batchQty,
+                  
                         JIDNI_BCH_BatchUnitPrice: batch.batchUnitPrice,
-                        JIDNI_BCH_BatchValue: batch.batchValue,
-                        JIDNI_BCH_Number: batch.lineBatch_Number
+                        JIDNI_BCH_BatchValue: batch.batchValue 
                     });
 
                 });
@@ -145,4 +142,59 @@ $("#DeliveryNoteBatchModal").on("shown.bs.modal", function () {
 
 });
 
-//#endregion SHOW BATCH 
+//#endregion SHOW BATCH
+
+function BindDeliveryNoteBatchTable() {
+
+    $("#DeliveryNoteBatchTableBody")
+        .find(".DeliveryNoteBatchRow")
+        .remove();
+
+    $.each(DeliveryNoteBatchList, function (index, data) {
+
+        // Required values check
+        if (
+            data.JIDNI_BCH_WH_Name != undefined &&
+            data.JIDNI_BCH_BatchDate != undefined &&
+            data.JIDNI_BCH_BatchNo != undefined &&
+            data.JIDNI_BCH_QtyAvailable != undefined
+        ) {
+
+            let row =
+                $("#DeliveryNoteBatchTemplateRow")
+                    .clone()
+                    .removeAttr("id")
+                    .removeAttr("style")
+                    .show()
+                    .addClass("DeliveryNoteBatchRow");
+
+             
+
+            row.find(".JIDNI_BCH_WH_Name")
+                .val(data.JIDNI_BCH_WH_Name || "");
+
+            row.find(".JIDNI_BCH_BatchDate")
+                .val(data.JIDNI_BCH_BatchDate || "");
+
+            row.find(".JIDNI_BCH_BatchNo")
+                .val(data.JIDNI_BCH_BatchNo || "");
+
+            
+
+            row.find(".JIDNI_BCH_QtyAvailable")
+                .val(data.JIDNI_BCH_QtyAvailable || 0);
+
+            row.find(".JIDNI_BCH_BatchUnitPrice")
+                .val(data.JIDNI_BCH_BatchUnitPrice || 0);
+
+            row.find(".JIDNI_BCH_BatchValue")
+                .val(data.JIDNI_BCH_BatchValue || 0);
+
+            $("#DeliveryNoteBatchTableBody")
+                .append(row);
+        }
+
+    });
+
+    CalculateBatchFooter();
+}

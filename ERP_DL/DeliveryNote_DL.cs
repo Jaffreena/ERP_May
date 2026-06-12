@@ -73,178 +73,180 @@ namespace ERP_DL
         {
             List<DeliveryNoteCreate_DTO> DNList =
                 new List<DeliveryNoteCreate_DTO>();
-
-            foreach (DataRow dr in DS.Tables[0].Rows)
+            if (DS != null && DS.Tables[0].Rows.Count > 0)
             {
-                DeliveryNoteCreate_DTO dto =
-                    new DeliveryNoteCreate_DTO();
 
-                //-----------------------------------------
-                // HEADER
-                //-----------------------------------------
-                dto.Header = new DeliveryNoteHeader_DTO
+                foreach (DataRow dr in DS.Tables[0].Rows)
                 {
-                    JIDNH_Number =
-                        Convert.ToInt64(dr["JIDNH_Number"]),
+                    DeliveryNoteCreate_DTO dto =
+                        new DeliveryNoteCreate_DTO();
 
-                    JIDNH_DN_No =
-                        Convert.ToString(dr["JIDNH_DN_No"]),
+                    //-----------------------------------------
+                    // HEADER
+                    //-----------------------------------------
+                    dto.Header = new DeliveryNoteHeader_DTO
+                    {
+                        JIDNH_Number =
+                            Convert.ToInt64(dr["JIDNH_Number"]),
 
-                    JIDNH_DN_Date =
-                        Convert.ToDateTime(dr["JIDNH_DN_Date"]),
+                        JIDNH_DN_No =
+                            Convert.ToString(dr["JIDNH_DN_No"]),
 
-                    JIDNH_MS_Number =
-                        Convert.ToInt64(dr["JIDNH_MS_Number"]),
+                        JIDNH_DN_Date =
+                            Convert.ToDateTime(dr["JIDNH_DN_Date"]),
 
-                    JIDNH_JW_Customer_Number =
-                        Convert.ToInt64(dr["JIDNH_JW_Customer_Number"]),
+                        JIDNH_MS_Number =
+                            Convert.ToInt64(dr["JIDNH_MS_Number"]),
 
-                    JIDNH_Currency_Number =
-                        Convert.ToInt64(dr["JIDNH_Currency_Number"]),
+                        JIDNH_JW_Customer_Number =
+                            Convert.ToInt64(dr["JIDNH_JW_Customer_Number"]),
 
-                    JIDNH_WH_Number =
-                        Convert.ToInt64(dr["JIDNH_WH_Number"]),
+                        JIDNH_Currency_Number =
+                            Convert.ToInt64(dr["JIDNH_Currency_Number"]),
 
-                    JIDNH_PaymentTerms =
-                        Convert.ToString(dr["JIDNH_PaymentTerms"]),
+                        JIDNH_WH_Number =
+                            Convert.ToInt64(dr["JIDNH_WH_Number"]),
 
-                    JIDNH_DeliveryTerms =
-                        Convert.ToString(dr["JIDNH_DeliveryTerms"]),
+                        JIDNH_PaymentTerms =
+                            Convert.ToString(dr["JIDNH_PaymentTerms"]),
 
-                    JIDNH_DeliveryMode =
-                        Convert.ToString(dr["JIDNH_DeliveryMode"]),
+                        JIDNH_DeliveryTerms =
+                            Convert.ToString(dr["JIDNH_DeliveryTerms"]),
 
-                    JIDNH_DespatchDocumentNo =
-                        Convert.ToString(dr["JIDNH_DespatchDocumentNo"]),
+                        JIDNH_DeliveryMode =
+                            Convert.ToString(dr["JIDNH_DeliveryMode"]),
 
-                    JIDNH_DespatchedThrough =
-                        Convert.ToString(dr["JIDNH_DespatchedThrough"]),
+                        JIDNH_DespatchDocumentNo =
+                            Convert.ToString(dr["JIDNH_DespatchDocumentNo"]),
 
-                    JIDNH_Remarks =
-                        Convert.ToString(dr["JIDNH_Remarks"]),
-                    JIDNH_Warehouse =
-                        Convert.ToString(dr["JIDNH_Warehouse"]),
-                    JIDNH_CustomerName =
-                        Convert.ToString(dr["JIDNH_CustomerName"]),
-                    JIDNH_CurrencyCode =
-                        Convert.ToString(dr["JIDNH_CurrencyCode"]),
-                    JIDNH_Segregation =
-                        Convert.ToString(dr["JIDNH_Segregation"])
-                };
+                        JIDNH_DespatchedThrough =
+                            Convert.ToString(dr["JIDNH_DespatchedThrough"]),
 
-                //-----------------------------------------
-                // ITEM LIST
-                //-----------------------------------------
-                dto.Items = new List<DeliveryNoteItem_DTO>();
+                        JIDNH_Remarks =
+                            Convert.ToString(dr["JIDNH_Remarks"]),
+                        JIDNH_Warehouse =
+                            Convert.ToString(dr["JIDNH_Warehouse"]),
+                        JIDNH_CustomerName =
+                            Convert.ToString(dr["JIDNH_CustomerName"]),
+                        JIDNH_CurrencyCode =
+                            Convert.ToString(dr["JIDNH_CurrencyCode"]),
+                        JIDNH_Segregation =
+                            Convert.ToString(dr["JIDNH_Segregation"])
+                    };
 
-                foreach (DataRow item in DS.Tables[1].Rows)
-                {
-                    dto.Items.Add(
-                        new DeliveryNoteItem_DTO
-                        {
-                            JIDNI_Number =
-                                Convert.ToInt64(item["JIDNI_Number"]),
+                    //-----------------------------------------
+                    // ITEM LIST
+                    //-----------------------------------------
+                    dto.Items = new List<DeliveryNoteItem_DTO>();
 
-                            JIDNI_JIDNH_Number =
-                                Convert.ToInt64(item["JIDNI_JIDNH_Number"]),
+                    foreach (DataRow item in DS.Tables[1].Rows)
+                    {
+                        dto.Items.Add(
+                            new DeliveryNoteItem_DTO
+                            {
+                                JIDNI_Number =
+                                    Convert.ToInt64(item["JIDNI_Number"]),
 
-                            JIDNI_PRS_Number =
-                                Convert.ToInt64(item["JIDNI_PRS_Number"]),
+                                JIDNI_JIDNH_Number =
+                                    Convert.ToInt64(item["JIDNI_JIDNH_Number"]),
 
-                            JIDNI_Item_Number =
-                                Convert.ToInt64(item["JIDNI_Item_Number"]),
+                                JIDNI_PRS_Number =
+                                    Convert.ToInt64(item["JIDNI_PRS_Number"]),
 
-                            JIDNI_WH_Number =
-                                Convert.ToInt64(item["JIDNI_WH_Number"]),
+                                JIDNI_Item_Number =
+                                    Convert.ToInt64(item["JIDNI_Item_Number"]),
 
-                            JIDNI_UoM_Number =
-                                Convert.ToInt64(item["JIDNI_UoM_Number"]),
+                                JIDNI_WH_Number =
+                                    Convert.ToInt64(item["JIDNI_WH_Number"]),
 
-                            JIDNI_Qty =
-                                Convert.ToDouble(item["JIDNI_Qty"]),
+                                JIDNI_UoM_Number =
+                                    Convert.ToInt64(item["JIDNI_UoM_Number"]),
 
-                            JIDNI_UnitPrice =
-                                Convert.ToDouble(item["JIDNI_UnitPrice"]),
+                                JIDNI_Qty =
+                                    Convert.ToDouble(item["JIDNI_Qty"]),
 
-                            JIDNI_Amount =
-                                Convert.ToDouble(item["JIDNI_Amount"]),
+                                JIDNI_UnitPrice =
+                                    Convert.ToDouble(item["JIDNI_UnitPrice"]),
 
-                            JIDNI_JW_InvoiceTracking =
-                                Convert.ToString(item["JIDNI_JW_InvoiceTracking"]),
-                            JIDNI_JW_ProcessName=
-                            Convert.ToString(item["JIDNI_JW_ProcessName"]),
-                            JIDNI_JW_ItemName =
-                            Convert.ToString(item["JIDNI_JW_ItemName"]),                         
+                                JIDNI_Amount =
+                                    Convert.ToDouble(item["JIDNI_Amount"]),
 
-                            JIDNI_JW_ItemDescription =
-    Convert.ToString(item["JIDNI_JW_ItemDescription"]),
+                                JIDNI_JW_InvoiceTracking =
+                                    Convert.ToString(item["JIDNI_JW_InvoiceTracking"]),
+                                JIDNI_JW_ProcessName =
+                                Convert.ToString(item["JIDNI_JW_ProcessName"]),
+                                JIDNI_JW_ItemName =
+                                Convert.ToString(item["JIDNI_JW_ItemName"]),
 
-                            JIDNI_JW_OuterDia =
-    Convert.ToString(item["JIDNI_JW_OuterDia"]),
+                                JIDNI_JW_ItemDescription =
+        Convert.ToString(item["JIDNI_JW_ItemDescription"]),
 
-                            JIDNI_JW_Thickness =
-    Convert.ToString(item["JIDNI_JW_Thickness"]),
+                                JIDNI_JW_OuterDia =
+        Convert.ToString(item["JIDNI_JW_OuterDia"]),
 
-                            JIDNI_JW_Length =
-    Convert.ToString(item["JIDNI_JW_Length"]),
+                                JIDNI_JW_Thickness =
+        Convert.ToString(item["JIDNI_JW_Thickness"]),
 
-                            JIDNI_JW_ITM_Width =
-    Convert.ToString(item["JIDNI_JW_ITM_Width"]),
+                                JIDNI_JW_Length =
+        Convert.ToString(item["JIDNI_JW_Length"]),
 
-                            JIDNI_JW_MaterialGrade =
-    Convert.ToString(item["JIDNI_JW_MaterialGrade"]),
-                            JIDNI_UOM =
-    Convert.ToString(item["JIDNI_UOM"]),
-     JIDNI_Warehouse =
-    Convert.ToString(item["JIDNI_Warehouse"])
-                        });
+                                JIDNI_JW_ITM_Width =
+        Convert.ToString(item["JIDNI_JW_ITM_Width"]),
+
+                                JIDNI_JW_MaterialGrade =
+        Convert.ToString(item["JIDNI_JW_MaterialGrade"]),
+                                JIDNI_UOM =
+        Convert.ToString(item["JIDNI_UOM"]),
+                                JIDNI_Warehouse =
+        Convert.ToString(item["JIDNI_Warehouse"])
+                            });
+                    }
+
+                    //-----------------------------------------
+                    // ADDRESS LIST
+                    //-----------------------------------------
+                    dto.Addresses = new List<DeliveryNoteAddress_DTO>();
+
+                    foreach (DataRow add in DS.Tables[2].Rows)
+                    {
+                        dto.Addresses.Add(
+                            new DeliveryNoteAddress_DTO
+                            {
+                                JIDNA_Number =
+                                    Convert.ToInt64(add["JIDNA_Number"]),
+
+                                JIDNA_JIDNH_Number =
+                                    Convert.ToInt64(add["JIDNA_JIDNH_Number"]),
+
+                                JIDNA_ADTP_Number =
+                                    Convert.ToInt64(add["JIDNA_ADTP_Number"]),
+
+                                JIDNA_Address_ID =
+                                    Convert.ToString(add["JIDNA_Address_ID"]),
+
+                                JIDNA_Address =
+                                    Convert.ToString(add["JIDNA_Address"]),
+
+                                JIDNA_City =
+                                    Convert.ToString(add["JIDNA_City"]),
+
+                                JIDNA_State =
+                                    Convert.ToString(add["JIDNA_State"]),
+
+                                JIDNA_Country =
+                                    Convert.ToString(add["JIDNA_Country"]),
+
+                                JIDNA_PIN =
+                                    Convert.ToString(add["JIDNA_PIN"]),
+
+                                JIDNA_GSTIN =
+                                    Convert.ToString(add["JIDNA_GSTIN"])
+                            });
+                    }
+
+                    DNList.Add(dto);
                 }
-
-                //-----------------------------------------
-                // ADDRESS LIST
-                //-----------------------------------------
-                dto.Addresses = new List<DeliveryNoteAddress_DTO>();
-
-                foreach (DataRow add in DS.Tables[2].Rows)
-                {
-                    dto.Addresses.Add(
-                        new DeliveryNoteAddress_DTO
-                        {
-                            JIDNA_Number =
-                                Convert.ToInt64(add["JIDNA_Number"]),
-
-                            JIDNA_JIDNH_Number =
-                                Convert.ToInt64(add["JIDNA_JIDNH_Number"]),
-
-                            JIDNA_ADTP_Number =
-                                Convert.ToInt64(add["JIDNA_ADTP_Number"]),
-
-                            JIDNA_Address_ID =
-                                Convert.ToString(add["JIDNA_Address_ID"]),
-
-                            JIDNA_Address =
-                                Convert.ToString(add["JIDNA_Address"]),
-
-                            JIDNA_City =
-                                Convert.ToString(add["JIDNA_City"]),
-
-                            JIDNA_State =
-                                Convert.ToString(add["JIDNA_State"]),
-
-                            JIDNA_Country =
-                                Convert.ToString(add["JIDNA_Country"]),
-
-                            JIDNA_PIN =
-                                Convert.ToString(add["JIDNA_PIN"]),
-
-                            JIDNA_GSTIN =
-                                Convert.ToString(add["JIDNA_GSTIN"])
-                        });
-                }
-
-                DNList.Add(dto);
             }
-
             return DNList;
         }
         public List<DeliveryNoteDetailed_DTO> DNDetailedList(DataTable Dt)

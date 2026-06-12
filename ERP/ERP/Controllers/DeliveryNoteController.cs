@@ -194,6 +194,8 @@ namespace ERP.Controllers
         public IActionResult Index()
         {
             GetDevliverNoteData();
+            DeliveryNote_DAO DN_DAO = new DeliveryNote_DAO();
+            DN_DAO.DeleteTempDeliveryNoteBatch();   
             return View();
         }
 
@@ -821,7 +823,7 @@ namespace ERP.Controllers
             
             DataSet DS = DN_DAO.DeliveryNoteEditDB(JIDNH_Number);
 
-
+            long Root_JIDNI_Number = 0;
             if (DS.Tables[0].Rows.Count > 0)
             {
                 DataRow dr = DS.Tables[0].Rows[0];
@@ -874,8 +876,17 @@ namespace ERP.Controllers
 
             foreach (DataRow item in DS.Tables[1].Rows)
             {
+                long currentJIDNI_Number =
+       Convert.ToInt64(item["JIDNI_Number"]);
+
+                // fill only first time
+                if (Root_JIDNI_Number == 0)
+                {
+                    Root_JIDNI_Number = currentJIDNI_Number;
+                }
                 dto.Items.Add(new DeliveryNoteItem_DTO
                 {
+
                     JIDNI_Number =
                         Convert.ToInt64(item["JIDNI_Number"]),
 
@@ -940,7 +951,9 @@ namespace ERP.Controllers
                         Convert.ToString(add["JIDNA_Address"])
                 });
             }
+            DeliveryNote_DAO dao = new DeliveryNote_DAO();
 
+            dao.InsertEditBatchToTempDB(Root_JIDNI_Number);
             return View("Edit", dto);
         }
         #endregion
@@ -984,12 +997,20 @@ namespace ERP.Controllers
         }
         #endregion
 
-        #region Show Batch View
+        #region Show Batch Edit
+
         [HttpGet]
-        public JsonResult GetBatchDetailsViewDB(long FromWarehouse, long LineItem_Number)
+        public JsonResult GetBatchDetailsEdit(long FromWarehouse, long LineItem_Number,long JIDNI_Number,int ItemGridIndex,long JIDNH_Number)
         {
+           
+
             DeliveryNote_DAO dao = new DeliveryNote_DAO();
-            DataTable dt = dao.GetBatchDetailsViewDB(FromWarehouse, LineItem_Number).Tables[0];
+           bool isTempEmpty = dao.IsTempDeliveryBatchEmpty();
+            DataTable dt = new DataTable();
+          dt=  dao.GetBatchStockDetails(LineItem_Number, FromWarehouse, JIDNH_Number, JIDNI_Number, ItemGridIndex);
+            
+
+
             var data = dt.AsEnumerable().Select(r => new
             {
                 LineBatch_Number = r["LineBatch_Number"] == DBNull.Value ? 0 : Convert.ToInt64(r["LineBatch_Number"]),
@@ -1005,6 +1026,98 @@ namespace ERP.Controllers
                 ReservedQty = r["ReservedQty"] == DBNull.Value ? 0 : Convert.ToDecimal(r["ReservedQty"]),
                 DeliveredQty = r["DeliveredQty"] == DBNull.Value ? 0 : Convert.ToDecimal(r["DeliveredQty"]),
                 AvailableQty = r["AvailableQty"] == DBNull.Value ? 0 : Convert.ToDecimal(r["AvailableQty"]),
+
+                BatchUnitPrice = r["BatchUnitPrice"] == DBNull.Value ? 0 : Convert.ToDecimal(r["BatchUnitPrice"]),
+                BatchValue = r["BatchValue"] == DBNull.Value ? 0 : Convert.ToDecimal(r["BatchValue"]),
+                RefBatch_Number = r["RefBatch_Number"] == DBNull.Value ? 0 : Convert.ToDecimal(r["RefBatch_Number"]),
+                WareHouseCode =
+                    dt.Columns.Contains("WarehouseCode") && r["WarehouseCode"] != DBNull.Value
+                    ? r["WarehouseCode"].ToString()
+                    : ""
+            }).ToList();
+
+            return new JsonResult(data, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = true
+            });
+        }
+        #endregion
+
+     
+        #region Validate Batch Details
+
+        [HttpGet]
+        public JsonResult ValidateBatchDetails(long JIDNH_Number)
+        {
+            DeliveryNote_DAO dao = new DeliveryNote_DAO();
+
+            string validationMessage =
+                dao.ValidateBatchDetails(JIDNH_Number);
+
+            var result = new
+            {
+                Status = string.IsNullOrEmpty(validationMessage),
+                Message = validationMessage
+            };
+
+            return new JsonResult(result,
+                new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy =
+                        JsonNamingPolicy.CamelCase,
+
+                    WriteIndented = true
+                });
+        }
+
+        #endregion
+
+        #region Validate Amended Batch Qty
+
+        [HttpGet]
+        public JsonResult Validate_Amended_BatchQty(long JIDNH_Number)
+        {
+            DeliveryNote_DAO dao = new DeliveryNote_DAO();
+
+            var data = dao.Validate_Amended_BatchQty(JIDNH_Number);
+
+            var result = new
+            {
+                status = true,
+                data = data
+            };
+
+            return new JsonResult(result, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = true
+            });
+        }
+
+        #endregion
+
+        #region Show Batch View
+        [HttpGet]
+        public JsonResult GetBatchDetailsViewDB(long FromWarehouse, long LineItem_Number)
+        {
+            DeliveryNote_DAO dao = new DeliveryNote_DAO();
+            DataTable dt = dao.GetBatchDetailsViewDB(FromWarehouse, LineItem_Number).Tables[0];
+            var data = dt.AsEnumerable().Select(r => new
+            {
+              //  LineBatch_Number = r["LineBatch_Number"] == DBNull.Value ? 0 : Convert.ToInt64(r["LineBatch_Number"]),
+             //   FromWarehouse = r["FromWarehouse"] == DBNull.Value ? 0 : Convert.ToInt64(r["FromWarehouse"]),
+
+                BatchDate = r["BatchDate"] == DBNull.Value
+                    ? ""
+                    : Convert.ToDateTime(r["BatchDate"]).ToString("dd MMM yyyy"),
+
+                BatchNo = r["BatchNo"] == DBNull.Value ? "" : r["BatchNo"].ToString(),
+
+                BatchQty = r["BatchQty"] == DBNull.Value ? 0 : Convert.ToDecimal(r["BatchQty"]),
+                //ReceiptQty = r["ReceiptQty"] == DBNull.Value ? 0 : Convert.ToDecimal(r["ReservedQty"]),
+                //DeliveredQty = r["DeliveredQty"] == DBNull.Value ? 0 : Convert.ToDecimal(r["DeliveredQty"]),
+                //AvailableQty = r["AvailableQty"] == DBNull.Value ? 0 : Convert.ToDecimal(r["AvailableQty"]),
 
                 BatchUnitPrice = r["BatchUnitPrice"] == DBNull.Value ? 0 : Convert.ToDecimal(r["BatchUnitPrice"]),
                 BatchValue = r["BatchValue"] == DBNull.Value ? 0 : Convert.ToDecimal(r["BatchValue"]),
@@ -1076,10 +1189,10 @@ namespace ERP.Controllers
                 }
 
                 DeliveryNote_DAO DBCH_DAO = new DeliveryNote_DAO();
- 
+                
 
                     DBCH_DAO.TempDeliveryBatchSaveDB(dtoList);
-                
+                DBCH_DAO.UpdateTempBatchReservedQty();
 
                 return Json(new
                 {
@@ -1097,6 +1210,59 @@ namespace ERP.Controllers
                 });
             }
         }
+        #endregion
+
+        #region TEMP DELIVERY BATCH SAVE
+        /*
+            PURPOSE
+            -------
+            Save Temp Delivery Batch.
+
+            ONLY 4 VALUES:
+            --------------
+            1. DBCH_Index
+            2. DBCH_Item_Number
+            3. DBCH_Warehouse_Number
+            4. DBCH_DBCH_Number
+        */
+
+        [HttpPost]
+        public IActionResult SaveTempDeliveryBatchAddRow
+        (
+            int DBCH_Index,
+            long DBCH_Item_Number,
+            long DBCH_Warehouse_Number,
+            long DBCH_DBCH_Number
+        )
+        {
+            try
+            {
+                DeliveryNote_DAO dao = new DeliveryNote_DAO();
+
+                dao.InsertTempDeliveryBatch
+                (
+                    DBCH_Index,
+                    DBCH_Item_Number,
+                    DBCH_Warehouse_Number,
+                    DBCH_DBCH_Number
+                );
+
+                return Json(new
+                {
+                    success = true,
+                    message = "Saved Successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+        }
+
         #endregion
 
         #region temp batch delete row
@@ -1176,5 +1342,81 @@ namespace ERP.Controllers
         }
         #endregion
 
+        #region temp batch update row
+        [Route("DeliveryNote/TempDeliveryBatchEditChangeItemDBRow")]
+        [HttpPost]
+        public IActionResult TempDeliveryBatchEditChangeItemDBRow(int DBCH_Item_Number, int warehouse, int JINDI_Number, int JINDH_Number,int DBCH_Index)
+        {
+            try
+            {
+  
+
+                DeliveryNote_DAO dbch_DAO = new DeliveryNote_DAO();
+
+                dbch_DAO.TempDeliveryBatchEditChangeItemDBRow(DBCH_Item_Number, warehouse, JINDI_Number, JINDH_Number, DBCH_Index);
+                dbch_DAO.UpdateTempBatchReservedQty();
+                return Json(new
+                {
+                    success = true,
+                    message = "Row deleted successfully",
+                    index = 0
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+        }
+        #endregion
+        #region update delivery note
+        [HttpPost]
+        public IActionResult UpdateDeliveryNote([FromBody] DeliveryNoteCreate_DTO dto)
+        {
+
+            try
+            {
+                Console.Write(dto);
+
+                DeliveryNote_DAO DN_DAO = new DeliveryNote_DAO();
+                DN_DAO.DeliveryNoteUpdateDB(dto);
+                DN_DAO.DeleteTempDeliveryNoteBatch();
+                return Json(new
+                {
+                    success = true,
+                    redirectUrl = Url.Action("DeliveryNoteSummary", "DeliveryNote")
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+        }
+
+        #endregion
+
+        #region delete item and batch
+        [HttpPost]
+        public IActionResult DeleteRemovedRows(
+    [FromBody] List<DeletedRowInfo_DTO> deletedRows)
+        {
+            DeliveryNote_DAO DN_DAO = new DeliveryNote_DAO();
+
+            DN_DAO.DeleteRemovedRowsDB(deletedRows);
+
+            return Json(new { success = true });
+        }
+        #endregion
+
     }
+
+
+
 }

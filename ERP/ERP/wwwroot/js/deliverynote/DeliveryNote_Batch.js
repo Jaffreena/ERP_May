@@ -529,40 +529,7 @@ $(document).on("click", ".OpenBatchPopup", function (e) {
 
     //#endregion
 
-    ////#region CHECK ALREADY SAVED DATA
-    //let existingBatch =
-    //    DeliveryNoteItemBatchList.find(
-    //        x => x.RowID == rowID
-    //    );
-
-    //let hasValidBatch =
-    //    existingBatch != null &&
-    //    existingBatch.BatchList != null &&
-    //    existingBatch.BatchList.some(batch =>
-
-    //        batch.JIDNI_BCH_BatchNo &&
-    //        batch.JIDNI_BCH_BatchNo !== "" &&
-
-    //        parseFloat(batch.JIDNI_BCH_QtyAvailable || 0) > 0
-
-    //    );
-
-    //if (hasValidBatch) {
-
-    //    DeliveryNoteBatchList =
-    //        existingBatch.BatchList;
-
-    //    BindDeliveryNoteBatchTable();
-
-    //    $("#DeliveryNoteBatchModal")
-    //        .modal("show");
-    
-
-    //    return;
-    //}
-
-    ////#endregion
-
+   
     // CLEAR TEMP ARRAY
     DeliveryNoteBatchList = [];
 
@@ -730,7 +697,7 @@ function BindDeliveryNoteOtherBatchTable(response) {
 
     });
 
-    CalculateOtherBatchFooter();
+   // CalculateOtherBatchFooter();
 }
 function BindOtherBatch(fromWarehouse, lineItemNumber, ItemGridindex) {
     //#region AJAX
@@ -873,6 +840,8 @@ function ValidateBatchQty() {
 
     return true;
 }
+//#endregion
+
 //#region  focus item grid on qty mismatch
 function FocusItemGridQty() {
 
@@ -1001,7 +970,14 @@ function SaveTempBatch() {
 
             DBCH_Value:
                 parseFloat(currentRow.find(".JIDNI_BCH_BatchValue").val()) || 0,
+            JIDNI_NUMBER:
+                parseInt(currentRow.find(".JIDNI_Number").val()) || 0,
 
+            JIDNH_NUMBER:
+                parseInt(currentRow.find(".JIDNH_Number").val()) || 0,
+
+            RefBatch_Number:
+                parseInt(currentRow.find(".RefBatch_Number").val()) || 0,
             Mode: 1,
             CreatorCode: 1,
             CreatorDate: new Date().toISOString()

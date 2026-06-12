@@ -793,20 +793,7 @@
 
                     </li>
 
-                    <li class="nav-item" role="presentation">
-
-                        <button class="nav-link"
-                                id="Other-tab"
-                                data-bs-toggle="tab"
-                                data-bs-target="#Other-tab-pane"
-                                type="button"
-                                role="tab">
-
-                            Other WH
-
-                        </button>
-
-                    </li>
+                   
 
                 </ul>
 
@@ -839,16 +826,10 @@
                                         </th>
 
                                         <th class="table-width-xl text-end">
-                                            Qty Available
+                                            Batch Qty
                                         </th>
 
-                                        <th class="table-width-xl text-end">
-                                            Qty Reserved
-                                        </th>
-
-                                        <th class="table-width-xl text-end">
-                                            Delivered Qty
-                                        </th>
+                                     
 
                                         <th class="table-width-xl text-end">
                                             Unit Price
@@ -870,13 +851,7 @@
 
                                         <td>
 
-                                            <input type="hidden" class="JIDNI_BCH_Number">
-
-                                            <input type="hidden" class="JIDNI_BCH_JIDNH_Number">
-
-                                            <input type="hidden" class="JIDNI_BCH_JIDNI_Number">
-
-                                            <input type="hidden" class="JIDNI_BCH_WH_Number">
+                                           
 
                                             <input type="text"
                                                    class="form-control JIDNI_BCH_WH_Name"
@@ -908,20 +883,7 @@
 
                                         </td>
 
-                                        <td class="table-width-xl">
-
-                                            <input type="text"
-                                                   class="form-control text-end JIDNI_BCH_QtyReserved"
-                                                   readonly>
-
-                                        </td>
-
-                                        <td class="table-width-xl">
-
-                                            <input type="number" autocomplete="off"
-                                                   class="form-control text-end JIDNI_BCH_QtyInvoice">
-
-                                        </td>
+                                   
 
                                         <td class="table-width-xl">
 
@@ -943,214 +905,15 @@
 
                                 </tbody>
 
-                                <!-- Footer -->
-                                <tfoot>
-
-                                    <tr class="table-info">
-
-                                        <td></td>
-
-                                        <td></td>
-
-                                        <td class="text-end fw-bold">
-                                            Total Qty
-                                        </td>
-
-                                        <td>
-
-                                            <input id="TotalAvailableQty"
-                                                   class="form-control text-end"
-                                                   readonly>
-
-                                        </td>
-
-                                        <td>
-
-                                            <input id="TotalReservedQty"
-                                                   class="form-control text-end"
-                                                   readonly>
-
-                                        </td>
-
-                                        <td>
-
-                                            <input id="TotalBatchQty"
-                                                   class="form-control text-end"
-                                                   readonly>
-
-                                        </td>
-
-                                        <td></td>
-
-                                        <td>
-
-                                            <input id="TotalBatchValue"
-                                                   class="form-control text-end"
-                                                   readonly>
-
-                                        </td>
-
-                                    </tr>
-
-                                </tfoot>
+                          
 
                             </table>
 
                         </div>
 
                     </div>
-
-                    <!-- Other WH -->
-                    <div class="tab-pane fade p-2 border border-top-0"
-                         id="Other-tab-pane"
-                         role="tabpanel">
-
-                        <div class="w-100 table-responsive">
-                            <table id="DeliveryNoteOtherBatchList" class="table table-bordered table-hover align-middle mb-0">
-
-                                <thead>
-
-                                    <tr class="table-info">
-
-                                        <th>
-                                            Warehouse
-                                        </th>
-
-                                        <th class="datetype text-center">
-                                            Batch Date
-                                        </th>
-
-                                        <th>
-                                            Batch Number
-                                        </th>
-
-                                       
-
-                                        <th class="table-width-xl text-end">
-                                            Available Qty
-                                        </th>
-
-                                        <th class="table-width-xl text-end">
-                                            Unit Price
-                                        </th>
-
-                                        <th class="table-width-3xl text-end">
-                                            Batch Value
-                                        </th>
-
-                                    </tr>
-
-                                </thead>
-
-                                <tbody id="DeliveryNoteOtherBatchTableBody">
-
-                                    <!-- Template Row -->
-                                    <tr id="DeliveryNoteOtherBatchTemplateRow"
-                                        style="display:none;">
-
-                                        <td>
-
-                                            <input type="hidden" class="JIDNI_BCH_Number">
-
-                                            <input type="hidden" class="JIDNI_BCH_JIDNH_Number">
-
-                                            <input type="hidden" class="JIDNI_BCH_JIDNI_Number">
-
-                                            <input type="hidden" class="JIDNI_BCH_WH_Number">
-
-                                            <input type="text"
-                                                   class="form-control JIDNI_BCH_WH_Name"
-                                                   readonly>
-
-                                        </td>
-
-                                        <td class="datetype">
-
-                                            <input type="text"
-                                                   class="form-control text-center JIDNI_BCH_BatchDate"
-                                                   readonly>
-
-                                        </td>
-
-                                        <td>
-
-                                            <input type="text"
-                                                   class="form-control JIDNI_BCH_BatchNo"
-                                                   readonly>
-
-                                        </td>
-
-                                         
-
-                                        <td class="table-width-xl">
-
-                                            <input type="number" autocomplete="off"
-                                                   class="form-control text-end JIDNI_BCH_AvailableQty">
-
-                                        </td>
-
-                                        <td class="table-width-xl">
-
-                                            <input type="text"
-                                                   class="form-control text-end JIDNI_BCH_BatchUnitPrice"
-                                                   readonly>
-
-                                        </td>
-
-                                        <td class="table-width-3xl">
-
-                                            <input type="text"
-                                                   class="form-control text-end JIDNI_BCH_BatchValue"
-                                                   readonly>
-
-                                        </td>
-
-                                    </tr>
-
-                                </tbody>
-
-                                <!-- Footer -->
-                                <tfoot style="display:none">
-
-                                    <tr class="table-info">
-
-                                            
-
-                                        <td class="text-end fw-bold">
-                                            Total Qty
-                                        </td>
-
- 
-
-                                           
-                                        <td>
-
-                                            <input id="TotalBatchQtyOther"
-                                                   class="form-control text-end"
-                                                   readonly>
-
-                                        </td>
-
-                                        <td></td>
-
-                                        <td>
-
-                                            <input id="TotalBatchValueOther"
-                                                   class="form-control text-end"
-                                                   readonly>
-
-                                        </td>
-
-                                    </tr>
-
-                                </tfoot>
-
-                            </table>
-
-                        </div>
-
-                    </div>
-
+                     
+                   
                 </div>
 
             </div>

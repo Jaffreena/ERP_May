@@ -8,6 +8,18 @@ using System.Threading.Tasks;
 
 namespace ERP_DTO.JobInwardTransaction
 {
+    public class DeletedRowInfo_DTO
+    {
+        public int ItemGridindex { get; set; }
+
+        public long JIDNI_Number { get; set; }
+
+        public long JIDNH_Number { get; set; }
+
+        public long DBCH_Item_Number { get; set; }
+
+        public long DBCH_DBCH_Number { get; set; }
+    }
     public class DeliveryNoteCreate_DTO
     {
         public DeliveryNoteHeader_DTO Header { get; set; }
@@ -315,6 +327,10 @@ namespace ERP_DTO.JobInwardTransaction
         public decimal JIDNI_BCH_BatchUnitPrice { get; set; }
 
         public decimal JIDNI_BCH_BatchValue { get; set; }
+
+        public decimal RefBatch_Number { get; set; }
+        public decimal JIDNH_Number { get; set; }
+        public decimal JIDNI_Number { get; set; }
     }
 
     public class TempDeliveryBatch_DTO
@@ -327,6 +343,10 @@ namespace ERP_DTO.JobInwardTransaction
         public long? DBCH_DBCH_Number { get; set; }
 
         public long DBCH_Item_Number { get; set; }
+
+        public long? JIDNI_NUMBER { get; set; }
+        public long? JIDNH_NUMBER { get; set; }
+        public long? RefBatch_Number { get; set; }
 
         public long DBCH_Warehouse_Number { get; set; }
 
