@@ -1,0 +1,280 @@
+ALTER PROCEDURE [dbo].[JI_DeliveryNoteItem_BulkUpdate_SP]
+(
+    @Items DeliveryNoteItemUpdateType READONLY
+)
+AS
+BEGIN
+
+    SET NOCOUNT ON;
+
+    --------------------------------------------------------------
+    -- BATCH SUMMARY
+    -- ONE RECORD PER DBCH_INDEX
+    --------------------------------------------------------------
+    DECLARE @BatchSummary TABLE
+    (
+        DBCH_Index BIGINT,
+        JIDNI_Number BIGINT,
+
+        JINDH_Number BIGINT,
+        DBCH_Item_Number BIGINT,
+        DBCH_Warehouse_Number BIGINT,
+
+        TotalQty DECIMAL(18,3)
+    );
+
+    INSERT INTO @BatchSummary
+    (
+        DBCH_Index,
+        JIDNI_Number,
+
+        JINDH_Number,
+        DBCH_Item_Number,
+        DBCH_Warehouse_Number,
+
+        TotalQty
+    )
+    SELECT
+        T.DBCH_Index,
+
+        MAX(ISNULL(T.JINDI_Number,0)) AS JIDNI_Number,
+
+        MAX(T.JINDH_Number) AS JINDH_Number,
+        MAX(T.DBCH_Item_Number) AS DBCH_Item_Number,
+        MAX(T.DBCH_Warehouse_Number) AS DBCH_Warehouse_Number,
+
+        SUM(T.DBCH_Qty) AS TotalQty
+
+    FROM Temp_DeliveryNoteBatch T
+
+    GROUP BY
+        T.DBCH_Index;
+
+    --------------------------------------------------------------
+    -- DISTINCT ITEMS
+    --------------------------------------------------------------
+    DECLARE @DistinctItems TABLE
+    (
+        RN INT,
+
+        JIDNI_Number BIGINT,
+        JIDNI_JIDNH_Number BIGINT,
+        JIDNI_PRS_Number BIGINT,
+        JIDNI_Item_Number BIGINT,
+        JIDNI_WH_Number BIGINT,
+        JIDNI_UoM_Number BIGINT,
+
+        JIDNI_UnitPrice DECIMAL(18,3),
+        JIDNI_Amount DECIMAL(18,3),
+
+        JIDNI_JW_InvoiceTracking NVARCHAR(50)
+    );
+
+    INSERT INTO @DistinctItems
+    (
+        RN,
+
+        JIDNI_Number,
+        JIDNI_JIDNH_Number,
+        JIDNI_PRS_Number,
+        JIDNI_Item_Number,
+        JIDNI_WH_Number,
+        JIDNI_UoM_Number,
+
+        JIDNI_UnitPrice,
+        JIDNI_Amount,
+
+        JIDNI_JW_InvoiceTracking
+    )
+    SELECT
+        ROW_NUMBER() OVER
+        (
+            PARTITION BY
+                JIDNI_JIDNH_Number,
+                JIDNI_Item_Number,
+                JIDNI_WH_Number
+            ORDER BY JIDNI_Number
+        ) AS RN,
+
+        JIDNI_Number,
+        JIDNI_JIDNH_Number,
+        JIDNI_PRS_Number,
+        JIDNI_Item_Number,
+        JIDNI_WH_Number,
+        JIDNI_UoM_Number,
+
+        JIDNI_UnitPrice,
+        JIDNI_Amount,
+
+        JIDNI_JW_InvoiceTracking
+
+    FROM @Items;
+
+    --------------------------------------------------------------
+    -- UPDATE EXISTING ITEMS
+    --------------------------------------------------------------
+    UPDATE DN
+    SET
+        DN.JIDNI_PRS_Number = I.JIDNI_PRS_Number,
+        DN.JIDNI_Item_Number = I.JIDNI_Item_Number,
+        DN.JIDNI_WH_Number = I.JIDNI_WH_Number,
+        DN.JIDNI_UoM_Number = I.JIDNI_UoM_Number,
+
+        DN.JIDNI_Qty = B.TotalQty,
+
+        DN.JIDNI_UnitPrice = I.JIDNI_UnitPrice,
+        DN.JIDNI_Amount = I.JIDNI_Amount,
+        DN.JIDNI_JW_InvoiceTracking = I.JIDNI_JW_InvoiceTracking
+
+    FROM JI_DeliveryNoteItem DN
+
+    INNER JOIN @BatchSummary B
+        ON DN.JIDNI_Number = B.JIDNI_Number
+
+    INNER JOIN @DistinctItems I
+        ON I.JIDNI_Number = B.JIDNI_Number
+       AND I.RN = 1
+
+    WHERE B.JIDNI_Number > 0;
+
+    --------------------------------------------------------------
+    -- TEMP TABLE FOR NEW ITEMS
+    --------------------------------------------------------------
+    DECLARE @NewItems TABLE
+    (
+        RowNo INT IDENTITY(1,1),
+
+        DBCH_Index BIGINT,
+
+        JIDNI_JIDNH_Number BIGINT,
+        JIDNI_PRS_Number BIGINT,
+        JIDNI_Item_Number BIGINT,
+        JIDNI_WH_Number BIGINT,
+        JIDNI_UoM_Number BIGINT,
+
+        JIDNI_Qty DECIMAL(18,3),
+        JIDNI_UnitPrice DECIMAL(18,3),
+        JIDNI_Amount DECIMAL(18,3),
+
+        JIDNI_JW_InvoiceTracking NVARCHAR(50)
+    );
+
+    --------------------------------------------------------------
+    -- STORE INSERTED IDS
+    --------------------------------------------------------------
+    DECLARE @InsertedItems TABLE
+    (
+        RowNo INT IDENTITY(1,1),
+
+        DBCH_Index BIGINT,
+        JIDNI_Number BIGINT
+    );
+
+    --------------------------------------------------------------
+    -- PREPARE NEW ITEMS
+    -- ONLY ONE RECORD PER DBCH_INDEX
+    --------------------------------------------------------------
+    INSERT INTO @NewItems
+    (
+        DBCH_Index,
+
+        JIDNI_JIDNH_Number,
+        JIDNI_PRS_Number,
+        JIDNI_Item_Number,
+        JIDNI_WH_Number,
+        JIDNI_UoM_Number,
+
+        JIDNI_Qty,
+        JIDNI_UnitPrice,
+        JIDNI_Amount,
+
+        JIDNI_JW_InvoiceTracking
+    )
+    SELECT
+        B.DBCH_Index,
+
+        I.JIDNI_JIDNH_Number,
+        I.JIDNI_PRS_Number,
+        I.JIDNI_Item_Number,
+        I.JIDNI_WH_Number,
+        I.JIDNI_UoM_Number,
+
+        B.TotalQty,
+
+        I.JIDNI_UnitPrice,
+        I.JIDNI_Amount,
+
+        I.JIDNI_JW_InvoiceTracking
+
+    FROM @BatchSummary B
+
+    INNER JOIN @DistinctItems I
+        ON B.JINDH_Number = I.JIDNI_JIDNH_Number
+       AND B.DBCH_Item_Number = I.JIDNI_Item_Number
+       AND B.DBCH_Warehouse_Number = I.JIDNI_WH_Number
+       AND I.RN = 1
+
+    WHERE B.JIDNI_Number = 0;
+
+    --------------------------------------------------------------
+    -- INSERT NEW DELIVERY NOTE ITEMS
+    --------------------------------------------------------------
+    INSERT INTO JI_DeliveryNoteItem
+    (
+        JIDNI_JIDNH_Number,
+        JIDNI_PRS_Number,
+        JIDNI_Item_Number,
+        JIDNI_WH_Number,
+        JIDNI_UoM_Number,
+        JIDNI_Qty,
+        JIDNI_UnitPrice,
+        JIDNI_Amount,
+        JIDNI_JW_InvoiceTracking
+    )
+
+    OUTPUT
+        INSERTED.JIDNI_Number
+    INTO @InsertedItems
+    (
+        JIDNI_Number
+    )
+
+    SELECT
+        N.JIDNI_JIDNH_Number,
+        N.JIDNI_PRS_Number,
+        N.JIDNI_Item_Number,
+        N.JIDNI_WH_Number,
+        N.JIDNI_UoM_Number,
+        N.JIDNI_Qty,
+        N.JIDNI_UnitPrice,
+        N.JIDNI_Amount,
+        N.JIDNI_JW_InvoiceTracking
+    FROM @NewItems N;
+
+    --------------------------------------------------------------
+    -- MAP DBCH_INDEX TO INSERTED IDS
+    --------------------------------------------------------------
+    UPDATE I
+    SET
+        I.DBCH_Index = N.DBCH_Index
+
+    FROM @InsertedItems I
+
+    INNER JOIN @NewItems N
+        ON I.RowNo = N.RowNo;
+
+    --------------------------------------------------------------
+    -- UPDATE TEMP BATCH TABLE
+    --------------------------------------------------------------
+    UPDATE T
+    SET
+        T.JINDI_Number = I.JIDNI_Number
+
+    FROM Temp_DeliveryNoteBatch T
+
+    INNER JOIN @InsertedItems I
+        ON T.DBCH_Index = I.DBCH_Index
+
+    WHERE ISNULL(T.JINDI_Number,0) = 0;
+
+END
