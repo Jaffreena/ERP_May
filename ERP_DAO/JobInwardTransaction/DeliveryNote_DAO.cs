@@ -1088,46 +1088,55 @@ namespace ERP_DAO.JobInwardTransaction
                 using (SqlCommand cmd = new SqlCommand(@"
 DELETE FROM Temp_DeliveryNoteBatch
 WHERE DBCH_Index = @DBCH_Index;
-            INSERT INTO Temp_DeliveryNoteBatch
-            (
-                DBCH_Index,
-                DBCH_DBCH_Number,
-                DBCH_Item_Number,
-                DBCH_Warehouse_Number,
-                DBCH_Date,
-                DBCH_No,
-                DBCH_Qty,
-                DBCH_UnitPrice,
-                DBCH_Value,
-                Mode,
-                CreatorCode,
-                CreatorDate,
-                DBCH_MainQty,
-                JINDI_Number,
-                JINDH_Number,
-                RefBatch_Number,
-                ReservedQty
-            )
-            VALUES
-            (
-                @DBCH_Index,
-                @DBCH_DBCH_Number,
-                @DBCH_Item_Number,
-                @DBCH_Warehouse_Number,
-                GETDATE(),
-                '',
-                0,
-                0,
-                0,
-                1,
-                1,
-                GETDATE(),
-                0,
-                0,
-                0,
-                0,
-                0
-            )
+
+
+INSERT INTO Temp_DeliveryNoteBatch
+(
+    DBCH_Index,
+    DBCH_DBCH_Number,
+    DBCH_Item_Number,
+    DBCH_Warehouse_Number,
+    DBCH_Date,
+    DBCH_No,
+    DBCH_Qty,
+    DBCH_UnitPrice,
+    DBCH_Value,
+    Mode,
+    CreatorCode,
+    CreatorDate,
+    DBCH_MainQty,
+    JINDI_Number,
+    JINDH_Number,
+    RefBatch_Number,
+    ReservedQty
+)
+SELECT
+    @DBCH_Index,
+    @DBCH_DBCH_Number,
+    @DBCH_Item_Number,
+    @DBCH_Warehouse_Number,
+    GETDATE(),
+    '',
+    0,
+    0,
+    0,
+    1,
+    1,
+    GETDATE(),
+    0,
+    0,
+    0,
+
+    B.LineBatch_Number,   -- RefBatch_Number
+
+    0
+FROM
+(
+    SELECT DISTINCT LineBatch_Number
+    FROM IN_COMMON_BATCH
+    WHERE Item_Number = @DBCH_Item_Number
+      AND FromWarehouse = @DBCH_Warehouse_Number
+) B;
 
         ", con))
                 {
@@ -1495,55 +1504,31 @@ WHERE
                 using (SqlCommand cmd = new SqlCommand(@"
  
  
-         ;WITH RowTotal AS
+;WITH BatchTotal AS
 (
     SELECT
         DBCH_Item_Number,
         DBCH_Warehouse_Number,
         RefBatch_Number,
-        DBCH_Index,
-        SUM(DBCH_Qty) AS RowQty
+        SUM(ISNULL(DBCH_Qty,0)) AS TotalQty
     FROM Temp_DeliveryNoteBatch
     GROUP BY
         DBCH_Item_Number,
         DBCH_Warehouse_Number,
-        RefBatch_Number,
-        DBCH_Index
-),
-
-Reserved AS
-(
-    SELECT
-        R1.DBCH_Item_Number,
-        R1.DBCH_Warehouse_Number,
-        R1.RefBatch_Number,
-        R1.DBCH_Index,
-
-        ISNULL(SUM(R2.RowQty),0) AS ReservedQty
-    FROM RowTotal R1
-
-    LEFT JOIN RowTotal R2
-        ON  R1.DBCH_Item_Number      = R2.DBCH_Item_Number
-        AND R1.DBCH_Warehouse_Number = R2.DBCH_Warehouse_Number
-        AND R1.RefBatch_Number       = R2.RefBatch_Number
-        AND R1.DBCH_Index           <> R2.DBCH_Index
-
-    GROUP BY
-        R1.DBCH_Item_Number,
-        R1.DBCH_Warehouse_Number,
-        R1.RefBatch_Number,
-        R1.DBCH_Index
+        RefBatch_Number
 )
 
 UPDATE T
-SET T.reservedqty = R.ReservedQty
+SET T.ReservedQty =
+        ISNULL(B.TotalQty,0)
+      - ISNULL(T.DBCH_Qty,0)
+
 FROM Temp_DeliveryNoteBatch T
 
-INNER JOIN Reserved R
-    ON  T.DBCH_Item_Number      = R.DBCH_Item_Number
-    AND T.DBCH_Warehouse_Number = R.DBCH_Warehouse_Number
-    AND T.RefBatch_Number       = R.RefBatch_Number
-    AND T.DBCH_Index            = R.DBCH_Index;
+INNER JOIN BatchTotal B
+    ON  T.DBCH_Item_Number      = B.DBCH_Item_Number
+    AND T.DBCH_Warehouse_Number = B.DBCH_Warehouse_Number
+    AND T.RefBatch_Number       = B.RefBatch_Number;
         ", con))
                 {
                     cmd.ExecuteNonQuery();

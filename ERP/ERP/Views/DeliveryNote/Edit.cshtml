@@ -1245,8 +1245,13 @@
                                                 <!-- JW -->
                                                 <td class="text-center">
 
+                                                    <input type="checkbox"
+                                                           class="form-check-input JIDNI_JW_InvoiceTracking"
+                                                    @(Model.Items[i].JIDNI_JW_InvoiceTracking == "Yes" ? "checked" : "") />
+
                                                     <input asp-for="Items[i].JIDNI_JW_InvoiceTracking"
-                                                           class="form-check-input JIDNI_JW_InvoiceTracking" />
+                                                           type="hidden"
+                                                           class="JIDNI_JW_InvoiceTracking_Value" />
 
                                                     <input asp-for="Items[i].JIDNI_IsDeleted"
                                                            type="hidden"
