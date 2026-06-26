@@ -167,7 +167,7 @@
 
         console.log("Starting address validation...");
 
-        $('tr.AddNewRow').each(function(index) {
+        $('tr.AddNewRow:visible').each(function(index) {
             var type = $(this).find('.CUS_ADD_ADTP_Number').val();
             var addressId = $(this).find('.CUS_ADD_AddressID').val();
             var isDefault = $(this).find('.CUS_ADD_Primary').is(':checked');

@@ -1,4 +1,6 @@
-﻿$(document).ready(function () {
+﻿var addressIndex = 0;
+
+$(document).ready(function () {
 
     //#region Initialize Flatpickr
     InitializeGstFlatpickrs();
@@ -12,6 +14,8 @@
             defaultDate: new Date() // optional: today default
         });
     }
+
+    DateBind();
     //#endregion Initialize Flatpickr
 
     //#region onkeypress qty and unit
@@ -35,6 +39,10 @@
 
     });
     //#endregion onkeypress qty and unit
+
+    $(document).on("click", "#btnClearAll", function () {
+        ClearAll();
+    });
 
     //#region auto add row function
     function autoAddRow(currentRow) {
@@ -170,7 +178,29 @@
 
         // 5. Recalculate totals (optional hook)
         calculateTotal();
+        //region item grid row focus out event
+        //$("#ItemTable").on(
+        //    "focusout",
+        //    "tr.NewRow",
+        //    function (e) {
 
+        //        let row = $(this);
+
+        //        setTimeout(() => {
+
+        //            // check next focused element
+        //            if (!row.find(document.activeElement).length) {
+
+        //                // document.getElementById('SaveBatchButton').click();
+
+        //            }
+
+        //        }, 0);
+
+        //    }
+        //);
+
+        //#endregion
     });
     //#endregion add row item grid
 
@@ -180,7 +210,7 @@
     $("#AddressButton").on("click", function () {
         $("#BuyerAddress").modal("show");
     });
-    let addressIndex = 0;
+ 
 
     $("#AddressAddButton").on("click", function () {
 
@@ -308,7 +338,9 @@
                 success: function (response) {
 
                     if (response.success) {
+                        ClearAll();
                         showAlert('Record Inserted')
+                        DateBind();
                      //  window.location.href = response.redirectUrl;
                         console.log(JSON.stringify(model));
                     }
@@ -497,7 +529,8 @@
             }
 
             let item = {
-
+                JISVOH_Number:
+                    parseInt(row.find(".JISVOH_Number").val()) || 0,
                 JIDNI_JIDNH_Number:
                     parseInt(row.find(".JIDNI_JIDNH_Number").val()) || 0,
 
@@ -683,6 +716,19 @@
 //#region ADD  ADDRESS ROW GRID ,VALIDATE ADDRESS GRID,VALIDATE TEMP ROW
 
 
+function DateBind() {
+    var today = new Date();
+
+    var day = String(today.getDate()).padStart(2, '0');
+    var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    var formattedDate = day + "-" + months[today.getMonth()] + "-" + today.getFullYear();
+
+    var fp = document.getElementById("Header_JIDNH_DN_Date")._flatpickr;
+    if (fp) fp.setDate(formattedDate, true, "d-M-Y");
+}
+
 //#region delete grid
 function DeleteItemRowTempTable(inputElement) {
     let ItemGridindex =
@@ -712,7 +758,7 @@ function DeleteItemRowTempTable(inputElement) {
 
 
 //#endregion
-
+ 
 function addAddressRow() {
 
     let i = addressIndex;
@@ -817,19 +863,26 @@ function validateAddressGrid() {
 
 function validateTempRow() {
 
-    let row = $("#AddTempRow");
+    let isValid = true;
 
-    if (!row.find(".JIDNA_ADTP_Number").val()) {
-        showAlert('Address Type is required');
-        return false;
-    }
+    $("#AddTableBody tr.AddNewRow:visible").each(function () {
 
-    if (!row.find(".JIDNA_Address_ID").val()) {
-        showAlert('Address ID is required');
-        return false;
-    }
+        let row = $(this);
+        console.log('JIDNA_ADTP_Number:' + row.find(".JIDNA_ADTP_Number").val())
+        if (!row.find(".JIDNA_ADTP_Number").val()) {
+            showAlert('Address Type is required');
+            isValid = false;
+            return false; // break each
+        }
 
-    return true;
+        if (!row.find(".JIDNA_Address_ID").val()) {
+            showAlert('Address ID is required');
+            isValid = false;
+            return false;
+        }
+    });
+
+    return isValid;
 }
 
 
@@ -919,7 +972,7 @@ async function SearchJWCustomer(inputElement) {
                         $("#SIH_WHT_Number").val(cust.cuS_WHT_Number);
 
                         $("#WH_Number").val(cust.cuS_WH_Number);
-
+                        BindServiceOrder(cust.cuS_Number);
                         resultsDiv.hide();
                     });
                 });
@@ -953,7 +1006,25 @@ async function SearchJWCustomer(inputElement) {
 
 //#endregion customer Search Functions
 
+function BindServiceOrder(customerId) {
 
+    $(".JISVOH_Number").empty();
+    $(".JISVOH_Number").append('<option value="0"></option>');
+
+    if (!customerId) return;
+
+    $.get("/DeliveryNote/GetServiceOrder",
+        { customerId: customerId },
+        function (data) {
+
+            $.each(data, function (i, item) {
+                $(".JISVOH_Number").append(
+                    `<option value="${item.value}">${item.text}</option>`
+                );
+            });
+
+        });
+}
 
 
 //#region Calculate Total
@@ -1011,6 +1082,7 @@ function OnFocusItem(inputElement) {
         $(inputElement).select();
     }
 }
+
 function searchItemJIDNI(inputElement) {
 
     let itemCode = inputElement.value;
@@ -1133,6 +1205,7 @@ function searchItemJIDNI(inputElement) {
         }
     });
 }
+
 //#endregion item grid fetch item details
 
 
@@ -1497,27 +1570,43 @@ function CreateTempDeliveryBatchModel(row) {
 //#endregion TEMP DELIVERY BATCH MODEL
 
 
-//region item grid row focus out event
-$("#ItemTable").on(
-    "focusout",
-    "tr.NewRow",
-    function (e) {
+//#region clear all
+function ClearAll() {
+    $(".left-menu")
+        .find("input, textarea, select")
+        .each(function () {
 
-        let row = $(this);
-
-        setTimeout(() => {
-
-            // check next focused element
-            if (!row.find(document.activeElement).length) {
-
-               // document.getElementById('SaveBatchButton').click();
-
+            if ($(this).is(":hidden")) {
+                $(this).val("");
             }
+            else if ($(this).is("select")) {
+                $(this).prop("selectedIndex", 0);
+            }
+            else {
+                $(this).val("");
+            }
+        });
+    $("#ItemTable tbody").empty();
+    $(".jwcustomer-search-results").hide().html("");
 
-        }, 0);
-
-    }
-);
-
+}
 //#endregion
+
+//#region datebind
+function DateBind() {
+    var today = new Date();
+
+    var day = String(today.getDate()).padStart(2, '0');
+    var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    var formattedDate = day + "-" + months[today.getMonth()] + "-" + today.getFullYear();
+
+    var fp = document.getElementById("Header_JIDNH_DN_Date")._flatpickr;
+    if (fp) fp.setDate(formattedDate, true, "d-M-Y");
+}
+//#endregion
+
+
+
 

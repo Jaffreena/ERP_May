@@ -176,7 +176,7 @@ namespace ERP.Controllers.JobworkInward
             return Result;
         }
 
-
+    
 
 
         #region receiptnote numbering

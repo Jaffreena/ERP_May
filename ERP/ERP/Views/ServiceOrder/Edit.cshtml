@@ -1,0 +1,464 @@
+﻿@model ERP_DTO.JobInwardTransaction.JI_ServiceOrder_DTO
+
+@{
+    ViewData["Title"] = "Service Order";
+}
+<form asp-action="SaveServiceOrder"
+      method="post"
+      id="ServiceOrderForm">
+    <div class="row align-items-center panel-header gx-2">
+        <div class="col h-100 align-items-center">
+            <div class="h6 fw-light text-white h-100 align-content-center bg-secondary px-2">
+                Service Order
+                <a asp-controller="JobworkInward" asp-action="Index" class="float-end btn p-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- Alert Popup -->
+    <div class="modal modal-sm fade" id="ModelAlert" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header draggable-modal-header">
+                    <p class="modal-title mb-0">Warning</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body py-4 text-dark fs-6 text-center">
+                    <img src="~/img/danger.png" class="img-fluid mb-2" />
+                    <div id="AlertMessage">@Html.Raw(ViewBag.ErrorMessage)</div>
+                </div>
+
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-primary px-4" id="AlertOkay" data-bs-dismiss="modal">Ok</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+      
+    <!-- item grid in body -->
+    <div class="row panel-body gx-2">
+
+        <div class="col-12 panel-card-fixed h-100">
+
+            <div class="w-100 rounded-0 h-100 border border-primary bg-transparent"
+                 id="BodyHeight">
+                <!-- HEADER -->
+                <div class="card rounded-0 bg-transparent shadow-none" id="CardHeader">
+                    <div class="card-body pb-0">
+                        <div class="row ps-2">
+
+                            <div class="col-auto left-menu text-black">
+                                <div class="row">
+
+                                    <!-- COLUMN 1 -->
+                                    <div class="col-12 col-md-3">
+
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="Header.JISVOH_RegNo"
+                                                   class="col-md-6 col-lg-5 col-form-label ps-0"></label>
+                                            <div class="col-md-6 col-lg-7">
+                                                <input asp-for="Header.JISVOH_RegNo"
+                                                       class="form-control Key KeyDup"
+                                                       autocomplete="off" />
+                                            </div>
+                                        </div>
+
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="Header.JISVOH_RegDate"
+                                                   class="col-md-6 col-lg-5 col-form-label ps-0"></label>
+                                            <div class="col-md-6 col-lg-7">
+                                                <input asp-for="Header.JISVOH_RegDate"
+                                                       class="form-control datepicker" />
+                                            </div>
+                                        </div>
+
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="Header.JISVOH_ServiceOrderNo"
+                                                   class="col-md-6 col-lg-5 col-form-label ps-0"></label>
+                                            <div class="col-md-6 col-lg-7">
+                                                <input asp-for="Header.JISVOH_ServiceOrderNo"
+                                                       class="form-control" />
+                                            </div>
+                                        </div>
+
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="Header.JISVOH_ServiceOrderDate"
+                                                   class="col-md-6 col-lg-5 col-form-label ps-0"></label>
+                                            <div class="col-md-6 col-lg-7">
+                                                <input asp-for="Header.JISVOH_ServiceOrderDate"
+                                                       class="form-control datepicker" />
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <!-- COLUMN 2 -->
+                                    <div class="col-12 col-md-3">
+                                        <div class="row align-items-center px-2 mb-1 d-none">
+                                            <label asp-for="Header.JISVOH_MS_Number"
+                                                   class="col-sm-5 col-form-label ps-0">
+                                            </label>
+
+                                            <div class="col-sm-7">
+                                                <select asp-for="Header.JISVOH_MS_Number"
+                                                        class="form-select"
+                                                        asp-items="@ViewBag.MaterialSegregation">
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="Header.JISVOH_JW_Customer_Number"
+                                                   class="col-sm-5 col-form-label ps-0"></label>
+
+                                            <div class="col-sm-7">
+                                                <input asp-for="Header.JISVOH_JW_Customer_Number" type="hidden" />
+
+                                                <input asp-for="Header.JISVOH_JW_Customer_Name"
+                                                       class="form-control"
+                                                       autocomplete="off"
+                                                       oninput="OnJWCustomerInput(this)"
+                                                       onfocus="OnJWCustomerFocus(this)" />
+
+                                                <div class="jwcustomer-search-results bg-primary card"
+                                                     style="display:none"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="Header.JISVOH_Currency_Number"
+                                                   class="col-sm-5 col-form-label ps-0"></label>
+
+                                            <div class="col-sm-7 position-relative">
+                                                <select asp-for="Header.JISVOH_Currency_Number"
+                                                        class="form-select"
+                                                        asp-items="@ViewBag.Currency">
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="Header.JISVOH_PaymentTerms"
+                                                   class="col-sm-5 col-form-label ps-0"></label>
+                                            <div class="col-sm-7">
+                                                <input asp-for="Header.JISVOH_PaymentTerms"
+                                                       class="form-control" />
+                                            </div>
+                                        </div>
+
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="Header.JISVOH_DeliveryTerms"
+                                                   class="col-sm-5 col-form-label ps-0"></label>
+                                            <div class="col-sm-7">
+                                                <input asp-for="Header.JISVOH_DeliveryTerms"
+                                                       class="form-control" />
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <!-- COLUMN 3 -->
+                                    <div class="col-12 col-md-3">
+
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="Header.JISVOH_DeliveryMode"
+                                                   class="col-sm-5 col-form-label ps-0"></label>
+                                            <div class="col-sm-7">
+                                                <input asp-for="Header.JISVOH_DeliveryMode"
+                                                       class="form-control" />
+                                            </div>
+                                        </div>
+
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="Header.JISVOH_Tax"
+                                                   class="col-sm-5 col-form-label ps-0"></label>
+                                            <div class="col-sm-7">
+                                                <input asp-for="Header.JISVOH_Tax"
+                                                       class="form-control" />
+                                            </div>
+                                        </div>
+
+                                        <div class="row align-items-center px-2 mb-1">
+                                            <label asp-for="Header.JISVOH_TDC"
+                                                   class="col-sm-5 col-form-label ps-0"></label>
+                                            <div class="col-sm-7">
+                                                <input asp-for="Header.JISVOH_TDC"
+                                                       class="form-control" />
+                                            </div>
+                                        </div>
+
+                                        <div class="row align-items-start px-2 mb-1">
+                                            <label asp-for="Header.JISVOH_Remarks"
+                                                   class="col-sm-5 col-form-label ps-0"></label>
+                                            <div class="col-sm-7">
+                                                <textarea asp-for="Header.JISVOH_Remarks"
+                                                          class="form-control"
+                                                          rows="2"></textarea>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- RIGHT MENU -->
+                            <div class="col-auto right-menu text-center border-start">
+
+                                <input id="btnSave"
+                                       name="Mode"
+                                       value="Save"
+                                       class="btn btn-primary btn-sm px-2 w-100 mb-1" />
+
+                                <input type="submit"
+                                       name="Mode"
+                                       value="Clear All"
+                                       class="btn btn-primary btn-sm px-2 w-100 mb-1" />
+
+                           
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                 
+                <!-- BODY has ITEM -->
+                <div class="card rounded-0 bg-transparent shadow-none" id="CardBody">
+                    <div class="card-body pb-0">
+                        <div class="row ps-2">
+
+                            <div class="col-auto left-menu text-black">
+                                <div class="card-body h-100">
+                                    <div class="row h-100">
+                                        <div class="col-auto h-100">
+
+                                            <div class="tab-content tab-body tab-body-h-o">
+
+                                                <div class="tab-pane fade show active p-0 pb-0 border border-top-0 h-100">
+
+                                                    <div class="row h-100">
+                                                        <div class="col-12">
+
+                                                            <div class="col table-fixed h-100">
+                                                                <div class="w-12 table-responsive table-body table-body-f">
+
+
+                                                                    <table class="table table-one table-striped table-bordered table-hover align-middle w-100"
+                                                                           id="ItemTable">
+
+                                                                        <thead>
+                                                                            <tr class="table-info">
+                                                                                <th class="px-2 del text-center">
+                                                                                    <input type="checkbox"
+                                                                                           class="IndexAllCheckItem form-check-input border-white">
+                                                                                </th>
+
+                                                                                <th>Process</th>
+                                                                                <th>Item Code</th>
+                                                                                <th>Description</th>
+                                                                                <th>Outer Dia</th>
+                                                                                <th>Thickness</th>
+                                                                                <th>Length</th>
+                                                                                <th>Width</th>
+                                                                                <th>Material Grade</th>
+                                                                                <th>Item Group</th>
+                                                                                <th>UOM</th>
+                                                                                <th>SVO Qty</th>
+                                                                                <th>Invoiced Qty</th>
+                                                                                <th>Invoice to be raised</th>
+                                                                                <th>Amend Qty</th>
+                                                                                <th>Unit Price</th>
+                                                                                <th>Amount</th>
+                                                                                <th>Delivery Date</th>
+                                                                            </tr>
+                                                                        </thead>
+
+                                                                        <tbody id="TableBody">
+
+                                                                            <!-- TEMP ROW -->
+                                                                            <tr id="TempRow" style="display:none">
+
+                                                                                <td class="p-2 del">
+                                                                                    <input type="checkbox" class="CheckItem form-check-input">
+                                                                                </td>
+
+                                                                                <td>
+                                                                                    <select name="Items[0].JISVOI_PRS_Number"
+                                                                                            class="form-select JISVOI_PRS_Number"
+                                                                                            asp-items="@ViewBag.Process">
+                                                                                    </select>
+                                                                                </td>
+
+                                                                                <td>
+                                                                                    <input name="Items[0].JISVOI_Number"
+                                                                                           type="hidden"
+                                                                                           class="JISVOI_Number" />
+
+                                                                                    <input name="Items[0].JISVOI_IsDeleted"
+                                                                                           type="hidden"
+                                                                                           value="false"
+                                                                                           class="JISVOI_IsDeleted" />
+
+                                                                                    <input name="Items[0].JISVOI_Item_Number"
+                                                                                           type="hidden"
+                                                                                           class="JISVOI_Item_Number" />
+
+                                                                                    <input name="Items[0].JISVOI_Item_Code"
+                                                                                           autocomplete="off"
+                                                                                           class="form-control JISVOI_Item_Code"
+                                                                                           oninput="OnInputItem(this)"
+                                                                                           onfocus="OnFocusItem(this)" />
+
+                                                                                    <div class="search-results card" style="display:none"></div>
+                                                                                </td>
+
+                                                                                <td><input name="Items[0].Description" class="form-control Description" readonly /></td>
+                                                                                <td><input name="Items[0].OuterDia" class="form-control OuterDia text-end" readonly /></td>
+                                                                                <td><input name="Items[0].Thickness" class="form-control Thickness text-end" readonly /></td>
+                                                                                <td><input name="Items[0].Length" class="form-control Length text-end" readonly /></td>
+                                                                                <td><input name="Items[0].Width" class="form-control Width text-end" readonly /></td>
+                                                                                <td><input name="Items[0].MaterialGrade" class="form-control MaterialGrade" readonly /></td>
+                                                                                <td><input name="Items[0].ItemGroup" class="form-control ItemGroup" readonly /></td>
+
+                                                                                <td>
+                                                                                    <select name="Items[0].JISVOI_UoM_Number"
+                                                                                            class="form-select JISVOI_UoM_Number"
+                                                                                            asp-items="@ViewBag.UOM">
+                                                                                    </select>
+                                                                                </td>
+
+                                                                                <td>
+                                                                                    <input name="Items[0].SVO_Qty"
+                                                                                           class="form-control SVO_Qty text-end"
+                                                                                           readonly />
+                                                                                </td>
+
+                                                                                <td>
+                                                                                    <input name="Items[0].InvoicedQty"
+                                                                                           class="form-control InvoicedQty text-end"
+                                                                                           readonly />
+                                                                                </td>
+                                                                                <td>
+                                                                                    <input name="Items[0].InvoiceToBeRaised"
+                                                                                           class="form-control InvoiceToBeRaised text-end"
+                                                                                           readonly />
+                                                                                </td>
+                                                                                <td>
+                                                                                    <input name="Items[0].JISVOI_Qty"
+                                                                                           class="form-control JISVOI_Qty text-end" />
+                                                                                </td>
+
+                                                                                <td>
+                                                                                    <input name="Items[0].JISVOI_UnitPrice"
+                                                                                           class="form-control JISVOI_UnitPrice text-end" />
+                                                                                </td>
+
+                                                                                <td>
+                                                                                    <input name="Items[0].JISVOI_Amount"
+                                                                                           class="form-control JISVOI_Amount text-end"
+                                                                                           readonly />
+                                                                                </td>
+
+                                                                                <td>
+                                                                                    <input name="Items[0].JISVOI_DeliveryDate"
+                                                                                           type="date"
+                                                                                           class="form-control JISVOI_DeliveryDate" />
+                                                                                </td>
+
+                                                                            </tr>
+
+                                                                            <!-- FIRST ROW -->
+                                                                            <tr class="NewRow" data-rowid="1">
+                                                                                <!-- clone same columns as TempRow -->
+                                                                            </tr>
+
+                                                                        </tbody>
+
+                                                                        <tfoot>
+                                                                            <tr class="table-info">
+                                                                                <td colspan="13" class="text-end py-2">
+                                                                                    <span class="float-end pe-3">Total</span>
+                                                                                </td>
+
+                                                                                <td>
+                                                                                    <input id="TotalQty"
+                                                                                           class="form-control text-end"
+                                                                                           readonly />
+                                                                                </td>
+
+                                                                                <td></td>
+
+                                                                                <td>
+                                                                                    <input id="TotalAmount"
+                                                                                           class="form-control text-end"
+                                                                                           readonly />
+                                                                                </td>
+
+                                                                                <td></td>
+                                                                            </tr>
+                                                                        </tfoot>
+
+                                                                    </table>
+                                                                </div>
+
+                                                                <div class="row table-footer align-items-center">
+                                                                    <div class="col">
+
+                                                                        <a id="AddRowButton"
+                                                                               class="btn btn-primary">
+                                                                            Add Row
+                                                                        </a>
+
+                                                                        <a id="RemoveItemRowButton"
+                                                                               class="RowRemove btn btn-primary">
+                                                                            Delete Row
+                                                                        </a>
+
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+        
+            </div>
+
+        </div>
+
+    </div>
+</form>
+
+                                                        
+@section Scripts {
+
+    <partial name="_ValidationScriptsPartial" />
+
+   
+    <script src="~/js/jw_serviceorder/JW_ServiceOrderEdit.js" asp-append-version="true"></script>
+
+
+        
+    
+}

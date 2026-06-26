@@ -142,7 +142,7 @@
                         Add Row
                     </button>
 
-                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
                         OK
                     </button>
 
@@ -627,7 +627,7 @@
         <div class="col h-100 align-items-center">
             <div class="h6 fw-light text-white h-100 align-content-center bg-secondary px-2">
                 Delivery Note
-                <a asp-controller="DeliveryNote" asp-action="Index" class="float-end btn p-0">
+                <a asp-controller="JobworkInward" asp-action="Index" class="float-end btn p-0">
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
                         <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
                     </svg>
@@ -687,7 +687,7 @@
                                             <div class="col-md-6 col-lg-7">
 
                                                 <input asp-for="Header.JIDNH_DN_Date" type="date"
-                                                       class="form-control Key datepicker"
+                                                       class="form-control datepicker"
                                                        autocomplete="off" />
 
                                             </div>
@@ -975,6 +975,9 @@
                                                                                        id="IndexAllCheckItem">
 
                                                                             </th>
+                                                                                <th>
+                                                                                    Service Order No
+                                                                                </th>
 
                                                                             <th>
                                                                                 Process
@@ -1052,6 +1055,13 @@
                                                                                        class="CheckItem form-check-input">
 
                                                                             </td>
+                                                                                <td>
+                                                                                    <select id="JISVOH_Number"
+                                                                                            class="form-select JISVOH_Number"
+                                                                                             asp-items="@ViewBag.SON">
+                                                                                     
+                                                                                    </select>
+                                                                                </td>
 
                                                                             <!-- PROCESS -->
                                                                             <td>
@@ -1218,7 +1228,13 @@
                                                                                        class="CheckItem form-check-input">
 
                                                                             </td>
-
+                                                                            <td>
+                                                                                    <select name="Items[0].JISVOH_Number"
+                                                                                            class="form-select JISVOH_Number"
+                                                                                              asp-items="@ViewBag.SON">
+                                                                                    </select>
+                                                                                </td>
+                                                                              
                                                                             <!-- PROCESS -->
                                                                             <td>
 
@@ -1381,7 +1397,7 @@
 
                                                                         <tr class="table-info">
 
-                                                                            <td colspan="12"
+                                                                            <td colspan="13"
                                                                                 class="text-end py-2">
 
                                                                                 <span class="float-end pe-3">

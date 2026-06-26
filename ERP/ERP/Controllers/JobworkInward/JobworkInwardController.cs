@@ -6,7 +6,9 @@ namespace ERP.Controllers.JobworkInward
     {
         public IActionResult Index()
         {
+
             return View();
         }
+       
     }
 }

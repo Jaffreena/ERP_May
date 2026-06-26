@@ -1,0 +1,195 @@
+﻿ @model ERP_DTO.JobInwardTransaction.JobworkInvoiceCreate_DTO
+@{
+    ViewData["Title"] = "Jobwork Invoice Create";
+}
+<form asp-action="JobworkInvoiceCreate" method="post" id="JobworkInvoiceCreateForm"> 
+ <div class="row align-items-center panel-header gx-2">
+    <div class="col h-100 align-items-center">
+        <div class="h6 fw-light text-white h-100 align-content-center bg-secondary px-2">
+            Jobwork Invoice View
+            <a asp-controller="JobworkInvoice" asp-action="Index" class="float-end btn p-0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                </svg>
+            </a>
+        </div>
+    </div>
+</div>
+    <div class="row panel-body gx-2">
+        <div class="col-12 panel-card-fixed h-100">
+            <div class="w-100 rounded-0 h-100 border border-primary bg-transparent" id="BodyHeight">
+                <div class="card rounded-0 bg-transparent shadow-none" id="CardHeader">
+                    <div class="card-body pb-0 pt-2">
+                        <div class="row ps-2">
+                            <div class="col-auto left-menu text-black">
+                                <div class="row align-items-center">
+                                    <div class="col-12 col-sm-5 col-lg-4 pb-2">
+                                        <div class="row">
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-7 col-lg-8 pb-2">
+                                        <a onclick="Print()" class="float-end btn btn-primary">Print</a>
+                                        <button type="button" class="float-end btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#PrintPreview">
+                                            Print View
+                                        </button>
+
+                                        <button class="float-end btn me-2 btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Download
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><input type="submit" name="Mode" value="Ascii" class="dropdown-item" /></li>
+                                            <li><input type="submit" name="Mode" value="Excel" class="dropdown-item" /></li>
+                                            <li><input type="submit" name="Mode" value="PDF" class="dropdown-item" /></li>
+                                        </ul>
+
+                                        <input type="submit" name="Mode" value="Delete" class="float-end btn btn-danger me-2" />
+
+                                        <a class="float-end btn btn-primary me-2">
+                                            Edit
+                                        </a>
+
+                                    </div>
+                                </div>
+                            
+
+                                <div class="col-auto left-menu text-black">
+                                    <div class="row">
+
+                                     
+
+                                        <div class="col-12 col-md-3">
+                                            <div class="row align-items-center px-2 mb-1">
+                                                <label asp-for="Header.JISVIH_InvoiceNo" class="col-md-6 col-lg-5 col-form-label ps-0"></label>
+                                                <div class="col-md-6 col-lg-7">
+                                                    <input asp-for="Header.JISVIH_InvoiceNo" class="form-control" autocomplete="off" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-12 col-md-3">
+                                            <div class="row align-items-center px-2 mb-1">
+                                                <label asp-for="Header.JISVIH_InvoiceDate" class="col-md-6 col-lg-5 col-form-label ps-0"></label>
+                                                <div class="col-md-6 col-lg-7">
+                                                    <input asp-for="Header.JISVIH_InvoiceDate" class="form-control" autocomplete="off" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-12 col-md-3">
+                                            <div class="row align-items-center px-2 mb-1">
+                                                <label asp-for="Header.JISVIH_JW_Customer_Number" class="col-md-6 col-lg-5 col-form-label ps-0"></label>
+                                                <div class="col-md-6 col-lg-7">
+                                                    <input asp-for="Header.JISVIH_JW_Customer_Number" class="form-control" autocomplete="off" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-12 col-md-3">
+                                            <div class="row align-items-center px-2 mb-1">
+                                                <label asp-for="Header.JISVIH_Currency_Number" class="col-md-6 col-lg-5 col-form-label ps-0"></label>
+                                                <div class="col-md-6 col-lg-7">
+                                                    <input asp-for="Header.JISVIH_Currency_Number" class="form-control" autocomplete="off" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-12 col-md-3">
+                                            <div class="row align-items-center px-2 mb-1">
+                                                <label asp-for="Header.JISVIH_TCT_Number" class="col-md-6 col-lg-5 col-form-label ps-0"></label>
+                                                <div class="col-md-6 col-lg-7">
+                                                    <input asp-for="Header.JISVIH_TCT_Number" class="form-control" autocomplete="off" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-12 col-md-3">
+                                            <div class="row align-items-center px-2 mb-1">
+                                                <label asp-for="Header.JISVIH_PaymentTerms" class="col-md-6 col-lg-5 col-form-label ps-0"></label>
+                                                <div class="col-md-6 col-lg-7">
+                                                    <input asp-for="Header.JISVIH_PaymentTerms" class="form-control" autocomplete="off" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-12 col-md-3">
+                                            <div class="row align-items-center px-2 mb-1">
+                                                <label asp-for="Header.JISVIH_PaymentMethod" class="col-md-6 col-lg-5 col-form-label ps-0"></label>
+                                                <div class="col-md-6 col-lg-7">
+                                                    <input asp-for="Header.JISVIH_PaymentMethod" class="form-control" autocomplete="off" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-12 col-md-3">
+                                            <div class="row align-items-center px-2 mb-1">
+                                                <label asp-for="Header.JISVIH_Remarks" class="col-md-6 col-lg-5 col-form-label ps-0"></label>
+                                                <div class="col-md-6 col-lg-7">
+                                                    <textarea asp-for="Header.JISVIH_Remarks" class="form-control"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <div class="col-auto right-menu text-center border-start">
+                                <button type="button" class="btn btn-primary btn-sm px-1 w-100 mb-1 HeaderIncome" id="HeaderIncomeModal">
+                                    Header Misc. Income
+                                </button>
+                                <button type="button" class="btn btn-primary btn-sm px-1 w-100 mb-1" data-bs-toggle="modal" data-bs-target="#BuyerAddress">
+                                    Address
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card rounded-0 bg-transparent shadow-none" id="CardBody">
+                    <div class="card-body h-100">
+                        <div class="row h-100">
+                            <div class="col-auto left-menu h-100">
+                                <ul class="nav nav-tabs tab-header">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" aria-current="page">Item</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark">Other</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content tab-body tab-body-h-o">
+                                    <div class="tab-pane fade show active p-2 pb-0 border border-top-0 h-100" tabindex="0">
+                                        <div class="row h-100">
+                                            @*      <partial name="PreviewSaleInvoiceItem.cshtml" model="@Model.InvoiceItem" /> *@
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto right-menu text-center border-start">
+                                <a class="ItemIncome btn btn-sm btn-primary px-2 mb-2 w-100 OneItemMode" disabled>
+                                    Item Misc. Income
+                                </a>
+                                <a class="GSTView btn btn-sm btn-primary px-2 mb-2 w-100 OneItemMode" disabled>
+                                    GST
+                                </a>
+                                <a class="ItemBatch btn btn-sm btn-primary px-2 mb-2 w-100 OneItemMode" disabled>
+                                    Batch
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</form>

@@ -370,7 +370,8 @@ namespace ERP_DAO.JobInwardTransaction
                             JIDNI_Qty,
                             JIDNI_UnitPrice,
                             JIDNI_Amount,
-                            JIDNI_JW_InvoiceTracking
+                            JIDNI_JW_InvoiceTracking,
+                            JISVOH_Number
                         )
 
                         OUTPUT INSERTED.JIDNI_Number
@@ -385,7 +386,8 @@ namespace ERP_DAO.JobInwardTransaction
                             @JIDNI_Qty,
                             @JIDNI_UnitPrice,
                             @JIDNI_Amount,
-                            @JIDNI_JW_InvoiceTracking
+                            @JIDNI_JW_InvoiceTracking,
+                            @JISVOH_Number
                         )", con, tr))
                             {
                                 cmd.Parameters.AddWithValue("@JIDNI_JIDNH_Number", DN_Number);
@@ -397,6 +399,7 @@ namespace ERP_DAO.JobInwardTransaction
                                 cmd.Parameters.AddWithValue("@JIDNI_UnitPrice", item.JIDNI_UnitPrice);
                                 cmd.Parameters.AddWithValue("@JIDNI_Amount", item.JIDNI_Amount);
                                 cmd.Parameters.AddWithValue("@JIDNI_JW_InvoiceTracking", item.JIDNI_JW_InvoiceTracking);
+                                cmd.Parameters.AddWithValue("@JISVOH_Number", item.JISVOH_Number);
 
                                 insertedItemNumber =
                                     Convert.ToInt64(cmd.ExecuteScalar());
@@ -1739,7 +1742,35 @@ WHERE I.Item_Number =@Item_Number
 
         #endregion
 
- 
+        public DataSet GetServiceOrderDB(long customerId)
+        {
+            try
+            {
+                Database db = new SqlDatabase(DB.Connection());
+
+                DbCommand cmd = db.GetStoredProcCommand("JI_ServiceOrder_GetByCustomer_SP");
+
+                db.AddInParameter(cmd, "@CustomerId", DbType.Int64, customerId);
+
+                return db.ExecuteDataSet(cmd);
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception(
+                    "SQL Error : " + ex.Message +
+                    Environment.NewLine +
+                    "Procedure : JI_ServiceOrder_GetByCustomer_SP",
+                    ex
+                );
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(
+                    "Application Error : " + ex.Message,
+                    ex
+                );
+            }
+        }
 
     }
 

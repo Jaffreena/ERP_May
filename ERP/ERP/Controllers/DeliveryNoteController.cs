@@ -1414,7 +1414,27 @@ namespace ERP.Controllers
             return Json(new { success = true });
         }
         #endregion
+        #region Get Service Order
+        [HttpGet]
+        public JsonResult GetServiceOrder(long customerId)
+        {
+            DeliveryNote_DAO dao = new DeliveryNote_DAO();
 
+            DataTable dt = dao.GetServiceOrderDB(customerId).Tables[0];
+
+            var data = dt.AsEnumerable().Select(r => new
+            {
+                value = r["JISVOH_Number"] == DBNull.Value ? 0 : Convert.ToInt64(r["JISVOH_Number"]),
+                text = r["JISVOH_ServiceOrderNo"] == DBNull.Value ? "" : r["JISVOH_ServiceOrderNo"].ToString()
+            }).ToList();
+
+            return new JsonResult(data, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = true
+            });
+        }
+        #endregion
     }
 
 
