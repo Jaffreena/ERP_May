@@ -18,7 +18,8 @@ namespace ERP_DTO.JobInwardTransaction
         [Display(Name = "Invoice Date")]
         [DataType(DataType.Date)]
         public DateTime JISVIH_InvoiceDate { get; set; }
-
+        [Display(Name = "Material Segregation")]
+        public long JISVIH_MS_Number { get; set; }
         [Display(Name = "JW Customer")]
         public long JISVIH_JW_Customer_Number { get; set; }
         public string JISVIH_JW_Customer_Name { get; set; }

@@ -30,7 +30,7 @@ namespace ERP_DAO.JobInwardTransaction
             DN_DTO.Header.JISVIH_InvoiceDate = DateTime.Now;
             db.AddInParameter(cmd, "@JISVIH_InvoiceDate", DbType.Date, DN_DTO.Header.JISVIH_InvoiceDate);
             //db.AddInParameter(cmd, "@JIDNI_Item_Code", DbType.String, DN_DTO.Header.it);
-            //db.AddInParameter(cmd, "@DN_CUS_Number", DbType.Int32, DN_DTO.Header.DN_CUS_Number);
+            //db.AddInParameter(cmd, "@DN_CUS_Number", DbType.Int32, DN_DTO.Header.JISVIH_JW_Customer_Number);
             //db.AddInParameter(cmd, "@DN_ADD_ADTP_Number", DbType.Int32, DN_DTO.Header.DN_ADD_ADTP_Number);
 
 
@@ -51,22 +51,19 @@ namespace ERP_DAO.JobInwardTransaction
             return db.ExecuteDataSet(cmd);
         }
 
-        public DataSet GetDeliveryNote_GroupItem(long CustomerNumber)
+        public DataSet GetDeliveryNote_GroupItem(long CustomerNumber, long MSNumber)
         {
             Database db = new SqlDatabase(DB.Connection());
-
             DbCommand cmd = db.GetStoredProcCommand("JI_GetDeliveryNote_GroupItem_SP");
 
-            db.AddInParameter(cmd,
-                              "@CustomerNumber",
-                              DbType.Int64,
-                              CustomerNumber);
+            db.AddInParameter(cmd, "@CustomerNumber", DbType.Int64, CustomerNumber);
+            db.AddInParameter(cmd, "@MSNumber", DbType.Int64, MSNumber);
 
             return db.ExecuteDataSet(cmd);
         }
 
         #region Header Save
-      
+
         #region get default address
 
         public DataSet GetJWCAddressDB(long JWCNumber)
@@ -83,7 +80,24 @@ namespace ERP_DAO.JobInwardTransaction
 
             return db.ExecuteDataSet(cmd);
         }
-     
+
+        #endregion
+        #region Get Jobwork Invoice Address
+
+        public DataSet GetJobworkInvoiceAddressDB(long JISVIHNumber)
+        {
+            Database db = new SqlDatabase(DB.Connection());
+
+            DbCommand cmd = db.GetStoredProcCommand("JI_JobworkInvoiceAddress_GetByJISVIHNumber");
+
+            db.AddInParameter(cmd,
+                              "@JISVIH_Number",
+                              DbType.Int64,
+                              JISVIHNumber);
+
+            return db.ExecuteDataSet(cmd);
+        }
+
         #endregion
         public void JobworkInvoiceInsertDB(JobworkInvoiceCreate_DTO Invoice_DTO)
          {
@@ -392,7 +406,8 @@ namespace ERP_DAO.JobInwardTransaction
 
                 cmd.Parameters.AddWithValue("@JISVIH_JW_Customer_Number",
                     Invoice_DTO.Header.JISVIH_JW_Customer_Number);
-
+                cmd.Parameters.AddWithValue("@JISVIH_MS_Number",
+                   Invoice_DTO.Header.JISVIH_MS_Number);
                 cmd.Parameters.AddWithValue("@JISVIH_Currency_Number",
                     Invoice_DTO.Header.JISVIH_Currency_Number);
 
@@ -708,6 +723,10 @@ namespace ERP_DAO.JobInwardTransaction
                 cmd.Parameters.AddWithValue(
                     "@JISVIH_Number",
                     DN_DTO.Header.JISVIH_Number);
+                cmd.Parameters.AddWithValue(
+                "@JISVIH_MS_Number",
+                DN_DTO.Header.JISVIH_MS_Number);
+
 
                 cmd.Parameters.AddWithValue(
                     "@JISVIH_InvoiceNo",
@@ -757,36 +776,38 @@ namespace ERP_DAO.JobInwardTransaction
         {
             DataTable dt = new DataTable();
 
-            dt.Columns.Add("JISVII_JISVIH_Number", typeof(long));
-            dt.Columns.Add("JISVII_Number", typeof(long));
-            dt.Columns.Add("JISVII_JISVOH_Number", typeof(long));
-            dt.Columns.Add("JISVII_JIDNH_Number", typeof(long));
-            dt.Columns.Add("JIDNI_Number", typeof(long));              // Added
-            dt.Columns.Add("JISVII_PRS_Number", typeof(long));
-            dt.Columns.Add("JISVII_Item_Number", typeof(long));
-            dt.Columns.Add("JISVII_UoM_Number", typeof(long));
-            dt.Columns.Add("JISVII_Qty", typeof(decimal));
-            dt.Columns.Add("JISVII_UnitPrice", typeof(decimal));
-            dt.Columns.Add("JISVII_Amount", typeof(decimal));
-            dt.Columns.Add("JISVII_SAC_Number", typeof(long));
-            dt.Columns.Add("JISVII_GST_Amount", typeof(decimal));
+            dt.Columns.Add("JISVII_JISVIH_Number", typeof(long));   // 1
+            dt.Columns.Add("JISVII_Number", typeof(long));          // 2
+            dt.Columns.Add("JISVOI_Number", typeof(long));          // 3 <-- Missing
+            dt.Columns.Add("JISVII_JISVOH_Number", typeof(long));   // 4
+            dt.Columns.Add("JISVII_JIDNH_Number", typeof(long));    // 5
+            dt.Columns.Add("JIDNI_Number", typeof(long));           // 6
+            dt.Columns.Add("JISVII_PRS_Number", typeof(long));      // 7
+            dt.Columns.Add("JISVII_Item_Number", typeof(long));     // 8
+            dt.Columns.Add("JISVII_UoM_Number", typeof(long));      // 9
+            dt.Columns.Add("JISVII_Qty", typeof(decimal));          // 10
+            dt.Columns.Add("JISVII_UnitPrice", typeof(decimal));    // 11
+            dt.Columns.Add("JISVII_Amount", typeof(decimal));       // 12
+            dt.Columns.Add("JISVII_SAC_Number", typeof(long));      // 13
+            dt.Columns.Add("JISVII_GST_Amount", typeof(decimal));   // 14
 
             foreach (var item in DN_DTO.Items)
             {
                 dt.Rows.Add(
-                    DN_DTO.Header.JISVIH_Number,
-                    item.JISVII_Number,
-                    item.JISVII_JISVOH_Number,
-                    item.JISVII_JIDNH_Number,
-                    item.JIDNI_Number,              // Added
-                    item.JISVII_PRS_Number,
-                    item.JISVII_Item_Number,
-                    item.JISVII_UoM_Number,
-                    item.JISVII_Qty,
-                    item.JISVII_UnitPrice,
-                    item.JISVII_Amount,
-                    item.JISVII_SAC_Number,
-                    item.JISVII_GST_Amount
+                    DN_DTO.Header.JISVIH_Number,   // 1
+                    item.JISVII_Number,            // 2
+                    item.JISVOI_Number,            // 3 <-- Added
+                    item.JISVII_JISVOH_Number,     // 4
+                    item.JISVII_JIDNH_Number,      // 5
+                    item.JIDNI_Number,             // 6
+                    item.JISVII_PRS_Number,        // 7
+                    item.JISVII_Item_Number,       // 8
+                    item.JISVII_UoM_Number,        // 9
+                    item.JISVII_Qty,               // 10
+                    item.JISVII_UnitPrice,         // 11
+                    item.JISVII_Amount,            // 12
+                    item.JISVII_SAC_Number,        // 13
+                    item.JISVII_GST_Amount         // 14
                 );
             }
 

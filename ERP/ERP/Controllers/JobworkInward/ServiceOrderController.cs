@@ -24,6 +24,38 @@ namespace ERP.Controllers.JobworkInward
         ServiceOrder_DAO SO_DAO =    new ServiceOrder_DAO();
         ServiceOrder_DL SO_DL = new ServiceOrder_DL();
         [HttpPost]
+        public IActionResult UpdateServiceOrder([FromBody] JI_ServiceOrder_DTO dto)
+        {
+            try
+            {
+                if (dto == null)
+                    return Json(new { success = false, message = "DTO is null" });
+
+                if (dto.Header == null)
+                    return Json(new { success = false, message = "Header is null" });
+
+                if (dto.Header.JISVOH_Number <= 0)
+                    return Json(new { success = false, message = "Invalid Service Order Number" });
+
+                ServiceOrder_DAO dao = new ServiceOrder_DAO();
+                dao.ServiceOrderUpdateDB(dto);
+
+                return Json(new
+                {
+                    success = true,
+                    redirectUrl = Url.Action("Index", "ServiceOrder")
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+        }
+        [HttpPost]
         public IActionResult SaveServiceOrder(
     [FromBody] JI_ServiceOrder_DTO dto)
         {
@@ -116,8 +148,8 @@ namespace ERP.Controllers.JobworkInward
 
             GetServiceOrderData();
 
-
-                return View();
+            ViewBag.Collapse = true;
+            return View();
           
         }
 
@@ -125,7 +157,7 @@ namespace ERP.Controllers.JobworkInward
         {
 
             GetServiceOrderData();
-
+            ViewBag.Collapse = true;
 
             return View();
 

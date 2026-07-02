@@ -309,7 +309,7 @@ $(document).on(
 function CalculateBatchFooter() {
 
     let totalQty = 0;
-
+    let totalReservedQty = 0;
     let totalValue = 0;
     let totalAvailableQty = 0;
 
@@ -335,6 +335,7 @@ function CalculateBatchFooter() {
                         .find(".JIDNI_BCH_BatchValue")
                         .val()
                 ) || 0;
+            totalReservedQty += parseFloat($(this).find(".JIDNI_BCH_QtyReserved").val()) || 0;
 
         });
 
@@ -345,6 +346,7 @@ function CalculateBatchFooter() {
         .val(totalValue.toFixed(2));
     $("#TotalAvailableQty")
         .val(totalAvailableQty.toFixed(2));
+    $("#TotalReservedQty").val(totalReservedQty.toFixed(2));
 }
 
 //#endregion
@@ -485,124 +487,136 @@ $(document).on(
 
 $(document).on("click", ".OpenBatchPopup", function (e) {
 
-    e.preventDefault();
-    //console.log("ROW ID :", rowID);
-    AssignItemRowID();
 
-    let checkedCheckbox = $(".CheckItem:checked");
 
-    //#region VALIDATION
+    
+        e.preventDefault();
+        //console.log("ROW ID :", rowID);
+        AssignItemRowID();
 
-    if (checkedCheckbox.length <= 0) {
-        alert("Please select at least one row");
-        return false;
-    }
+        let checkedCheckbox = $(".CheckItem:checked");
 
-    if (checkedCheckbox.length > 1) {
-        alert("Please select only one row");
-        return false;
-    }
+        //#region VALIDATION
 
-    //#endregion
-
-    let selectedRow = checkedCheckbox.closest("tr");
-
-    CurrentBatchItemRow = selectedRow;
-
-    let rowID = CurrentBatchItemRow.attr("data-rowid");
-
-    let ItemGridindex =
-        $("#TableBody tr[data-rowid='" + rowID + "']").index();
-
-    //#region GET VALUES
-
-    let fromWarehouse =
-        selectedRow.find(".JIDNI_WH_Number").val();
-
-    let lineItemNumber =
-        selectedRow.find(".JIDNI_Item_Number").val();
-
-    let invoiceQty =
-        selectedRow.find(".JIDNI_Qty").val();
-
-    $("#BatchPopupQty").text(invoiceQty);
-
-    //#endregion
-
-   
-    // CLEAR TEMP ARRAY
-    DeliveryNoteBatchList = [];
-
-    // CLEAR OLD ROWS
-    $("#DeliveryNoteBatchTableBody")
-        .find(".DeliveryNoteBatchRow")
-        .remove();
-
-    //#region AJAX
-
-    $.ajax({
-
-        url: "/DeliveryNote/GetBatchDetails",
-
-        type: "GET",
-
-        data: {
-            FromWarehouse: fromWarehouse,
-            LineItem_Number: lineItemNumber,
-            ItemGridIndex: ItemGridindex
-        },
-
-        success: function (response) {
-
-            console.log(response);
-
-            DeliveryNoteBatchList = [];
-
-            if (response && response.length > 0) {
-
-                $.each(response, function (i, batch) {
-
-                    DeliveryNoteBatchList.push({
-
-                        JIDNI_BCH_WH_Number: batch.fromWarehouse,
-                        JIDNI_BCH_JIDNI_Number: lineItemNumber,
-                        JIDNI_BCH_WH_Name: batch.wareHouseCode,
-                        JIDNI_BCH_BatchDate:batch.batchDate,
-                        JIDNI_BCH_BatchNo:batch.batchNo,
-                        JIDNI_BCH_QtyAvailable: batch.availableQty,
-                        JIDNI_BCH_QtyReserved: batch.reservedQty,
-                        JIDNI_BCH_QtyInvoice: batch.deliveredQty,
-                        JIDNI_BCH_BatchUnitPrice:batch.batchUnitPrice,
-                        JIDNI_BCH_BatchValue: batch.batchValue,
-                        JIDNI_BCH_Number : batch.lineBatch_Number
-                    });
-
-                });
-
-            } else {
-
-                DeliveryNoteBatchList.push({});
-            }
-
-            BindDeliveryNoteBatchTable();
-            BindOtherBatch(fromWarehouse, lineItemNumber, ItemGridindex);
-
-            $("#DeliveryNoteBatchModal")
-                .modal("show");
-        },
-
-        error: function (xhr, status, error) {
-
-            console.log("Status:", status);
-            console.log("Error:", error);
-            console.log("Response Text:", xhr.responseText);
-
-            alert("Error loading batch details");
+        if (checkedCheckbox.length <= 0) {
+            alert("Please select at least one row");
+            return false;
         }
 
-    });
+        if (checkedCheckbox.length > 1) {
+            alert("Please select only one row");
+            return false;
+        }
 
-    //#endregion
+        //#endregion
+
+        let selectedRow = checkedCheckbox.closest("tr");
+
+        CurrentBatchItemRow = selectedRow;
+
+        let rowID = CurrentBatchItemRow.attr("data-rowid");
+
+        let ItemGridindex =
+            $("#TableBody tr[data-rowid='" + rowID + "']").index();
+
+        //#region GET VALUES
+
+        let fromWarehouse =
+            selectedRow.find(".JIDNI_WH_Number").val();
+
+        let lineItemNumber =
+            selectedRow.find(".JIDNI_Item_Number").val();
+
+        let invoiceQty =
+            selectedRow.find(".JIDNI_Qty").val();
+
+        $("#BatchPopupQty").text(invoiceQty);
+
+        //#endregion
+
+
+        // CLEAR TEMP ARRAY
+        DeliveryNoteBatchList = [];
+
+        // CLEAR OLD ROWS
+        $("#DeliveryNoteBatchTableBody")
+            .find(".DeliveryNoteBatchRow")
+            .remove();
+
+        //#region AJAX
+
+        $.ajax({
+
+            url: "/DeliveryNote/GetBatchDetails",
+
+            type: "GET",
+
+            data: {
+                FromWarehouse: fromWarehouse,
+                LineItem_Number: lineItemNumber,
+                ItemGridIndex: ItemGridindex
+            },
+
+            success: function (response) {
+
+                console.log(response);
+
+                DeliveryNoteBatchList = [];
+
+                if (response && response.length > 0) {
+
+                    $.each(response, function (i, batch) {
+
+                        DeliveryNoteBatchList.push({
+
+                            JIDNI_BCH_WH_Number: batch.fromWarehouse,
+                            JIDNI_BCH_JIDNI_Number: lineItemNumber,
+                            JIDNI_BCH_WH_Name: batch.wareHouseCode,
+                            JIDNI_BCH_BatchDate: batch.batchDate,
+                            JIDNI_BCH_BatchNo: batch.batchNo,
+                            JIDNI_BCH_QtyAvailable: batch.availableQty,
+                            JIDNI_BCH_QtyReserved: batch.reservedQty,
+                            JIDNI_BCH_QtyInvoice: batch.deliveredQty,
+                            JIDNI_BCH_BatchUnitPrice: batch.batchUnitPrice,
+                            JIDNI_BCH_BatchValue: batch.batchValue,
+                            JIDNI_BCH_Number: batch.lineBatch_Number
+                        });
+
+                    });
+
+                } else {
+
+                    DeliveryNoteBatchList.push({});
+                }
+
+                BindDeliveryNoteBatchTable();
+                BindOtherBatch(fromWarehouse, lineItemNumber, ItemGridindex);
+
+                //#region logic for mismatch qty
+                var currentItemGridSelectedRow = GetCheckedRowId();
+                ApplyBatchValues(currentItemGridSelectedRow);
+                //#endregion
+
+        
+
+                $("#DeliveryNoteBatchModal")
+                    .modal("show");
+            },
+
+            error: function (xhr, status, error) {
+
+                console.log("Status:", status);
+                console.log("Error:", error);
+                console.log("Response Text:", xhr.responseText);
+
+                alert("Error loading batch details");
+            }
+
+        });
+
+        //#endregion
+   
+  
 
 });
 
@@ -623,7 +637,31 @@ $("#DeliveryNoteBatchModal").on("shown.bs.modal", function () {
 
 });
 
-//#endregion SHOW BATCH 
+//#endregion SHOW BATCH
+
+//#region apply batch values
+function ApplyBatchValues(rowId) {
+
+    let batchValues = GetBatchValues(rowId);
+
+    if (batchValues.length === 0)
+        return;
+
+    let rows = $("#DeliveryNoteBatchTableBody tr")
+        .not("#DeliveryNoteBatchTemplateRow");
+
+    if (rows.length !== batchValues.length)
+        return;
+
+    rows.each(function (index) {
+
+        $(this)
+            .find(".JIDNI_BCH_QtyInvoice")
+            .val(batchValues[index]);
+    });
+    CalculateBatchFooter();
+}
+//#endregion
 
 //#region ADD DATA TO ARRAY
 
@@ -696,8 +734,43 @@ function BindDeliveryNoteOtherBatchTable(response) {
         tbody.append(row);
 
     });
+    if (response.length === 0) {
+        tbody.append(`
+        <tr class="DeliveryNoteOtherBatchRow">
+            <td style="height:25px;"></td>
+            <td></td>
+            <td></td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+        </tr>
+    `);
+        return;
+    }
 
-   // CalculateOtherBatchFooter();
+    CalculateOtherBatchFooter();
+}
+function CalculateOtherBatchFooter() {
+
+    let totalQty = 0;
+    let totalValue = 0;
+
+    $("#DeliveryNoteOtherBatchTableBody .DeliveryNoteOtherBatchRow").each(function () {
+
+        totalQty += parseFloat($(this)
+            .find(".JIDNI_BCH_AvailableQty").val()) || 0;
+
+        totalValue += parseFloat($(this)
+            .find(".JIDNI_BCH_BatchValue").val()) || 0;
+    });
+
+    $("#TotalBatchQtyOther").val(totalQty.toFixed(2));
+    $("#TotalBatchValueOther").val(totalValue.toFixed(2));
+
+    if ($("#DeliveryNoteOtherBatchTableBody .DeliveryNoteOtherBatchRow").length > 0)
+        $("#DeliveryNoteOtherBatchList tfoot").show();
+    else
+        $("#DeliveryNoteOtherBatchList tfoot").hide();
 }
 function BindOtherBatch(fromWarehouse, lineItemNumber, ItemGridindex) {
     //#region AJAX
@@ -742,7 +815,8 @@ function BindOtherBatch(fromWarehouse, lineItemNumber, ItemGridindex) {
 function BindDeliveryNoteBatchTable() {
 
     $("#DeliveryNoteBatchTableBody").find(".DeliveryNoteBatchRow").remove();
- 
+   
+
     $.each(DeliveryNoteBatchList, function (index, data) {
 
         // Check required values
@@ -797,6 +871,20 @@ function BindDeliveryNoteBatchTable() {
 
             $("#DeliveryNoteBatchTableBody").append(row);
 
+        } else {
+
+            $("#DeliveryNoteBatchTableBody").append(`
+    <tr class="DeliveryNoteBatchRow">
+        <td style="height:25px;"></td>
+        <td style="height:25px;"></td>
+        <td style="height:25px;"></td>
+        <td style="height:25px;"></td>
+        <td style="height:25px;"></td>
+        <td style="height:25px;"></td>
+        <td style="height:25px;"></td>
+        <td style="height:25px;"></td>
+    </tr>
+`);
         }
 
     });
@@ -807,6 +895,7 @@ function BindDeliveryNoteBatchTable() {
 //#endregion
 
 //#region QTY INVOICE VALIDATION
+
 function ValidateBatchQty() {
 
     let InvoiceQty =
@@ -831,17 +920,58 @@ function ValidateBatchQty() {
     if (InvoiceQty !== BatchQty) {
 
         alert("Qty Mismatch !");
-
+        var ItemGridRowSelected = GetCheckedRowId();
+        console.log('----ItemGridRowSelected--------' + ItemGridRowSelected)
+        StoreBatchMismatch(ItemGridRowSelected);
         CloseDeliveryNoteBatchModal();
 
          
         return false;
+    } else {
+
+        let rowId = GetCheckedRowId();
+
+        batchMismatchData =
+            batchMismatchData.filter(x => x.rowId !== rowId);
     }
 
     return true;
 }
+
+let batchMismatchData = [];
 //#endregion
 
+//#region batch mismatch fill grid
+function GetBatchValues(rowId) {
+
+    let row = batchMismatchData.find(x => x.rowId === rowId);
+
+    return row ? row.batchValues : [];
+}
+function StoreBatchMismatch(rowId) {
+
+    let batchValues = $("#DeliveryNoteBatchTableBody tr")
+        .not("#DeliveryNoteBatchTemplateRow")
+        .map(function () {
+            return parseFloat(
+                removeCommas(
+                    $(this).find(".JIDNI_BCH_QtyInvoice").val()
+                )
+            ) || 0;
+        }).get();
+
+    batchMismatchData =
+        batchMismatchData.filter(x => x.rowId !== rowId);
+
+    batchMismatchData.push({
+        rowId: rowId,
+        batchValues: batchValues
+    });
+    console.log('-------batchMismatchData--------' + JSON.stringify(batchMismatchData));
+   
+}
+//#endregion
+ 
 //#region  focus item grid on qty mismatch
 function FocusItemGridQty() {
 
@@ -1013,5 +1143,22 @@ function SaveTempBatch() {
             console.log(xhr.responseText);
         }
     });
+}
+//#endregion
+
+//#region get item checked row
+function GetCheckedRowId() {
+
+    let rowId = -1;
+
+    $("#TableBody tr.NewRow:visible").each(function (index) {
+
+        if ($(this).find(".CheckItem").prop("checked")) {
+            rowId = index + 1;
+            return false; // break
+        }
+    });
+
+    return rowId;
 }
 //#endregion

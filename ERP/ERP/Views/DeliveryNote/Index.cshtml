@@ -39,8 +39,10 @@
 <form asp-action="SaveDeliveryNote"
       method="post"
       id="DeliveryNoteForm">
+
      
     <!-- Address Popup -->
+   
     <div class="modal fade" id="BuyerAddress" tabindex="-1">
 
         <div class="modal-dialog modal-xl modal-dialog-centered">
@@ -101,34 +103,6 @@
 
                             </tr>
 
-
-                            <!-- 🔥 FIRST ROW (ALWAYS SHOWN EMPTY ROW) -->
-                            <tr class="AddNewRow">
-
-                                <td>
-                                    <select class="form-select JIDNA_ADTP_Number"
-                                            asp-items="@ViewBag.AddressType"></select>
-                                </td>
-
-                                <td>
-                                    <select class="form-select JIDNA_Address_ID"
-                                            asp-items="@ViewBag.AddressID"></select>
-                                </td>
-
-                                <td><input class="form-control JIDNA_Address" readonly></td>
-                                <td><input class="form-control JIDNA_City" readonly></td>
-                                <td><input class="form-control JIDNA_State" readonly></td>
-                                <td><input class="form-control JIDNA_Country" readonly></td>
-                                <td><input class="form-control JIDNA_PIN" readonly></td>
-                                <td><input class="form-control JIDNA_GSTIN" readonly></td>
-
-                                <td>
-                                    <input type="hidden" class="JIDNA_IsDeleted" value="0">
-                                    <a class="AddRowRemove btn text-danger">🗑</a>
-                                </td>
-
-                            </tr>
-
                         </tbody>
 
                     </table>
@@ -153,7 +127,9 @@
         </div>
 
     </div>
-  <!-- Batch Popup -->
+ 
+    
+    <!-- Batch Popup -->
     <div class="modal custom-modal-width fade"
      id="DeliveryNoteBatchModal"
      data-bs-backdrop="static"
@@ -537,39 +513,31 @@
                                     </tbody>
 
                                     <!-- Footer -->
-                                    <tfoot style="display:none">
-
+                                    <tfoot>
                                         <tr class="table-info">
 
-                                            
+                                            <td></td>
+                                            <td></td>
 
                                             <td class="text-end fw-bold">
                                                 Total Qty
                                             </td>
- 
-
-                                           
 
                                             <td>
-
                                                 <input id="TotalBatchQtyOther"
                                                        class="form-control text-end"
                                                        readonly>
-
                                             </td>
 
                                             <td></td>
 
                                             <td>
-
                                                 <input id="TotalBatchValueOther"
                                                        class="form-control text-end"
                                                        readonly>
-
                                             </td>
 
                                         </tr>
-
                                     </tfoot>
 
                                 </table>
@@ -975,10 +943,7 @@
                                                                                        id="IndexAllCheckItem">
 
                                                                             </th>
-                                                                                <th>
-                                                                                    Service Order No
-                                                                                </th>
-
+                                                                              
                                                                             <th>
                                                                                 Process
                                                                             </th>
@@ -1038,6 +1003,9 @@
                                                                             <th class="table-width-md text-center">
                                                                                 JW Invoice Applicable
                                                                             </th>
+                                                                                <th>
+                                                                                    Service Order No
+                                                                                </th>
 
                                                                         </tr>
 
@@ -1055,13 +1023,7 @@
                                                                                        class="CheckItem form-check-input">
 
                                                                             </td>
-                                                                                <td>
-                                                                                    <select id="JISVOH_Number"
-                                                                                            class="form-select JISVOH_Number"
-                                                                                             asp-items="@ViewBag.SON">
-                                                                                     
-                                                                                    </select>
-                                                                                </td>
+                                                                              
 
                                                                             <!-- PROCESS -->
                                                                             <td>
@@ -1216,7 +1178,13 @@
                                                                                        value="false" />
 
                                                                             </td>
-
+                                                                                <!-- so dropdown -->
+                                                                            <td>
+                                                                                    <select id="JISVOH_Number"
+                                                                                            class="form-select JISVOH_Number"
+                                                                                            asp-items="@ViewBag.SON">
+                                                                                    </select>
+                                                                                </td>
                                                                         </tr>
 
                                                                         <!-- FIRST ROW -->
@@ -1228,12 +1196,7 @@
                                                                                        class="CheckItem form-check-input">
 
                                                                             </td>
-                                                                            <td>
-                                                                                    <select name="Items[0].JISVOH_Number"
-                                                                                            class="form-select JISVOH_Number"
-                                                                                              asp-items="@ViewBag.SON">
-                                                                                    </select>
-                                                                                </td>
+                                                                          
                                                                               
                                                                             <!-- PROCESS -->
                                                                             <td>
@@ -1388,7 +1351,12 @@
                                                                                        value="false" />
 
                                                                             </td>
-
+                                                                                <td>
+                                                                                    <select name="Items[0].JISVOH_Number"
+                                                                                            class="form-select JISVOH_Number"
+                                                                                            asp-items="@ViewBag.SON">
+                                                                                    </select>
+                                                                                </td>
                                                                         </tr>
 
                                                                     </tbody>
@@ -1417,6 +1385,7 @@
                                                                             </td>
 
                                                                             <td>
+                                                                                    
                                                                             </td>
 
                                                                             <td>

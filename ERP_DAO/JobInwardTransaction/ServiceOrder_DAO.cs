@@ -46,6 +46,31 @@ namespace ERP_DAO.JobInwardTransaction
 
             return db.ExecuteDataSet(cmd);
         }
+        public void ServiceOrderUpdateDB(JI_ServiceOrder_DTO serviceOrderDTO)
+        {
+            using SqlConnection con = new SqlConnection(DB.Connection());
+            con.Open();
+
+            using SqlTransaction tr = con.BeginTransaction();
+
+            try
+            {
+                ServiceOrderHeadUpdate(serviceOrderDTO, con, tr);
+
+                ServiceOrderItemUpdate(
+                    serviceOrderDTO.Header.JISVOH_Number,
+                    serviceOrderDTO.Items,
+                    con,
+                    tr);
+
+                tr.Commit();
+            }
+            catch
+            {
+                tr.Rollback();
+                throw;
+            }
+        }
         public void ServiceOrderInsertDB(JI_ServiceOrder_DTO serviceOrderDTO)
         {
             using (SqlConnection con =
@@ -89,6 +114,29 @@ namespace ERP_DAO.JobInwardTransaction
                 }
             }
         }
+        private void ServiceOrderHeadUpdate(JI_ServiceOrder_DTO dto, SqlConnection con, SqlTransaction tr)
+        {
+            using SqlCommand cmd = new SqlCommand("JI_ServiceOrderHead_Update_SP", con, tr);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            var h = dto.Header;
+
+            cmd.Parameters.AddWithValue("@JISVOH_Number", h.JISVOH_Number);
+            cmd.Parameters.AddWithValue("@JISVOH_RegNo", h.JISVOH_RegNo);
+            cmd.Parameters.AddWithValue("@JISVOH_RegDate", h.JISVOH_RegDate);
+            cmd.Parameters.AddWithValue("@JISVOH_ServiceOrderNo", h.JISVOH_ServiceOrderNo);
+            cmd.Parameters.AddWithValue("@JISVOH_ServiceOrderDate", h.JISVOH_ServiceOrderDate);
+            cmd.Parameters.AddWithValue("@JISVOH_JW_Customer_Number", h.JISVOH_JW_Customer_Number);
+            cmd.Parameters.AddWithValue("@JISVOH_Currency_Number", h.JISVOH_Currency_Number);
+            cmd.Parameters.AddWithValue("@JISVOH_PaymentTerms", h.JISVOH_PaymentTerms ?? "");
+            cmd.Parameters.AddWithValue("@JISVOH_DeliveryTerms", h.JISVOH_DeliveryTerms ?? "");
+            cmd.Parameters.AddWithValue("@JISVOH_DeliveryMode", h.JISVOH_DeliveryMode ?? "");
+            cmd.Parameters.AddWithValue("@JISVOH_Tax", h.JISVOH_Tax ?? "");
+            cmd.Parameters.AddWithValue("@JISVOH_TDC", h.JISVOH_TDC ?? "");
+            cmd.Parameters.AddWithValue("@JISVOH_Remarks", h.JISVOH_Remarks ?? "");
+
+            cmd.ExecuteNonQuery();
+        }
         private long ServiceOrderHeadInsert(
     JI_ServiceOrder_DTO dto,
     SqlConnection con,
@@ -115,6 +163,40 @@ namespace ERP_DAO.JobInwardTransaction
             cmd.Parameters.AddWithValue("@JISVOH_Remarks", h.JISVOH_Remarks ?? "");
 
             return Convert.ToInt64(cmd.ExecuteScalar());
+        }
+        private DataTable CreateServiceOrderItemUpdateTable(List<JI_ServiceOrderItem_DTO> items)
+        {
+            DataTable dt = new DataTable();
+
+            dt.Columns.Add("JISVOI_Number", typeof(long));
+            dt.Columns.Add("JISVOI_PRS_Number", typeof(long));
+            dt.Columns.Add("JISVOI_Item_Number", typeof(long));
+            dt.Columns.Add("JISVOI_UoM_Number", typeof(long));
+            dt.Columns.Add("JISVOI_Qty", typeof(double));
+            dt.Columns.Add("JISVOI_UnitPrice", typeof(double));
+            dt.Columns.Add("JISVOI_Amount", typeof(double));
+            dt.Columns.Add("JISVOI_DeliveryDate", typeof(DateTime));
+
+            foreach (var item in items)
+            {
+                if (item.JISVOI_IsDeleted)
+                    continue;
+
+                DataRow row = dt.NewRow();
+
+                row["JISVOI_Number"] = item.JISVOI_Number > 0 ? item.JISVOI_Number : DBNull.Value;
+                row["JISVOI_PRS_Number"] = item.JISVOI_PRS_Number;
+                row["JISVOI_Item_Number"] = item.JISVOI_Item_Number;
+                row["JISVOI_UoM_Number"] = item.JISVOI_UoM_Number;
+                row["JISVOI_Qty"] = item.JISVOI_Qty;
+                row["JISVOI_UnitPrice"] = item.JISVOI_UnitPrice;
+                row["JISVOI_Amount"] = item.JISVOI_Amount;
+                row["JISVOI_DeliveryDate"] = item.JISVOI_DeliveryDate.HasValue ? item.JISVOI_DeliveryDate.Value : DBNull.Value;
+
+                dt.Rows.Add(row);
+            }
+
+            return dt;
         }
         private DataTable CreateServiceOrderItemTable(
     List<JI_ServiceOrderItem_DTO> items)
@@ -163,6 +245,21 @@ namespace ERP_DAO.JobInwardTransaction
             }
 
             return dt;
+        }
+        private void ServiceOrderItemUpdate(long headerNumber, List<JI_ServiceOrderItem_DTO> items, SqlConnection con, SqlTransaction tr)
+        {
+            DataTable dt = CreateServiceOrderItemUpdateTable(items);
+
+            using SqlCommand cmd = new SqlCommand("JI_ServiceOrderItem_Update_SP", con, tr);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("@JISVOH_Number", headerNumber);
+
+            SqlParameter param = cmd.Parameters.AddWithValue("@Items", dt);
+            param.SqlDbType = SqlDbType.Structured;
+            param.TypeName = "dbo.JI_ServiceOrderItem_Update_TableType";
+
+            cmd.ExecuteNonQuery();
         }
         private void ServiceOrderItemBulkInsert(long headerNumber, List<JI_ServiceOrderItem_DTO> items, SqlConnection con, SqlTransaction tr)
         {

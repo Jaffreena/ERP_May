@@ -1,17 +1,36 @@
 ﻿$(document).ready(function () {
 
+
+
+    //#region Row Click - Single Selection
+    $("#ItemTable").on("click", "tbody tr.NewRow", function (e) {
+
+        // If checkbox itself is clicked, don't run row click logic
+        if ($(e.target).closest(".CheckItem").length) {
+            return;
+        }
+
+        // Uncheck all row checkboxes
+        $("#ItemTable .CheckItem").prop("checked", false);
+
+        // Check only clicked row checkbox
+        $(this).find(".CheckItem").prop("checked", true);
+    });
+    //#endregion
+
+
+    //#region Checkbox Click - Multiple Selection
+    $("#ItemTable").on("click", ".CheckItem", function (e) {
+
+        // Prevent checkbox click from triggering row click
+        e.stopPropagation();
+    });
+    //#endregion
+
     //#region Initialize Flatpickr
     InitializeGstFlatpickrs();
 
-    function InitializeGstFlatpickrs() {
-        $(".datepicker").flatpickr({
-            dateFormat: "d-M-Y",   // 30-Apr-2026
-            altInput: true,        // shows formatted date
-            altFormat: "d-M-Y",   // display format
-            allowInput: true,     // user can type manually
-            defaultDate: new Date() // optional: today default
-        });
-    }
+ 
     DateBind();
     //#region onkeypress qty and unit
     $(document).on("keyup change", ".JISVOI_Qty, .JISVOI_UnitPrice", function () {
@@ -117,7 +136,20 @@
         $newRow.attr("data-rowid", rowID);
 
         $("#TableBody").append($newRow);
+        $newRow.find("td:last").html(`
+    <input name="Items[${rowIndex}].JISVOI_DeliveryDate"
+           type="text"
+           class="form-control datepicker JISVOI_DeliveryDate" />
+`);
 
+        $newRow.find(".datepicker").flatpickr({
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "d-M-Y",
+            allowInput: true,
+            defaultDate: new Date()
+        });
+       // SetRowDate($newRow);
         rowIndex++;
 
         calculateTotal();
@@ -141,7 +173,13 @@
             e.preventDefault();
             return false;
         }
+        let duplicateMessage = ValidateDuplicateItemCombination();
 
+        if (duplicateMessage) {
+            e.preventDefault();
+            showAlert(duplicateMessage);
+            return false;
+        }
         let model = CreateServiceOrderModel();
 
         console.log(JSON.stringify(model));
@@ -221,7 +259,52 @@
         calculateTotal();
     });
     //#endregion
+    let firstRow = $("#ItemTable tbody tr.NewRow:first");
+    autoAddRow(firstRow);
 });
+
+//#region validation
+function ValidateDuplicateItemCombination() {
+
+    let combinationMap = {};
+    let duplicateMessages = [];
+
+    $("#ItemTable tbody tr.NewRow").each(function (index) {
+
+        let row = $(this);
+
+        if (row.find(".JISVOI_IsDeleted").val() == "1") return;
+        if (!row.find(".JISVOI_Item_Number").val()) return;
+
+        let prs = row.find(".JISVOI_PRS_Number").val() || 0;
+        let item = row.find(".JISVOI_Item_Number").val() || 0;
+        let uom = row.find(".JISVOI_UoM_Number").val() || 0;
+
+        let key = prs + "_" + item + "_" + uom;
+        let rowNo = index + 1;
+
+        if (!combinationMap[key]) {
+            combinationMap[key] = [];
+        }
+
+        combinationMap[key].push(rowNo);
+    });
+
+    $.each(combinationMap, function (key, rows) {
+        if (rows.length > 1) {
+            duplicateMessages.push(
+                "Row # " + rows.join(", ") + " have the same combination of Process, Item and UoM"
+            );
+        }
+    });
+
+    if (duplicateMessages.length > 0) {
+        return duplicateMessages.join("\n");
+    }
+
+    return "";
+}
+//#endregion
 //#region auto add row function
 function autoAddRow(currentRow) {
 
@@ -277,6 +360,34 @@ function ClearAll() {
 
 }
 //#endregion
+function InitializeGstFlatpickrs() {
+    $(".datepicker").flatpickr({
+        dateFormat: "d-M-Y",   // 30-Apr-2026
+        altInput: true,        // shows formatted date
+        altFormat: "d-M-Y",   // display format
+        allowInput: true,     // user can type manually
+        defaultDate: new Date() // optional: today default
+    });
+}
+function SetRowDate($row) {
+    var today = new Date();
+
+    var day = String(today.getDate()).padStart(2, '0');
+
+    var months = [
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ];
+
+    var formattedDate =
+        day + "-" + months[today.getMonth()] + "-" + today.getFullYear();
+
+    var fp = $row.find(".datepicker")[0]?._flatpickr;
+
+    if (fp) {
+        fp.setDate(formattedDate, true, "d-M-Y");
+    }
+}
 function DateBind() {
     var today = new Date();
 

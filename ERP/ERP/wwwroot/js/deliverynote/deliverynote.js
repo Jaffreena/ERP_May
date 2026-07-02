@@ -2,6 +2,75 @@
 
 $(document).ready(function () {
 
+ 
+
+    //#region Unit Price Format
+
+    $(document).on("focusout", ".JIDNI_UnitPrice", function () {
+
+        // Get current input value
+        var value = $(this).val().trim();
+
+        // If empty or invalid, set default value
+        if (value === "" || isNaN(value)) {
+            $(this).val("0.00");
+            return;
+        }
+
+        // Convert to 2 decimal format
+        $(this).val(parseFloat(value).toFixed(2));
+    });
+
+    //#endregion
+
+    //#region INPUT CLICK SELECT ALL
+    $(document).on("click", "#DeliveryNoteBatchList input", function (e) {
+        e.stopPropagation();
+
+        let input = this;
+        input.focus();
+
+        setTimeout(function () {
+            input.select();
+        }, 10);
+    });
+    $(document).on("click", "#ItemTable input", function (e) {
+        e.stopPropagation();
+
+        let input = this;
+        input.focus();
+
+        setTimeout(function () {
+            input.select();
+        }, 10);
+    });
+    //#endregion
+
+    //#region Row Click - Single Selection
+    $("#ItemTable").on("click", "tbody tr.NewRow", function (e) {
+
+        // Ignore direct checkbox click
+        if ($(e.target).closest(".CheckItem").length) {
+            return;
+        }
+
+        // Uncheck all row checkboxes
+        $("#ItemTable .CheckItem").prop("checked", false);
+
+        // Check only current row
+        $(this).find(".CheckItem").prop("checked", true);
+    });
+    //#endregion
+
+
+    //#region Checkbox Click - Multiple Selection
+    $("#ItemTable").on("click", ".CheckItem", function (e) {
+
+        // Prevent row click event
+        e.stopPropagation();
+    });
+    //#endregion
+
     //#region Initialize Flatpickr
     InitializeGstFlatpickrs();
 
@@ -201,16 +270,38 @@ $(document).ready(function () {
         //);
 
         //#endregion
+      
+      
     });
     //#endregion add row item grid
 
+    //#region jwc address
+  
 
+    $("#AddressButton").click(function () {
+
+        var count = GetVisibleAddressRowCount();
+        console.log('--visibleRowCount--' + count);
+        if (count === 0) {
+            LoadJWCAddress();
+        } else {
+            $("#BuyerAddress").modal("show");
+        }
+
+    });
+    function GetVisibleAddressRowCount() {
+
+        return $("#AddTableBody tr.AddNewRow").filter(function () {
+            var style = ($(this).attr("style") || "")
+                .replace(/\s/g, "")
+                .toLowerCase();
+
+            return !style.includes("display:none");
+        }).length;
+    }
 
     //#region CLICK ADDRESS BUTTON, ADD ADDRESS ROW, DELETE ADDRESS ROW
-    $("#AddressButton").on("click", function () {
-        $("#BuyerAddress").modal("show");
-    });
- 
+
 
     $("#AddressAddButton").on("click", function () {
 
@@ -226,6 +317,7 @@ $(document).ready(function () {
         row.hide();
     });
     //#endregion CLICK ADDRESS BUTTON
+
 
 
     //#region CHANGE ADDRESS TYPE
@@ -319,7 +411,19 @@ $(document).ready(function () {
         if (!validateHeaderById()) {
             e.preventDefault();
             return false;
-        } else {
+        }
+        else if (batchMismatchData.length > 0) {
+            var rowIds = GetBatchMismatchRowIds();
+            alert("Batch Qty mismatch exists in rows: " + rowIds);
+            e.preventDefault();
+            return false;
+
+           
+
+            // continue save
+        }
+
+        else {
 
             var model = CreateDeliveryNoteModel();
 
@@ -341,6 +445,7 @@ $(document).ready(function () {
                         ClearAll();
                         showAlert('Record Inserted')
                         DateBind();
+                        window.location.reload();
                      //  window.location.href = response.redirectUrl;
                         console.log(JSON.stringify(model));
                     }
@@ -358,7 +463,11 @@ $(document).ready(function () {
         }
 
     }); 
-
+    function GetBatchMismatchRowIds() {
+        return batchMismatchData
+            .map(x => x.rowId)
+            .join(",");
+    }
     function CreateDeliveryNoteBatchModel() {
 
         let deliveryNoteBatches = [];
@@ -710,9 +819,34 @@ $(document).ready(function () {
 
     });
     //#endregion remove checked rows
-   
+
+
+    $(document).on(
+        "change",
+        ".JIDNI_JW_InvoiceTracking, .JIDNI_PRS_Number, .JIDNI_Item_Code, .JIDNI_UoM_Number",
+        function () {
+
+            let row = $(this).closest("tr");
+
+            if (row.find(".JIDNI_JW_InvoiceTracking").is(":checked")) {
+
+                BindServiceOrder(
+                    $("#Header_JIDNH_JW_Customer_Number").val(),
+                    row.find(".JIDNI_PRS_Number").val(),
+                    row.find(".JIDNI_Item_Number").val(),
+                    row.find(".JIDNI_UoM_Number").val()
+                );
+
+            } else {
+                row.find(".JISVOH_Number").html('<option value="0"></option>');
+            }
+        }
+    );
 
 });
+
+
+
 //#region ADD  ADDRESS ROW GRID ,VALIDATE ADDRESS GRID,VALIDATE TEMP ROW
 
 
@@ -972,7 +1106,7 @@ async function SearchJWCustomer(inputElement) {
                         $("#SIH_WHT_Number").val(cust.cuS_WHT_Number);
 
                         $("#WH_Number").val(cust.cuS_WH_Number);
-                        BindServiceOrder(cust.cuS_Number);
+                     //   BindServiceOrder(cust.cuS_Number);
                         resultsDiv.hide();
                     });
                 });
@@ -1006,24 +1140,92 @@ async function SearchJWCustomer(inputElement) {
 
 //#endregion customer Search Functions
 
-function BindServiceOrder(customerId) {
 
-    $(".JISVOH_Number").empty();
-    $(".JISVOH_Number").append('<option value="0"></option>');
+//#region Delivered Qty Validation
 
+$(document).on("focusout", ".JIDNI_Qty", function () {
+
+    let row = $(this).closest("tr");
+    let jisvohNumber = row.find(".JISVOH_Number").val();  
+    if (!jisvohNumber) return;
+    let prsNumber = row.find(".JIDNI_PRS_Number").val();
+    let itemNumber = row.find(".JIDNI_Item_Number").val();
+    let uomNumber = row.find(".JIDNI_UoM_Number").val();
+    let originalQty = parseFloat(row.find(".JIDNI_Qty").val()) || 0;
+    let rowIndex = row.index();
+    $.get("/DeliveryNote/CheckDeliveredQtyExceeded", {
+        jisvohNumber,
+        prsNumber,
+        itemNumber,
+        uomNumber
+    }, function (res) {
+        if (!res || res.length === 0) return;
+        let deliveredQty = parseFloat(res[0].deliveredQty) || 0;
+        let jisvoiQty = parseFloat(res[0].jisvoiQty) || 0;
+        if ((deliveredQty + originalQty) > jisvoiQty) {         
+
+            alert("Qty Allowed: " + (jisvoiQty - deliveredQty));
+            setTimeout(function () {
+                row.find(".JIDNI_Qty")
+                    .focus()
+                    .select();
+                row.find(".JISVOH_Number").val("0");
+            }, 300);            
+        }
+    });
+});
+
+$(document).on("change", ".JISVOH_Number", function () {
+
+    let row = $(this).closest("tr");
+    let jisvohNumber = $(this).val();
+    row.find(".JISVOH_Number").val(jisvohNumber)  
+
+    let prsNumber = row.find(".JIDNI_PRS_Number").val();
+    let itemNumber = row.find(".JIDNI_Item_Number").val();
+    let uomNumber = row.find(".JIDNI_UoM_Number").val();
+    let originalQty = parseFloat(row.find(".JIDNI_Qty").val()) || 0;
+    let rowIndex = row.index();
+
+    $.get("/DeliveryNote/CheckDeliveredQtyExceeded", {
+        jisvohNumber,
+        prsNumber,
+        itemNumber,
+        uomNumber
+    }, function (res) {
+
+        if (!res || res.length === 0) return;
+
+        let deliveredQty = parseFloat(res[0].deliveredQty) || 0;
+        let jisvoiQty = parseFloat(res[0].jisvoiQty) || 0;
+
+        if ((deliveredQty + originalQty) > jisvoiQty) {
+          
+
+            alert("Qty Allowed: " + (jisvoiQty - deliveredQty));
+            setTimeout(function () {
+                row.find(".JIDNI_Qty")
+                    .focus()
+                    .select();
+                row.find(".JISVOH_Number").val("0");
+            }, 300);
+        
+          
+        }
+    });
+});
+
+//#endregion
+function BindServiceOrder(customerId, prsNumber = null, itemNumber = null, uomNumber = null) {
+    $(".JISVOH_Number").html('<option value="0"></option>');
     if (!customerId) return;
 
     $.get("/DeliveryNote/GetServiceOrder",
-        { customerId: customerId },
-        function (data) {
-
-            $.each(data, function (i, item) {
-                $(".JISVOH_Number").append(
-                    `<option value="${item.value}">${item.text}</option>`
-                );
-            });
-
-        });
+        { customerId, prsNumber, itemNumber, uomNumber },
+        data => $.each(data, (_, item) =>
+            $(".JISVOH_Number").append(`<option value="${item.value}">${item.text}</option>`)
+        )
+    );
 }
 
 
@@ -1159,6 +1361,7 @@ function searchItemJIDNI(inputElement) {
 
                         // ✔ Move to Qty
                         let qtyInput = row.find(".JIDNI_Qty");
+                        let qtyUnitprice = row.find(".JIDNI_UnitPrice");
                         qtyInput.focus();
 
                         setTimeout(function () {
@@ -1170,7 +1373,9 @@ function searchItemJIDNI(inputElement) {
                         let decimalPlaces = item.decimalPlaces || 2;
 
                         let qtyVal = qtyInput.val();
+                        let qtyUnitpriceVal = qtyUnitprice.val();
                         qtyInput.val(QtyDecimalRupees(qtyVal, decimalPlaces));
+                        qtyUnitprice.val(QtyDecimalRupees(qtyUnitpriceVal, decimalPlaces));
 
                         resultsDiv.hide();
                     });
@@ -1607,6 +1812,38 @@ function DateBind() {
 }
 //#endregion
 
+function LoadJWCAddress() {
+    var jwcNumber = $("#Header_JIDNH_JW_Customer_Number").val();
 
+    $.ajax({
+        url: '/JobworkInvoice/GetJWCAddress',
+        type: 'GET',
+        data: { JWCNumber: jwcNumber },
+        success: function (response) {
+            console.log(JSON.stringify(response));
+            if (!response || !response.length) return;
 
+            var rowCount = 0;
 
+            response.forEach(function (addr) {
+                if (addr.jwC_ADD_Default != 1) return;
+
+                addAddressRow(); // always create new row
+                var row = $("#AddTableBody tr.AddNewRow:last");
+
+                row.find(".JIDNA_ADTP_Number").val(addr.jwC_ADD_ADTP_Number).trigger("change");
+                row.find(".JIDNA_Address_ID").val(addr.jwC_ADD_Address_ID);
+                row.find(".JIDNA_Address").val(addr.jwC_ADD_Address);
+                row.find(".JIDNA_City").val(addr.jwC_ADD_City);
+                row.find(".JIDNA_State").val(addr.jwC_ADD_State);
+                row.find(".JIDNA_Country").val(addr.jwC_ADD_Country);
+                row.find(".JIDNA_PIN").val(addr.jwC_ADD_PIN);
+                row.find(".JIDNA_GSTIN").val(addr.jwC_ADD_GSTIN);
+
+                row.show();
+            });
+
+            $("#BuyerAddress").modal("show");
+        }
+    });
+}

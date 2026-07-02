@@ -37,7 +37,7 @@
 </style>
 
 
-<form asp-action="SaveDeliveryNote"      method="post"      id="DeliveryNoteForm">
+<form asp-action="SaveDeliveryNote" method="post" id="DeliveryNoteForm">
     <!-- Alert Popup -->
     <div class="modal modal-sm fade" id="ModelAlert" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -201,9 +201,9 @@
                                             style="display:none;">
 
                                             <td>
-                                                 <input type="hidden" class="RefBatch_Number">
-                                                  <input type="hidden" class="JIDNI_Number">
-                                                    <input type="hidden" class="JIDNH_Number">
+                                                <input type="hidden" class="RefBatch_Number">
+                                                <input type="hidden" class="JIDNI_Number">
+                                                <input type="hidden" class="JIDNH_Number">
                                                 <input type="hidden" class="JIDNI_BCH_Number">
 
                                                 <input type="hidden" class="JIDNI_BCH_JIDNH_Number">
@@ -675,7 +675,7 @@
                                                asp-for="Addresses[i].JIDNA_Number"
                                                class="JIDNA_Number">
 
-                                     @*    <input type="hidden"
+                                        @*    <input type="hidden"
                                                asp-for="Addresses[i].JIDNA_IsDeleted"
                                                class="JIDNA_IsDeleted"> *@
 
@@ -717,137 +717,277 @@
  
     <input asp-for="Header.JIDNH_Number"
            type="hidden" />
-
-    <!-- HEADER -->
     <div class="row align-items-center panel-header gx-2">
-
         <div class="col h-100 align-items-center">
-
             <div class="h6 fw-light text-white h-100 align-content-center bg-secondary px-2">
-
-                Edit Delivery Note
-
-                <a asp-controller="DeliveryNote"
-                       asp-action="Index"
-                       class="float-end btn p-0">
-
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                         width="12"
-                         height="12"
-                         fill="currentColor"
-                         class="bi bi-x-lg"
-                         viewBox="0 0 16 16">
-
+                Delivery Note
+                <a asp-controller="JobworkInward" asp-action="Index" class="float-end btn p-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
                         <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
-
                     </svg>
-
                 </a>
-
             </div>
-
         </div>
-
     </div>
 
-    <!-- BODY -->
+    <!-- item grid in body -->
     <div class="row panel-body gx-2">
 
         <div class="col-12 panel-card-fixed h-100">
 
-            <div class="w-100 rounded-0 h-100 border border-primary bg-transparent">
+            <div class="w-100 rounded-0 h-100 border border-primary bg-transparent"
+                 id="BodyHeight">
 
                 <!-- HEADER -->
                 <div class="card rounded-0 bg-transparent shadow-none"
                      id="CardHeader">
 
                     <div class="card-body pb-0">
-
+                        
                         <div class="row ps-2">
 
-                            <!-- LEFT -->
+                        
+
+                    
                             <div class="col-auto left-menu text-black">
 
                                 <div class="row">
 
-                                    <!-- COLUMN 1 -->
-                                    <div class="col-12 col-md-3">
+                                    <!-- LEFT -->
+                                    <div class="col-auto left-menu text-black">
 
-                                        <!-- DN NO -->
-                                        <div class="row align-items-center px-2 mb-1">
+                                        <div class="row">
 
-                                            <label asp-for="Header.JIDNH_DN_No"
-                                                   class="col-md-5 col-form-label ps-0">
-                                            </label>
+                                            <!-- COLUMN 1 -->
+                                            <div class="col-12 col-md-3">
 
-                                            <div class="col-md-7">
+                                                <!-- DN NO -->
+                                                <div class="row align-items-center px-2 mb-1">
 
-                                                <input asp-for="Header.JIDNH_DN_No"
-                                                       class="form-control"
-                                                       autocomplete="off" />
+                                                    <label asp-for="Header.JIDNH_DN_No"
+                                                           class="col-md-5 col-form-label ps-0">
+                                                    </label>
 
-                                            </div>
+                                                    <div class="col-md-7">
 
-                                        </div>
+                                                        <input asp-for="Header.JIDNH_DN_No"
+                                                               class="form-control"
+                                                               autocomplete="off" />
 
-                                        <!-- DN DATE -->
-                                        <div class="row align-items-center px-2 mb-1">
+                                                    </div>
 
-                                            <label asp-for="Header.JIDNH_DN_Date"
-                                                   class="col-md-5 col-form-label ps-0">
-                                            </label>
+                                                </div>
 
-                                            <div class="col-md-7">
+                                                <!-- DN DATE -->
+                                                <div class="row align-items-center px-2 mb-1">
 
-                                                <input asp-for="Header.JIDNH_DN_Date"
-                                                       type="date"
-                                                       class="form-control"
-                                                       autocomplete="off" />
+                                                    <label asp-for="Header.JIDNH_DN_Date"
+                                                           class="col-md-5 col-form-label ps-0">
+                                                    </label>
 
-                                            </div>
+                                                    <div class="col-md-7">
 
-                                        </div>
+                                                        <input asp-for="Header.JIDNH_DN_Date"
+                                                               type="date"
+                                                               class="form-control"
+                                                               autocomplete="off" />
 
-                                        <!-- MATERIAL SEGREGATION -->
-                                        <div class="row align-items-center px-2 mb-1">
+                                                    </div>
 
-                                            <label asp-for="Header.JIDNH_MS_Number"
-                                                   class="col-md-5 col-form-label ps-0">
-                                            </label>
+                                                </div>
 
-                                            <div class="col-md-7">
+                                                <!-- MATERIAL SEGREGATION -->
+                                                <div class="row align-items-center px-2 mb-1">
 
-                                                <select asp-for="Header.JIDNH_MS_Number"
-                                                        class="form-select"
-                                                        asp-items="@ViewBag.MaterialSegregation">
-                                                </select>
+                                                    <label asp-for="Header.JIDNH_MS_Number"
+                                                           class="col-md-5 col-form-label ps-0">
+                                                    </label>
 
-                                            </div>
+                                                    <div class="col-md-7">
 
-                                        </div>
+                                                        <select asp-for="Header.JIDNH_MS_Number"
+                                                                class="form-select"
+                                                                asp-items="@ViewBag.MaterialSegregation">
+                                                        </select>
 
-                                        <!-- CUSTOMER -->
-                                        <div class="row align-items-center px-2 mb-1">
+                                                    </div>
 
-                                            <label asp-for="Header.JIDNH_JW_Customer_Number"
-                                                   class="col-md-5 col-form-label ps-0">
-                                            </label>
+                                                </div>
 
-                                            <div class="col-md-7">
+                                                <!-- CUSTOMER -->
+                                                <div class="row align-items-center px-2 mb-1">
 
-                                                <input asp-for="Header.JIDNH_JW_Customer_Number"
-                                                       type="hidden" />
+                                                    <label asp-for="Header.JIDNH_JW_Customer_Number"
+                                                           class="col-md-5 col-form-label ps-0">
+                                                    </label>
 
-                                                <input asp-for="Header.JIDNH_JW_Customer_Name"
-                                                       class="form-control"
-                                                       autocomplete="off"
-                                                       oninput="OnEditJWCustomerInput(this)"
-                                                       onfocus="OnEditJWCustomerFocus(this)" />
+                                                    <div class="col-md-7">
+
+                                                        <input asp-for="Header.JIDNH_JW_Customer_Number"
+                                                               type="hidden" />
+
+                                                        <input asp-for="Header.JIDNH_JW_Customer_Name"
+                                                               class="form-control"
+                                                               autocomplete="off"
+                                                               oninput="OnEditJWCustomerInput(this)"
+                                                               onfocus="OnEditJWCustomerFocus(this)" />
 
                                               
 
-                                                <div class="jwcustomer-search-results bg-primary card"
-                                                     style="display:none">
+                                                        <div class="jwcustomer-search-results bg-primary card"
+                                                             style="display:none">
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                            <!-- COLUMN 2 -->
+                                            <div class="col-12 col-md-3">
+
+                                                <!-- CURRENCY -->
+                                                <div class="row align-items-center px-2 mb-1">
+
+                                                    <label asp-for="Header.JIDNH_Currency_Number"
+                                                           class="col-md-5 col-form-label ps-0">
+                                                    </label>
+
+                                                    <div class="col-md-7">
+
+                                                        <select asp-for="Header.JIDNH_Currency_Number"
+                                                                class="form-select"
+                                                                asp-items="@ViewBag.Currency">
+                                                        </select>
+
+                                                    </div>
+
+                                                </div>
+
+                                                <!-- WAREHOUSE -->
+                                                <div class="row align-items-center px-2 mb-1">
+
+                                                    <label asp-for="Header.JIDNH_WH_Number"
+                                                           class="col-md-5 col-form-label ps-0">
+                                                    </label>
+
+                                                    <div class="col-md-7">
+
+                                                        <select asp-for="Header.JIDNH_WH_Number"
+                                                                class="form-select"
+                                                                asp-items="@ViewBag.Warehouse">
+                                                        </select>
+
+                                                    </div>
+
+                                                </div>
+
+                                                <!-- PAYMENT TERMS -->
+                                                <div class="row align-items-center px-2 mb-1">
+
+                                                    <label asp-for="Header.JIDNH_PaymentTerms"
+                                                           class="col-md-5 col-form-label ps-0">
+                                                    </label>
+
+                                                    <div class="col-md-7">
+
+                                                        <input asp-for="Header.JIDNH_PaymentTerms"
+                                                               class="form-control"
+                                                               autocomplete="off" />
+
+                                                    </div>
+
+                                                </div>
+
+                                                <!-- DELIVERY TERMS -->
+                                                <div class="row align-items-center px-2 mb-1">
+
+                                                    <label asp-for="Header.JIDNH_DeliveryTerms"
+                                                           class="col-md-5 col-form-label ps-0">
+                                                    </label>
+
+                                                    <div class="col-md-7">
+
+                                                        <input asp-for="Header.JIDNH_DeliveryTerms"
+                                                               class="form-control"
+                                                               autocomplete="off" />
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                            <!-- COLUMN 3 -->
+                                            <div class="col-12 col-md-3">
+
+                                                <!-- DELIVERY MODE -->
+                                                <div class="row align-items-center px-2 mb-1">
+
+                                                    <label asp-for="Header.JIDNH_DeliveryMode"
+                                                           class="col-md-5 col-form-label ps-0">
+                                                    </label>
+
+                                                    <div class="col-md-7">
+
+                                                        <input asp-for="Header.JIDNH_DeliveryMode"
+                                                               class="form-control"
+                                                               autocomplete="off" />
+
+                                                    </div>
+
+                                                </div>
+
+                                                <!-- DESPATCH DOC NO -->
+                                                <div class="row align-items-center px-2 mb-1">
+
+                                                    <label asp-for="Header.JIDNH_DespatchDocumentNo"
+                                                           class="col-md-5 col-form-label ps-0 text-nowrap">
+                                                    </label>
+
+                                                    <div class="col-md-7">
+
+                                                        <input asp-for="Header.JIDNH_DespatchDocumentNo"
+                                                               class="form-control"
+                                                               autocomplete="off" />
+
+                                                    </div>
+
+                                                </div>
+
+                                                <!-- DESPATCH THROUGH -->
+                                                <div class="row align-items-center px-2 mb-1">
+
+                                                    <label asp-for="Header.JIDNH_DespatchedThrough"
+                                                           class="col-md-5 col-form-label ps-0">
+                                                    </label>
+
+                                                    <div class="col-md-7">
+
+                                                        <input asp-for="Header.JIDNH_DespatchedThrough"
+                                                               class="form-control"
+                                                               autocomplete="off" />
+
+                                                    </div>
+
+                                                </div>
+
+                                                <!-- REMARKS -->
+                                                <div class="row align-items-start px-2 mb-1">
+
+                                                    <label asp-for="Header.JIDNH_Remarks"
+                                                           class="col-md-5 col-form-label ps-0">
+                                                    </label>
+
+                                                    <div class="col-md-7">
+
+                                                        <textarea asp-for="Header.JIDNH_Remarks"
+                                                                  class="form-control"
+                                                                  rows="2"></textarea>
+
+                                                    </div>
+
                                                 </div>
 
                                             </div>
@@ -856,161 +996,15 @@
 
                                     </div>
 
-                                    <!-- COLUMN 2 -->
-                                    <div class="col-12 col-md-3">
-
-                                        <!-- CURRENCY -->
-                                        <div class="row align-items-center px-2 mb-1">
-
-                                            <label asp-for="Header.JIDNH_Currency_Number"
-                                                   class="col-md-5 col-form-label ps-0">
-                                            </label>
-
-                                            <div class="col-md-7">
-
-                                                <select asp-for="Header.JIDNH_Currency_Number"
-                                                        class="form-select"
-                                                        asp-items="@ViewBag.Currency">
-                                                </select>
-
-                                            </div>
-
-                                        </div>
-
-                                        <!-- WAREHOUSE -->
-                                        <div class="row align-items-center px-2 mb-1">
-
-                                            <label asp-for="Header.JIDNH_WH_Number"
-                                                   class="col-md-5 col-form-label ps-0">
-                                            </label>
-
-                                            <div class="col-md-7">
-
-                                                <select asp-for="Header.JIDNH_WH_Number"
-                                                        class="form-select"
-                                                        asp-items="@ViewBag.Warehouse">
-                                                </select>
-
-                                            </div>
-
-                                        </div>
-
-                                        <!-- PAYMENT TERMS -->
-                                        <div class="row align-items-center px-2 mb-1">
-
-                                            <label asp-for="Header.JIDNH_PaymentTerms"
-                                                   class="col-md-5 col-form-label ps-0">
-                                            </label>
-
-                                            <div class="col-md-7">
-
-                                                <input asp-for="Header.JIDNH_PaymentTerms"
-                                                       class="form-control"
-                                                       autocomplete="off" />
-
-                                            </div>
-
-                                        </div>
-
-                                        <!-- DELIVERY TERMS -->
-                                        <div class="row align-items-center px-2 mb-1">
-
-                                            <label asp-for="Header.JIDNH_DeliveryTerms"
-                                                   class="col-md-5 col-form-label ps-0">
-                                            </label>
-
-                                            <div class="col-md-7">
-
-                                                <input asp-for="Header.JIDNH_DeliveryTerms"
-                                                       class="form-control"
-                                                       autocomplete="off" />
-
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
-                                    <!-- COLUMN 3 -->
-                                    <div class="col-12 col-md-3">
-
-                                        <!-- DELIVERY MODE -->
-                                        <div class="row align-items-center px-2 mb-1">
-
-                                            <label asp-for="Header.JIDNH_DeliveryMode"
-                                                   class="col-md-5 col-form-label ps-0">
-                                            </label>
-
-                                            <div class="col-md-7">
-
-                                                <input asp-for="Header.JIDNH_DeliveryMode"
-                                                       class="form-control"
-                                                       autocomplete="off" />
-
-                                            </div>
-
-                                        </div>
-
-                                        <!-- DESPATCH DOC NO -->
-                                        <div class="row align-items-center px-2 mb-1">
-
-                                            <label asp-for="Header.JIDNH_DespatchDocumentNo"
-                                                   class="col-md-5 col-form-label ps-0 text-nowrap">
-                                            </label>
-
-                                            <div class="col-md-7">
-
-                                                <input asp-for="Header.JIDNH_DespatchDocumentNo"
-                                                       class="form-control"
-                                                       autocomplete="off" />
-
-                                            </div>
-
-                                        </div>
-
-                                        <!-- DESPATCH THROUGH -->
-                                        <div class="row align-items-center px-2 mb-1">
-
-                                            <label asp-for="Header.JIDNH_DespatchedThrough"
-                                                   class="col-md-5 col-form-label ps-0">
-                                            </label>
-
-                                            <div class="col-md-7">
-
-                                                <input asp-for="Header.JIDNH_DespatchedThrough"
-                                                       class="form-control"
-                                                       autocomplete="off" />
-
-                                            </div>
-
-                                        </div>
-
-                                        <!-- REMARKS -->
-                                        <div class="row align-items-start px-2 mb-1">
-
-                                            <label asp-for="Header.JIDNH_Remarks"
-                                                   class="col-md-5 col-form-label ps-0">
-                                            </label>
-
-                                            <div class="col-md-7">
-
-                                                <textarea asp-for="Header.JIDNH_Remarks"
-                                                          class="form-control"
-                                                          rows="2"></textarea>
-
-                                            </div>
-
-                                        </div>
-
-                                    </div>
+                               
 
                                 </div>
 
                             </div>
 
-                            <!-- RIGHT -->
                             <div class="col-auto right-menu text-center border-start">
 
+                              
                                 <button type="button"
                                         id="btnUpdate"
                                         class="btn btn-primary btn-sm px-2 w-100 mb-1">
@@ -1026,6 +1020,335 @@
                                     Address
 
                                 </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- BODY has ITEM -->
+                <div class="card rounded-0 bg-transparent shadow-none"
+                     id="CardBody">
+                    <div class="card-body pb-0">
+                        <div class="row ps-2">
+                            <div class="col-auto left-menu text-black">
+                                <div class="card-body h-100">
+
+                                    <div class="row h-100">
+
+                                        <div class="col-auto h-100">
+
+                                        
+
+                                            <ul class="nav nav-tabs" role="tablist">
+
+
+                                                <li class="nav-item" role="presentation">
+                                           
+                                                    <a class="nav-link active"
+                                                           aria-current="page">
+
+                                                        Item
+
+                                                    </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link text-dark">Other</a>
+                                                </li>
+ 
+                                            </ul>
+
+                                            <div class="tab-content tab-body tab-body-h-o">
+
+                                                <!-- ITEM -->
+                                                <div class="tab-pane fade show active p-0 pb-0 border border-top-0 h-100"
+                                                     tabindex="0">
+
+                                                    <div class="row h-100">
+
+                                                        <div class="col-12">
+ 
+                                                            <div class="col table-fixed h-100">
+
+                                                                <div class="w-12 table-responsive table-body table-body-f">
+ 
+
+                                                                    <table class="table table-one table-striped table-bordered table-hover align-middle w-100"
+                                                                           id="ItemTable">
+
+                                                                        <thead>
+
+                                                                            <tr class="table-info">
+                                                                                <th class="px-2 del text-center">
+
+                                                                                    <input type="checkbox"
+                                                                                           class="IndexAllCheckItem form-check-input border-white"
+                                                                                           id="IndexAllCheckItem">
+
+                                                                                </th>
+                                                                                <th>Process</th>
+                                                                                <th>Item Code</th>
+                                                                                <th>Description</th>
+                                                                                <th>Outer Dia</th>
+                                                                                <th>Thickness</th>
+                                                                                <th>Length</th>
+                                                                                <th>Width</th>
+                                                                                <th>Material</th>
+                                                                                <th>Group</th>
+                                                                                <th>Warehouse</th>
+                                                                                <th>UOM</th>
+                                                                                <th>Original Qty</th>
+                                                                                <th>Amend Qty</th>
+                                                                                <th>Unit Price</th>
+                                                                                <th>Amount</th>
+                                                                                <th> JW Invoice Applicable</th>
+                                                                                <th>Service Order No</th>
+                                                                            </tr>
+
+                                                                        </thead>
+
+                                                                        <tbody id="TableBody">
+
+                                                                            @for (int i = 0; i < Model.Items.Count; i++)
+                                                                            {
+                                                                                <tr class="NewRow">
+                                                                                    <td class="p-2 del">
+                                                                                        <input type="checkbox" class="CheckItem form-check-input">
+                                                                                    </td>
+
+                                                                                    <!-- PROCESS -->
+                                                                                    <td>
+
+                                                                                        <select asp-for="Items[i].JIDNI_PRS_Number"
+                                                                                                class="form-select JIDNI_PRS_Number"
+                                                                                                asp-items="@ViewBag.Process">
+                                                                                        </select>
+
+                                                                                    </td>
+
+                                                                                    <!-- ITEM -->
+                                                                                    <td>
+
+                                                                                        <input asp-for="Items[i].JIDNI_Number"
+                                                                                               type="hidden"
+                                                                                               class="JIDNI_Number" />
+
+                                                                                        <input asp-for="Items[i].JIDNI_Item_Number"
+                                                                                               type="hidden"
+                                                                                               class="JIDNI_Item_Number" />
+
+                                                                                        <input asp-for="Items[i].JIDNI_Item_Code"
+                                                                                               autocomplete="off"
+                                                                                               class="form-control JIDNI_Item_Code"
+                                                                                               oninput="OnEditInputItem(this)"
+                                                                                               onfocus="OnEditFocusItem(this)" />
+                                                                                        <div class="search-results bg-primary card"
+                                                                                             style="display:none">
+                                                                                        </div>
+
+                                                                                    </td>
+
+                                                                                    <!-- DESCRIPTION -->
+                                                                                    <td>
+
+                                                                                        <input asp-for="Items[i].JIDNI_Item_Description"
+                                                                                               class="form-control JIDNI_Item_Description"
+                                                                                               readonly />
+
+                                                                                    </td>
+
+                                                                                    <!-- OD -->
+                                                                                    <td>
+
+                                                                                        <input asp-for="Items[i].JIDNI_OuterDia"
+                                                                                               class="form-control JIDNI_OuterDia text-end"
+                                                                                               readonly />
+
+                                                                                    </td>
+
+                                                                                    <!-- THK -->
+                                                                                    <td>
+
+                                                                                        <input asp-for="Items[i].JIDNI_Thickness"
+                                                                                               class="form-control JIDNI_Thickness text-end"
+                                                                                               readonly />
+
+                                                                                    </td>
+
+                                                                                    <!-- LENGTH -->
+                                                                                    <td>
+
+                                                                                        <input asp-for="Items[i].JIDNI_Length"
+                                                                                               class="form-control JIDNI_Length text-end"
+                                                                                               readonly />
+
+                                                                                    </td>
+
+                                                                                    <!-- WIDTH -->
+                                                                                    <td>
+
+                                                                                        <input asp-for="Items[i].JIDNI_Width"
+                                                                                               class="form-control JIDNI_Width text-end"
+                                                                                               readonly />
+
+                                                                                    </td>
+
+                                                                                    <!-- MATERIAL -->
+                                                                                    <td>
+
+                                                                                        <input asp-for="Items[i].JIDNI_MaterialGrade"
+                                                                                               class="form-control JIDNI_MaterialGrade"
+                                                                                               readonly />
+
+                                                                                    </td>
+
+                                                                                    <!-- GROUP -->
+                                                                                    <td>
+
+                                                                                        <input asp-for="Items[i].JIDNI_ItemGroup"
+                                                                                               class="form-control JIDNI_ItemGroup"
+                                                                                               readonly />
+
+                                                                                    </td>
+
+                                                                                    <!-- WH -->
+                                                                                    <td>
+
+                                                                                        <select asp-for="Items[i].JIDNI_WH_Number"
+                                                                                                class="form-select JIDNI_WH_Number"
+                                                                                                asp-items="@ViewBag.Warehouse">
+                                                                                        </select>
+
+                                                                                    </td>
+
+                                                                                    <!-- UOM -->
+                                                                                    <td>
+
+                                                                                        <select asp-for="Items[i].JIDNI_UoM_Number"
+                                                                                                class="form-select JIDNI_UoM_Number"
+                                                                                                asp-items="@ViewBag.UOM">
+                                                                                        </select>
+
+                                                                                    </td>
+
+                                                                                    <!-- QTY -->
+                                                                                    <td>
+
+                                                                                        <input asp-for="Items[i].JIDNI_Qty"
+                                                                                               autocomplete="off" readonly
+                                                                                               class="form-control JIDNI_OriginalQty  text-end" />
+
+                                                                                    </td>
+                                                
+                                                                                    <!-- QTY -->
+                                                                                    <td>
+
+                                                                                        <input asp-for="Items[i].JIDNI_Qty"
+                                                                                               autocomplete="off"
+                                                                                               class="form-control JIDNI_Qty text-end" />
+
+                                                                                    </td>
+                                                                                    <!-- PRICE -->
+                                                                                    <td>
+
+                                                                                        <input asp-for="Items[i].JIDNI_UnitPrice"
+                                                                                               autocomplete="off"
+                                                                                               class="form-control JIDNI_UnitPrice text-end" />
+
+                                                                                    </td>
+
+                                                                                    <!-- AMOUNT -->
+                                                                                    <td>
+
+                                                                                        <input asp-for="Items[i].JIDNI_Amount"
+                                                                                               class="form-control JIDNI_Amount text-end"
+                                                                                               readonly />
+
+                                                                                    </td>
+
+                                                                                    <!-- JW -->
+                                                                                    <td class="text-center">
+
+                                                                                        <input type="checkbox"
+                                                                                               class="form-check-input JIDNI_JW_InvoiceTracking"
+                                                                                        @(Model.Items[i].JIDNI_JW_InvoiceTracking == "Yes" ? "checked" : "") />
+
+                                                                                        <input asp-for="Items[i].JIDNI_JW_InvoiceTracking"
+                                                                                               type="hidden"
+                                                                                               class="JIDNI_JW_InvoiceTracking_Value" />
+
+                                                                                        <input asp-for="Items[i].JIDNI_IsDeleted"
+                                                                                               type="hidden"
+                                                                                               class="JIDNI_IsDeleted" />
+
+                                                                                    </td>
+                                                                                    <!-- SO Dropdown -->
+                                                                                    <td>
+                                                                                        <select asp-for="Items[i].JISVOH_Number"
+                                                                                                class="form-select JISVOH_Number"
+                                                                                              
+                                                                                                asp-items="@ViewBag.SON">
+                                                                                        </select>
+                                                                                    </td>
+
+                                                                                </tr>
+                                                                            }
+
+                                                                        </tbody>
+
+                                                                    </table>
+
+                                                                </div>
+
+                                                                <div class="row table-footer align-items-center">
+
+                                                                    <div class="col">
+
+                                                                        <a id="EditAddRowButton"
+                                                                               class="btn btn-primary">
+
+                                                                            Add Row
+
+                                                                        </a>
+
+                                                                        <a id="RemoveItemRowButton_Edit" class="RowRemove btn btn-primary">
+
+                                                                            Delete Row
+
+                                                                        </a>
+
+                                                                    </div>
+
+                                                                </div>
+
+                                                            </div>
+
+                                              
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                         
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+              
+                            <!-- RIGHT SIDE BATCH PANEL -->
+                            <div class="col-auto right-menu text-center border-start">
+
                                 <button type="button"
                                         id="BatchButton"
                                         class="btn btn-primary OpenBatchPopup btn-sm px-1 w-100 mb-1">
@@ -1033,268 +1356,15 @@
                                     Batch
 
                                 </button>
-                            </div>
 
+                         
+
+                            </div>
                         </div>
-
                     </div>
-
                 </div>
-                <!-- GRID -->
-                <div class="card rounded-0 bg-transparent shadow-none">
 
-                    <div class="card-body h-100">
-
-                        <div class="col table-fixed h-100">
-
-                            <div class="w-12 table-responsive table-body table-body-f">
-
-                                <table class="table table-one table-striped table-bordered table-hover align-middle w-100"
-                                       id="ItemTable">
-
-                                    <thead>
-
-                                        <tr class="table-info">
-                                            <th class="px-2 del text-center">
-
-                                                <input type="checkbox"
-                                                       class="IndexAllCheckItem form-check-input border-white"
-                                                       id="IndexAllCheckItem">
-
-                                            </th>
-                                            <th>Process</th>
-                                            <th>Item Code</th>
-                                            <th>Description</th>
-                                            <th>Outer Dia</th>
-                                            <th>Thickness</th>
-                                            <th>Length</th>
-                                            <th>Width</th>
-                                            <th>Material</th>
-                                            <th>Group</th>
-                                            <th>Warehouse</th>
-                                            <th>UOM</th>
-                                            <th>Original Qty</th>
-                                               <th>Amend Qty</th>
-                                            <th>Unit Price</th>
-                                            <th>Amount</th>
-                                            <th>JW</th>
-
-                                        </tr>
-
-                                    </thead>
-
-                                    <tbody id="TableBody">
-
-                                        @for (int i = 0; i < Model.Items.Count; i++)
-                                        {
-                                            <tr class="NewRow">
-                                                <td class="p-2 del">
-                                                    <input type="checkbox" class="CheckItem form-check-input">
-                                                 </td>
-
-                                                <!-- PROCESS -->
-                                                <td>
-
-                                                    <select asp-for="Items[i].JIDNI_PRS_Number"
-                                                            class="form-select JIDNI_PRS_Number"
-                                                            asp-items="@ViewBag.Process">
-                                                    </select>
-
-                                                </td>
-
-                                                <!-- ITEM -->
-                                                <td>
-
-                                                    <input asp-for="Items[i].JIDNI_Number"
-                                                           type="hidden"
-                                                           class="JIDNI_Number" />
-
-                                                    <input asp-for="Items[i].JIDNI_Item_Number"
-                                                           type="hidden"
-                                                           class="JIDNI_Item_Number" />
-
-                                                    <input asp-for="Items[i].JIDNI_Item_Code"
-                                                    autocomplete="off"
-                                                           class="form-control JIDNI_Item_Code"
-                                                           oninput="OnEditInputItem(this)"
-                                                           onfocus="OnEditFocusItem(this)" />
-                                                    <div class="search-results bg-primary card"
-                                                         style="display:none">
-                                                    </div>
-
-                                                </td>
-
-                                                <!-- DESCRIPTION -->
-                                                <td>
-
-                                                    <input asp-for="Items[i].JIDNI_Item_Description"
-                                                           class="form-control JIDNI_Item_Description"
-                                                           readonly />
-
-                                                </td>
-
-                                                <!-- OD -->
-                                                <td>
-
-                                                    <input asp-for="Items[i].JIDNI_OuterDia"
-                                                           class="form-control JIDNI_OuterDia text-end"
-                                                           readonly />
-
-                                                </td>
-
-                                                <!-- THK -->
-                                                <td>
-
-                                                    <input asp-for="Items[i].JIDNI_Thickness"
-                                                           class="form-control JIDNI_Thickness text-end"
-                                                           readonly />
-
-                                                </td>
-
-                                                <!-- LENGTH -->
-                                                <td>
-
-                                                    <input asp-for="Items[i].JIDNI_Length"
-                                                           class="form-control JIDNI_Length text-end"
-                                                           readonly />
-
-                                                </td>
-
-                                                <!-- WIDTH -->
-                                                <td>
-
-                                                    <input asp-for="Items[i].JIDNI_Width"
-                                                           class="form-control JIDNI_Width text-end"
-                                                           readonly />
-
-                                                </td>
-
-                                                <!-- MATERIAL -->
-                                                <td>
-
-                                                    <input asp-for="Items[i].JIDNI_MaterialGrade"
-                                                           class="form-control JIDNI_MaterialGrade"
-                                                           readonly />
-
-                                                </td>
-
-                                                <!-- GROUP -->
-                                                <td>
-
-                                                    <input asp-for="Items[i].JIDNI_ItemGroup"
-                                                           class="form-control JIDNI_ItemGroup"
-                                                           readonly />
-
-                                                </td>
-
-                                                <!-- WH -->
-                                                <td>
-
-                                                    <select asp-for="Items[i].JIDNI_WH_Number"
-                                                            class="form-select JIDNI_WH_Number"
-                                                            asp-items="@ViewBag.Warehouse">
-                                                    </select>
-
-                                                </td>
-
-                                                <!-- UOM -->
-                                                <td>
-
-                                                    <select asp-for="Items[i].JIDNI_UoM_Number"
-                                                            class="form-select JIDNI_UoM_Number"
-                                                            asp-items="@ViewBag.UOM">
-                                                    </select>
-
-                                                </td>
-
-                                                <!-- QTY -->
-                                                <td>
-
-                                                    <input asp-for="Items[i].JIDNI_Qty"
-                                                    autocomplete="off" readonly
-                                                           class="form-control JIDNI_OriginalQty  text-end" />
-
-                                                </td>
-                                                
-                                                <!-- QTY -->
-                                                <td>
-
-                                                    <input asp-for="Items[i].JIDNI_Qty"
-                                                           autocomplete="off"
-                                                           class="form-control JIDNI_Qty text-end" />
-
-                                                </td>
-                                                <!-- PRICE -->
-                                                <td>
-
-                                                    <input asp-for="Items[i].JIDNI_UnitPrice"
-                                                    autocomplete="off"
-                                                           class="form-control JIDNI_UnitPrice text-end" />
-
-                                                </td>
-
-                                                <!-- AMOUNT -->
-                                                <td>
-
-                                                    <input asp-for="Items[i].JIDNI_Amount"
-                                                           class="form-control JIDNI_Amount text-end"
-                                                           readonly />
-
-                                                </td>
-
-                                                <!-- JW -->
-                                                <td class="text-center">
-
-                                                    <input type="checkbox"
-                                                           class="form-check-input JIDNI_JW_InvoiceTracking"
-                                                    @(Model.Items[i].JIDNI_JW_InvoiceTracking == "Yes" ? "checked" : "") />
-
-                                                    <input asp-for="Items[i].JIDNI_JW_InvoiceTracking"
-                                                           type="hidden"
-                                                           class="JIDNI_JW_InvoiceTracking_Value" />
-
-                                                    <input asp-for="Items[i].JIDNI_IsDeleted"
-                                                           type="hidden"
-                                                           class="JIDNI_IsDeleted" />
-
-                                                </td>
-
-                                            </tr>
-                                        }
-
-                                    </tbody>
-
-                                </table>
-
-                            </div>
-
-                            <!-- FOOTER -->
-                            <div class="row table-footer align-items-center">
-
-                                <div class="col">
-
-                                    <a id="EditAddRowButton"
-                                           class="btn btn-primary">
-
-                                        Add Row
-
-                                    </a>
-
-                                    <a id="RemoveItemRowButton_Edit" class="RowRemove btn btn-primary">
-
-                                        Delete Row
-
-                                    </a>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
+              
 
             </div>
 
@@ -1302,6 +1372,7 @@
 
     </div>
 
+   
 </form>
 
 @section Scripts {

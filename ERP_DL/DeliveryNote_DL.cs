@@ -23,13 +23,18 @@ namespace ERP_DL
                     new DeliveryNoteSummary_DTO
                     {
                         JIDNH_Number =
-                            Convert.ToInt64(dr["JIDNH_Number"]),
+                            dr["JIDNH_Number"] == DBNull.Value ||
+                            string.IsNullOrWhiteSpace(dr["JIDNH_Number"].ToString())
+                            ? 0
+                            : Convert.ToInt64(dr["JIDNH_Number"]),
 
                         JIDNH_DN_No =
                             Convert.ToString(dr["JIDNH_DN_No"]),
 
                         JIDNH_DN_Date =
-                            Convert.ToDateTime(dr["JIDNH_DN_Date"]),
+                            dr["JIDNH_DN_Date"] == DBNull.Value
+                            ? DateTime.MinValue
+                            : Convert.ToDateTime(dr["JIDNH_DN_Date"]),
 
                         CUS_Name =
                             Convert.ToString(dr["CUS_Name"]),
@@ -41,29 +46,44 @@ namespace ERP_DL
                             Convert.ToString(dr["WarehouseCode"]),
 
                         JIDNH_MS_Number =
-                            Convert.ToInt64(dr["JIDNH_MS_Number"]),
+                            dr["JIDNH_MS_Number"] == DBNull.Value ||
+                            string.IsNullOrWhiteSpace(dr["JIDNH_MS_Number"].ToString())
+                            ? 0
+                            : Convert.ToInt64(dr["JIDNH_MS_Number"]),
 
                         Segregation =
                             Convert.ToString(dr["Segregation"]),
 
                         NoOfLineItems =
-                            Convert.ToInt32(dr["NoOfLineItems"]),
+                            dr["NoOfLineItems"] == DBNull.Value ||
+                            string.IsNullOrWhiteSpace(dr["NoOfLineItems"].ToString())
+                            ? 0
+                            : Convert.ToInt32(dr["NoOfLineItems"]),
 
                         Qty =
                             MH.DecimalConvertQty(
-                                Convert.ToDouble(dr["Qty"])),
+                                dr["Qty"] == DBNull.Value ||
+                                string.IsNullOrWhiteSpace(dr["Qty"].ToString())
+                                ? 0
+                                : Convert.ToDouble(dr["Qty"])),
 
                         Amount =
-                            Convert.ToDouble(dr["Amount"]),
-                        JCG_JW_CustomerGroup=
-                         Convert.ToString(dr["JCG_JW_CustomerGroup"]),
-                        JCC_JW_CustomerCategory =
-                         Convert.ToString(dr["JCC_JW_CustomerCategory"]),
-                        CustomerWareHouse =
-                         Convert.ToString(dr["CustomerWareHouse"]),
-                        ItemWareHouse =
-                         Convert.ToString(dr["ItemWareHouse"])
+                            dr["Amount"] == DBNull.Value ||
+                            string.IsNullOrWhiteSpace(dr["Amount"].ToString())
+                            ? 0
+                            : Convert.ToDouble(dr["Amount"]),
 
+                        JCG_JW_CustomerGroup =
+                            Convert.ToString(dr["JCG_JW_CustomerGroup"]),
+
+                        JCC_JW_CustomerCategory =
+                            Convert.ToString(dr["JCC_JW_CustomerCategory"]),
+
+                        CustomerWareHouse =
+                            Convert.ToString(dr["CustomerWareHouse"]),
+
+                        ItemWareHouse =
+                            Convert.ToString(dr["ItemWareHouse"])
                     });
             }
 

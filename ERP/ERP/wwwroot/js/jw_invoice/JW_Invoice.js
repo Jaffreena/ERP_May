@@ -56,6 +56,43 @@ var DeliveryNoteMap = {};
 let ItemGSTMap = {};
 let CurrentGSTRow = null;
 $(document).ready(function () {
+    //#region call service order onclick
+    $(document).on("focus", ".JISVII_JISVOH_Number", function () {
+        console.log("dropdown focused");
+
+        let dropdown = $(this);
+        LoadServiceOrderDropdown(dropdown);
+    });
+    //#endregion
+
+
+
+
+    //#region Row Click - Single Selection
+    $("#ItemTable").on("click", "tbody tr.NewRow", function (e) {
+
+        // If checkbox clicked directly, skip row selection logic
+        if ($(e.target).closest(".CheckItem").length) {
+            return;
+        }
+
+        // Uncheck all row checkboxes
+        $("#ItemTable .CheckItem").prop("checked", false);
+
+        // Check only clicked row
+        $(this).find(".CheckItem").prop("checked", true);
+    });
+    //#endregion
+
+
+    //#region Checkbox Click - Multiple Selection
+    $("#ItemTable").on("click", ".CheckItem", function (e) {
+
+        // Prevent checkbox click from triggering row click
+        e.stopPropagation();
+    });
+    //#endregion
+
     InitializeGstFlatpickrs();
 
     function InitializeGstFlatpickrs() {
@@ -81,12 +118,31 @@ $(document).ready(function () {
         }, 10);
     });
  
-    LoadJWCAddress();
+   // LoadJWCAddress();
   //  LoadServiceOrders();
     //#region CLICK ADDRESS BUTTON, ADD ADDRESS ROW, DELETE ADDRESS ROW
-    $("#AddressButton").on("click", function () {
-        $("#BuyerAddress").modal("show");
+    $("#AddressButton").click(function () {
+
+        var count = GetVisibleAddressRowCount();
+        console.log('--visibleRowCount--' + count);
+        if (count === 0) {
+            LoadJWCAddress();
+        } else {
+            $("#BuyerAddress").modal("show");
+        }
+
     });
+    function GetVisibleAddressRowCount() {
+
+        return $("#AddTableBody tr.AddNewRow").filter(function () {
+            var style = ($(this).attr("style") || "")
+                .replace(/\s/g, "")
+                .toLowerCase();
+
+            return !style.includes("display:none");
+        }).length;
+    }
+
     //#endregion CLICK ADDRESS BUTTON, ADD ADDRESS ROW, DELETE ADDRESS ROW
     $(document).on('click', '#RemoveItemRowButton', function () {
 
@@ -112,7 +168,7 @@ $(document).ready(function () {
     });
 
     $("#Header_JISVIH_InvoiceDate").on("change", function () {
-        console.log("Date changed:", $(this).val());
+       // console.log("Date changed:", $(this).val());
 
         loadTaxCluster(); // your function
     });
@@ -216,6 +272,28 @@ $(document).ready(function () {
 
             currentQty = balanceQty;
 
+        } else {
+
+           
+            let jisvohNumber = row.find(".JISVII_ServiceOrderHidden").val() || 0;
+            console.log('---if value is there in so:' + jisvohNumber)
+            if (jisvohNumber > 0) {
+                GetAllowedQty(
+                    jisvohNumber,
+                    row.find(".JISVII_PRS_Number").val() || 0,
+                    row.find(".JISVII_Item_Number").val() || 0,
+                    row.find(".JISVII_UoM_Number").val() || 0,
+                    function (allowedQty) {
+
+                        console.log("Allowed Qty:", allowedQty);
+
+                        if (currentQty > allowedQty) {
+                            alert("Allowed Qty: " + allowedQty);
+                           // row.find(".JISVII_Qty").val(allowedQty);
+                        }
+                    }
+                );
+            }
         }
 
         // Prevent negative values
@@ -276,6 +354,29 @@ $(document).ready(function () {
 
 
 });
+
+function GetAllowedQty(jisvohNumber, prsNumber, itemNumber, uomNumber, callback) {
+    $.get("/DeliveryNote/CheckDeliveredQtyExceeded", {
+        jisvohNumber: jisvohNumber,
+        prsNumber: prsNumber,
+        itemNumber: itemNumber,
+        uomNumber: uomNumber
+    }, function (res) {
+
+        if (!res || res.length === 0) {
+            callback(0);
+            return;
+        }
+
+        let deliveredQty = parseFloat(res[0].deliveredQty) || 0;
+        let jisvoiQty = parseFloat(res[0].jisvoiQty) || 0;
+
+        let allowedQty = jisvoiQty - deliveredQty;
+
+        callback(allowedQty);
+    });
+}
+
 function DateBind() {
     var today = new Date();
 
@@ -609,705 +710,8 @@ async function SearchJWCustomer(inputElement) {
 
 //#endregion customer Search Functions
 
-//#region LOAD DELIVERY NOTE ITEMS
-$("#LoadDeliveryNote").click(function () {
 
-    LoadDeliveryNoteItems();
 
-});
-
-// Load delivery note items from SP and fill table
-function LoadDeliveryNoteItems() {
-
-    var customerNumber = $("#Header_JISVIH_JW_Customer_Number").val();
-
-    var resultsDiv = $("#DeliveryNoteTableView");
-    var headers = GetDistinctDeliveryNoteHeaders();
- 
-
-    $.ajax({
-
-        url: '/JobworkInvoice/GetDeliveryNote_GroupItem',
-
-        type: 'GET',
-
-        data: {
-            CustomerNumber: customerNumber
-        },
-
-        success: function (response) {
-
-            if (response && response.length > 0) {
-
-                resultsDiv.empty();
-
-                //#region TABLE
-
-                var tableHTML = `
-    <table class="table table-bordered mb-0 table-hover table-grid">
-
-        <thead>
-
-            <tr class="table-info">
-
-                <th class="px-2 del"></th>
-
-                <th>Delivery Note No</th>
-
-                <th>Delivery Note Date</th>
-
-              
-
-                <th class="text-end">Qty</th>
-
-                <th class="text-center">
-                    Recover Deleted Item
-                </th>
-
-            </tr>
-
-        </thead>
-
-        <tbody></tbody>
-
-    </table>`;
-
-                var table = $(tableHTML);
-
-                //#endregion
-
-                //#region ROW BINDING
-
-                response.forEach(function (DN) {
-
-                    //#region MAIN CHECKBOX
-
-                    var checkboxCell = $('<td class="px-2 del text-center"></td>');
-
-                    var checkbox = $('<input type="checkbox" class="form-check-input deliverynote-checkbox">');
-
-                    checkbox.val(DN.jidnH_Number);
-
-                    //#region AUTO CHECK IF EXISTS IN GRID
-
-                    if ($.inArray(DN.jidnH_Number.toString(), headers) !== -1) {
-
-                        checkbox.prop('checked', true);
-
-                    }
-
-                    //#endregion
-
-                    checkboxCell.append(checkbox);
-
-                    //#endregion
-
-                    //#region ITEM CHECKBOX
-
-                    var itemCheckboxCell = $('<td class="px-2 del text-center"></td>');
-
-                    var itemCheckbox = $('<input type="checkbox" class="form-check-input item-delete-checkbox">');
-
-                    itemCheckbox.val(DN.jidnH_Number);
- 
-
-                    itemCheckboxCell.append(itemCheckbox);
-
-                    //#endregion
-
-                    //#region ROW
-
-                    var row = $('<tr class="DNCheck"></tr>');
-
-                    row.append(checkboxCell);
-
-                    row.append('<td>' + DN.jidnH_DN_No + '</td>');
-
-                    row.append('<td>' + DN.jidnH_DN_Date + '</td>');
-
-                    row.append('<td class="text-end">' + parseFloat(DN.totalQty).toFixed(2) + '</td>');
-
-                    row.append(itemCheckboxCell);
-
-                    table.find('tbody').append(row);
-
-                    //#endregion
-
-                });
-
-                //#endregion
-
-                var getButton = $(`
-                    <div class="w-100 p-2 text-center">
-
-                        <button type="button"
-                                class="btn btn-primary"
-                                id="GetDeliveryNote">
-                            Get
-                        </button>
-
-                    </div>`);
-
-                resultsDiv.append(table);
-
-                resultsDiv.append(getButton);
-
-                resultsDiv.find('#GetDeliveryNote').on('click', function () {
-
-                    var selectedDN = $.map(
-                        table.find('.deliverynote-checkbox:checked'),
-                        function (c) {
-                            return c.value;
-                        }
-                    );
-                    // REMOVE UNCHECKED DELIVERY NOTE ROWS
-
-                    $("#TableBody tr.NewRow").each(function () {
-
-                        var dn = $(this).attr("data-dn");
-
-                        if ($.inArray(dn, selectedDN) === -1) {
-
-                            var dn = $(this).attr("data-dn");
-
-                            $(this).remove();
-
-                            delete DeliveryNoteMap[dn];
-
-                        }
-
-                    });
-                    // RECOVER HIDDEN ROWS
-
-                 
-                    // ✅ Selected recovered/active item checkboxes
-                    var selectedRecoveredItems = $.map(
-                        table.find('.item-delete-checkbox:checked'),
-                        function (c) {
-                            return c.value;
-                        }
-                    );
-                    selectedRecoveredItems.forEach(function (dnNo) {
-
-                        $("#TableBody tr.NewRow")
-                            .filter("[data-dn='" + dnNo + "'][data-deleted='1']")
-                            .show()
-                            .attr("data-deleted", "0");
-
-                    });
-                    console.log(selectedDN);
-
-                    var selectedDNString = selectedDN.join(',');
-                    var recoveredString = selectedRecoveredItems.join(',');
-
-                    InsertDeliveryNoteItems(selectedDNString, selectedRecoveredItems, selectedDN);
-                   
-                    $("#DNView").modal('hide');
-
-                });
-
-                $("#DNView").modal('show');
-            }
-            else {
-
-                resultsDiv.html(`
-                    <div class="text-center p-3">
-
-                        No Delivery Note Found
-
-                    </div>`);
-
-            }
-
-        }
-
-    });
-
-}
-function GetSONOptions() {
-    let options = '';
-
-    sonList.forEach(function (item) {
-        if (item.Value !== '') {
-            options += `<option value="${item.Value}">
-                            ${item.Text}
-                        </option>`;
-        }
-    });
-
-    return options;
-}
-function LoadServiceOrders() {
-
-    var customerNumber =
-        $("#Header_JISVIH_JW_Customer_Number").val();
-
-    $.ajax({
-        url: '/ServiceOrder/GetServiceOrderHead',
-        type: 'GET',
-        data: {
-            customerNumber: customerNumber
-        },
-        success: function (response) {
-            sonList = response;
-            console.log(sonList);
-        }
-    });
-}
-
-
-function OnServiceOrderChange(ele) {
-
-    var row = $(ele).closest("tr");
-
-    var serviceOrderNo = $(ele).val();
-    var prsNumber = row.find(".JISVII_PRS_Number").val();
-    var itemNumber = row.find(".JISVII_Item_Number").val();
-    var uomNumber = row.find(".JISVII_UoM_Number").val();
-
-    $.ajax({
-        url: '/JobworkInvoice/GetServiceOrderItemInfo',
-        type: 'GET',
-        data: {
-            JISVOH_Number: serviceOrderNo,
-            PRS_Number: prsNumber,
-            Item_Number: itemNumber,
-            UoM_Number: uomNumber
-        },
-        success: function (response) {
-            console.log(response);
-            console.log(JSON.stringify(response));
-
-            var unitPriceBox = row.find(".JISVII_UnitPrice");
-            var amountBox = row.find(".JISVII_Amount");
-            var serviceOrderItemBox = row.find(".JISVOI_Number");
-
-            if (!response) {
-
-                serviceOrderItemBox.val(0);   // added
-
-                unitPriceBox.val("")
-                    .prop("readonly", false);
-
-                amountBox.val("")
-                    .prop("readonly", false);
-
-                return;
-            }
-
-            // Set JISVOI_Number
-            serviceOrderItemBox.val(response.jisvoI_Number || 0);
-
-            // Unit Price
-            if (response.unitPrice == null || response.unitPrice === "") {
-                unitPriceBox.val("")
-                    .prop("readonly", false);
-            }
-            else {
-                unitPriceBox.val(response.unitPrice);
-                unitPriceBox.trigger("input");
-                unitPriceBox.trigger("change");
-                unitPriceBox.prop("readonly", true);
-                unitPriceBox.off("keydown keypress paste")
-                    .on("keydown keypress paste", function (e) {
-                        e.preventDefault();
-                    });
-            }
-
-            // Amount
-            //if (response.amount == null || response.amount === "") {
-            //    amountBox.val("")
-            //        .prop("readonly", false);
-            //}
-            //else {
-            //    amountBox.val(response.amount);
-            //    amountBox.trigger("input");
-            //    amountBox.trigger("change");
-            //    amountBox.prop("readonly", true);
-            //    amountBox.off("keydown keypress paste")
-            //        .on("keydown keypress paste", function (e) {
-            //            e.preventDefault();
-            //        });
-            //}
-        },
-        error: function (err) {
-            console.log(err);
-            console.log(JSON.stringify(err));
-        }
-    });
-}
-function InsertDeliveryNoteItems(selectedDNString, selectedRecoveredItems, selectedDN) {
-
-    var customerNumber = $("#Header_JISVIH_JW_Customer_Number").val();
-
-    $.ajax({
-
-        url: '/JobworkInvoice/GetDeliveryNote_ForInvoice',
-
-        type: 'GET',
-
-        data: {
-            CustomerNumber: customerNumber,
-            DNNumbers: selectedDNString
-        },
-
-        success: function (response) {
-
-            console.log(response);
-
-            $.each(response, function (index, item) {
-                var headerId = item.jidnI_JIDNH_Number.toString();
-
-                var itemId = item.jidnI_Number.toString();
-
-                if (!DeliveryNoteMap[headerId]) {
-
-                    DeliveryNoteMap[headerId] = [];
-
-                }
-
-                if ($.inArray(itemId, DeliveryNoteMap[headerId]) === -1) {
-
-                    DeliveryNoteMap[headerId].push(itemId);
-
-                }
-
-                //#region DUPLICATE CHECK (VISIBLE + HIDDEN BOTH)
-
-                let existingRow = $("#TableBody tr.NewRow").filter(function () {
-
-                    var DNItemNumber = $(this)
-                        .find(".JIDNI_Number")
-                        .val();
-
-                    return DNItemNumber == item.jidnI_Number;
-
-                }).first();
-
-
-                // ✅ check recovered list
-                let isRecovered = selectedRecoveredItems &&
-                    selectedRecoveredItems.includes(item.jidnI_JIDNH_Number.toString());
-
-
-                // IF EXISTS
-                if (existingRow.length > 0) {
-
-                    // recover deleted row
-                    if (isRecovered &&
-                        existingRow.attr("data-deleted") == "1") {
-
-                        existingRow
-                            .show()
-                            .attr("data-deleted", "0");
-
-                    }
-
-                    return;
-                }
-
-                //#endregion
-
-              
-
-                //#region ROW COUNT ONLY VISIBLE
-
-                var rowCount = $("#TableBody tr.NewRow").length;
-
-                //#endregion
-                var deliveredQty = parseFloat(item.jidnI_Qty) || 0;
-
-                var prevInvoiceQty = parseFloat(item.invoicedQty) || 0;
-
-                var currentInvoiceQty = Math.max(
-                    0,
-                    deliveredQty - prevInvoiceQty
-                );
-                var row = `
-
-<tr class="NewRow"
-    data-rowid="${rowCount + 1}"
-    data-dn="${item.jidnI_JIDNH_Number}"
-    data-item="${item.jidnI_Number}"
-    data-deleted="0">
-
-    <td class="p-2 del">
-
-        <input type="checkbox"
-               class="CheckItem form-check-input">
-
-    </td>
-
-    <!-- SERVICE ORDER -->
-    <td>
-
-  
-   <select name="Items[${rowCount}].JISVII_JISVOH_Number" onchange="OnServiceOrderChange(this)"
-        class="form-select JISVII_JISVOH_Number">
-   
-    ${GetSONOptions()}
-</select>
-
-      
-
-    </td>
-
-    <!-- DELIVERY NOTE -->
-    <td>
-
-        <input name="Items[${rowCount}].JISVII_DN_No"
-               value="${item.jidnH_DN_No ?? ''}"
-               class="form-control JISVII_DN_No"
-               readonly />
-
-    </td>
-
-    <!-- PROCESS -->
-    <td>
-
-        <input name="Items[${rowCount}].PRS_ProcessName"
-               value="${item.prS_ProcessName ?? ''}"
-               class="form-control PRS_ProcessName"
-               readonly />
-
-    </td>
-
-    <!-- ITEM CODE -->
-    <td>
-
-        <!-- DELIVERY NOTE HEADER -->
-        <input type="hidden"
-               value="${item.jidnI_JIDNH_Number}"
-               class="JISVII_JIDNH_Number" />
-         
-        <!-- ITEM NUMBER -->
-        <input name="Items[${rowCount}].JISVII_Number"
-               type="hidden"
-               value="${item.jidnI_Number}"
-               class="JISVII_Number" />
-               
-               <input name="Items[${rowCount}].JISVOI_Number"
-       type="hidden"
-       value="0"
-       class="JISVOI_Number" />
-
-               <input name="Items[${rowCount}].JIDNI_Number"
-               type="hidden"
-               value="${item.jidnI_Number}"
-               class="JIDNI_Number" />
-
-        <!-- ITEM -->
-        <input name="Items[${rowCount}].JISVII_Item_Number"
-               type="hidden"
-               value="${item.jidnI_Item_Number}"
-               class="JISVII_Item_Number" />
-
-                    <input name="Items[${rowCount}].JISVII_PRS_Number"
-               type="hidden"
-               value="${item.jidnI_PRS_Number}"
-               class="JISVII_PRS_Number" />
-
-                    <input name="Items[${rowCount}].JISVII_UoM_Number"
-               type="hidden"
-               value="${item.jidnI_UoM_Number}"
-               class="JISVII_UoM_Number" />
-               
-
-        <input name="Items[${rowCount}].JISVII_ItemCode"
-               value="${item.itemCode ?? ''}"
-               class="form-control JISVII_ItemCode"
-               readonly />
-
-    </td>
-
-    <!-- DESCRIPTION -->
-    <td>
-
-        <input name="Items[${rowCount}].JISVII_ItemDescription"
-               value="${item.itemDescription ?? ''}"
-               class="form-control JISVII_ItemDescription"
-               readonly />
-
-    </td>
-
-    <!-- OUTER DIA -->
-    <td>
-
-        <input name="Items[${rowCount}].JISVII_OuterDia"
-               value="${item.outerDia ?? ''}"
-               class="form-control JISVII_OuterDia text-end"
-               readonly />
-
-    </td>
-
-    <!-- THICKNESS -->
-    <td>
-
-        <input name="Items[${rowCount}].JISVII_Thickness"
-               value="${item.thickness ?? ''}"
-               class="form-control JISVII_Thickness text-end"
-               readonly />
-
-    </td>
-
-    <!-- LENGTH -->
-    <td>
-
-        <input name="Items[${rowCount}].JISVII_Length"
-               value="${item.length ?? ''}"
-               class="form-control JISVII_Length text-end"
-               readonly />
-
-    </td>
-
-    <!-- WIDTH -->
-    <td>
-
-        <input name="Items[${rowCount}].JISVII_Width"
-               value="${item.itm_Width ?? ''}"
-               class="form-control JISVII_Width text-end"
-               readonly />
-
-    </td>
-
-    <!-- MATERIAL GRADE -->
-    <td>
-
-        <input name="Items[${rowCount}].JISVII_MaterialGrade"
-               value="${item.materialGrade ?? ''}"
-               class="form-control JISVII_MaterialGrade"
-               readonly />
-
-    </td>
-
-    <!-- ITEM GROUP -->
-    <td>
-
-        <input name="Items[${rowCount}].JISVII_ItemGroup"
-               value="${item.itemGroup ?? ''}"
-               class="form-control JISVII_ItemGroup"
-               readonly />
-
-    </td>
-
-    <!-- UOM -->
-    <td>
-
-        <input name="Items[${rowCount}].JISVII_UoM"
-               value="${item.uom ?? ''}"
-               class="form-control JISVII_UoM text-center"
-               readonly />
-
-    </td>
-
-    <!-- QTY 1 -->
-    <td class="text-end">
-
-        <input name="Items[${rowCount}].JISVII_Qty"
-               type="hidden"
-               value="${item.jidnI_Qty ?? 0}" />
-
-        <label class="form-control text-end JISVII_DeliveredQty">
-
-           ${item.jidnI_Qty ?? 0}
-
-        </label>
-
-    </td>
-
-    <!-- QTY 2 -->
-    <td class="text-end">
-
-        <input name="Items[${rowCount}].JISVII_Qty"
-               type="hidden"
-               value="${item.invoicedQty}" />
-
-        <label class="form-control text-end JISVII_PrevInvoiceQty">
-
-            ${item.invoicedQty}
-
-        </label>
-
-    </td>
-
-    <!-- EDITABLE QTY -->
-    <td>
-
-        <input name="Items[${rowCount}].JISVII_Qty"
-               value="${currentInvoiceQty}"
-               class="form-control JISVII_Qty text-end" />
-
-    </td>
-
-    <!-- UNIT PRICE -->
-    <td>
-
-        <input name="Items[${rowCount}].JISVII_UnitPrice"
-               value="${0}"
-               class="form-control JISVII_UnitPrice text-end" />
-
-    </td>
-
-    <!-- AMOUNT -->
-    <td>
-
-        <input name="Items[${rowCount}].JISVII_Amount"
-               value="${0}"
-               class="form-control JISVII_Amount text-end"
-               readonly />
-
-    </td>
-
-    <!-- SAC -->
-    <td>
-     <input name="Items[${rowCount}].SAC_Number"
-               value="${item.saC_Number ?? 0}"   type="hidden"
-               class="form-control SAC_Number text-end" />
-
-        <label class="form-control text-end SAC">
-
-            ${item.sac ?? 0}
-
-        </label>
-
-    </td>
-
-    <!-- GST -->
-    <td>
-
-        <input name="Items[${rowCount}].JISVII_GST_Amount"
-               value="0"
-               class="form-control JISVII_GST_Amount text-end"
-               readonly />
-
-    </td>
-
-</tr>`;
-
-                $("#TableBody").append(row);
-                //#region select service order num from delivery note and unitprice from service order item
-             
-                let currentRow = $("#TableBody tr.NewRow:last");
-
-                let serviceOrderDropdown = currentRow.find(".JISVII_JISVOH_Number");
-
-                serviceOrderDropdown.val(item.jisvoH_Number);
-
-                // Trigger your function
-                OnServiceOrderChange(serviceOrderDropdown[0]);
-                    //#endregion 
-
-            });
-            CalculateTotals();
-
-        }
-
-    });
-
-}
-
-
-//#endregion
 //#region validate unit price
 function ValidateUnitPriceAndAmount() {
 
@@ -1370,6 +774,24 @@ function ValidateUnitPriceAndAmount() {
 }
 //#endregion
 //#region Save Function
+function ValidateItemTable() {
+    let hasRow = false;
+
+    $("#ItemTable tbody tr.NewRow").each(function () {
+        let row = $(this);
+
+        if (row.attr("data-deleted") != "1") {
+            hasRow = true;
+            return false;
+        }
+    });
+
+    if (!hasRow) {
+        return "At least one item row is required";
+    }
+
+    return "";
+}
 function validateHeaderById() {
 
     // 1. Invoice No
@@ -1436,6 +858,20 @@ function validateHeaderById() {
 
         return false;
     }
+    // 5. Message / MS
+    if (
+        $("#Header_JISVIH_MS_Number").val() === "" ||
+        $("#Header_JISVIH_MS_Number").val() === "0"
+    ) {
+
+        showAlert(
+            'Material Seggregation is required',
+            '#Header_JISVIH_MS_Number'
+        );
+
+        return false;
+    }
+
 
     return true;
 }
@@ -1448,6 +884,12 @@ $("#btnSave").on("click", function (e) {
         return false;
     } if (!ValidateUnitPriceAndAmount()) {
         e.preventDefault();
+        return false;
+    }
+    let itemValidation = ValidateItemTable();
+    if (itemValidation) {
+        e.preventDefault();
+        showAlert(itemValidation);
         return false;
     }
     else {
@@ -1530,7 +972,7 @@ function CreateJobworkInvoiceItemModel() {
         if (row.attr("data-deleted") == "1") {
             return;
         }
-
+        console.log('service order dropdown value---'+row.find(".JISVII_ServiceOrderHidden").val());
         let item = {
 
             JISVII_Number:
@@ -1540,7 +982,7 @@ function CreateJobworkInvoiceItemModel() {
                 parseInt(row.find(".JISVOI_Number").val()) || 0,
 
             JISVII_JISVOH_Number:
-                parseInt(row.find(".JISVII_JISVOH_Number").val()) || 0,
+                parseInt(row.find(".JISVII_ServiceOrderHidden").val()) || 0,
 
             JISVII_Item_Number:
                 parseInt(row.find(".JISVII_Item_Number").val()) || 0,
@@ -1608,6 +1050,8 @@ function CreateJobworkInvoiceItemModel() {
 
     return items;
 }
+
+
 function CreateJobworkInvoiceModel() {
 
     //=====================================
@@ -1625,7 +1069,8 @@ function CreateJobworkInvoiceModel() {
         JISVIH_InvoiceDate:
             new Date($("#Header_JISVIH_InvoiceDate").val())
                 .toISOString(),
-
+        JISVIH_MS_Number:
+            parseInt($("#Header_JISVIH_MS_Number").val()) || 0,
         JISVIH_JW_Customer_Number:
             parseInt($("#Header_JISVIH_JW_Customer_Number").val()) || 0,
 
@@ -1794,10 +1239,7 @@ function CheckAndRemoveEmptyHeaders() {
 
 
 //#region CLICK ADDRESS BUTTON, ADD ADDRESS ROW, DELETE ADDRESS ROW
-$("#AddressButton").on("click", function () {
-    LoadJWCAddress();
-   
-});
+
 
 
 $("#AddressAddButton").on("click", function () {
@@ -2028,89 +1470,905 @@ function validateTempRow() {
 
 //#region jwc address
 function LoadJWCAddress() {
-
     var jwcNumber = $("#Header_JISVIH_JW_Customer_Number").val();
 
     $.ajax({
         url: '/JobworkInvoice/GetJWCAddress',
         type: 'GET',
+        data: { JWCNumber: jwcNumber },
+        success: function (response) {
+            console.log(JSON.stringify(response));
+            if (!response || !response.length) return;
+
+            var rowCount = 0;
+
+            response.forEach(function (addr) {
+                if (addr.jwC_ADD_Default != 1) return;
+
+                addAddressRow(); // always create new row
+                var row = $("#AddTableBody tr.AddNewRow:last");
+
+                row.find(".JIDNA_ADTP_Number").val(addr.jwC_ADD_ADTP_Number).trigger("change");
+                row.find(".JIDNA_Address_ID").val(addr.jwC_ADD_Address_ID);
+                row.find(".JIDNA_Address").val(addr.jwC_ADD_Address);
+                row.find(".JIDNA_City").val(addr.jwC_ADD_City);
+                row.find(".JIDNA_State").val(addr.jwC_ADD_State);
+                row.find(".JIDNA_Country").val(addr.jwC_ADD_Country);
+                row.find(".JIDNA_PIN").val(addr.jwC_ADD_PIN);
+                row.find(".JIDNA_GSTIN").val(addr.jwC_ADD_GSTIN);
+
+                row.show();
+            });
+
+            $("#BuyerAddress").modal("show");
+        }
+    });
+}
+
+ 
+//#endregion
+
+
+//#region items
+//#region callsp service orderdropdown filter
+function LoadServiceOrderDropdown(dropdown) {
+
+    let row = $(dropdown).closest("tr");
+
+    let customerId = $("#Header_JISVIH_JW_Customer_Number").val();
+    let prsNumber = row.find(".JISVII_PRS_Number").val();
+    let itemNumber = row.find(".JISVII_Item_Number").val();
+    let uomNumber = row.find(".JISVII_UoM_Number").val();
+    console.log(row.find(".JISVII_PRS_Number").length);
+    console.log(row.find(".JISVII_Item_Number").length);
+    console.log(row.find(".JISVII_UoM_Number").length);
+    $.ajax({
+        url: "/DeliveryNote/GetServiceOrder",
+        type: "GET",
         data: {
-            JWCNumber: jwcNumber
+            customerId: customerId,
+            prsNumber: prsNumber,
+            itemNumber: itemNumber,
+            uomNumber: uomNumber
+        },
+        success: function (response) {
+            console.log('--what is response---' + JSON.stringify(response));
+
+            let options = '<option value="0"></option>';
+
+            $.each(response, function (_, item) {
+                options += `<option value="${item.value}">
+                            ${item.text}
+                        </option>`;
+            });
+
+            $(dropdown).html(options);
+        }, error: function (xhr, status, error) {
+
+            console.log("AJAX Error");
+            console.log("Status:", status);
+            console.log("Error:", error);
+            console.log("Response:", xhr.responseText);
+
+            // alert("Failed to load Service Orders.");
+        }
+    });
+}
+//#endregion
+
+//#region LOAD DELIVERY NOTE ITEMS
+$("#LoadDeliveryNote").click(function () {
+
+   
+
+
+    // 4. Material Segregation
+    if (
+        $("#Header_JISVIH_MS_Number").val() === "" ||
+        $("#Header_JISVIH_MS_Number").val() === "0"
+    ) {
+        showAlert(
+            'Material Seggregation is required',
+            '#Header_JISVIH_MS_Number'
+        );
+        return false;
+    }
+    // 3. JW Customer
+    if (
+        $("#Header_JISVIH_JW_Customer_Number").val().trim() === "" ||
+        $("#Header_JISVIH_JW_Customer_Number").val() === "0" ||
+        $("#Header_JISVIH_JW_Customer_Name").val().trim() === ""
+    ) {
+
+        showAlert(
+            'JW Customer is required',
+            '#Header_JISVIH_JW_Customer_Name'
+        );
+
+        return false;
+    }
+    LoadDeliveryNoteItems();
+});
+
+// Load delivery note items from SP and fill table
+function LoadDeliveryNoteItems() {
+
+    var customerNumber = $("#Header_JISVIH_JW_Customer_Number").val();
+    var msNumber = $("#Header_JISVIH_MS_Number").val();
+    var resultsDiv = $("#DeliveryNoteTableView");
+    var headers = GetDistinctDeliveryNoteHeaders();
+
+
+    $.ajax({
+
+        url: '/JobworkInvoice/GetDeliveryNote_GroupItem',
+
+        type: 'GET',
+
+        data: {
+            CustomerNumber: customerNumber,
+            MSNumber: msNumber
         },
 
         success: function (response) {
 
             if (response && response.length > 0) {
 
-                //#region CLEAR OLD ROWS
+                resultsDiv.empty();
 
-                $("#AddTableBody tr.AddNewRow").not(":first").remove();
+                //#region TABLE
 
-                var firstRow = $("#AddTableBody tr.AddNewRow:first");
+                var tableHTML = `
+    <table class="table table-bordered mb-0 table-hover table-grid">
 
-                firstRow.find("input").val("");
-                firstRow.find("select").val("");
-                firstRow.find(".JIDNA_IsDeleted").val("0");
+        <thead>
 
-                addressIndex = 1;
+            <tr class="table-info">
+
+                <th class="px-2 del"></th>
+
+                <th>Delivery Note No</th>
+
+                <th>Delivery Note Date</th>
+
+              
+
+                <th class="text-end">Qty</th>
+
+                <th class="text-center">
+                    Recover Deleted Item
+                </th>
+
+            </tr>
+
+        </thead>
+
+        <tbody></tbody>
+
+    </table>`;
+
+                var table = $(tableHTML);
 
                 //#endregion
 
-                response.forEach(function (addr, index) {
-                    if (addr.jwC_ADD_Default == 1) {
-                        var row;
+                //#region ROW BINDING
 
-                        //#region FIRST ROW / NEW ROW
+                response.forEach(function (DN) {
 
-                        if (index === 0) {
-                            row = $("#AddTableBody tr.AddNewRow:first");
-                        }
-                        else {
-                            addAddressRow();
-                            row = $("#AddTableBody tr.AddNewRow:last");
-                        }
+                    //#region MAIN CHECKBOX
 
-                        //#endregion
+                    var checkboxCell = $('<td class="px-2 del text-center"></td>');
 
-                        //#region BIND VALUES
-                        row.find(".JIDNA_ADTP_Number")
-                            .val(addr.jwC_ADD_ADTP_Number)
-                            .trigger("change");
+                    var checkbox = $('<input type="checkbox" class="form-check-input deliverynote-checkbox">');
 
-                        row.find(".JIDNA_Address_ID")
-                            .val(addr.jwC_ADD_Address_ID)
-                            .trigger("change");
- 
+                    checkbox.val(DN.jidnH_Number);
 
-                        row.find(".JIDNA_Address")
-                            .val(
-                                (addr.jwC_ADD_Address)
-                            );
+                    //#region AUTO CHECK IF EXISTS IN GRID
 
-                        row.find(".JIDNA_City")
-                            .val(addr.jwC_ADD_City);
+                    if ($.inArray(DN.jidnH_Number.toString(), headers) !== -1) {
 
-                        row.find(".JIDNA_State")
-                            .val(addr.jwC_ADD_State);
+                        checkbox.prop('checked', true);
 
-                        row.find(".JIDNA_PIN")
-                            .val(addr.jwC_ADD_PIN);
-
-                        row.find(".jwC_ADD_GSTIN")
-                            .val(addr.jwcaD_GSTIN);
-
-                        //#endregion
                     }
+
+                    //#endregion
+
+                    checkboxCell.append(checkbox);
+
+                    //#endregion
+
+                    //#region ITEM CHECKBOX
+
+                    var itemCheckboxCell = $('<td class="px-2 del text-center"></td>');
+
+                    var itemCheckbox = $('<input type="checkbox" class="form-check-input item-delete-checkbox">');
+
+                    itemCheckbox.val(DN.jidnH_Number);
+
+
+                    itemCheckboxCell.append(itemCheckbox);
+
+                    //#endregion
+
+                    //#region ROW
+
+                    var row = $('<tr class="DNCheck"></tr>');
+
+                    row.append(checkboxCell);
+
+                    row.append('<td>' + DN.jidnH_DN_No + '</td>');
+
+                    row.append('<td>' + DN.jidnH_DN_Date + '</td>');
+
+                    row.append('<td class="text-end">' + parseFloat(DN.totalQty).toFixed(2) + '</td>');
+
+                    row.append(itemCheckboxCell);
+
+                    table.find('tbody').append(row);
+
+                    //#endregion
+
                 });
 
-                $("#BuyerAddress").modal("show");
+                //#endregion
+
+                var getButton = $(`
+                    <div class="w-100 p-2 text-center">
+
+                        <button type="button"
+                                class="btn btn-primary"
+                                id="GetDeliveryNote">
+                            Get
+                        </button>
+
+                    </div>`);
+
+                resultsDiv.append(table);
+
+                resultsDiv.append(getButton);
+
+                resultsDiv.find('#GetDeliveryNote').on('click', function () {
+
+                    var selectedDN = $.map(
+                        table.find('.deliverynote-checkbox:checked'),
+                        function (c) {
+                            return c.value;
+                        }
+                    );
+                    // REMOVE UNCHECKED DELIVERY NOTE ROWS
+
+                    $("#TableBody tr.NewRow").each(function () {
+
+                        var dn = $(this).attr("data-dn");
+
+                        if ($.inArray(dn, selectedDN) === -1) {
+
+                            var dn = $(this).attr("data-dn");
+
+                            $(this).remove();
+
+                            delete DeliveryNoteMap[dn];
+
+                        }
+
+                    });
+                    // RECOVER HIDDEN ROWS
+
+
+                    // ✅ Selected recovered/active item checkboxes
+                    var selectedRecoveredItems = $.map(
+                        table.find('.item-delete-checkbox:checked'),
+                        function (c) {
+                            return c.value;
+                        }
+                    );
+                    selectedRecoveredItems.forEach(function (dnNo) {
+
+                        $("#TableBody tr.NewRow")
+                            .filter("[data-dn='" + dnNo + "'][data-deleted='1']")
+                            .show()
+                            .attr("data-deleted", "0");
+
+                    });
+                    console.log(selectedDN);
+
+                    var selectedDNString = selectedDN.join(',');
+                    var recoveredString = selectedRecoveredItems.join(',');
+
+                    InsertDeliveryNoteItems(selectedDNString, selectedRecoveredItems, selectedDN);
+
+                    $("#DNView").modal('hide');
+
+                });
+
+                $("#DNView").modal('show');
             }
             else {
-               // alert("No Address Found");
+
+                resultsDiv.html(`
+                    <div class="text-center p-3">
+
+                        No Delivery Note Found
+
+                    </div>`);
+
             }
+
+        }
+
+    });
+
+}
+function GetSONOptions() {
+    let options = '';
+    let isFirst = true;
+
+    sonList.forEach(function (item) {
+        if (item.Value !== '') {
+            options += `<option value="${item.Value}" ${isFirst ? 'selected' : ''}>
+                            ${item.Text}
+                        </option>`;
+            isFirst = false;
+        }
+    });
+
+    return options;
+}
+function LoadServiceOrders() {
+
+    var customerNumber =
+        $("#Header_JISVIH_JW_Customer_Number").val();
+
+    $.ajax({
+        url: '/ServiceOrder/GetServiceOrderHead',
+        type: 'GET',
+        data: {
+            customerNumber: customerNumber
+        },
+        success: function (response) {
+            sonList = response;
+            console.log(sonList);
         }
     });
 }
+
+
+function OnServiceOrderChange(ele) {
+
+    var row = $(ele).closest("tr");
+    row.find(".JISVII_ServiceOrderHidden").val($(ele).val());
+    var serviceOrderNo = $(ele).val();
+    var prsNumber = row.find(".JISVII_PRS_Number").val();
+    var itemNumber = row.find(".JISVII_Item_Number").val();
+    var uomNumber = row.find(".JISVII_UoM_Number").val();
+
+    $.ajax({
+        url: '/JobworkInvoice/GetServiceOrderItemInfo',
+        type: 'GET',
+        data: {
+            JISVOH_Number: serviceOrderNo,
+            PRS_Number: prsNumber,
+            Item_Number: itemNumber,
+            UoM_Number: uomNumber
+        },
+        success: function (response) {
+            console.log(response);
+            console.log(JSON.stringify(response));
+
+            var unitPriceBox = row.find(".JISVII_UnitPrice");
+            var amountBox = row.find(".JISVII_Amount");
+            var serviceOrderItemBox = row.find(".JISVOI_Number");
+
+            if (!response) {
+
+                serviceOrderItemBox.val(0);   // added
+
+                unitPriceBox.val("")
+                    .prop("readonly", false);
+
+                amountBox.val("")
+                    .prop("readonly", false);
+
+                return;
+            }
+
+            // Set JISVOI_Number
+            serviceOrderItemBox.val(response.jisvoI_Number || 0);
+
+            // Unit Price
+            if (response.unitPrice == null || response.unitPrice === "") {
+                unitPriceBox.val("")
+                    .prop("readonly", false);
+            }
+            else {
+                unitPriceBox.val(response.unitPrice);
+                unitPriceBox.trigger("input");
+                unitPriceBox.trigger("change");
+                unitPriceBox.prop("readonly", true);
+              //  row.find(".JISVII_JISVOH_Number").prop("disabled", true);
+                unitPriceBox.off("keydown keypress paste")
+                    .on("keydown keypress paste", function (e) {
+                        e.preventDefault();
+                    });
+              
+            }
+
+            // Amount
+            //if (response.amount == null || response.amount === "") {
+            //    amountBox.val("")
+            //        .prop("readonly", false);
+            //}
+            //else {
+            //    amountBox.val(response.amount);
+            //    amountBox.trigger("input");
+            //    amountBox.trigger("change");
+            //    amountBox.prop("readonly", true);
+            //    amountBox.off("keydown keypress paste")
+            //        .on("keydown keypress paste", function (e) {
+            //            e.preventDefault();
+            //        });
+            //}
+        },
+        error: function (err) {
+            console.log(err);
+            console.log(JSON.stringify(err));
+        }
+    });
+}
+function InsertDeliveryNoteItems(selectedDNString, selectedRecoveredItems, selectedDN) {
+
+    var customerNumber = $("#Header_JISVIH_JW_Customer_Number").val();
+
+    $.ajax({
+
+        url: '/JobworkInvoice/GetDeliveryNote_ForInvoice',
+
+        type: 'GET',
+
+        data: {
+            CustomerNumber: customerNumber,
+            DNNumbers: selectedDNString
+        },
+
+        success: function (response) {
+
+            console.log(response);
+
+            $.each(response, function (index, item) {
+                console.log('---first select---' + item)
+                console.log(JSON.stringify(item));
+                var headerId = item.jidnI_JIDNH_Number.toString();
+
+                var itemId = item.jidnI_Number.toString();
+
+                if (!DeliveryNoteMap[headerId]) {
+
+                    DeliveryNoteMap[headerId] = [];
+
+                }
+
+                if ($.inArray(itemId, DeliveryNoteMap[headerId]) === -1) {
+
+                    DeliveryNoteMap[headerId].push(itemId);
+
+                }
+
+                //#region DUPLICATE CHECK (VISIBLE + HIDDEN BOTH)
+
+                let existingRow = $("#TableBody tr.NewRow").filter(function () {
+
+                    var DNItemNumber = $(this)
+                        .find(".JIDNI_Number")
+                        .val();
+
+                    return DNItemNumber == item.jidnI_Number;
+
+                }).first();
+
+
+                // ✅ check recovered list
+                let isRecovered = selectedRecoveredItems &&
+                    selectedRecoveredItems.includes(item.jidnI_JIDNH_Number.toString());
+
+
+                // IF EXISTS
+                if (existingRow.length > 0) {
+
+                    // recover deleted row
+                    if (isRecovered &&
+                        existingRow.attr("data-deleted") == "1") {
+
+                        existingRow
+                            .show()
+                            .attr("data-deleted", "0");
+
+                    }
+
+                    return;
+                }
+
+                //#endregion
+
+
+
+                //#region ROW COUNT ONLY VISIBLE
+
+                var rowCount = $("#TableBody tr.NewRow").length;
+
+                //#endregion
+                var deliveredQty = parseFloat(item.jidnI_Qty) || 0;
+
+                var prevInvoiceQty = parseFloat(item.invoicedQty) || 0;
+
+                var currentInvoiceQty = Math.max(
+                    0,
+                    deliveredQty - prevInvoiceQty
+                );
+                //#region condition
+                let serviceOrderCell =
+                    (item.hasServiceOrder == 1
+                        ? `<label class="form-control JISVII_ServiceOrderLabel">
+               ${item.serviceOrderNo ?? ''}
+           </label>`
+                        : `<select name="Items[${rowCount}].JISVII_JISVOH_Number"
+                  onchange="OnServiceOrderChange(this)"
+                  class="form-select JISVII_JISVOH_Number">
+           </select>`)
+                    +
+                    `<input name="Items[${rowCount}].JISVII_JISVOH_Number"
+            type="hidden"
+            value="${item.serviceOrderId ?? item.jisvoH_Number ?? 0}"
+            class="JISVII_ServiceOrderHidden" />`;
+
+                let unitPriceCell = item.hasServiceOrder == 1
+                    ? `<label class="form-control JISVII_UnitPriceLabel text-end">${item.jisvoI_UnitPrice ?? 0} </label>
+       <input name="Items[${rowCount}].ServiceOrderId" type="hidden" value="${item.serviceOrderId ?? 0}" class="ServiceOrderId" />
+       <input name="Items[${rowCount}].JISVII_UnitPrice" type="hidden" value="${item.jisvoI_UnitPrice ?? 0}" class="JISVII_UnitPrice" />`
+         : `<input name="Items[${rowCount}].JISVII_UnitPrice" value="${item.jisvoI_UnitPrice ?? 0}" class="form-control JISVII_UnitPrice text-end" />`;
+                //#endregion
+
+
+                var row = `
+
+<tr class="NewRow"
+    data-rowid="${rowCount + 1}"
+    data-dn="${item.jidnI_JIDNH_Number}"
+    data-item="${item.jidnI_Number}"
+    data-deleted="0">
+
+    <td class="p-2 del">
+
+        <input type="checkbox"
+               class="CheckItem form-check-input">
+
+    </td>
+
+    
+
+    <!-- SERVICE ORDER -->
+   <td>
+    ${serviceOrderCell}
+</td>
+
+    <!-- DELIVERY NOTE -->
+    <td>
+
+        <input name="Items[${rowCount}].JISVII_DN_No"
+               value="${item.jidnH_DN_No ?? ''}"
+               class="form-control JISVII_DN_No"
+               readonly />
+
+    </td>
+
+    <!-- PROCESS -->
+    <td>
+
+        <input name="Items[${rowCount}].PRS_ProcessName"
+               value="${item.prS_ProcessName ?? ''}"
+               class="form-control PRS_ProcessName"
+               readonly />
+
+    </td>
+
+    <!-- ITEM CODE -->
+    <td>
+
+        <!-- DELIVERY NOTE HEADER -->
+        <input type="hidden"
+               value="${item.jidnI_JIDNH_Number}"
+               class="JISVII_JIDNH_Number" />
+         
+        <!-- ITEM NUMBER -->
+        <input name="Items[${rowCount}].JISVII_Number"
+               type="hidden"
+               value="${item.jidnI_Number}"
+               class="JISVII_Number" />
+               
+               <input name="Items[${rowCount}].JISVOI_Number"
+       type="hidden"
+       value="0"
+       class="JISVOI_Number" />
+
+               <input name="Items[${rowCount}].JIDNI_Number"
+               type="hidden"
+               value="${item.jidnI_Number}"
+               class="JIDNI_Number" />
+
+        <!-- ITEM -->
+        <input name="Items[${rowCount}].JISVII_Item_Number"
+               type="hidden"
+               value="${item.jidnI_Item_Number}"
+               class="JISVII_Item_Number" />
+
+                    <input name="Items[${rowCount}].JISVII_PRS_Number"
+               type="hidden"
+               value="${item.jidnI_PRS_Number}"
+               class="JISVII_PRS_Number" />
+
+                    <input name="Items[${rowCount}].JISVII_UoM_Number"
+               type="hidden"
+               value="${item.jidnI_UoM_Number}"
+               class="JISVII_UoM_Number" />
+               
+
+        <input name="Items[${rowCount}].JISVII_ItemCode"
+               value="${item.itemCode ?? ''}"
+               class="form-control JISVII_ItemCode"
+               readonly />
+
+    </td>
+
+    <!-- DESCRIPTION -->
+    <td>
+
+        <input name="Items[${rowCount}].JISVII_ItemDescription"
+               value="${item.itemDescription ?? ''}"
+               class="form-control JISVII_ItemDescription"
+               readonly />
+
+    </td>
+
+    <!-- OUTER DIA -->
+    <td>
+
+        <input name="Items[${rowCount}].JISVII_OuterDia"
+               value="${item.outerDia ?? ''}"
+               class="form-control JISVII_OuterDia text-end"
+               readonly />
+
+    </td>
+
+    <!-- THICKNESS -->
+    <td>
+
+        <input name="Items[${rowCount}].JISVII_Thickness"
+               value="${item.thickness ?? ''}"
+               class="form-control JISVII_Thickness text-end"
+               readonly />
+
+    </td>
+
+    <!-- LENGTH -->
+    <td>
+
+        <input name="Items[${rowCount}].JISVII_Length"
+               value="${item.length ?? ''}"
+               class="form-control JISVII_Length text-end"
+               readonly />
+
+    </td>
+
+    <!-- WIDTH -->
+    <td>
+
+        <input name="Items[${rowCount}].JISVII_Width"
+               value="${item.itm_Width ?? ''}"
+               class="form-control JISVII_Width text-end"
+               readonly />
+
+    </td>
+
+    <!-- MATERIAL GRADE -->
+    <td>
+
+        <input name="Items[${rowCount}].JISVII_MaterialGrade"
+               value="${item.materialGrade ?? ''}"
+               class="form-control JISVII_MaterialGrade"
+               readonly />
+
+    </td>
+
+    <!-- ITEM GROUP -->
+    <td>
+
+        <input name="Items[${rowCount}].JISVII_ItemGroup"
+               value="${item.itemGroup ?? ''}"
+               class="form-control JISVII_ItemGroup"
+               readonly />
+
+    </td>
+
+    <!-- UOM -->
+    <td>
+
+        <input name="Items[${rowCount}].JISVII_UoM"
+               value="${item.uom ?? ''}"
+               class="form-control JISVII_UoM text-center"
+               readonly />
+
+    </td>
+
+    <!-- QTY 1 -->
+    <td class="text-end">
+
+        <input name="Items[${rowCount}].JISVII_Qty"
+               type="hidden"
+               value="${item.jidnI_Qty ?? 0}" />
+
+        <label class="form-control text-end JISVII_DeliveredQty">
+
+           ${item.jidnI_Qty ?? 0}
+
+        </label>
+
+    </td>
+
+    <!-- QTY 2 -->
+    <td class="text-end">
+
+        <input name="Items[${rowCount}].JISVII_Qty"
+               type="hidden"
+               value="${item.invoicedQty}" />
+
+        <label class="form-control text-end JISVII_PrevInvoiceQty">
+
+            ${item.invoicedQty}
+
+        </label>
+
+    </td>
+
+    <!-- EDITABLE QTY -->
+    <td>
+
+        <input name="Items[${rowCount}].JISVII_Qty"
+               value="${currentInvoiceQty}"
+               class="form-control JISVII_Qty text-end" />
+
+    </td>
+
+    <!-- UNIT PRICE -->
+   <td>
+    ${unitPriceCell}
+</td>
+
+    <!-- AMOUNT -->
+    <td>
+
+        <input name="Items[${rowCount}].JISVII_Amount"
+               value="${0}"
+               class="form-control JISVII_Amount text-end"
+               readonly />
+
+    </td>
+
+    <!-- SAC -->
+    <td>
+     <input name="Items[${rowCount}].SAC_Number"
+               value="${item.saC_Number ?? 0}"   type="hidden"
+               class="form-control SAC_Number text-end" />
+
+        <label class="form-control text-end SAC">
+
+            ${item.sac ?? 0}
+
+        </label>
+
+    </td>
+
+    <!-- GST -->
+    <td>
+
+        <input name="Items[${rowCount}].JISVII_GST_Amount"
+               value="0"
+               class="form-control JISVII_GST_Amount text-end"
+               readonly />
+
+    </td>
+
+</tr>`;
+
+                $("#TableBody").append(row);
+               
+
+            });
+            $("#TableBody .JISVII_Qty").trigger("change");
+            $("#TableBody .JISVII_UnitPrice").trigger("change");
+            CalculateTotals();
+
+        }
+
+    });
+
+}
+
+
+//#endregion
+
+
+//#region JISVII_JISVOH_Number change
+$(document).on("change", ".JISVII_JISVOH_Number", function () {
+
+    let row = $(this).closest("tr");
+    let jisvohNumber = $(this).val();
+
+    row.find(".JISVOH_Number").val(jisvohNumber);
+
+    $.get("/DeliveryNote/CheckDeliveredQtyExceeded", {
+        jisvohNumber,
+        prsNumber: row.find(".JISVII_PRS_Number").val(),
+        itemNumber: row.find(".JISVII_Item_Number").val(),
+        uomNumber: row.find(".JISVII_UoM_Number").val()
+    }, function (res) {
+
+        if (!res || res.length === 0) return;
+
+        let deliveredQty = parseFloat(res[0].deliveredQty) || 0;
+        let jisvoiQty = parseFloat(res[0].jisvoiQty) || 0;
+        let originalQty = parseFloat(row.find(".JISVII_Qty").val()) || 0;
+
+        if ((deliveredQty + originalQty) > jisvoiQty) {
+            alert("Qty Allowed: " + (jisvoiQty - deliveredQty));
+            row.find(".JISVII_Qty").focus().select();
+        }
+    });
+});
+
+function CheckDeliveredQtyExceeded(jisvohNumber, prsNumber, itemNumber, uomNumber, originalQty, rowIndex) {
+    $.get("/DeliveryNote/CheckDeliveredQtyExceeded", {
+        jisvohNumber,
+        prsNumber,
+        itemNumber,
+        uomNumber
+    }, function (res) {
+
+        if (!res || res.length === 0) return;
+
+        let deliveredQty = parseFloat(res[0].deliveredQty) || 0;
+        let jisvoiQty = parseFloat(res[0].jisvoiQty) || 0;
+
+        if ((deliveredQty + originalQty) > jisvoiQty) {
+
+            alert("Qty Allowed: " + (jisvoiQty - deliveredQty));
+
+            //setTimeout(function () {
+            //    $("#ItemTable tbody tr.NewRow")
+            //        .eq(rowIndex)
+            //        .find(".JISVII_Qty")
+            //        .focus()
+            //        .select();
+            //}, 100);
+        }
+    });
+}
+
+function BindServiceOrder(customerId, prsNumber = null, itemNumber = null, uomNumber = null) {
+
+    $(".JISVII_JISVOH_Number").html('<option value="0"></option>');
+    if (!customerId) return;
+
+    $.get("/DeliveryNote/GetServiceOrder",
+        { customerId, prsNumber, itemNumber, uomNumber },
+        data => $.each(data, (_, item) =>
+            $(".JISVII_JISVOH_Number").append(
+                `<option value="${item.value}">${item.text}</option>`
+            )
+        )
+    );
+}
+//#endregion
+
+
 //#endregion
 
 

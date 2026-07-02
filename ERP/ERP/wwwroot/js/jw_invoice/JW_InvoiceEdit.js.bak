@@ -58,146 +58,16 @@ var DeliveryNoteMap = {};
 let ItemGSTMap = {};
 let CurrentGSTRow = null;
 $(document).ready(function () {
-
-    //#region JISVII_JISVOH_Number focus
+ //#region call service order onclick
     $(document).on("focus", ".JISVII_JISVOH_Number", function () {
         console.log("dropdown focused");
 
         let dropdown = $(this);
         LoadServiceOrderDropdown(dropdown);
     });
-
-    //#region load JISVII_JISVOH_Number -LoadServiceOrderDropdown
-    function LoadServiceOrderDropdown(dropdown) {
-
-        let row = $(dropdown).closest("tr");
-
-        let customerId = $("#Header_JISVIH_JW_Customer_Number").val();
-        let prsNumber = row.find(".JISVII_PRS_Number").val();
-        let itemNumber = row.find(".JISVII_Item_Number").val();
-        let uomNumber = row.find(".JISVII_UoM_Number").val();
-        console.log(row.find(".JISVII_PRS_Number").length);
-        console.log(row.find(".JISVII_Item_Number").length);
-        console.log(row.find(".JISVII_UoM_Number").length);
-        $.ajax({
-            url: "/DeliveryNote/GetServiceOrder",
-            type: "GET",
-            data: {
-                customerId: customerId,
-                prsNumber: prsNumber,
-                itemNumber: itemNumber,
-                uomNumber: uomNumber
-            },
-            success: function (response) {
-                console.log('--what is response---' + JSON.stringify(response));
-
-                let options = '<option value="0"></option>';
-
-                $.each(response, function (_, item) {
-                    options += `<option value="${item.value}">
-                            ${item.text}
-                        </option>`;
-                });
-
-                $(dropdown).html(options);
-            }, error: function (xhr, status, error) {
-
-                console.log("AJAX Error");
-                console.log("Status:", status);
-                console.log("Error:", error);
-                console.log("Response:", xhr.responseText);
-
-                // alert("Failed to load Service Orders.");
-            }
-        });
-    }
     //#endregion
 
-
-    //#endregion
-
-    //#region JISVII_JISVOH_Number change
-    $(document).on("change", ".JISVII_JISVOH_Number", function () {
-
-        let row = $(this).closest("tr");
-        let jisvohNumber = $(this).val();
-        row.find(".JISVII_ServiceOrderHidden").val(jisvohNumber) 
-        console.log('JISVII_ServiceOrderHidden:--'+row.find(".JISVII_ServiceOrderHidden").val())
-        row.find(".JISVOH_Number").val(jisvohNumber);
-
-        $.get("/DeliveryNote/CheckDeliveredQtyExceeded", {
-            jisvohNumber: jisvohNumber,
-            prsNumber: row.find(".JISVII_PRS_Number").val(),
-            itemNumber: row.find(".JISVII_Item_Number").val(),
-            uomNumber: row.find(".JISVII_UoM_Number").val()
-        }, function (res) {
-
-            if (res && res.length > 0) {
-
-                let deliveredQty = parseFloat(res[0].deliveredQty) || 0;
-                let jisvoiQty = parseFloat(res[0].jisvoiQty) || 0;
-                let originalQty = parseFloat(row.find(".JISVII_AmendQty").val()) || 0;
-
-                if ((deliveredQty + originalQty) > jisvoiQty) {
-                    alert("Qty Allowed: " + (jisvoiQty - deliveredQty));
-                    row.find(".JISVII_AmendQty").focus().select();
-                    return; // stop second ajax if qty invalid
-                }
-            }
-
-            // SECOND AJAX (runs after first success)
-            $.ajax({
-                url: '/JobworkInvoice/GetServiceOrderItemInfo',
-                type: 'GET',
-                data: {
-                    JISVOH_Number: jisvohNumber,
-                    PRS_Number: row.find(".JISVII_PRS_Number").val(),
-                    Item_Number: row.find(".JISVII_Item_Number").val(),
-                    UoM_Number: row.find(".JISVII_UoM_Number").val()
-                },
-                success: function (response) {
-
-                    var unitPriceBox = row.find(".JISVII_UnitPrice");
-                    var amountBox = row.find(".JISVII_Amount");
-                    var serviceOrderItemBox = row.find(".JISVOI_Number");
-
-                    console.log("GetServiceOrderItemInfo--");
-                    console.log(JSON.stringify(response));
-
-                    if (!response) {
-                        serviceOrderItemBox.val(0);
-                        unitPriceBox.val("").prop("readonly", false);
-                        amountBox.val("").prop("readonly", false);
-                        return;
-                    }
-
-                    serviceOrderItemBox.val(response.jisvoI_Number || 0);
-
-                    if (response.unitPrice == null || response.unitPrice === "") {
-                        unitPriceBox.val("").prop("readonly", false);
-                    } else {
-                        unitPriceBox.val(response.unitPrice);
-                        unitPriceBox.trigger("input");
-                        unitPriceBox.trigger("change");
-                        unitPriceBox.prop("readonly", true);
-
-                        unitPriceBox.off("keydown keypress paste")
-                            .on("keydown keypress paste", function (e) {
-                                e.preventDefault();
-                            });
-                    }
-                },
-                error: function (err) {
-                    console.log(err);
-                }
-            });
-
-        });
-    });
-    //#endregion
- 
-
-    //#region ItemTable .CheckItem click
+    //#region Row Click - Single Selection
     $("#ItemTable").on("click", "tbody tr.NewRow", function (e) {
 
         // If checkbox clicked directly, skip row selection logic
@@ -214,16 +84,14 @@ $(document).ready(function () {
     //#endregion
 
 
-    //#region ItemTable .CheckItem click
+    //#region Checkbox Click - Multiple Selection
     $("#ItemTable").on("click", ".CheckItem", function (e) {
 
         // Prevent checkbox click from triggering row click
         e.stopPropagation();
     });
     //#endregion
-
-
-    //#region #ItemTable  #TableBody click
+    //#region  click check box
     $(document).on("click", "#TableBody tr, #TableBody tr input, #TableBody tr select, #TableBody tr textarea, #TableBody tr label", function () {
 
         var row = $(this).closest("tr");
@@ -234,9 +102,8 @@ $(document).ready(function () {
 
     });
     //#endregion
-
-    //#region .datepicker
     InitializeGstFlatpickrs();
+
     function InitializeGstFlatpickrs() {
         $(".datepicker").flatpickr({
             dateFormat: "d-M-Y",   // 30-Apr-2026
@@ -246,18 +113,9 @@ $(document).ready(function () {
             defaultDate: new Date() // optional: today default
         });
     }
-    DateBind();
-
-    //#endregion
-
-    //#region #btnClearAll   click
-
     $(document).on("click", "#btnClearAll", function () {
         ClearAll();
     });
-    //#endregion
-
-    //#region #ItemTable  #ItemTable input
     $(document).on("click", "#ItemTable input", function (e) {
         e.stopPropagation();
 
@@ -268,17 +126,14 @@ $(document).ready(function () {
             input.select();
         }, 10);
     });
-    //#endregion
-   
+    DateBind();
     
-    //#region #AddressButton click
+    //#region CLICK ADDRESS BUTTON, ADD ADDRESS ROW, DELETE ADDRESS ROW
     $("#AddressButton").on("click", function () {
         $("#BuyerAddress").modal("show");
     });
    
-    //#endregion
-
-   
+    //#endregion CLICK ADDRESS BUTTON, ADD ADDRESS ROW, DELETE ADDRESS ROW
     $(document).on('click', '#RemoveItemRowButton', function () {
 
         //#region REMOVE CHECKED ROWS
@@ -302,15 +157,14 @@ $(document).ready(function () {
 
     });
 
-    //#region #Header_JISVIH_InvoiceDate change
     $("#Header_JISVIH_InvoiceDate").on("change", function () {
         console.log("Date changed:", $(this).val());
 
         loadTaxCluster(); // your function
     });
-    //#endregion
 
-    //#region .GSTView click
+
+    //#region gst popup
 
     $(document).on('click', '.GSTView', function () {
         let CheckedCheckbox = document.querySelector('.CheckItem:checked');
@@ -359,8 +213,6 @@ $(document).ready(function () {
 
     //#endregion
 
-    //#region .JISVII_AmendQty change
-
     $(document).on("keyup change", ".JISVII_AmendQty, .JISVII_UnitPrice", function () {
 
         var row = $(this).closest("tr");
@@ -380,12 +232,8 @@ $(document).ready(function () {
 
         CalculateTotals();
     });
-    //#endregion
 
-    
-
-    //#region .JISVII_AmendQty change
-    $(document).on("focusout", ".JISVII_AmendQty", function () {
+    $(document).on("keyup change", ".JISVII_AmendQty", function () {
 
         var row = $(this).closest("tr");
 
@@ -396,84 +244,46 @@ $(document).ready(function () {
         var prevInvoiceQty = parseFloat(
             row.find(".JISVII_PrevInvoiceQty").val()
         ) || 0;
-
+        console.log("Delivered Qty:", deliveredQty);
+        console.log("Prev Invoice Qty:", prevInvoiceQty);
         var currentQty = parseFloat(
             row.find(".JISVII_AmendQty").val()
         ) || 0;
 
         var balanceQty = deliveredQty - prevInvoiceQty;
 
-        // Prevent negative
-        if (currentQty < 0) {
-            row.find(".JISVII_AmendQty").val(0);
-            currentQty = 0;
-        }
-
-        // Balance validation
+        // Validation
         if (currentQty > balanceQty) {
+
             alert("Current Invoice Qty cannot exceed Balance Qty (" + balanceQty + ")");
+
             row.find(".JISVII_AmendQty").val(balanceQty);
+
             currentQty = balanceQty;
-            row.find(".JISVII_AmendQty").focus().select();
-        }
-
-        let jisvohNumber = row.find(".JISVII_JISVOH_Number").val() || 0;
-
-        // With Service Order
-        if (jisvohNumber > 0) {
-
-            $.get("/DeliveryNote/CheckDeliveredQtyExceeded", {
-                jisvohNumber: jisvohNumber,
-                prsNumber: row.find(".JISVII_PRS_Number").val() || 0,
-                itemNumber: row.find(".JISVII_Item_Number").val() || 0,
-                uomNumber: row.find(".JISVII_UoM_Number").val() || 0
-            }, function (res) {
-
-                if (res && res.length > 0) {
-
-                    let deliveredQty = parseFloat(res[0].deliveredQty) || 0;
-                    let jisvoiQty = parseFloat(res[0].jisvoiQty) || 0;
-                    let allowedQty = jisvoiQty - deliveredQty;
-
-                    console.log("Allowed Qty:", allowedQty);
-
-                    if (currentQty > allowedQty) {
-                        alert("Allowed Qty: " + allowedQty);
-                        currentQty = allowedQty;
-                        row.find(".JISVII_AmendQty").val(allowedQty);
-                    }
-                }
-
-                var unitPrice = parseFloat(
-                    row.find(".JISVII_UnitPrice").val()
-                ) || 0;
-
-                var amount = currentQty * unitPrice;
-
-                row.find(".JISVII_Amount")
-                    .val(amount.toFixed(2));
-
-                CalculateTotals();
-            });
 
         }
-        // Without Service Order
-        else {
 
-            var unitPrice = parseFloat(
-                row.find(".JISVII_UnitPrice").val()
-            ) || 0;
+        // Prevent negative values
+        if (currentQty < 0) {
 
-            var amount = currentQty * unitPrice;
+            row.find(".JISVII_AmendQty").val(0);
 
-            row.find(".JISVII_Amount")
-                .val(amount.toFixed(2));
+            currentQty = 0;
 
-            CalculateTotals();
         }
+
+        var unitPrice = parseFloat(
+            row.find(".JISVII_UnitPrice").val()
+        ) || 0;
+
+        var amount = currentQty * unitPrice;
+
+        row.find(".JISVII_Amount")
+            .val(amount.toFixed(2));
+
+        CalculateTotals();
+
     });
-    //#endregion
-
 
     $(document).on("input", ".JISVII_AmendQty, .JISVII_UnitPrice", async function () {
 
@@ -517,7 +327,78 @@ $(document).ready(function () {
     $("#Header_JISVIH_Number").val(siNo);
     LoadJobworkInvoiceAddress();
 
-  
+    $(document).on("keyup change", ".JISVII_Qty", function () {
+
+        var row = $(this).closest("tr");
+
+        var deliveredQty = parseFloat(
+            row.find(".JISVII_DeliveredQty").text()
+        ) || 0;
+
+        var prevInvoiceQty = parseFloat(
+            row.find(".JISVII_PrevInvoiceQty").text()
+        ) || 0;
+
+        var currentQty = parseFloat(
+            row.find(".JISVII_Qty").val()
+        ) || 0;
+
+        var balanceQty = deliveredQty - prevInvoiceQty;
+
+        // Validation
+        if (currentQty > balanceQty) {
+
+            alert("Current Invoice Qty cannot exceed Balance Qty (" + balanceQty + ")");
+
+            row.find(".JISVII_Qty").val(balanceQty);
+
+            currentQty = balanceQty;
+
+        } else {
+
+
+            let jisvohNumber = row.find(".JISVII_ServiceOrderHidden").val() || 0;
+            console.log('---if value is there in so:' + jisvohNumber)
+            if (jisvohNumber > 0) {
+                GetAllowedQty(
+                    jisvohNumber,
+                    row.find(".JISVII_PRS_Number").val() || 0,
+                    row.find(".JISVII_Item_Number").val() || 0,
+                    row.find(".JISVII_UoM_Number").val() || 0,
+                    function (allowedQty) {
+
+                        console.log("Allowed Qty:", allowedQty);
+
+                        if (currentQty > allowedQty) {
+                            alert("Allowed Qty: " + allowedQty);
+                            // row.find(".JISVII_Qty").val(allowedQty);
+                        }
+                    }
+                );
+            }
+        }
+
+        // Prevent negative values
+        if (currentQty < 0) {
+
+            row.find(".JISVII_Qty").val(0);
+
+            currentQty = 0;
+
+        }
+
+        var unitPrice = parseFloat(
+            row.find(".JISVII_UnitPrice").val()
+        ) || 0;
+
+        var amount = currentQty * unitPrice;
+
+        row.find(".JISVII_Amount")
+            .val(amount.toFixed(2));
+
+        CalculateTotals();
+
+    });
 
     $(document).on("input change", ".JISVII_Qty, .JISVII_UnitPrice", async function () {
 
@@ -579,13 +460,17 @@ function DateBind() {
     var today = new Date();
 
     var day = String(today.getDate()).padStart(2, '0');
+
     var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-    var formattedDate = day + "-" + months[today.getMonth()] + "-" + today.getFullYear();
+    var month = months[today.getMonth()];
+    var year = today.getFullYear();
 
-    var fp = document.getElementById("Header_JISVIH_InvoiceDate")._flatpickr;
-    if (fp) fp.setDate(formattedDate, true, "d-M-Y");
+    var formattedDate = day + "-" + month + "-" + year;
+
+    $("#Header_JISVIH_InvoiceDate").val(formattedDate);
+
 }
 
 
@@ -899,6 +784,7 @@ async function SearchJWCustomer(inputElement) {
 
 //#region LOAD DELIVERY NOTE ITEMS
 $("#LoadDeliveryNote").click(function () {
+
     // 4. Material Segregation
     if (
         $("#Header_JISVIH_MS_Number").val() === "" ||
@@ -947,7 +833,6 @@ function LoadDeliveryNoteItems() {
             CustomerNumber: customerNumber,
             MSNumber: msNumber
         },
-
 
         success: function (response) {
 
@@ -1227,28 +1112,6 @@ function InsertDeliveryNoteItems(selectedDNString, selectedRecoveredItems, selec
              
 
                 var amendQty = deliveredQty - prevInvoiceQty;
-                //#region condition
-                let serviceOrderCell =
-                    (item.hasServiceOrder == 1
-                        ? `<label class="form-control JISVII_ServiceOrderLabel">
-               ${item.serviceOrderNo ?? ''}
-           </label>`
-                        : `<select name="Items[${rowCount}].JISVII_JISVOH_Number"
-                  onchange="OnServiceOrderChange(this)"
-                  class="form-select JISVII_JISVOH_Number">
-           </select>`)
-                    +
-                    `<input name="Items[${rowCount}].JISVII_JISVOH_Number"
-            type="hidden"
-            value="${item.serviceOrderId ?? item.jisvoH_Number ?? 0}"
-            class="JISVII_ServiceOrderHidden" />`;
-
-                let unitPriceCell = item.hasServiceOrder == 1
-                    ? `<label class="form-control JISVII_UnitPriceLabel text-end">${item.jisvoI_UnitPrice ?? 0} </label>
-       <input name="Items[${rowCount}].ServiceOrderId" type="hidden" value="${item.serviceOrderId ?? 0}" class="ServiceOrderId" />
-       <input name="Items[${rowCount}].JISVII_UnitPrice" type="hidden" value="${item.jisvoI_UnitPrice ?? 0}" class="JISVII_UnitPrice" />`
-                    : `<input name="Items[${rowCount}].JISVII_UnitPrice" value="${item.jisvoI_UnitPrice ?? 0}" class="form-control JISVII_UnitPrice text-end" />`;
-                //#endregion
                 var row = `
 
 <tr class="NewRow"
@@ -1258,9 +1121,11 @@ function InsertDeliveryNoteItems(selectedDNString, selectedRecoveredItems, selec
     data-deleted="0">
 
     <td class="p-2 del"><input type="checkbox" class="CheckItem form-check-input"></td>
-  <td>
-    ${serviceOrderCell}
-</td>
+
+    <td>
+        <select name="Items[${rowCount}].JISVII_JISVOH_Number"
+                class="form-select JISVII_JISVOH_Number"></select>
+    </td>
 
     <td>
         <input name="Items[${rowCount}].JISVII_DN_No"
@@ -1379,9 +1244,12 @@ function InsertDeliveryNoteItems(selectedDNString, selectedRecoveredItems, selec
            value="${amendQty}"
            class="form-control JISVII_AmendQty text-end" />
 </td>
-   <td>
-    ${unitPriceCell}
-</td>
+
+    <td>
+        <input name="Items[${rowCount}].JISVII_UnitPrice"
+               value="${0}"
+               class="form-control JISVII_UnitPrice text-end" />
+    </td>
 
     <td>
         <input name="Items[${rowCount}].JISVII_Amount"
@@ -1737,8 +1605,7 @@ function CreateJobworkInvoiceModel() {
 
         JISVIH_JW_Customer_Number:
             parseInt($("#Header_JISVIH_JW_Customer_Number").val()) || 0,
-        JISVIH_MS_Number:
-            parseInt($("#Header_JISVIH_MS_Number").val()) || 0,
+
         JISVIH_Currency_Number:
             parseInt($("#Header_JISVIH_Currency_Number").val()) || 0,
 
@@ -2289,8 +2156,7 @@ function BindHeader(header) {
         .val(header.JISVIH_Remarks);
     $("#Header_JISVIH_Number")
         .val(header.JISVIH_Number);
-    $("#Header_JISVIH_MS_Number")
-        .val(header.JISVIH_MS_Number);
+    
     
 
 }
@@ -2433,8 +2299,6 @@ function BindItems(items) {
 </tr>`;
 
         $("#TableBody").append(row);
-        $row.find(".JISVII_AmendQty").trigger("change");
-        $row.find(".JISVII_UnitPrice").trigger("change");
     });
 
     CalculateTotals();

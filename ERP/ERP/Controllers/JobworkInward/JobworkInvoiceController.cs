@@ -31,6 +31,7 @@ namespace ERP.Controllers.JobworkInward
         public IActionResult Edit(long SI_No)
         {
             GetJobworkInvoiceData();
+            ViewBag.Collapse = true;
             return View();
         }
         #endregion
@@ -39,6 +40,7 @@ namespace ERP.Controllers.JobworkInward
         public IActionResult Create()
         {
             GetJobworkInvoiceData();
+            ViewBag.Collapse = true;
             return View();
         }
 
@@ -60,6 +62,7 @@ namespace ERP.Controllers.JobworkInward
             ViewBag.Process = Help.GetCat(DS.Tables[12]);
             ViewBag.SAC = Help.GetCat(DS.Tables[13]);
             ViewBag.SON = Help.GetCat(DS.Tables[14]);
+            ViewBag.MaterialSegregation = Help.GetCat(DS.Tables[15]);
 
         }
         #region GET DELIVERY NOTE ITEMS
@@ -213,44 +216,23 @@ namespace ERP.Controllers.JobworkInward
 
         #endregion
 
-        #region GET DELIVERY  NOTE GROUP ITEMS
+        #region GET DELIVERY NOTE GROUP ITEMS
 
-        // Get delivery note items using customer number and return JSON
         [HttpGet]
-        public JsonResult GetDeliveryNote_GroupItem(long CustomerNumber)
+        public JsonResult GetDeliveryNote_GroupItem(long CustomerNumber, long MSNumber)
         {
             JobworkInvoice_DAO dao = new JobworkInvoice_DAO();
-
-            DataTable dt = dao.GetDeliveryNote_GroupItem(CustomerNumber).Tables[0];
+            DataTable dt = dao.GetDeliveryNote_GroupItem(CustomerNumber, MSNumber).Tables[0];
 
             var data = dt.AsEnumerable().Select(r => new
             {
-                
-
-                TotalQty = r["RemainingQty"] == DBNull.Value
-           ? 0
-           : Convert.ToDecimal(r["RemainingQty"]),
-
-                JIDNH_Number = r["JIDNH_Number"] == DBNull.Value
-           ? 0
-           : Convert.ToInt64(r["JIDNH_Number"]),
-
-                JIDNH_DN_No = r["JIDNH_DN_No"] == DBNull.Value
-           ? ""
-           : r["JIDNH_DN_No"].ToString(),
-
-                JIDNH_DN_Date = r["JIDNH_DN_Date"] == DBNull.Value
-           ? ""
-           : Convert.ToDateTime(r["JIDNH_DN_Date"]).ToString("dd MMM yyyy")
-
-                
-
+                TotalQty = r["RemainingQty"] == DBNull.Value ? 0 : Convert.ToDecimal(r["RemainingQty"]),
+                JIDNH_Number = r["JIDNH_Number"] == DBNull.Value ? 0 : Convert.ToInt64(r["JIDNH_Number"]),
+                JIDNH_DN_No = r["JIDNH_DN_No"] == DBNull.Value ? "" : r["JIDNH_DN_No"].ToString(),
+                JIDNH_DN_Date = r["JIDNH_DN_Date"] == DBNull.Value ? "" : Convert.ToDateTime(r["JIDNH_DN_Date"]).ToString("dd MMM yyyy")
             }).ToList();
-            return new JsonResult(data, new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                WriteIndented = true
-            });
+
+            return new JsonResult(data, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, WriteIndented = true });
         }
 
         #endregion
@@ -311,6 +293,66 @@ namespace ERP.Controllers.JobworkInward
         ? 0
         : Convert.ToInt32(r["JWC_ADD_Default"])
             }).ToList();
+            return new JsonResult(data, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = true
+            });
+        }
+
+        #endregion
+        #region GET JOBWORK INVOICE ADDRESS
+
+        [HttpGet]
+        public JsonResult GetJobworkInvoiceAddress(long JISVIHNumber)
+        {
+            JobworkInvoice_DAO dao = new JobworkInvoice_DAO();
+
+            DataTable dt = dao.GetJobworkInvoiceAddressDB(JISVIHNumber).Tables[0];
+
+            var data = dt.AsEnumerable().Select(r => new
+            {
+                JISVIA_Number = r["JISVIA_Number"] == DBNull.Value
+                    ? 0
+                    : Convert.ToInt64(r["JISVIA_Number"]),
+
+                JISVIA_JISVIH_Number = r["JISVIA_JISVIH_Number"] == DBNull.Value
+                    ? 0
+                    : Convert.ToInt64(r["JISVIA_JISVIH_Number"]),
+
+                JISVIA_ADTP_Number = r["JISVIA_ADTP_Number"] == DBNull.Value
+                    ? 0
+                    : Convert.ToInt64(r["JISVIA_ADTP_Number"]),
+
+                JISVIA_Address_ID = r["JISVIA_Address_ID"] == DBNull.Value
+                    ? ""
+                    : r["JISVIA_Address_ID"].ToString(),
+
+                JISVIA_Address = r["JISVIA_Address"] == DBNull.Value
+                    ? ""
+                    : r["JISVIA_Address"].ToString(),
+
+                JISVIA_City = r["JISVIA_City"] == DBNull.Value
+                    ? ""
+                    : r["JISVIA_City"].ToString(),
+
+                JISVIA_State = r["JISVIA_State"] == DBNull.Value
+                    ? ""
+                    : r["JISVIA_State"].ToString(),
+
+                JISVIA_Country = r["JISVIA_Country"] == DBNull.Value
+                    ? ""
+                    : r["JISVIA_Country"].ToString(),
+
+                JISVIA_PIN = r["JISVIA_PIN"] == DBNull.Value
+                    ? ""
+                    : r["JISVIA_PIN"].ToString(),
+
+                JISVIA_GSTIN = r["JISVIA_GSTIN"] == DBNull.Value
+                    ? ""
+                    : r["JISVIA_GSTIN"].ToString()
+            }).ToList();
+
             return new JsonResult(data, new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -526,7 +568,18 @@ namespace ERP.Controllers.JobworkInward
                 JISVII_Number =  0,
                 InvoicedQty = r["InvoicedQty"] == DBNull.Value
       ? ""
-      : r["InvoicedQty"].ToString()
+      : r["InvoicedQty"].ToString(),
+                HasServiceOrder = r["HasServiceOrder"] == DBNull.Value
+    ? 0
+    : Convert.ToInt32(r["HasServiceOrder"]),
+
+                ServiceOrderId = r["ServiceOrderId"] == DBNull.Value
+    ? 0
+    : Convert.ToInt64(r["ServiceOrderId"]),
+
+                ServiceOrderNo = r["ServiceOrderNo"] == DBNull.Value
+    ? ""
+    : r["ServiceOrderNo"].ToString()
 
 
 

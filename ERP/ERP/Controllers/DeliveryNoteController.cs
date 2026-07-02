@@ -195,7 +195,8 @@ namespace ERP.Controllers
         {
             GetDevliverNoteData();
             DeliveryNote_DAO DN_DAO = new DeliveryNote_DAO();
-            DN_DAO.DeleteTempDeliveryNoteBatch();   
+            DN_DAO.DeleteTempDeliveryNoteBatch();
+            ViewBag.Collapse = true;
             return View();
         }
 
@@ -213,7 +214,7 @@ namespace ERP.Controllers
             ViewBag.Warehouse = Help.GetCat(DS.Tables[8]);
             ViewBag.AddressType = Help.GetCat(DS.Tables[12]);
             ViewBag.Process = Help.GetCat(DS.Tables[13]);
-
+            ViewBag.SON = Help.GetCat(DS.Tables[14]);
         }
         [HttpPost]
         public IActionResult SaveDeliveryNote([FromBody] DeliveryNoteCreate_DTO dto)
@@ -936,7 +937,9 @@ namespace ERP.Controllers
                         Convert.ToDouble(item["JIDNI_Amount"]),
 
                     JIDNI_JW_InvoiceTracking =
-                        Convert.ToString(item["JIDNI_JW_InvoiceTracking"]) 
+                        Convert.ToString(item["JIDNI_JW_InvoiceTracking"]) ,
+                    JISVOH_Number =
+                        Convert.ToInt64(item["JISVOH_Number"])
                 });
             }
 
@@ -954,6 +957,9 @@ namespace ERP.Controllers
             DeliveryNote_DAO dao = new DeliveryNote_DAO();
 
             dao.InsertEditBatchToTempDB(Root_JIDNI_Number);
+       
+            ViewBag.Collapse = true;
+            var x = dto.Items[0].JISVOH_Number;
             return View("Edit", dto);
         }
         #endregion
@@ -1416,23 +1422,40 @@ namespace ERP.Controllers
         #endregion
         #region Get Service Order
         [HttpGet]
-        public JsonResult GetServiceOrder(long customerId)
+        public JsonResult GetServiceOrder(long customerId, long? prsNumber = null, long? itemNumber = null, long? uomNumber = null)
         {
-            DeliveryNote_DAO dao = new DeliveryNote_DAO();
+            var dt = new DeliveryNote_DAO()
+                .GetServiceOrderDB(customerId, prsNumber, itemNumber, uomNumber)
+                .Tables[0];
 
-            DataTable dt = dao.GetServiceOrderDB(customerId).Tables[0];
+            return new JsonResult(
+                dt.AsEnumerable().Select(r => new
+                {
+                    value = r["JISVOH_Number"] == DBNull.Value ? 0 : Convert.ToInt64(r["JISVOH_Number"]),
+                    text = r["JISVOH_ServiceOrderNo"]?.ToString() ?? ""
+                }).ToList(),
+                new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    WriteIndented = true
+                });
+        }
+        #endregion
 
-            var data = dt.AsEnumerable().Select(r => new
+        #region Check Delivered Qty Exceeded
+        [HttpGet]
+        public JsonResult CheckDeliveredQtyExceeded(long jisvohNumber, long? prsNumber = null, long? itemNumber = null, long? uomNumber = null)
+        {
+            var dt = new DeliveryNote_DAO()
+                .CheckDeliveredQtyExceededDB(jisvohNumber, prsNumber, itemNumber, uomNumber)
+                .Tables[0];
+
+            return new JsonResult(dt.AsEnumerable().Select(r => new
             {
-                value = r["JISVOH_Number"] == DBNull.Value ? 0 : Convert.ToInt64(r["JISVOH_Number"]),
-                text = r["JISVOH_ServiceOrderNo"] == DBNull.Value ? "" : r["JISVOH_ServiceOrderNo"].ToString()
-            }).ToList();
-
-            return new JsonResult(data, new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                WriteIndented = true
-            });
+                deliveredQty = r["DeliveredQty"] == DBNull.Value ? 0 : Convert.ToDecimal(r["DeliveredQty"]),
+                jisvoiQty = r["JISVOI_Qty"] == DBNull.Value ? 0 : Convert.ToDecimal(r["JISVOI_Qty"]),
+                isExceeded = r["IsExceeded"] != DBNull.Value && Convert.ToBoolean(r["IsExceeded"])
+            }).ToList());
         }
         #endregion
     }

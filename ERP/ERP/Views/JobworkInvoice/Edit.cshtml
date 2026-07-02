@@ -153,7 +153,7 @@
                         <tbody id="AddTableBody">
 
                             <!-- 🔥 TEMPLATE ROW (USED FOR CLONE ONLY) -->
-                            <tr id="AddTempRow" style="display:none">
+                            <tr id="AddTempRow" class="TemplateRow" style="display:none">
 
                                 <td>
                                     <select class="form-select JIDNA_ADTP_Number"
@@ -307,7 +307,22 @@
                                             </div>
 
                                         </div>
+                                        <div class="row align-items-center px-2 mb-1">
 
+                                            <label asp-for="Header.JISVIH_MS_Number"
+                                                   class="col-md-6 col-lg-5 col-form-label ps-0">
+                                            </label>
+
+                                            <div class="col-md-6 col-lg-7">
+
+                                                <select asp-for="Header.JISVIH_MS_Number"
+                                                        class="form-select"
+                                                        asp-items="@ViewBag.MaterialSegregation">
+                                                </select>
+
+                                            </div>
+
+                                        </div>
  
                                         <div class="row align-items-center px-2 mb-1">
 
@@ -337,6 +352,12 @@
                                             </div>
 
                                         </div>
+                                   
+                                    </div>
+
+                                    <!-- COLUMN 2 -->
+                                    <div class="col-12 col-md-3">
+
                                         <div class="row align-items-center px-2 mb-1">
 
                                             <label asp-for="Header.JISVIH_Currency_Number"
@@ -353,12 +374,6 @@
                                             </div>
 
                                         </div>
-                                    </div>
-
-                                    <!-- COLUMN 2 -->
-                                    <div class="col-12 col-md-3">
-
-                                   
 
                                         <div class="row align-items-center px-2 mb-1">
 
@@ -573,7 +588,7 @@
 
                                                                                 <!-- SERVICE ORDER -->
                                                                                 <td>
-                                                                                    <select class="form-select JISVII_JISVOH_Number" asp-items="@ViewBag.ServiceOrder"></select>
+                                                                                    <select class="form-select JISVII_JISVOH_Number" asp-items="@ViewBag.SON"></select>
                                                                                 </td>
 
                                                                                 <!-- DELIVERY NOTE -->
@@ -786,7 +801,10 @@
 @section Scripts {
 
     <partial name="_ValidationScriptsPartial" />
-
+    <script>
+        var sonList = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.SON));
+        console.log("sonList from cshtml:", sonList);
+    </script>
     <script src="~/js/jw_invoice/JW_InvoiceEdit.js" asp-append-version="true"></script>
 
         

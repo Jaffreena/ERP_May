@@ -119,7 +119,9 @@
         </div>
     </div>
 
+      
     <!-- Address Popup -->
+   
     <div class="modal fade" id="BuyerAddress" tabindex="-1">
 
         <div class="modal-dialog modal-xl modal-dialog-centered">
@@ -180,37 +182,6 @@
 
                             </tr>
 
-
-                            <!-- 🔥 FIRST ROW (ALWAYS SHOWN EMPTY ROW) -->
-                            <tr class="AddNewRow">
-
-                                <td>
-                                    <select class="form-select JIDNA_ADTP_Number"
-                                            asp-items="@ViewBag.AddressType"></select>
-                                </td>
-
-                                <td>
-                                    <select class="form-select JIDNA_Address_ID"
-                                            asp-items="@ViewBag.AddressID"></select>
-                                </td>
-
-                                <td><input class="form-control JIDNA_Address" readonly></td>
-                                <td><input class="form-control JIDNA_City" readonly></td>
-                                <td><input class="form-control JIDNA_State" readonly></td>
-                                <td><input class="form-control JIDNA_Country" readonly></td>
-                                <td><input class="form-control JIDNA_PIN" readonly></td>
-                                <td><input class="form-control JIDNA_GSTIN" readonly></td>
-
-                                <td>
-                                    <input type="hidden" class="JIDNA_JIDNH_Number" value="0">
-                                    <input type="hidden" class="JIDNA_Number" value="0">
-                                    <input type="hidden" class="JIDNA_IsDeleted" value="0">
-
-                                    <a class="AddRowRemove btn text-danger">🗑</a>
-                                </td>
-
-                            </tr>
-
                         </tbody>
 
                     </table>
@@ -235,6 +206,9 @@
         </div>
 
     </div>
+
+ 
+  
 
     <div class="row align-items-center panel-header gx-2">
         <div class="col h-100 align-items-center">
@@ -305,7 +279,22 @@
                                             </div>
 
                                         </div>
+                                        <div class="row align-items-center px-2 mb-1">
 
+                                            <label asp-for="Header.JISVIH_MS_Number"
+                                                   class="col-md-6 col-lg-5 col-form-label ps-0">
+                                            </label>
+
+                                            <div class="col-md-6 col-lg-7">
+
+                                                <select asp-for="Header.JISVIH_MS_Number"
+                                                        class="form-select"
+                                                        asp-items="@ViewBag.MaterialSegregation">
+                                                </select>
+
+                                            </div>
+
+                                        </div>
  
                                         <div class="row align-items-center px-2 mb-1">
 
@@ -335,6 +324,12 @@
                                             </div>
 
                                         </div>
+                                 
+                                    </div>
+
+                                    <!-- COLUMN 2 -->
+                                    <div class="col-12 col-md-3">
+
                                         <div class="row align-items-center px-2 mb-1">
 
                                             <label asp-for="Header.JISVIH_Currency_Number"
@@ -351,12 +346,6 @@
                                             </div>
 
                                         </div>
-                                    </div>
-
-                                    <!-- COLUMN 2 -->
-                                    <div class="col-12 col-md-3">
-
-                                   
 
                                         <div class="row align-items-center px-2 mb-1">
 
@@ -568,7 +557,7 @@
 
                                                                                 <!-- SERVICE ORDER -->
                                                                                 <td>
-                                                                                    <select  class="form-select JISVII_JISVOH_Number" asp-items="@ViewBag.ServiceOrder"></select>
+                                                                                    <select  class="form-select JISVII_JISVOH_Number" asp-items="@ViewBag.SON"></select>
                                                                                 </td>
 
                                                                                 <!-- DELIVERY NOTE -->

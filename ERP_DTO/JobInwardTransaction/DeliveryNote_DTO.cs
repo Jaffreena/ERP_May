@@ -164,8 +164,9 @@ namespace ERP_DTO.JobInwardTransaction
         public string? JIDNI_IsDeleted { get; set; }
         public long? CustomerNumber { get; set; }
         public long? JISVOH_Number { get; set; }
+        public long? JISVOI_Number { get; set; }
+       
 
-        
 
 
     }

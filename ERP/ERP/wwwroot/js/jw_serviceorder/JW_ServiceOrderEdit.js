@@ -1,5 +1,35 @@
 ﻿$(document).ready(function () {
 
+
+
+
+    //#region Row Click - Single Selection
+    $("#ItemTable").on("click", "tbody tr.NewRow", function (e) {
+
+        // If checkbox itself is clicked, don't run row click logic
+        if ($(e.target).closest(".CheckItem").length) {
+            return;
+        }
+
+        // Uncheck all row checkboxes
+        $("#ItemTable .CheckItem").prop("checked", false);
+
+        // Check only clicked row checkbox
+        $(this).find(".CheckItem").prop("checked", true);
+    });
+    //#endregion
+
+
+    //#region Checkbox Click - Multiple Selection
+    $("#ItemTable").on("click", ".CheckItem", function (e) {
+
+        // Prevent checkbox click from triggering row click
+        e.stopPropagation();
+    });
+    //#endregion
+
+
+
     //#region Initialize Flatpickr
     InitializeGstFlatpickrs();
 
@@ -151,7 +181,8 @@
     });
 
     //#region Save Function
-    $("#btnSave").on("click", function (e) {
+    //#region Update Function
+    $("#btnUpdate").on("click", function (e) {
 
         if (!validateHeaderById()) {
             e.preventDefault();
@@ -163,7 +194,7 @@
         console.log(JSON.stringify(model));
 
         $.ajax({
-            url: '/ServiceOrder/SaveServiceOrder',
+            url: '/ServiceOrder/UpdateServiceOrder',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(model),
@@ -171,7 +202,7 @@
             success: function (response) {
 
                 if (response.success) {
-                    showAlert('Record Inserted');
+                    showAlert('Record Updated');
                     ClearAll();
                     DateBind();
                     console.log(model);
@@ -184,6 +215,7 @@
         });
 
     });
+    //#endregion
     //#endregion
 
     //#region remove checked rows
@@ -248,6 +280,9 @@
 
     if (siNo) {
         GetServiceOrder(siNo);
+        $("#Header_JISVOH_Number").val(siNo);
+
+        console.log($("#Header_JISVOH_Number").val());
     }
 });
 //#region auto add row function
@@ -1266,9 +1301,12 @@ function BindItems(items) {
 
         $row.find(".JISVOI_UoM_Number")
             .val(item.JISVOI_UoM_Number);
+        // ADD THESE 2 LINES HERE
+        $row.find(".JISVOI_AmendQty").trigger("change");
+        $row.find(".JISVOI_UnitPrice").trigger("change");
     });
 
-    CalculateTotals();
+    calculateTotal();
 }
 
 //#endregion

@@ -1,0 +1,1326 @@
+﻿@using ERP_DTO.JobInwardTransaction
+@model ERP_DTO.JobInwardTransaction.DeliveryNoteCreate_DTO
+
+@{
+    ViewData["Title"] = "Edit Delivery Note";
+}
+
+@if (Model.Items == null || Model.Items.Count == 0)
+{
+    Model.Items = new List<DeliveryNoteItem_DTO>()
+    {
+        new DeliveryNoteItem_DTO()
+    };
+}
+
+@if (Model.Addresses == null || Model.Addresses.Count == 0)
+{
+    Model.Addresses = new List<DeliveryNoteAddress_DTO>()
+    {
+        new DeliveryNoteAddress_DTO()
+    };
+}
+<style>
+
+    /* Chrome, Edge, Safari */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /* Firefox */
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+
+</style>
+
+
+<form asp-action="SaveDeliveryNote"      method="post"      id="DeliveryNoteForm">
+    <!-- Alert Popup -->
+    <div class="modal modal-sm fade" id="ModelAlert" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header draggable-modal-header">
+                    <p class="modal-title mb-0">Warning</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body py-4 text-dark fs-6 text-center">
+                    <img src="~/img/danger.png" class="img-fluid mb-2" />
+                    <div id="AlertMessage">@Html.Raw(ViewBag.ErrorMessage)</div>
+                </div>
+
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-primary px-4" id="AlertOkay" data-bs-dismiss="modal">Ok</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- Batch Popup -->
+    <div class="modal custom-modal-width fade"
+         id="DeliveryNoteBatchModal"
+         data-bs-backdrop="static"
+         data-bs-keyboard="false"
+         tabindex="-1"
+         aria-hidden="true">
+
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+
+            <div class="modal-content shadow-lg border-0">
+
+                <!-- Header -->
+                <div class="modal-header bg-primary text-white">
+
+                    <h5 class="modal-title fw-bold">
+                        Delivery Note Batch
+                    </h5>
+
+                    <!-- Right Side -->
+                    <div class="d-flex align-items-center ms-auto">
+
+                        <div class="d-flex align-items-center me-3">
+
+                            <label class="fw-bold me-2 mb-0">
+                                Item Invoice Qty :
+                            </label>
+
+                            <span id="BatchPopupQty"
+                                  class="badge bg-light text-dark">
+                                0
+                            </span>
+
+                        </div>
+
+                        <button type="button"
+                                class="btn-close btn-close-white"
+                                id="DeliveryNoteBatchClose">
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <!-- Body -->
+                <div class="modal-body p-2">
+
+                    <!-- Tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+
+                        <li class="nav-item" role="presentation">
+
+                            <button class="nav-link active"
+                                    id="Batch-tab"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#Batch-tab-pane"
+                                    type="button"
+                                    role="tab">
+
+                                Batch WH
+
+                            </button>
+
+                        </li>
+
+                        <li class="nav-item" role="presentation">
+
+                            <button class="nav-link"
+                                    id="Other-tab"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#Other-tab-pane"
+                                    type="button"
+                                    role="tab">
+
+                                Other WH
+
+                            </button>
+
+                        </li>
+
+                    </ul>
+
+                    <!-- Tab Content -->
+                    <div class="tab-content">
+
+                        <!-- Batch WH -->
+                        <div class="tab-pane fade show active p-2 border border-top-0"
+                             id="Batch-tab-pane"
+                             role="tabpanel">
+
+                            <div class="table-responsive">
+
+                                <table id="DeliveryNoteBatchList" class="table table-bordered table-hover align-middle mb-0">
+
+                                    <thead>
+
+                                        <tr class="table-info">
+
+                                            <th>
+                                                Warehouse
+                                            </th>
+
+                                            <th class="datetype text-center">
+                                                Batch Date
+                                            </th>
+
+                                            <th>
+                                                Batch Number
+                                            </th>
+
+                                            <th class="table-width-xl text-end">
+                                                Qty Available
+                                            </th>
+
+                                            <th class="table-width-xl text-end">
+                                                Qty Reserved
+                                            </th>
+
+                                            <th class="table-width-xl text-end">
+                                                Delivered Qty
+                                            </th>
+
+                                            <th class="table-width-xl text-end">
+                                                Unit Price
+                                            </th>
+
+                                            <th class="table-width-3xl text-end">
+                                                Batch Value
+                                            </th>
+
+                                        </tr>
+
+                                    </thead>
+
+                                    <tbody id="DeliveryNoteBatchTableBody">
+
+                                        <!-- Template Row -->
+                                        <tr id="DeliveryNoteBatchTemplateRow"
+                                            style="display:none;">
+
+                                            <td>
+                                                 <input type="hidden" class="RefBatch_Number">
+                                                  <input type="hidden" class="JIDNI_Number">
+                                                    <input type="hidden" class="JIDNH_Number">
+                                                <input type="hidden" class="JIDNI_BCH_Number">
+
+                                                <input type="hidden" class="JIDNI_BCH_JIDNH_Number">
+
+                                                <input type="hidden" class="JIDNI_BCH_JIDNI_Number">
+
+                                                <input type="hidden" class="JIDNI_BCH_WH_Number">
+
+                                                <input type="text"
+                                                       class="form-control JIDNI_BCH_WH_Name"
+                                                       readonly>
+
+                                            </td>
+
+                                            <td class="datetype">
+
+                                                <input type="text"
+                                                       class="form-control text-center JIDNI_BCH_BatchDate"
+                                                       readonly>
+
+                                            </td>
+
+                                            <td>
+
+                                                <input type="text"
+                                                       class="form-control JIDNI_BCH_BatchNo"
+                                                       readonly>
+
+                                            </td>
+
+                                            <td class="table-width-xl">
+
+                                                <input type="text"
+                                                       class="form-control text-end JIDNI_BCH_QtyAvailable"
+                                                       readonly>
+
+                                            </td>
+
+                                            <td class="table-width-xl">
+
+                                                <input type="text"
+                                                       class="form-control text-end JIDNI_BCH_QtyReserved"
+                                                       readonly>
+
+                                            </td>
+
+                                            <td class="table-width-xl">
+                                                
+                                                <input type="number" autocomplete="off"
+                                                       class="form-control text-end JIDNI_BCH_QtyInvoice">
+
+                                            </td>
+
+                                            <td class="table-width-xl">
+
+                                                <input type="text"
+                                                       class="form-control text-end JIDNI_BCH_BatchUnitPrice"
+                                                       readonly>
+
+                                            </td>
+
+                                            <td class="table-width-3xl">
+
+                                                <input type="text"
+                                                       class="form-control text-end JIDNI_BCH_BatchValue"
+                                                       readonly>
+
+                                            </td>
+
+                                        </tr>
+
+                                    </tbody>
+
+                                    <!-- Footer -->
+                                    <tfoot>
+
+                                        <tr class="table-info">
+
+                                            <td></td>
+
+                                            <td></td>
+
+                                            <td class="text-end fw-bold">
+                                                Total Qty
+                                            </td>
+
+                                            <td>
+
+                                                <input id="TotalAvailableQty"
+                                                       class="form-control text-end"
+                                                       readonly>
+
+                                            </td>
+
+                                            <td>
+
+                                                <input id="TotalReservedQty"
+                                                       class="form-control text-end"
+                                                       readonly>
+
+                                            </td>
+
+                                            <td>
+
+                                                <input id="TotalBatchQty"
+                                                       class="form-control text-end"
+                                                       readonly>
+
+                                            </td>
+
+                                            <td></td>
+
+                                            <td>
+
+                                                <input id="TotalBatchValue"
+                                                       class="form-control text-end"
+                                                       readonly>
+
+                                            </td>
+
+                                        </tr>
+
+                                    </tfoot>
+
+                                </table>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Other WH -->
+                        <div class="tab-pane fade p-2 border border-top-0"
+                             id="Other-tab-pane"
+                             role="tabpanel">
+
+                            <div class="w-100 table-responsive">
+                                <table id="DeliveryNoteOtherBatchList" class="table table-bordered table-hover align-middle mb-0">
+
+                                    <thead>
+
+                                        <tr class="table-info">
+
+                                            <th>
+                                                Warehouse
+                                            </th>
+
+                                            <th class="datetype text-center">
+                                                Batch Date
+                                            </th>
+
+                                            <th>
+                                                Batch Number
+                                            </th>
+
+                                       
+
+                                            <th class="table-width-xl text-end">
+                                                Available Qty
+                                            </th>
+
+                                            <th class="table-width-xl text-end">
+                                                Unit Price
+                                            </th>
+
+                                            <th class="table-width-3xl text-end">
+                                                Batch Value
+                                            </th>
+
+                                        </tr>
+
+                                    </thead>
+
+                                    <tbody id="DeliveryNoteOtherBatchTableBody">
+
+                                        <!-- Template Row -->
+                                        <tr id="DeliveryNoteOtherBatchTemplateRow"
+                                            style="display:none;">
+
+                                            <td>
+
+                                                <input type="hidden" class="JIDNI_BCH_Number">
+
+                                                <input type="hidden" class="JIDNI_BCH_JIDNH_Number">
+
+                                                <input type="hidden" class="JIDNI_BCH_JIDNI_Number">
+
+                                                <input type="hidden" class="JIDNI_BCH_WH_Number">
+
+                                                <input type="text"
+                                                       class="form-control JIDNI_BCH_WH_Name"
+                                                       readonly>
+
+                                            </td>
+
+                                            <td class="datetype">
+
+                                                <input type="text"
+                                                       class="form-control text-center JIDNI_BCH_BatchDate"
+                                                       readonly>
+
+                                            </td>
+
+                                            <td>
+
+                                                <input type="text"
+                                                       class="form-control JIDNI_BCH_BatchNo"
+                                                       readonly>
+
+                                            </td>
+
+                                         
+
+                                            <td class="table-width-xl">
+
+                                                <input type="number" autocomplete="off" readonly
+                                                       class="form-control text-end JIDNI_BCH_AvailableQty">
+
+                                            </td>
+
+                                            <td class="table-width-xl">
+
+                                                <input type="text"
+                                                       class="form-control text-end JIDNI_BCH_BatchUnitPrice"
+                                                       readonly>
+
+                                            </td>
+
+                                            <td class="table-width-3xl">
+
+                                                <input type="text"
+                                                       class="form-control text-end JIDNI_BCH_BatchValue"
+                                                       readonly>
+
+                                            </td>
+
+                                        </tr>
+
+                                    </tbody>
+
+                                    <!-- Footer -->
+                                    <tfoot style="display:none">
+
+                                        <tr class="table-info">
+
+                                            
+
+                                            <td class="text-end fw-bold">
+                                                Total Qty
+                                            </td>
+
+ 
+
+                                           
+                                            <td>
+
+                                                <input id="TotalBatchQtyOther"
+                                                       class="form-control text-end"
+                                                       readonly>
+
+                                            </td>
+
+                                            <td></td>
+
+                                            <td>
+
+                                                <input id="TotalBatchValueOther"
+                                                       class="form-control text-end"
+                                                       readonly>
+
+                                            </td>
+
+                                        </tr>
+
+                                    </tfoot>
+
+                                </table>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Footer -->
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-primary px-4"
+                            id="SaveBatchButton">
+
+                        Ok
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="BuyerAddress" tabindex="-1">
+
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+
+            <div class="modal-content">
+
+                <!-- HEADER -->
+                <div class="modal-header">
+                    <h5 class="modal-title">Address</h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- BODY -->
+                <div class="modal-body">
+
+                    <table class="table table-bordered table-hover">
+
+                        <thead>
+                            <tr class="table-info">
+                                <th>Type</th>
+                                <th>Address ID</th>
+                                <th>Address</th>
+                                <th>City</th>
+                                <th>State</th>
+                                <th>Country</th>
+                                <th>PIN</th>
+                                <th>GSTIN</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="AddTableBody">
+
+                            <!-- TEMPLATE ROW FOR CLONE -->
+                            <tr id="AddTempRow" style="display:none">
+
+                                <td>
+                                    <select class="form-select JIDNA_ADTP_Number"
+                                            name="Addresses[0].JIDNA_ADTP_Number"
+                                            asp-items="@ViewBag.AddressType">
+                                    </select>
+                                </td>
+
+                                <td>
+                                    <select class="form-select JIDNA_Address_ID"
+                                            name="Addresses[0].JIDNA_Address_ID"
+                                            asp-items="@ViewBag.AddressID">
+                                    </select>
+                                </td>
+
+                                <td>
+                                    <input class="form-control JIDNA_Address"
+                                           name="Addresses[0].JIDNA_Address"
+                                           readonly>
+                                </td>
+
+                                <td>
+                                    <input class="form-control JIDNA_City"
+                                           name="Addresses[0].JIDNA_City"
+                                           readonly>
+                                </td>
+
+                                <td>
+                                    <input class="form-control JIDNA_State"
+                                           name="Addresses[0].JIDNA_State"
+                                           readonly>
+                                </td>
+
+                                <td>
+                                    <input class="form-control JIDNA_Country"
+                                           name="Addresses[0].JIDNA_Country"
+                                           readonly>
+                                </td>
+
+                                <td>
+                                    <input class="form-control JIDNA_PIN"
+                                           name="Addresses[0].JIDNA_PIN"
+                                           readonly>
+                                </td>
+
+                                <td>
+                                    <input class="form-control JIDNA_GSTIN"
+                                           name="Addresses[0].JIDNA_GSTIN"
+                                           readonly>
+                                </td>
+
+                                <td>
+
+                                    <input type="hidden"
+                                           class="JIDNA_Number"
+                                           name="Addresses[0].JIDNA_Number"
+                                           value="0">
+
+                                    <input type="hidden"
+                                           class="JIDNA_IsDeleted"
+                                           name="Addresses[0].JIDNA_IsDeleted"
+                                           value="0">
+
+                                    <a class="AddRowRemove btn text-danger">🗑</a>
+
+                                </td>
+
+                            </tr>
+
+                            <!-- EXISTING DATA BIND -->
+                            @for (int i = 0; i < Model.Addresses.Count; i++)
+                            {
+                                <tr class="AddNewRow">
+
+                                    <td>
+                                        <select class="form-select JIDNA_ADTP_Number"
+                                                asp-for="Addresses[i].JIDNA_ADTP_Number"
+                                                asp-items="@ViewBag.AddressType">
+                                        </select>
+                                    </td>
+
+                                    <td>
+                                        <select class="form-select JIDNA_Address_ID"
+                                                asp-for="Addresses[i].JIDNA_Address_ID"
+                                                asp-items="@ViewBag.AddressID">
+                                        </select>
+                                    </td>
+
+                                    <td>
+                                        <input asp-for="Addresses[i].JIDNA_Address"
+                                               class="form-control JIDNA_Address"
+                                               readonly>
+                                    </td>
+
+                                    <td>
+                                        <input asp-for="Addresses[i].JIDNA_City"
+                                               class="form-control JIDNA_City"
+                                               readonly>
+                                    </td>
+
+                                    <td>
+                                        <input asp-for="Addresses[i].JIDNA_State"
+                                               class="form-control JIDNA_State"
+                                               readonly>
+                                    </td>
+
+                                    <td>
+                                        <input asp-for="Addresses[i].JIDNA_Country"
+                                               class="form-control JIDNA_Country"
+                                               readonly>
+                                    </td>
+
+                                    <td>
+                                        <input asp-for="Addresses[i].JIDNA_PIN"
+                                               class="form-control JIDNA_PIN"
+                                               readonly>
+                                    </td>
+
+                                    <td>
+                                        <input asp-for="Addresses[i].JIDNA_GSTIN"
+                                               class="form-control JIDNA_GSTIN"
+                                               readonly>
+                                    </td>
+
+                                    <td>
+
+                                        <input type="hidden"
+                                               asp-for="Addresses[i].JIDNA_Number"
+                                               class="JIDNA_Number">
+
+                                     @*    <input type="hidden"
+                                               asp-for="Addresses[i].JIDNA_IsDeleted"
+                                               class="JIDNA_IsDeleted"> *@
+
+                                        <a class="AddRowRemove btn text-danger">🗑</a>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <!-- FOOTER -->
+                <div class="modal-footer">
+
+                    <button type="button"
+                            id="AddressAddButton"
+                            class="btn btn-primary">
+                        Add Row
+                    </button>
+
+                    <button type="button"
+                            class="btn btn-success"
+                            data-bs-dismiss="modal">
+                        OK
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+ 
+    <input asp-for="Header.JIDNH_Number"
+           type="hidden" />
+    <!-- item grid in body -->
+    <div class="row panel-body gx-2">
+
+        <div class="col-12 panel-card-fixed h-100">
+
+            <div class="w-100 rounded-0 h-100 border border-primary bg-transparent"
+                 id="BodyHeight">
+    <!-- HEADER -->
+                <div class="card rounded-0 bg-transparent shadow-none"
+                     id="CardHeader">
+
+        <div class="col h-100 align-items-center">
+
+            <div class="h6 fw-light text-white h-100 align-content-center bg-secondary px-2">
+
+                Edit Delivery Note
+
+                <a asp-controller="DeliveryNote"
+                       asp-action="Index"
+                       class="float-end btn p-0">
+
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         width="12"
+                         height="12"
+                         fill="currentColor"
+                         class="bi bi-x-lg"
+                         viewBox="0 0 16 16">
+
+                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+
+                    </svg>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- BODY -->
+                <div class="card rounded-0 bg-transparent shadow-none" id="CardBody">
+
+        <div class="col-12 panel-card-fixed h-100">
+
+            <div class="w-100 rounded-0 h-100 border border-primary bg-transparent">
+
+                <!-- HEADER -->
+                <div class="card rounded-0 bg-transparent shadow-none"
+                     id="CardHeader">
+
+                    <div class="card-body pb-0">
+
+                        <div class="row ps-2">
+
+                            <!-- LEFT -->
+                            <div class="col-auto left-menu text-black">
+
+                                <div class="row">
+
+                                    <!-- COLUMN 1 -->
+                                    <div class="col-12 col-md-3">
+
+                                        <!-- DN NO -->
+                                        <div class="row align-items-center px-2 mb-1">
+
+                                            <label asp-for="Header.JIDNH_DN_No"
+                                                   class="col-md-5 col-form-label ps-0">
+                                            </label>
+
+                                            <div class="col-md-7">
+
+                                                <input asp-for="Header.JIDNH_DN_No"
+                                                       class="form-control"
+                                                       autocomplete="off" />
+
+                                            </div>
+
+                                        </div>
+
+                                        <!-- DN DATE -->
+                                        <div class="row align-items-center px-2 mb-1">
+
+                                            <label asp-for="Header.JIDNH_DN_Date"
+                                                   class="col-md-5 col-form-label ps-0">
+                                            </label>
+
+                                            <div class="col-md-7">
+
+                                                <input asp-for="Header.JIDNH_DN_Date"
+                                                       type="date"
+                                                       class="form-control"
+                                                       autocomplete="off" />
+
+                                            </div>
+
+                                        </div>
+
+                                        <!-- MATERIAL SEGREGATION -->
+                                        <div class="row align-items-center px-2 mb-1">
+
+                                            <label asp-for="Header.JIDNH_MS_Number"
+                                                   class="col-md-5 col-form-label ps-0">
+                                            </label>
+
+                                            <div class="col-md-7">
+
+                                                <select asp-for="Header.JIDNH_MS_Number"
+                                                        class="form-select"
+                                                        asp-items="@ViewBag.MaterialSegregation">
+                                                </select>
+
+                                            </div>
+
+                                        </div>
+
+                                        <!-- CUSTOMER -->
+                                        <div class="row align-items-center px-2 mb-1">
+
+                                            <label asp-for="Header.JIDNH_JW_Customer_Number"
+                                                   class="col-md-5 col-form-label ps-0">
+                                            </label>
+
+                                            <div class="col-md-7">
+
+                                                <input asp-for="Header.JIDNH_JW_Customer_Number"
+                                                       type="hidden" />
+
+                                                <input asp-for="Header.JIDNH_JW_Customer_Name"
+                                                       class="form-control"
+                                                       autocomplete="off"
+                                                       oninput="OnEditJWCustomerInput(this)"
+                                                       onfocus="OnEditJWCustomerFocus(this)" />
+
+                                              
+
+                                                <div class="jwcustomer-search-results bg-primary card"
+                                                     style="display:none">
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    <!-- COLUMN 2 -->
+                                    <div class="col-12 col-md-3">
+
+                                        <!-- CURRENCY -->
+                                        <div class="row align-items-center px-2 mb-1">
+
+                                            <label asp-for="Header.JIDNH_Currency_Number"
+                                                   class="col-md-5 col-form-label ps-0">
+                                            </label>
+
+                                            <div class="col-md-7">
+
+                                                <select asp-for="Header.JIDNH_Currency_Number"
+                                                        class="form-select"
+                                                        asp-items="@ViewBag.Currency">
+                                                </select>
+
+                                            </div>
+
+                                        </div>
+
+                                        <!-- WAREHOUSE -->
+                                        <div class="row align-items-center px-2 mb-1">
+
+                                            <label asp-for="Header.JIDNH_WH_Number"
+                                                   class="col-md-5 col-form-label ps-0">
+                                            </label>
+
+                                            <div class="col-md-7">
+
+                                                <select asp-for="Header.JIDNH_WH_Number"
+                                                        class="form-select"
+                                                        asp-items="@ViewBag.Warehouse">
+                                                </select>
+
+                                            </div>
+
+                                        </div>
+
+                                        <!-- PAYMENT TERMS -->
+                                        <div class="row align-items-center px-2 mb-1">
+
+                                            <label asp-for="Header.JIDNH_PaymentTerms"
+                                                   class="col-md-5 col-form-label ps-0">
+                                            </label>
+
+                                            <div class="col-md-7">
+
+                                                <input asp-for="Header.JIDNH_PaymentTerms"
+                                                       class="form-control"
+                                                       autocomplete="off" />
+
+                                            </div>
+
+                                        </div>
+
+                                        <!-- DELIVERY TERMS -->
+                                        <div class="row align-items-center px-2 mb-1">
+
+                                            <label asp-for="Header.JIDNH_DeliveryTerms"
+                                                   class="col-md-5 col-form-label ps-0">
+                                            </label>
+
+                                            <div class="col-md-7">
+
+                                                <input asp-for="Header.JIDNH_DeliveryTerms"
+                                                       class="form-control"
+                                                       autocomplete="off" />
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    <!-- COLUMN 3 -->
+                                    <div class="col-12 col-md-3">
+
+                                        <!-- DELIVERY MODE -->
+                                        <div class="row align-items-center px-2 mb-1">
+
+                                            <label asp-for="Header.JIDNH_DeliveryMode"
+                                                   class="col-md-5 col-form-label ps-0">
+                                            </label>
+
+                                            <div class="col-md-7">
+
+                                                <input asp-for="Header.JIDNH_DeliveryMode"
+                                                       class="form-control"
+                                                       autocomplete="off" />
+
+                                            </div>
+
+                                        </div>
+
+                                        <!-- DESPATCH DOC NO -->
+                                        <div class="row align-items-center px-2 mb-1">
+
+                                            <label asp-for="Header.JIDNH_DespatchDocumentNo"
+                                                   class="col-md-5 col-form-label ps-0 text-nowrap">
+                                            </label>
+
+                                            <div class="col-md-7">
+
+                                                <input asp-for="Header.JIDNH_DespatchDocumentNo"
+                                                       class="form-control"
+                                                       autocomplete="off" />
+
+                                            </div>
+
+                                        </div>
+
+                                        <!-- DESPATCH THROUGH -->
+                                        <div class="row align-items-center px-2 mb-1">
+
+                                            <label asp-for="Header.JIDNH_DespatchedThrough"
+                                                   class="col-md-5 col-form-label ps-0">
+                                            </label>
+
+                                            <div class="col-md-7">
+
+                                                <input asp-for="Header.JIDNH_DespatchedThrough"
+                                                       class="form-control"
+                                                       autocomplete="off" />
+
+                                            </div>
+
+                                        </div>
+
+                                        <!-- REMARKS -->
+                                        <div class="row align-items-start px-2 mb-1">
+
+                                            <label asp-for="Header.JIDNH_Remarks"
+                                                   class="col-md-5 col-form-label ps-0">
+                                            </label>
+
+                                            <div class="col-md-7">
+
+                                                <textarea asp-for="Header.JIDNH_Remarks"
+                                                          class="form-control"
+                                                          rows="2"></textarea>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <!-- RIGHT -->
+                            <div class="col-auto right-menu text-center border-start">
+
+                                <button type="button"
+                                        id="btnUpdate"
+                                        class="btn btn-primary btn-sm px-2 w-100 mb-1">
+
+                                    Update
+
+                                </button>
+
+                                <button type="button"
+                                        id="AddressButton"
+                                        class="btn btn-primary btn-sm px-1 w-100 mb-1">
+
+                                    Address
+
+                                </button>
+                                <button type="button"
+                                        id="BatchButton"
+                                        class="btn btn-primary OpenBatchPopup btn-sm px-1 w-100 mb-1">
+
+                                    Batch
+
+                                </button>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+                <!-- GRID -->
+                <div class="card rounded-0 bg-transparent shadow-none">
+
+                    <div class="card-body h-100">
+
+                        <div class="col table-fixed h-100">
+
+                            <div class="w-12 table-responsive table-body table-body-f">
+
+                                <table class="table table-one table-striped table-bordered table-hover align-middle w-100"
+                                       id="ItemTable">
+
+                                    <thead>
+
+                                        <tr class="table-info">
+                                            <th class="px-2 del text-center">
+
+                                                <input type="checkbox"
+                                                       class="IndexAllCheckItem form-check-input border-white"
+                                                       id="IndexAllCheckItem">
+
+                                            </th>
+                                            <th>Process</th>
+                                            <th>Item Code</th>
+                                            <th>Description</th>
+                                            <th>Outer Dia</th>
+                                            <th>Thickness</th>
+                                            <th>Length</th>
+                                            <th>Width</th>
+                                            <th>Material</th>
+                                            <th>Group</th>
+                                            <th>Warehouse</th>
+                                            <th>UOM</th>
+                                            <th>Original Qty</th>
+                                               <th>Amend Qty</th>
+                                            <th>Unit Price</th>
+                                            <th>Amount</th>
+                                            <th>JW</th>
+
+                                        </tr>
+
+                                    </thead>
+
+                                    <tbody id="TableBody">
+
+                                        @for (int i = 0; i < Model.Items.Count; i++)
+                                        {
+                                            <tr class="NewRow">
+                                                <td class="p-2 del">
+                                                    <input type="checkbox" class="CheckItem form-check-input">
+                                                 </td>
+
+                                                <!-- PROCESS -->
+                                                <td>
+
+                                                    <select asp-for="Items[i].JIDNI_PRS_Number"
+                                                            class="form-select JIDNI_PRS_Number"
+                                                            asp-items="@ViewBag.Process">
+                                                    </select>
+
+                                                </td>
+
+                                                <!-- ITEM -->
+                                                <td>
+
+                                                    <input asp-for="Items[i].JIDNI_Number"
+                                                           type="hidden"
+                                                           class="JIDNI_Number" />
+
+                                                    <input asp-for="Items[i].JIDNI_Item_Number"
+                                                           type="hidden"
+                                                           class="JIDNI_Item_Number" />
+
+                                                    <input asp-for="Items[i].JIDNI_Item_Code"
+                                                    autocomplete="off"
+                                                           class="form-control JIDNI_Item_Code"
+                                                           oninput="OnEditInputItem(this)"
+                                                           onfocus="OnEditFocusItem(this)" />
+                                                    <div class="search-results bg-primary card"
+                                                         style="display:none">
+                                                    </div>
+
+                                                </td>
+
+                                                <!-- DESCRIPTION -->
+                                                <td>
+
+                                                    <input asp-for="Items[i].JIDNI_Item_Description"
+                                                           class="form-control JIDNI_Item_Description"
+                                                           readonly />
+
+                                                </td>
+
+                                                <!-- OD -->
+                                                <td>
+
+                                                    <input asp-for="Items[i].JIDNI_OuterDia"
+                                                           class="form-control JIDNI_OuterDia text-end"
+                                                           readonly />
+
+                                                </td>
+
+                                                <!-- THK -->
+                                                <td>
+
+                                                    <input asp-for="Items[i].JIDNI_Thickness"
+                                                           class="form-control JIDNI_Thickness text-end"
+                                                           readonly />
+
+                                                </td>
+
+                                                <!-- LENGTH -->
+                                                <td>
+
+                                                    <input asp-for="Items[i].JIDNI_Length"
+                                                           class="form-control JIDNI_Length text-end"
+                                                           readonly />
+
+                                                </td>
+
+                                                <!-- WIDTH -->
+                                                <td>
+
+                                                    <input asp-for="Items[i].JIDNI_Width"
+                                                           class="form-control JIDNI_Width text-end"
+                                                           readonly />
+
+                                                </td>
+
+                                                <!-- MATERIAL -->
+                                                <td>
+
+                                                    <input asp-for="Items[i].JIDNI_MaterialGrade"
+                                                           class="form-control JIDNI_MaterialGrade"
+                                                           readonly />
+
+                                                </td>
+
+                                                <!-- GROUP -->
+                                                <td>
+
+                                                    <input asp-for="Items[i].JIDNI_ItemGroup"
+                                                           class="form-control JIDNI_ItemGroup"
+                                                           readonly />
+
+                                                </td>
+
+                                                <!-- WH -->
+                                                <td>
+
+                                                    <select asp-for="Items[i].JIDNI_WH_Number"
+                                                            class="form-select JIDNI_WH_Number"
+                                                            asp-items="@ViewBag.Warehouse">
+                                                    </select>
+
+                                                </td>
+
+                                                <!-- UOM -->
+                                                <td>
+
+                                                    <select asp-for="Items[i].JIDNI_UoM_Number"
+                                                            class="form-select JIDNI_UoM_Number"
+                                                            asp-items="@ViewBag.UOM">
+                                                    </select>
+
+                                                </td>
+
+                                                <!-- QTY -->
+                                                <td>
+
+                                                    <input asp-for="Items[i].JIDNI_Qty"
+                                                    autocomplete="off" readonly
+                                                           class="form-control JIDNI_OriginalQty  text-end" />
+
+                                                </td>
+                                                
+                                                <!-- QTY -->
+                                                <td>
+
+                                                    <input asp-for="Items[i].JIDNI_Qty"
+                                                           autocomplete="off"
+                                                           class="form-control JIDNI_Qty text-end" />
+
+                                                </td>
+                                                <!-- PRICE -->
+                                                <td>
+
+                                                    <input asp-for="Items[i].JIDNI_UnitPrice"
+                                                    autocomplete="off"
+                                                           class="form-control JIDNI_UnitPrice text-end" />
+
+                                                </td>
+
+                                                <!-- AMOUNT -->
+                                                <td>
+
+                                                    <input asp-for="Items[i].JIDNI_Amount"
+                                                           class="form-control JIDNI_Amount text-end"
+                                                           readonly />
+
+                                                </td>
+
+                                                <!-- JW -->
+                                                <td class="text-center">
+
+                                                    <input type="checkbox"
+                                                           class="form-check-input JIDNI_JW_InvoiceTracking"
+                                                    @(Model.Items[i].JIDNI_JW_InvoiceTracking == "Yes" ? "checked" : "") />
+
+                                                    <input asp-for="Items[i].JIDNI_JW_InvoiceTracking"
+                                                           type="hidden"
+                                                           class="JIDNI_JW_InvoiceTracking_Value" />
+
+                                                    <input asp-for="Items[i].JIDNI_IsDeleted"
+                                                           type="hidden"
+                                                           class="JIDNI_IsDeleted" />
+
+                                                </td>
+
+                                            </tr>
+                                        }
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                            <!-- FOOTER -->
+                            <div class="row table-footer align-items-center">
+
+                                <div class="col">
+
+                                    <a id="EditAddRowButton"
+                                           class="btn btn-primary">
+
+                                        Add Row
+
+                                    </a>
+
+                                    <a id="RemoveItemRowButton_Edit" class="RowRemove btn btn-primary">
+
+                                        Delete Row
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+    
+            </div>
+
+        </div>
+
+    </div>
+</form>
+
+@section Scripts {
+
+    <partial name="_ValidationScriptsPartial" />
+
+    <script src="~/js/deliverynote/DeliveryNoteEdit.js"
+            asp-append-version="true"></script>
+
+}

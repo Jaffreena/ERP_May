@@ -229,14 +229,13 @@ namespace ERP_DAO.JobInwardTransaction
             }
         }
         public void DeliveryNoteItemBulkUpdate(
-    DeliveryNoteCreate_DTO DN_DTO,
-    SqlConnection con,
-    SqlTransaction tr)
+      DeliveryNoteCreate_DTO DN_DTO,
+      SqlConnection con,
+      SqlTransaction tr)
         {
             DataTable dt = new DataTable();
 
-          
-           dt.Columns.Add("JIDNI_JIDNH_Number", typeof(long));
+            dt.Columns.Add("JIDNI_JIDNH_Number", typeof(long));
             dt.Columns.Add("JIDNI_Number", typeof(long));
             dt.Columns.Add("JIDNI_PRS_Number", typeof(long));
             dt.Columns.Add("JIDNI_Item_Number", typeof(long));
@@ -247,12 +246,15 @@ namespace ERP_DAO.JobInwardTransaction
             dt.Columns.Add("JIDNI_Amount", typeof(decimal));
             dt.Columns.Add("JIDNI_JW_InvoiceTracking", typeof(string));
 
+            // NEW
+            dt.Columns.Add("JISVOH_Number", typeof(long));
+            dt.Columns.Add("JISVOI_Number", typeof(long));
+
             foreach (var item in DN_DTO.Items)
             {
                 dt.Rows.Add(
-                    
-                   DN_DTO.Header.JIDNH_Number,
-                   item.JIDNI_Number,
+                    DN_DTO.Header.JIDNH_Number,
+                    item.JIDNI_Number,
                     item.JIDNI_PRS_Number,
                     item.JIDNI_Item_Number,
                     item.JIDNI_WH_Number,
@@ -260,7 +262,11 @@ namespace ERP_DAO.JobInwardTransaction
                     item.JIDNI_Qty,
                     item.JIDNI_UnitPrice,
                     item.JIDNI_Amount,
-                    item.JIDNI_JW_InvoiceTracking
+                    item.JIDNI_JW_InvoiceTracking,
+
+                    // NEW
+                    item.JISVOH_Number,
+                    item.JISVOI_Number
                 );
             }
 
@@ -269,7 +275,6 @@ namespace ERP_DAO.JobInwardTransaction
                 cmd.CommandType = CommandType.StoredProcedure;
 
                 SqlParameter param = cmd.Parameters.AddWithValue("@Items", dt);
-
                 param.SqlDbType = SqlDbType.Structured;
                 param.TypeName = "DeliveryNoteItemUpdateType";
 
@@ -358,37 +363,60 @@ namespace ERP_DAO.JobInwardTransaction
                         foreach (var item in DN_DTO.Items)
                         {
                             long insertedItemNumber = 0;
+                            long JISVOI_Number = 0;
+
+                            // Get JISVOI_Number from Service Order Item
+                            using (SqlCommand getCmd = new SqlCommand(@"
+         SELECT TOP 1 JISVOI_Number
+         FROM JI_ServiceOrderItem
+         WHERE JISVOI_PRS_Number = @PRS_Number
+           AND JISVOI_Item_Number = @Item_Number
+           AND JISVOI_UoM_Number = @UoM_Number
+ AND JISVOI_JISVOH_Number = @JISVOH_Number
+     ", con, tr))
+                            {
+                                getCmd.Parameters.AddWithValue("@PRS_Number", item.JIDNI_PRS_Number);
+                                getCmd.Parameters.AddWithValue("@Item_Number", item.JIDNI_Item_Number);
+                                getCmd.Parameters.AddWithValue("@UoM_Number", item.JIDNI_UoM_Number);
+                                getCmd.Parameters.AddWithValue("@JISVOH_Number", item.JISVOH_Number);
+                                object result = getCmd.ExecuteScalar();
+
+                                if (result != null && result != DBNull.Value)
+                                    JISVOI_Number = Convert.ToInt64(result);
+                            }
 
                             using (SqlCommand cmd = new SqlCommand(@"
-                        INSERT INTO JI_DeliveryNoteItem
-                        (
-                            JIDNI_JIDNH_Number,
-                            JIDNI_PRS_Number,
-                            JIDNI_Item_Number,
-                            JIDNI_WH_Number,
-                            JIDNI_UoM_Number,
-                            JIDNI_Qty,
-                            JIDNI_UnitPrice,
-                            JIDNI_Amount,
-                            JIDNI_JW_InvoiceTracking,
-                            JISVOH_Number
-                        )
+         INSERT INTO JI_DeliveryNoteItem
+         (
+             JIDNI_JIDNH_Number,
+             JIDNI_PRS_Number,
+             JIDNI_Item_Number,
+             JIDNI_WH_Number,
+             JIDNI_UoM_Number,
+             JIDNI_Qty,
+             JIDNI_UnitPrice,
+             JIDNI_Amount,
+             JIDNI_JW_InvoiceTracking,
+             JISVOH_Number,
+             JISVOI_Number
+         )
 
-                        OUTPUT INSERTED.JIDNI_Number
+         OUTPUT INSERTED.JIDNI_Number
 
-                        VALUES
-                        (
-                            @JIDNI_JIDNH_Number,
-                            @JIDNI_PRS_Number,
-                            @JIDNI_Item_Number,
-                            @JIDNI_WH_Number,
-                            @JIDNI_UoM_Number,
-                            @JIDNI_Qty,
-                            @JIDNI_UnitPrice,
-                            @JIDNI_Amount,
-                            @JIDNI_JW_InvoiceTracking,
-                            @JISVOH_Number
-                        )", con, tr))
+         VALUES
+         (
+             @JIDNI_JIDNH_Number,
+             @JIDNI_PRS_Number,
+             @JIDNI_Item_Number,
+             @JIDNI_WH_Number,
+             @JIDNI_UoM_Number,
+             @JIDNI_Qty,
+             @JIDNI_UnitPrice,
+             @JIDNI_Amount,
+             @JIDNI_JW_InvoiceTracking,
+             @JISVOH_Number,
+             @JISVOI_Number
+         )", con, tr))
                             {
                                 cmd.Parameters.AddWithValue("@JIDNI_JIDNH_Number", DN_Number);
                                 cmd.Parameters.AddWithValue("@JIDNI_PRS_Number", item.JIDNI_PRS_Number);
@@ -400,6 +428,7 @@ namespace ERP_DAO.JobInwardTransaction
                                 cmd.Parameters.AddWithValue("@JIDNI_Amount", item.JIDNI_Amount);
                                 cmd.Parameters.AddWithValue("@JIDNI_JW_InvoiceTracking", item.JIDNI_JW_InvoiceTracking);
                                 cmd.Parameters.AddWithValue("@JISVOH_Number", item.JISVOH_Number);
+                                cmd.Parameters.AddWithValue("@JISVOI_Number", JISVOI_Number);
 
                                 insertedItemNumber =
                                     Convert.ToInt64(cmd.ExecuteScalar());
@@ -408,11 +437,10 @@ namespace ERP_DAO.JobInwardTransaction
                             insertedItems.Add(new ItemMapDTO
                             {
                                 ItemNumber = insertedItemNumber,
-                                ItemMasterNumber =Convert.ToInt64(item.JIDNI_Item_Number),
+                                ItemMasterNumber = Convert.ToInt64(item.JIDNI_Item_Number),
                                 Qty = Convert.ToDecimal(item.JIDNI_Qty)
                             });
                         }
-
                         //-------------------------------------------------
                         // BATCH INSERT
                         //-------------------------------------------------
@@ -1742,7 +1770,11 @@ WHERE I.Item_Number =@Item_Number
 
         #endregion
 
-        public DataSet GetServiceOrderDB(long customerId)
+        public DataSet GetServiceOrderDB(
+       long customerId,
+       long? prsNumber = null,
+       long? itemNumber = null,
+       long? uomNumber = null)
         {
             try
             {
@@ -1751,6 +1783,14 @@ WHERE I.Item_Number =@Item_Number
                 DbCommand cmd = db.GetStoredProcCommand("JI_ServiceOrder_GetByCustomer_SP");
 
                 db.AddInParameter(cmd, "@CustomerId", DbType.Int64, customerId);
+                db.AddInParameter(cmd, "@PRS_Number", DbType.Int64,
+                    prsNumber.HasValue ? (object)prsNumber.Value : DBNull.Value);
+
+                db.AddInParameter(cmd, "@Item_Number", DbType.Int64,
+                    itemNumber.HasValue ? (object)itemNumber.Value : DBNull.Value);
+
+                db.AddInParameter(cmd, "@UoM_Number", DbType.Int64,
+                    uomNumber.HasValue ? (object)uomNumber.Value : DBNull.Value);
 
                 return db.ExecuteDataSet(cmd);
             }
@@ -1770,6 +1810,63 @@ WHERE I.Item_Number =@Item_Number
                     ex
                 );
             }
+        }
+
+        #region check validation USP_CheckDeliveredQtyExceeded
+        public DataSet CheckDeliveredQtyExceededDB(
+    long jisvohNumber,
+    long? prsNumber = null,
+    long? itemNumber = null,
+    long? uomNumber = null)
+        {
+            try
+            {
+                Database db = new SqlDatabase(DB.Connection());
+
+                DbCommand cmd = db.GetStoredProcCommand("USP_CheckDeliveredQtyExceeded");
+
+                db.AddInParameter(cmd, "@JISVOH_Number", DbType.Int64, jisvohNumber);
+
+                db.AddInParameter(cmd, "@PRS_Number", DbType.Int64,
+                    prsNumber.HasValue ? (object)prsNumber.Value : DBNull.Value);
+
+                db.AddInParameter(cmd, "@Item_Number", DbType.Int64,
+                    itemNumber.HasValue ? (object)itemNumber.Value : DBNull.Value);
+
+                db.AddInParameter(cmd, "@UoM_Number", DbType.Int64,
+                    uomNumber.HasValue ? (object)uomNumber.Value : DBNull.Value);
+
+                return db.ExecuteDataSet(cmd);
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception(
+                    "SQL Error : " + ex.Message +
+                    Environment.NewLine +
+                    "Procedure : USP_CheckDeliveredQtyExceeded",
+                    ex
+                );
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(
+                    "Application Error : " + ex.Message,
+                    ex
+                );
+            }
+        }
+        #endregion
+        public DataSet GetServiceOrderListDB(long prsNumber, long itemNumber, long uomNumber, long jisvohNumber)
+        {
+            Database db = new SqlDatabase(DB.Connection());
+            DbCommand cmd = db.GetStoredProcCommand("JI_DeliveryNote_GetServiceOrderList_SP");
+
+            db.AddInParameter(cmd, "@PRS_Number", DbType.Int64, prsNumber);
+            db.AddInParameter(cmd, "@Item_Number", DbType.Int64, itemNumber);
+            db.AddInParameter(cmd, "@UoM_Number", DbType.Int64, uomNumber);
+            db.AddInParameter(cmd, "@JISVOH_Number", DbType.Int64, jisvohNumber);
+
+            return db.ExecuteDataSet(cmd);
         }
 
     }
